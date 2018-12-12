@@ -20,7 +20,8 @@ class App {
         // responsible for fetching the data for those types.
         const server = new ApolloServer({
             typeDefs, resolvers,
-            introspection: true
+            introspection: true,
+            playground: true
         });
 
         // This `listen` method launches a web-server.  Existing apps
