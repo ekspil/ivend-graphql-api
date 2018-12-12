@@ -58,7 +58,7 @@ jobs:
 
 workflows:
   version: 2
-  aggregation_api_deploy:
+  graphql_api_deploy:
     jobs:
       - build:
           filters:
