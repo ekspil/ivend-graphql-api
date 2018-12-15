@@ -17,14 +17,17 @@ class CreateController_1544871592978 {
                 {
                     name: "uid",
                     type: "varchar",
+                    isNullable: false
                 },
                 {
                     name: "mode",
                     type: "varchar",
+                    isNullable: false
                 },
                 {
                     name: "accessKey",
                     type: "varchar",
+                    isNullable: false
                 }
             ]
         }), true)
