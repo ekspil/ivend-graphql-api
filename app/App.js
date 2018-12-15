@@ -5,8 +5,10 @@ const resolvers = require("./resolvers")
 const mongoose = require("mongoose")
 
 const ControllerEntity = require("./entities/ControllerEntity")
+const UserEntity = require("./entities/UserEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
+const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
 
 class App {
 
@@ -19,10 +21,10 @@ class App {
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DATABASE,
-            entities: [ControllerEntity],
+            entities: [ControllerEntity, UserEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== 'production',
-            migrations: [CreateController_1544871592978],
+            migrations: [CreateController_1544871592978, CreateUser_1544875175234],
             migrationsRun: true,
             cli: {
                 migrationsDir: "migrations"
