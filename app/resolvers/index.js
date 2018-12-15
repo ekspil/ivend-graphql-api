@@ -1,5 +1,6 @@
 const ControllerQueryResolver = require("./query/ControllerQueryResolver")
 const RegisterUserMutationResolver = require("./mutations/RegisterUserMutationResolver")
+const CreateControllerMutationResolver = require("./mutations/CreateControllerMutationResolver")
 
 const Resolvers = function(injects) {
 
@@ -10,7 +11,8 @@ const Resolvers = function(injects) {
             controller: new ControllerQueryResolver(controllerService)
         },
         Mutation: {
-            registerUser: new RegisterUserMutationResolver(userService)
+            registerUser: new RegisterUserMutationResolver(userService),
+            createController: new CreateControllerMutationResolver(controllerService)
         }
     }
 }

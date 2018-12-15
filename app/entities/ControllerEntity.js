@@ -19,7 +19,8 @@ module.exports = new EntitySchema({
             type: "varchar"
         },
         accessKey: {
-            type: "varchar"
+            type: "varchar",
+            nullable: true
         }
     }
 });

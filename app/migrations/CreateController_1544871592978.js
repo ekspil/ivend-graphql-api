@@ -24,7 +24,8 @@ class CreateController_1544871592978 {
                 },
                 {
                     name: "accessKey",
-                    type: "varchar"
+                    type: "varchar",
+                    isNullable: true
                 }
             ]
         }), true)
