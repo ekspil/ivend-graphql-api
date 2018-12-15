@@ -11,8 +11,8 @@ class CreateController_1544871592978 {
                 {
                     name: "id",
                     type: "int",
-                    primary: true,
-                    generated: true
+                    isPrimary: true,
+                    isGenerated: true
                 },
                 {
                     name: "uid",
