@@ -1,12 +1,19 @@
+const ControllerQueryResolver = require("./query/ControllerQueryResolver")
+const RegisterUserMutationResolver = require("./mutations/RegisterUserMutationResolver")
 
-module.exports = {
-    Query: {
-        controller(obj, args, context, info) {
-            return {
-                uid: args.uid,
-                mode: "exe",
-                accessKey: "accessKey"
-            }
+const Resolvers = function(injects) {
+
+    const {userService} = injects
+
+    return {
+        Query: {
+            controller: new ControllerQueryResolver()
         },
+        Mutation: {
+            registerUser: new RegisterUserMutationResolver(userService)
+        }
     }
-};
+}
+
+
+module.exports = Resolvers;

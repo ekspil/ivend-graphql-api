@@ -1,10 +1,11 @@
 const {EntitySchema} = require("typeorm")
 
-const Controller = require("../models/Controller")
+const User = require("../models/User")
 
 module.exports = new EntitySchema({
     name: "User",
-    target: Controller,
+    tableName: "users",
+    target: User,
     columns: {
         id: {
             type: "int",

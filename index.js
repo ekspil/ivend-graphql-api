@@ -1,3 +1,4 @@
+require('dotenv').config()
 const App = require("./app/App")
 const app = new App()
 

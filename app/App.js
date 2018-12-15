@@ -1,7 +1,7 @@
 const {ApolloServer} = require('apollo-server');
 const {createConnection} = require("typeorm")
 const typeDefs = require("../graphqlTypedefs")
-const resolvers = require("./resolvers")
+const Resolvers = require("./resolvers")
 
 const ControllerEntity = require("./entities/ControllerEntity")
 const UserEntity = require("./entities/UserEntity")
@@ -11,11 +11,13 @@ const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234"
 
 const ContextResolver = require('./resolvers/ContextResolver')
 
+const UserService = require("./services/UserService")
+
 class App {
 
     async start() {
 
-        await createConnection({
+        const connection = await createConnection({
             type: "postgres",
             host: process.env.POSTGRES_HOST,
             port: process.env.POSTGRES_PORT,
@@ -31,6 +33,12 @@ class App {
                 migrationsDir: "migrations"
             }
         })
+
+        const userRepository = connection.getRepository(UserEntity);
+
+        const userService = new UserService(userRepository)
+
+        const resolvers = new Resolvers({userService})
 
         const server = new ApolloServer({
             typeDefs,

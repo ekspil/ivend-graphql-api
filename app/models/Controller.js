@@ -1,5 +1,6 @@
 class Controller {
-    constructor(uid, mode, accessKey) {
+    constructor(id, uid, mode, accessKey) {
+        this.id = id
         this.uid = uid
         this.mode = mode
         this.accessKey = accessKey

@@ -4,6 +4,7 @@ const Controller = require("../models/Controller")
 
 module.exports = new EntitySchema({
     name: "Controller",
+    tableName: "controllers",
     target: Controller,
     columns: {
         id: {
