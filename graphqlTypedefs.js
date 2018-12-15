@@ -13,6 +13,7 @@ const typeDefs = gql`
 
     type Query {
         controller(uid: String!): Controller
+        controllers: [Controller]
     }
 
     type Mutation {

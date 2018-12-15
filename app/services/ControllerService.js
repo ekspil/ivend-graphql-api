@@ -7,6 +7,7 @@ class ControllerService {
         this.controllerRepository = controllerRepository
 
         this.createController = this.createController.bind(this)
+        this.getAll = this.getAll.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
     }
 
@@ -26,6 +27,14 @@ class ControllerService {
         controller.mode = mode
 
         return await this.controllerRepository.save(controller)
+    }
+
+    async getAll(user) {
+        if (!user) {
+            throw new NotAuthorized();
+        }
+
+        return await this.controllerRepository.find()
     }
 
     async getControllerByUID(uid, user) {
