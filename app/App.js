@@ -10,6 +10,8 @@ const UserEntity = require("./entities/UserEntity")
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
 
+const ContextResolver = require('./resolvers/ContextResolver')
+
 class App {
 
     async start() {
@@ -34,6 +36,7 @@ class App {
         const server = new ApolloServer({
             typeDefs,
             resolvers,
+            context: ContextResolver,
             introspection: true,
             playground: true
         });

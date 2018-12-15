@@ -1,10 +1,12 @@
-const ControllerRepository = require("../repositories/ControllerRepository")
-const controllerRepository = new ControllerRepository()
-
-const controller = require("./ControllerResolver")(controllerRepository)
 
 module.exports = {
     Query: {
-        controller
-    },
-}
+        controller(obj, args, context, info) {
+            return {
+                uid: args.uid,
+                mode: "exe",
+                accessKey: "accessKey"
+            }
+        },
+    }
+};

@@ -1,5 +1,5 @@
 
-function controllerResolver(controllerRepository) {
+function controllerQueryResolver(controllerRepository) {
     /**
      *
      * @param controllerRepository
@@ -13,4 +13,4 @@ function controllerResolver(controllerRepository) {
 }
 
 
-module.exports = controllerResolver
+module.exports = controllerQueryResolver
