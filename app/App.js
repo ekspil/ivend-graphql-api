@@ -2,7 +2,6 @@ const {ApolloServer} = require('apollo-server');
 const {createConnection} = require("typeorm")
 const typeDefs = require("../graphqlTypedefs")
 const resolvers = require("./resolvers")
-const mongoose = require("mongoose")
 
 const ControllerEntity = require("./entities/ControllerEntity")
 const UserEntity = require("./entities/UserEntity")
@@ -22,7 +21,7 @@ class App {
             port: process.env.POSTGRES_PORT,
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
-            database: process.env.POSTGRES_DATABASE,
+            database: process.env.POSTGRES_DB,
             entities: [ControllerEntity, UserEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== 'production',
