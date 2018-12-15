@@ -1,14 +1,10 @@
-
 class Controller {
-    constructor(rawObj) {
-        const {uid, mode, accessKey} = rawObj
-
+    constructor(uid, mode, accessKey) {
         this.uid = uid
         this.mode = mode
         this.accessKey = accessKey
     }
 
 }
-
 
 module.exports = Controller
