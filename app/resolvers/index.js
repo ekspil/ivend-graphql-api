@@ -3,11 +3,11 @@ const RegisterUserMutationResolver = require("./mutations/RegisterUserMutationRe
 
 const Resolvers = function(injects) {
 
-    const {userService} = injects
+    const {userService, controllerService} = injects
 
     return {
         Query: {
-            controller: new ControllerQueryResolver()
+            controller: new ControllerQueryResolver(controllerService)
         },
         Mutation: {
             registerUser: new RegisterUserMutationResolver(userService)

@@ -12,6 +12,7 @@ const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234"
 const ContextResolver = require('./resolvers/ContextResolver')
 
 const UserService = require("./services/UserService")
+const ControllerService = require("./services/ControllerService")
 
 class App {
 
@@ -35,15 +36,17 @@ class App {
         })
 
         const userRepository = connection.getRepository(UserEntity);
+        const controllerRepository = connection.getRepository(ControllerEntity);
 
         const userService = new UserService(userRepository)
+        const controllerService = new ControllerService(controllerRepository)
 
-        const resolvers = new Resolvers({userService})
+        const resolvers = new Resolvers({userService, controllerService})
 
         const server = new ApolloServer({
             typeDefs,
             resolvers,
-            context: ContextResolver,
+            context: new ContextResolver(userRepository),
             introspection: true,
             playground: true
         });
