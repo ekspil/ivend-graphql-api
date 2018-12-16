@@ -20,6 +20,14 @@ class AddDefaultRoles_1544941511727 {
             .into(tableName)
             .values([{name: "ADMIN"}])
             .execute()
+
+        await queryRunner
+            .manager
+            .createQueryBuilder()
+            .insert()
+            .into(tableName)
+            .values([{name: "AGGREGATOR"}])
+            .execute()
     }
 
     async down(queryRunner) {
@@ -38,6 +46,14 @@ class AddDefaultRoles_1544941511727 {
             .delete()
             .from(tableName)
             .where("name = :role", {role: "ADMIN"})
+            .execute()
+
+        await queryRunner
+            .manager
+            .createQueryBuilder()
+            .delete()
+            .from(tableName)
+            .where("name = :role", {role: "AGGREGATOR"})
             .execute()
     }
 
