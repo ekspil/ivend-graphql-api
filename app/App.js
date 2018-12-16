@@ -8,6 +8,7 @@ const UserEntity = require("./entities/UserEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
+const CreateRoles_1544871592978 = require("./migrations/CreateRoles_1544871592978")
 
 const ContextResolver = require('./resolvers/ContextResolver')
 
@@ -28,7 +29,7 @@ class App {
             entities: [ControllerEntity, UserEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== 'production',
-            migrations: [CreateController_1544871592978, CreateUser_1544875175234],
+            migrations: [CreateController_1544871592978, CreateUser_1544875175234, CreateRoles_1544871592978],
             migrationsRun: true,
             cli: {
                 migrationsDir: "migrations"
