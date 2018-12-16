@@ -2,7 +2,7 @@ const {MigrationInterface, QueryRunner, Table} = require("typeorm");
 
 const tableName = `roles`;
 
-class CreateRoles_1544871592978 {
+class CreateRoles_1544941386216 {
 
     async up(queryRunner) {
         await queryRunner.createTable(new Table({
@@ -28,4 +28,4 @@ class CreateRoles_1544871592978 {
 
 }
 
-module.exports = CreateRoles_1544871592978
+module.exports = CreateRoles_1544941386216
