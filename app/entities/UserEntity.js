@@ -23,5 +23,16 @@ module.exports = new EntitySchema({
             type: "varchar",
             nullable: true
         }
+    },
+    relations: {
+        role: {
+            target: "Role",
+            type: "one-to-one",
+            joinColumn: {
+                name: 'role_id',
+                referencedColumnName: 'id'
+            },
+            cascade: true
+        }
     }
 });
