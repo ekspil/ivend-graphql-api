@@ -13,8 +13,8 @@ class CreateRolePermissions_1544949078636 {
                     type: "int",
                 },
                 {
-                    name: "name",
-                    type: "varchar"
+                    name: "permission_id",
+                    type: "int"
                 }
             ]
         }), true)

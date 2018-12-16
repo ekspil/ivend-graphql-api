@@ -6,6 +6,7 @@ const Resolvers = require("./resolvers")
 const ControllerEntity = require("./entities/ControllerEntity")
 const UserEntity = require("./entities/UserEntity")
 const RoleEntity = require("./entities/RoleEntity")
+const PermissionEntity = require("./entities/PermissionEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
@@ -31,7 +32,7 @@ class App {
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            entities: [ControllerEntity, UserEntity, RoleEntity],
+            entities: [ControllerEntity, UserEntity, RoleEntity, PermissionEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== 'production',
             migrations: [
