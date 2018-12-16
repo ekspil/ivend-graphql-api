@@ -12,6 +12,7 @@ const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234"
 const CreateRoles_1544941386216 = require("./migrations/CreateRoles_1544941386216")
 const AddDefaultRoles_1544941511727 = require("./migrations/AddDefaultRoles_1544941511727")
 const AddRoleColumnToUser_1544941511727 = require("./migrations/AddRoleColumnToUser_1544941511727")
+const CreatePermission_1544948265057 = require("./migrations/CreatePermission_1544948265057")
 
 const ContextResolver = require('./resolvers/ContextResolver')
 
@@ -32,7 +33,14 @@ class App {
             entities: [ControllerEntity, UserEntity, RoleEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== 'production',
-            migrations: [CreateController_1544871592978, CreateUser_1544875175234, CreateRoles_1544941386216, AddDefaultRoles_1544941511727, AddRoleColumnToUser_1544941511727],
+            migrations: [
+                CreateController_1544871592978,
+                CreateUser_1544875175234,
+                CreateRoles_1544941386216,
+                AddDefaultRoles_1544941511727,
+                AddRoleColumnToUser_1544941511727,
+                CreatePermission_1544948265057
+            ],
             migrationsRun: true,
             cli: {
                 migrationsDir: "migrations"
