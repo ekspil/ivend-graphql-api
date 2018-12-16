@@ -16,19 +16,5 @@ module.exports = new EntitySchema({
             type: "varchar",
             unique: true
         }
-    },
-    relations: {
-        permissions: {
-            target: "Permission",
-            type: "one-to-one",
-            joinTable: {
-                name: 'role_permissions',
-                joinColumn: {
-                    name: 'role_id',
-                    referencedColumnName: 'id'
-                }
-            },
-            cascade: true
-        }
     }
 });

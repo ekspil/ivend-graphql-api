@@ -6,15 +6,12 @@ const Resolvers = require("./resolvers")
 const ControllerEntity = require("./entities/ControllerEntity")
 const UserEntity = require("./entities/UserEntity")
 const RoleEntity = require("./entities/RoleEntity")
-const PermissionEntity = require("./entities/PermissionEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
 const CreateRoles_1544941386216 = require("./migrations/CreateRoles_1544941386216")
 const AddDefaultRoles_1544941511727 = require("./migrations/AddDefaultRoles_1544941511727")
 const AddRoleColumnToUser_1544941511727 = require("./migrations/AddRoleColumnToUser_1544941511727")
-const CreatePermission_1544948265057 = require("./migrations/CreatePermission_1544948265057")
-const CreateRolePermissions_1544949078636 = require("./migrations/CreateRolePermissions_1544949078636")
 
 const ContextResolver = require('./resolvers/ContextResolver')
 
@@ -32,7 +29,7 @@ class App {
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            entities: [ControllerEntity, UserEntity, RoleEntity, PermissionEntity],
+            entities: [ControllerEntity, UserEntity, RoleEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== 'production',
             migrations: [
@@ -40,9 +37,7 @@ class App {
                 CreateUser_1544875175234,
                 CreateRoles_1544941386216,
                 AddDefaultRoles_1544941511727,
-                AddRoleColumnToUser_1544941511727,
-                CreatePermission_1544948265057,
-                CreateRolePermissions_1544949078636
+                AddRoleColumnToUser_1544941511727
             ],
             migrationsRun: true,
             cli: {
