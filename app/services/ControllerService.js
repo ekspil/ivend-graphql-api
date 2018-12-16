@@ -1,5 +1,6 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const Controller = require("../models/Controller")
+const Permission = require("../enum/Permission")
 
 class ControllerService {
 
@@ -16,7 +17,7 @@ class ControllerService {
             throw new Error("UID and mode are required for controller creation")
         }
 
-        if (!user) {
+        if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
             throw new NotAuthorized();
         }
 
@@ -30,7 +31,7 @@ class ControllerService {
     }
 
     async getAll(user) {
-        if (!user) {
+        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
             throw new NotAuthorized();
         }
 
@@ -38,7 +39,7 @@ class ControllerService {
     }
 
     async getControllerByUID(uid, user) {
-        if (!user) {
+        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
             throw new NotAuthorized();
         }
 

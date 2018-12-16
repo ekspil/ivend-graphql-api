@@ -32,6 +32,7 @@ module.exports = new EntitySchema({
                 name: 'role_id',
                 referencedColumnName: 'id'
             },
+            eager:true,
             cascade: true
         }
     }

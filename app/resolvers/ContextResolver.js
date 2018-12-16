@@ -1,5 +1,7 @@
 const bcryptjs = require("bcryptjs")
 
+const RolePermissions = require("../enum/RolePermissions")
+
 const parseAuthorizationHeader = async (header) => {
     const splitted = header.split(" ")
     const method = splitted[0]
@@ -24,11 +26,29 @@ const parseAuthorizationHeader = async (header) => {
 }
 
 
-const resolveAuth = async (ctx) => {
-
-}
-
 module.exports = function (userRepository) {
+
+    const authBasic = async (authCreds) => {
+        const {username, password} = authCreds
+
+        const user = await userRepository.findOne({email: username})
+
+        if (user) {
+
+            const equals = await bcryptjs.compare(password, user.passwordHash)
+
+            if (equals) {
+
+                user.checkPermission = (permission) => {
+                    const role = user.role.name
+                    return RolePermissions[role] && RolePermissions[role].indexOf(permission) !== -1;
+                }
+
+                return {user: user}
+            }
+        }
+    }
+
     return async ({req}) => {
         const authorizationHeader = req.headers.authorization
 
@@ -38,20 +58,9 @@ module.exports = function (userRepository) {
 
                 const {type} = authCreds
 
-                if (type === 'basic') {
-                    const {username, password} = authCreds
-
-                    const user = await userRepository.findOne({email: username})
-
-                    if (user) {
-
-                        const equals = await bcryptjs.compare(password, user.passwordHash)
-
-                        if (equals) {
-                            return {user}
-                        }
-
-                    }
+                switch (type) {
+                    case "basic":
+                        return await authBasic(authCreds)
                 }
 
             } catch (e) {

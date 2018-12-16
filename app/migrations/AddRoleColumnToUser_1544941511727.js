@@ -7,7 +7,7 @@ class AddRoleColumnToUser_1544941511727 {
     async up(queryRunner) {
         await queryRunner.addColumn(tableName, new TableColumn({
             name: "role_id",
-            type: "varchar"
+            type: "int"
         }))
     }
 
