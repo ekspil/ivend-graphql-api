@@ -13,6 +13,7 @@ const CreateRoles_1544941386216 = require("./migrations/CreateRoles_154494138621
 const AddDefaultRoles_1544941511727 = require("./migrations/AddDefaultRoles_1544941511727")
 const AddRoleColumnToUser_1544941511727 = require("./migrations/AddRoleColumnToUser_1544941511727")
 const CreatePermission_1544948265057 = require("./migrations/CreatePermission_1544948265057")
+const CreateRolePermissions_1544949078636 = require("./migrations/CreateRolePermissions_1544949078636")
 
 const ContextResolver = require('./resolvers/ContextResolver')
 
@@ -39,7 +40,8 @@ class App {
                 CreateRoles_1544941386216,
                 AddDefaultRoles_1544941511727,
                 AddRoleColumnToUser_1544941511727,
-                CreatePermission_1544948265057
+                CreatePermission_1544948265057,
+                CreateRolePermissions_1544949078636
             ],
             migrationsRun: true,
             cli: {
