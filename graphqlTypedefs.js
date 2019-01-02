@@ -19,6 +19,7 @@ const typeDefs = gql`
     type Mutation {
         registerUser(email: String!, password: String!): User
         createController(uid:String!, mode: String!): Controller
+        authController(uid:String!): String
     }
 
 `;
