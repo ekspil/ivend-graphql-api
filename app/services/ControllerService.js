@@ -2,6 +2,8 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const Controller = require("../models/Controller")
 const Permission = require("../enum/Permission")
 
+const crypto = require("crypto")
+
 class ControllerService {
 
     constructor(controllerRepository) {
@@ -46,6 +48,40 @@ class ControllerService {
         //todo validation UID
 
         return await this.controllerRepository.findOne({uid: uid})
+    }
+
+    async generateAccessKey(uid, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized();
+        }
+
+        let controller = await this.controllerRepository.findOne({uid: uid})
+
+        if (!controller) {
+            return null
+        }
+
+        controller.accessKey = await this._generateRandomAccessKey()
+
+        controller = await this.controllerRepository.save(controller)
+
+        return controller.accessKey
+
+    }
+
+
+    async _generateRandomAccessKey() {
+        return new Promise((res, rej) => {
+            const buf = Buffer.alloc(16);
+            crypto.randomFill(buf, 0, 16, (err, buf) => {
+                if (err) {
+                    return rej(err)
+                }
+
+                res(buf.toString('hex'))
+            });
+        })
+
     }
 
 }
