@@ -1,5 +1,6 @@
-function RegisterUserMutationResolver(controllerService) {
-    return async (root, args, context) => {
+function ControllerMutations({controllerService}) {
+
+    const createController = async (root, args, context) => {
         const {uid, mode} = args;
         const {user} = context
 
@@ -11,7 +12,12 @@ function RegisterUserMutationResolver(controllerService) {
         }
 
     }
+
+    return {
+        createController
+    }
+
 }
 
-module.exports = RegisterUserMutationResolver
+module.exports = ControllerMutations
 

@@ -1,5 +1,6 @@
-function RegisterUserMutationResolver(userService) {
-    return async (root, args) => {
+function UserMutations({userService}) {
+
+    const registerUser = async (root, args) => {
         const {email, password} = args;
 
         const user = await userService.registerUser(email, password)
@@ -10,7 +11,10 @@ function RegisterUserMutationResolver(userService) {
         }
 
     }
+
+    return {registerUser}
+
 }
 
-module.exports = RegisterUserMutationResolver
+module.exports = UserMutations
 
