@@ -7,11 +7,12 @@ function Mutations({userService, controllerService}) {
     const controllerMutations = new ControllerMutations({controllerService})
 
     const {registerUser} = userMutations
-    const {createController} = controllerMutations
+    const {createController, addErrorToController} = controllerMutations
 
     return {
         registerUser,
-        createController
+        createController,
+        addErrorToController
     }
 }
 

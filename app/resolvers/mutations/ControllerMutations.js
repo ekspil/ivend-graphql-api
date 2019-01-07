@@ -13,8 +13,22 @@ function ControllerMutations({controllerService}) {
 
     }
 
+    const addErrorToController = async (root, args, context) => {
+        const {uid, message} = args;
+        const {user} = context
+
+        const controllerError = await controllerService.addErrorToController(uid, message, user)
+
+        return {
+            id: controllerError.id,
+            message: controllerError.message
+        }
+
+    }
+
     return {
-        createController
+        createController,
+        addErrorToController
     }
 
 }
