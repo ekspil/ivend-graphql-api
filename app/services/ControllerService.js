@@ -26,6 +26,7 @@ class ControllerService {
         const controller = new Controller()
         controller.uid = uid
         controller.mode = mode
+        controller.user = user
 
         return await this.controllerRepository.save(controller)
     }

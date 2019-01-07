@@ -1,34 +1,31 @@
 const {EntitySchema} = require("typeorm")
 
-const Controller = require("../models/Controller")
+const ControllerError = require("../models/ControllerError")
 
 module.exports = new EntitySchema({
-    name: "Controller",
-    tableName: "controllers",
-    target: Controller,
+    name: "ControllerError",
+    tableName: "controller_errors",
+    target: ControllerError,
     columns: {
         id: {
             type: "int",
             primary: true,
             generated: true
         },
-        uid: {
-            type: "varchar"
+        message: {
+            type: "text"
         },
-        mode: {
-            type: "varchar"
-        },
-        accessKey: {
-            type: "varchar",
-            nullable: true
+        controller_id: {
+            type: "int",
+            nullable: false
         }
     },
     relations: {
-        user: {
-            target: "User",
+        controller: {
+            target: "Controller",
             type: "one-to-one",
             joinColumn: {
-                name: 'user_id',
+                name: 'controller_id',
                 referencedColumnName: 'id'
             },
             eager: true
