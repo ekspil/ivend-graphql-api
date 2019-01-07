@@ -26,9 +26,19 @@ function ControllerMutations({controllerService}) {
 
     }
 
+
+    const authController = async (root, args, context) => {
+        const {uid} = args;
+        const {user} = context
+
+        return await controllerService.generateAccessKey(uid, user)
+
+    }
+
     return {
         createController,
-        addErrorToController
+        addErrorToController,
+        authController
     }
 
 }
