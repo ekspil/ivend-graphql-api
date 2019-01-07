@@ -2,8 +2,9 @@ const Permission = require("./Permission")
 
 const RolePermissions = {
     "USER": [Permission.READ_CONTROLLER],
-    "ADMIN": [Permission.READ_CONTROLLER, Permission.WRITE_CONTROLLER],
-    "AGGREGATE": [Permission.WRITE_CONTROLLER],
+    //ADMIN ROLE does not need permissions at all, he have access to all methods
+    "ADMIN": [],
+    "AGGREGATE": [Permission.WRITE_CONTROLLER, Permission.AUTH_CONTROLLER],
 }
 
 

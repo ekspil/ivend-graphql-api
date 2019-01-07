@@ -41,6 +41,11 @@ module.exports = function (userRepository) {
 
                 user.checkPermission = (permission) => {
                     const role = user.role.name
+
+                    if (role === 'ADMIN') {
+                        return true
+                    }
+
                     return RolePermissions[role] && RolePermissions[role].indexOf(permission) !== -1;
                 }
 
