@@ -7,7 +7,7 @@ const parseAuthorizationHeader = async (header) => {
     const method = splitted[0]
     const value = splitted[1]
 
-    if (method === 'basic') {
+    if (method === 'Basic') {
         const credentials = Buffer.from(value, 'base64')
             .toString('ascii')
             .split(":")
