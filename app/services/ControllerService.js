@@ -51,6 +51,30 @@ class ControllerService {
         return await this.controllerRepository.findOne({uid: uid})
     }
 
+    async addErrorToController(uid, message, user) {
+        if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
+            throw new NotAuthorized();
+        }
+
+        const controller = await this.getControllerByUID(uid, user)
+
+        if (!controller) {
+            //todo custom error
+            throw new Error("Controller not found")
+        }
+
+        //check controller belongs to user
+        if (!user.id === controller.user.id) {
+            throw new NotAuthorized()
+        }
+
+        const controllerError = new ControllerError()
+        controllerError.message = message
+        controllerError.controller = controller
+
+        return await this.controllerErrorRepository.save(controllerError)
+    }
+
 }
 
 module.exports = ControllerService
