@@ -1,11 +1,13 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const Controller = require("../models/Controller")
+const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
 
 class ControllerService {
 
-    constructor(controllerRepository) {
+    constructor({controllerErrorRepository, controllerRepository}) {
         this.controllerRepository = controllerRepository
+        this.controllerErrorRepository = controllerErrorRepository
 
         this.createController = this.createController.bind(this)
         this.getAll = this.getAll.bind(this)
