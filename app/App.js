@@ -79,10 +79,10 @@ class App {
             playground: true
         })
 
-        server.listen()
-            .then(({ url }) => {
-                logger.info(`GraphQL Server ready at ${url}`)
-            })
+        const serverInfo = await server.listen()
+        
+        logger.info(`GraphQL Server ready at ${serverInfo.url}`)
+
     }
 }
 
