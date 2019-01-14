@@ -4,7 +4,8 @@
   "description": "iVend GraphQL server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint app"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "bcryptjs": "^2.4.3",
-    "dotenv": "^6.2.0"
+    "dotenv": "^6.2.0",
+    "eslint": "^5.12.0"
   }
 }
