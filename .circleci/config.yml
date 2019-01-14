@@ -51,6 +51,12 @@ workflows:
               only:
                 - master
                 - develop
+      - lint:
+          filters:
+            branches:
+              only:
+                - master
+                - develop
       - deploy:
           filters:
             branches:
@@ -58,3 +64,4 @@ workflows:
                 - master
           requires:
             - build
+            - lint
