@@ -7,7 +7,7 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({controllerErrorRepository, controllerRepository}) {
+    constructor({ controllerErrorRepository, controllerRepository }) {
         this.controllerRepository = controllerRepository
         this.controllerErrorRepository = controllerErrorRepository
 
@@ -23,7 +23,7 @@ class ControllerService {
         }
 
         if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
-            throw new NotAuthorized();
+            throw new NotAuthorized()
         }
 
         //todo validation uid
@@ -38,7 +38,7 @@ class ControllerService {
 
     async getAll(user) {
         if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
-            throw new NotAuthorized();
+            throw new NotAuthorized()
         }
 
         return await this.controllerRepository.find()
@@ -46,18 +46,18 @@ class ControllerService {
 
     async getControllerByUID(uid, user) {
         if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
-            throw new NotAuthorized();
+            throw new NotAuthorized()
         }
 
         //todo validation UID
 
-        return await this.controllerRepository.findOne({uid: uid})
+        return await this.controllerRepository.findOne({ uid: uid })
     }
 
 
     async addErrorToController(uid, message, user) {
         if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
-            throw new NotAuthorized();
+            throw new NotAuthorized()
         }
 
         const controller = await this.getControllerByUID(uid, user)
@@ -81,10 +81,10 @@ class ControllerService {
 
     async generateAccessKey(uid, user) {
         if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
-            throw new NotAuthorized();
+            throw new NotAuthorized()
         }
 
-        let controller = await this.controllerRepository.findOne({uid: uid})
+        let controller = await this.controllerRepository.findOne({ uid: uid })
 
         if (!controller) {
             return null
@@ -101,14 +101,14 @@ class ControllerService {
 
     async _generateRandomAccessKey() {
         return new Promise((res, rej) => {
-            const buf = Buffer.alloc(16);
+            const buf = Buffer.alloc(16)
             crypto.randomFill(buf, 0, 16, (err, buf) => {
                 if (err) {
                     return rej(err)
                 }
 
-                res(buf.toString('hex'))
-            });
+                res(buf.toString("hex"))
+            })
         })
 
     }

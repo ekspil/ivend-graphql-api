@@ -1,6 +1,4 @@
-const UserEntity = require("../entities/UserEntity")
 const User = require("../models/User")
-const Role = require("../models/Role")
 const bcryptjs = require("bcryptjs")
 
 const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
@@ -8,7 +6,7 @@ const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
 class UserService {
 
     constructor(injects) {
-        const {userRepository, roleRepository} = injects
+        const { userRepository, roleRepository } = injects
 
         this.userRepository = userRepository
         this.roleRepository = roleRepository
@@ -18,18 +16,18 @@ class UserService {
 
 
     async registerUser(email, password) {
-        let user = new User();
+        let user = new User()
         //todo validation
 
         //todo ensure no user with such email exists
 
-        const role = await this.roleRepository.findOne({name: 'USER'})
+        const role = await this.roleRepository.findOne({ name: "USER" })
 
         if (!role) {
             throw new Error("Unknown role USER")
         }
 
-        user.email = email;
+        user.email = email
         user.passwordHash = await this.hashPassword(password)
         user.role = role
 

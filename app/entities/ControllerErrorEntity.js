@@ -1,4 +1,4 @@
-const {EntitySchema} = require("typeorm")
+const { EntitySchema } = require("typeorm")
 
 const ControllerError = require("../models/ControllerError")
 
@@ -25,10 +25,10 @@ module.exports = new EntitySchema({
             target: "Controller",
             type: "one-to-one",
             joinColumn: {
-                name: 'controller_id',
-                referencedColumnName: 'id'
+                name: "controller_id",
+                referencedColumnName: "id"
             },
             eager: true
         }
     }
-});
+})

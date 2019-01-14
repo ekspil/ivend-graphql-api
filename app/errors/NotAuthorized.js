@@ -1,10 +1,9 @@
 class NotAuthorized extends Error {
 
-
     constructor() {
-        super();
+        super()
 
-        this.message = 'Not authorized'
+        this.message = "Not authorized"
     }
 }
 

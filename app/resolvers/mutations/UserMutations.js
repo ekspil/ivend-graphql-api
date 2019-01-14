@@ -1,7 +1,7 @@
-function UserMutations({userService}) {
+function UserMutations({ userService }) {
 
     const registerUser = async (root, args) => {
-        const {email, password} = args;
+        const { email, password } = args
 
         const user = await userService.registerUser(email, password)
 
@@ -12,7 +12,7 @@ function UserMutations({userService}) {
 
     }
 
-    return {registerUser}
+    return { registerUser }
 
 }
 

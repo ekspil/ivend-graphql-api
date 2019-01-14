@@ -1,6 +1,6 @@
-const {MigrationInterface, QueryRunner, Table} = require("typeorm");
+const { Table } = require("typeorm")
 
-const tableName = `controllers`;
+const tableName = `controllers`
 
 class CreateController_1544871592978 {
 
@@ -32,7 +32,7 @@ class CreateController_1544871592978 {
     }
 
     async down(queryRunner) {
-        await queryRunner.dropTable(tableName);
+        await queryRunner.dropTable(tableName)
     }
 
 }

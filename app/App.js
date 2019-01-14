@@ -1,5 +1,5 @@
-const {ApolloServer} = require('apollo-server');
-const {createConnection} = require("typeorm")
+const { ApolloServer } = require("apollo-server")
+const { createConnection } = require("typeorm")
 const typeDefs = require("../graphqlTypedefs")
 const Resolvers = require("./resolvers")
 
@@ -16,10 +16,12 @@ const AddRoleColumnToUser_1544941511727 = require("./migrations/AddRoleColumnToU
 const CreateControllerErrors_1546796166078 = require("./migrations/CreateControllerErrors_1546796166078")
 const AddUserColumnToController_1546799900517 = require("./migrations/AddUserColumnToController_1546799900517")
 
-const ContextResolver = require('./resolvers/ContextResolver')
+const ContextResolver = require("./resolvers/ContextResolver")
 
 const UserService = require("./services/UserService")
 const ControllerService = require("./services/ControllerService")
+
+const logger = require("./utils/logger")
 
 class App {
 
@@ -34,7 +36,7 @@ class App {
             database: process.env.POSTGRES_DB,
             entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity],
             synchronize: false,
-            logging: process.env.NODE_ENV !== 'production',
+            logging: process.env.NODE_ENV !== "production",
             migrations: [
                 CreateController_1544871592978,
                 CreateUser_1544875175234,
@@ -50,15 +52,24 @@ class App {
             }
         })
 
-        const userRepository = connection.getRepository(UserEntity);
-        const controllerRepository = connection.getRepository(ControllerEntity);
-        const controllerErrorRepository = connection.getRepository(ControllerErrorEntity);
-        const roleRepository = connection.getRepository(RoleEntity);
+        const userRepository = connection.getRepository(UserEntity)
+        const controllerRepository = connection.getRepository(ControllerEntity)
+        const controllerErrorRepository = connection.getRepository(ControllerErrorEntity)
+        const roleRepository = connection.getRepository(RoleEntity)
 
-        const userService = new UserService({userRepository, roleRepository})
-        const controllerService = new ControllerService({controllerRepository, controllerErrorRepository})
+        const userService = new UserService({
+            userRepository,
+            roleRepository
+        })
+        const controllerService = new ControllerService({
+            controllerRepository,
+            controllerErrorRepository
+        })
 
-        const resolvers = new Resolvers({userService, controllerService})
+        const resolvers = new Resolvers({
+            userService,
+            controllerService
+        })
 
         const server = new ApolloServer({
             typeDefs,
@@ -66,11 +77,12 @@ class App {
             context: new ContextResolver(userRepository),
             introspection: true,
             playground: true
-        });
+        })
 
-        server.listen().then(({url}) => {
-            console.log(`GraphQL Server ready at ${url}`);
-        });
+        server.listen()
+            .then(({ url }) => {
+                logger.info(`GraphQL Server ready at ${url}`)
+            })
     }
 }
 

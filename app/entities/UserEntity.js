@@ -1,4 +1,4 @@
-const {EntitySchema} = require("typeorm")
+const { EntitySchema } = require("typeorm")
 
 const User = require("../models/User")
 
@@ -29,11 +29,11 @@ module.exports = new EntitySchema({
             target: "Role",
             type: "one-to-one",
             joinColumn: {
-                name: 'role_id',
-                referencedColumnName: 'id'
+                name: "role_id",
+                referencedColumnName: "id"
             },
-            eager:true,
+            eager: true,
             cascade: true
         }
     }
-});
+})

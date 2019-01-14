@@ -1,8 +1,8 @@
-function ControllerMutations({controllerService}) {
+function ControllerMutations({ controllerService }) {
 
     const createController = async (root, args, context) => {
-        const {uid, mode} = args;
-        const {user} = context
+        const { uid, mode } = args
+        const { user } = context
 
         const controller = await controllerService.createController(uid, mode, user)
 
@@ -14,8 +14,8 @@ function ControllerMutations({controllerService}) {
     }
 
     const addErrorToController = async (root, args, context) => {
-        const {uid, message} = args;
-        const {user} = context
+        const { uid, message } = args
+        const { user } = context
 
         const controllerError = await controllerService.addErrorToController(uid, message, user)
 
@@ -28,8 +28,8 @@ function ControllerMutations({controllerService}) {
 
 
     const authController = async (root, args, context) => {
-        const {uid} = args;
-        const {user} = context
+        const { uid } = args
+        const { user } = context
 
         return await controllerService.generateAccessKey(uid, user)
 

@@ -1,4 +1,4 @@
-const {EntitySchema} = require("typeorm")
+const { EntitySchema } = require("typeorm")
 
 const Role = require("../models/Role")
 
@@ -17,4 +17,4 @@ module.exports = new EntitySchema({
             unique: true
         }
     }
-});
+})

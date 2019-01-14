@@ -1,6 +1,4 @@
-const {MigrationInterface, QueryRunner, Table} = require("typeorm");
-
-const tableName = `roles`;
+const tableName = `roles`
 
 class AddDefaultRoles_1544941511727 {
 
@@ -10,7 +8,7 @@ class AddDefaultRoles_1544941511727 {
             .createQueryBuilder()
             .insert()
             .into(tableName)
-            .values([{name: "USER"}])
+            .values([{ name: "USER" }])
             .execute()
 
         await queryRunner
@@ -18,7 +16,7 @@ class AddDefaultRoles_1544941511727 {
             .createQueryBuilder()
             .insert()
             .into(tableName)
-            .values([{name: "ADMIN"}])
+            .values([{ name: "ADMIN" }])
             .execute()
 
         await queryRunner
@@ -26,7 +24,7 @@ class AddDefaultRoles_1544941511727 {
             .createQueryBuilder()
             .insert()
             .into(tableName)
-            .values([{name: "AGGREGATOR"}])
+            .values([{ name: "AGGREGATOR" }])
             .execute()
     }
 
@@ -37,7 +35,7 @@ class AddDefaultRoles_1544941511727 {
             .createQueryBuilder()
             .delete()
             .from(tableName)
-            .where("name = :role", {role: "USER"})
+            .where("name = :role", { role: "USER" })
             .execute()
 
         await queryRunner
@@ -45,7 +43,7 @@ class AddDefaultRoles_1544941511727 {
             .createQueryBuilder()
             .delete()
             .from(tableName)
-            .where("name = :role", {role: "ADMIN"})
+            .where("name = :role", { role: "ADMIN" })
             .execute()
 
         await queryRunner
@@ -53,7 +51,7 @@ class AddDefaultRoles_1544941511727 {
             .createQueryBuilder()
             .delete()
             .from(tableName)
-            .where("name = :role", {role: "AGGREGATOR"})
+            .where("name = :role", { role: "AGGREGATOR" })
             .execute()
     }
 

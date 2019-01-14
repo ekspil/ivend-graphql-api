@@ -4,9 +4,12 @@ const Mutations = require("./mutations")
 
 const Resolvers = function (injects) {
 
-    const {userService, controllerService} = injects
+    const { userService, controllerService } = injects
 
-    const mutations = new Mutations({userService, controllerService})
+    const mutations = new Mutations({
+        userService,
+        controllerService
+    })
 
     return {
         Query: {
@@ -18,4 +21,4 @@ const Resolvers = function (injects) {
 }
 
 
-module.exports = Resolvers;
+module.exports = Resolvers

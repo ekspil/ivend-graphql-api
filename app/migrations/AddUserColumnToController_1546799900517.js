@@ -1,6 +1,6 @@
-const {MigrationInterface, QueryRunner, Table, TableColumn} = require("typeorm");
+const { TableColumn } = require("typeorm")
 
-const tableName = `controllers`;
+const tableName = `controllers`
 
 class AddUserColumnToController_1546799900517 {
 
@@ -12,7 +12,7 @@ class AddUserColumnToController_1546799900517 {
     }
 
     async down(queryRunner) {
-        await queryRunner.dropColumn(tableName, 'user_id');
+        await queryRunner.dropColumn(tableName, "user_id")
     }
 
 }
