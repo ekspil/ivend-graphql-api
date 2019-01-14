@@ -41,21 +41,6 @@ jobs:
           name: Deploy
           command: ssh root@$DEPLOY_SERVER 'source /opt/.env && cd /opt/graphql-api && git pull && docker-compose up -d --build'
 
-  notify:
-    docker:
-      - image: circleci/node:11.1.0
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "85:a7:2e:d9:6a:eb:0a:f7:a1:76:22:a3:d0:ec:e6:4d"
-      - run:
-          name: Notify via Telegram
-          command: curl --data chat_id="$BOT_CHAT_ID" --data "text=Successfully%20deployed%20graphql-api%20on%20ivend-main%20($(git log --format=oneline -n 1 $CIRCLE_SHA1  | sed 's/ /%20/g'))" "https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
-
 workflows:
   version: 2
   graphql_api_deploy:
@@ -73,6 +58,3 @@ workflows:
                 - master
           requires:
             - build
-      - notify:
-          requires:
-            - deploy
