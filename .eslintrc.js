@@ -12,7 +12,7 @@ module.exports = {
         "indent": [
             "error",
             4,
-            { "SwitchCase": 1 }
+            {SwitchCase: 1}
         ],
         "linebreak-style": [
             "error",
@@ -21,7 +21,7 @@ module.exports = {
         "quotes": [
             "error",
             "double",
-            { "allowTemplateLiterals": true }
+            {"allowTemplateLiterals": true}
         ],
         "semi": [
             "error",
