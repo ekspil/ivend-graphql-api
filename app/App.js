@@ -1,5 +1,5 @@
-const { ApolloServer } = require("apollo-server")
-const { createConnection } = require("typeorm")
+const {ApolloServer} = require("apollo-server")
+const {createConnection} = require("typeorm")
 const typeDefs = require("../graphqlTypedefs")
 const Resolvers = require("./resolvers")
 
@@ -7,6 +7,7 @@ const ControllerEntity = require("./entities/ControllerEntity")
 const UserEntity = require("./entities/UserEntity")
 const RoleEntity = require("./entities/RoleEntity")
 const ControllerErrorEntity = require("./entities/ControllerErrorEntity")
+const EquipmentEntity = require("./entities/EquipmentEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
@@ -15,11 +16,13 @@ const AddDefaultRoles_1544941511727 = require("./migrations/AddDefaultRoles_1544
 const AddRoleColumnToUser_1544941511727 = require("./migrations/AddRoleColumnToUser_1544941511727")
 const CreateControllerErrors_1546796166078 = require("./migrations/CreateControllerErrors_1546796166078")
 const AddUserColumnToController_1546799900517 = require("./migrations/AddUserColumnToController_1546799900517")
+const CreateEquipment_1548762321802 = require("./migrations/CreateEquipment_1548762321802")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
 const UserService = require("./services/UserService")
 const ControllerService = require("./services/ControllerService")
+const EquipmentService = require("./services/EquipmentService")
 
 const logger = require("./utils/logger")
 
@@ -34,7 +37,7 @@ class App {
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity],
+            entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity, EquipmentEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== "production",
             migrations: [
@@ -44,7 +47,8 @@ class App {
                 AddDefaultRoles_1544941511727,
                 AddRoleColumnToUser_1544941511727,
                 CreateControllerErrors_1546796166078,
-                AddUserColumnToController_1546799900517
+                AddUserColumnToController_1546799900517,
+                CreateEquipment_1548762321802
             ],
             migrationsRun: true,
             cli: {
@@ -56,19 +60,27 @@ class App {
         const controllerRepository = connection.getRepository(ControllerEntity)
         const controllerErrorRepository = connection.getRepository(ControllerErrorEntity)
         const roleRepository = connection.getRepository(RoleEntity)
+        const equipmentRepository = connection.getRepository(EquipmentEntity)
 
         const userService = new UserService({
             userRepository,
             roleRepository
         })
+
         const controllerService = new ControllerService({
             controllerRepository,
             controllerErrorRepository
         })
 
+
+        const equipmentService = new EquipmentService({
+            equipmentRepository
+        })
+
         const resolvers = new Resolvers({
             userService,
-            controllerService
+            controllerService,
+            equipmentService
         })
 
         const server = new ApolloServer({
@@ -80,7 +92,7 @@ class App {
         })
 
         const serverInfo = await server.listen()
-        
+
         logger.info(`GraphQL Server ready at ${serverInfo.url}`)
 
     }
