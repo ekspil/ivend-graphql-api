@@ -1,0 +1,53 @@
+@startuml
+
+class User {
+    -email: string
+    -phone: string
+    -passwordHash: string
+}
+
+class Controller {
+    -uid : string
+    -mode : string
+    -accessKey : string
+}
+
+class ControllerError {
+    -message: string
+    -date: date
+}
+
+class ControllerState {
+    -coinAcceptor: string
+    -billAcceptor: string
+    -coinAmount: number
+    -billAmount: number
+    -dex1Bus: string
+    -dex2Bus: string
+    -exeBus: string
+    -mdbBus: string
+}
+
+class Equipment {
+    -model: string
+}
+
+class Item {
+    -name: string
+}
+
+enum Role {
+    ADMIN
+    USER
+    CONTROLLER
+}
+
+
+User -- Role
+
+Controller *- ControllerError
+Controller -- ControllerState
+Controller -- User
+Controller -- Equipment
+
+@enduml
