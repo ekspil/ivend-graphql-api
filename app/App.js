@@ -9,6 +9,7 @@ const RoleEntity = require("./entities/RoleEntity")
 const ControllerErrorEntity = require("./entities/ControllerErrorEntity")
 const EquipmentEntity = require("./entities/EquipmentEntity")
 const FiscalRegistrarEntity = require("./entities/FiscalRegistrarEntity")
+const BankTerminalEntity = require("./entities/BankTerminalEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
@@ -19,6 +20,7 @@ const CreateControllerErrors_1546796166078 = require("./migrations/CreateControl
 const AddUserColumnToController_1546799900517 = require("./migrations/AddUserColumnToController_1546799900517")
 const CreateEquipment_1548762321802 = require("./migrations/CreateEquipment_1548762321802")
 const CreateFiscalRegistrar_1548765405824 = require("./migrations/CreateFiscalRegistrar_1548765405824")
+const CreateBankTerminal_1544941511727 = require("./migrations/CreateBankTerminal_1544941511727")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
@@ -26,6 +28,7 @@ const UserService = require("./services/UserService")
 const ControllerService = require("./services/ControllerService")
 const EquipmentService = require("./services/EquipmentService")
 const FiscalRegistrarService = require("./services/FiscalRegistrarService")
+const BankTerminalService = require("./services/BankTerminalService")
 
 const logger = require("./utils/logger")
 
@@ -40,7 +43,7 @@ class App {
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity, EquipmentEntity, FiscalRegistrarEntity],
+            entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity, EquipmentEntity, FiscalRegistrarEntity, BankTerminalEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== "production",
             migrations: [
@@ -52,7 +55,8 @@ class App {
                 CreateControllerErrors_1546796166078,
                 AddUserColumnToController_1546799900517,
                 CreateEquipment_1548762321802,
-                CreateFiscalRegistrar_1548765405824
+                CreateFiscalRegistrar_1548765405824,
+                CreateBankTerminal_1544941511727
             ],
             migrationsRun: true,
             cli: {
@@ -66,6 +70,7 @@ class App {
         const roleRepository = connection.getRepository(RoleEntity)
         const equipmentRepository = connection.getRepository(EquipmentEntity)
         const fiscalRegistrarRepository = connection.getRepository(FiscalRegistrarEntity)
+        const bankTerminalRepository = connection.getRepository(BankTerminalEntity)
 
         const userService = new UserService({
             userRepository,
@@ -86,11 +91,16 @@ class App {
             fiscalRegistrarRepository
         })
 
+        const bankTerminalService = new BankTerminalService({
+            bankTerminalRepository
+        })
+
         const resolvers = new Resolvers({
             userService,
             controllerService,
             equipmentService,
-            fiscalRegistrarService
+            fiscalRegistrarService,
+            bankTerminalService
         })
 
         const server = new ApolloServer({

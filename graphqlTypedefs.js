@@ -13,17 +13,20 @@ const typeDefs = gql`
         mode: ControllerMode!
         fiscalRegistrar: FiscalRegistrar
     }
-    
-    type BankTerminal {
-        name: String
-    }
-    
-    type FiscalRegistrar {
+
+    type Equipment {
+        id: Int!
         name: String!
     }
-    
-    type Equipment {
-        name: String
+
+    type FiscalRegistrar {
+        id: Int!
+        name: String!
+    }
+
+    type BankTerminal {
+        id: Int!
+        name: String!
     }
 
     type ControllerError {
@@ -45,18 +48,18 @@ const typeDefs = gql`
         saleTime: Timestamp
         createTime: Timestamp,
     }
-    
+
     input SaleItemInput {
         id: Int
-    } 
-    
+    }
+
     input SaleEventInput {
         saleTime: Timestamp
         items: [SaleItemInput!]!
-    } 
-    
+    }
+
     input UpdateStateEventInput {
-        coinAcceptor: BusStatus,        
+        coinAcceptor: BusStatus,
         billAcceptor: BusStatus,
         coinAmount: Float,
         billAmount: Float,
@@ -65,26 +68,30 @@ const typeDefs = gql`
         exeStatus: BusStatus,
         mdbStatus: BusStatus
     }
-    
+
     input CreateEquipmentInput {
         name: String!
     }
-    
+
     input CreateFiscalRegistrarInput {
         name: String!
     }
-    
+
+    input CreateBankTerminalInput {
+        name: String!
+    }
+
     input ErrorEventInput {
-        errorTime: Timestamp,        
+        errorTime: Timestamp,
         message: String
     }
-    
+
     enum BusStatus {
         OK,
         DISABLED,
         ERROR
     }
-    
+
     enum ControllerStatus {
         ENABLED
         DISABLED
@@ -92,18 +99,19 @@ const typeDefs = gql`
         PAUSED
         DEBUG
     }
-    
+
     enum ControllerMode {
         MDB
         EXE
         CASHLESS
     }
-    
+
     type Mutation {
         registerUser(email: String!, password: String!): User
         createController(uid:String!, mode: String!): Controller
-        createEquipment(input: CreateEquipmentInput): Equipment
-        createFiscalRegistrar(input: CreateFiscalRegistrarInput): Equipment
+        createEquipment(input: CreateEquipmentInput!): Equipment
+        createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
+        createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         authController(uid:String!): String
         addErrorToController(uid:String!, message: String!): ControllerError
         #registerSale(input: SaleEventInput): Controller
