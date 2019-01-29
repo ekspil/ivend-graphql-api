@@ -4,12 +4,13 @@ const Mutations = require("./mutations")
 
 const Resolvers = function (injects) {
 
-    const { userService, controllerService, equipmentService} = injects
+    const {userService, controllerService, equipmentService, fiscalRegistrarService} = injects
 
     const mutations = new Mutations({
         userService,
         controllerService,
-        equipmentService
+        equipmentService,
+        fiscalRegistrarService
     })
 
     return {

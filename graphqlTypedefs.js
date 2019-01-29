@@ -70,6 +70,10 @@ const typeDefs = gql`
         name: String!
     }
     
+    input CreateFiscalRegistrarInput {
+        name: String!
+    }
+    
     input ErrorEventInput {
         errorTime: Timestamp,        
         message: String
@@ -99,6 +103,7 @@ const typeDefs = gql`
         registerUser(email: String!, password: String!): User
         createController(uid:String!, mode: String!): Controller
         createEquipment(input: CreateEquipmentInput): Equipment
+        createFiscalRegistrar(input: CreateFiscalRegistrarInput): Equipment
         authController(uid:String!): String
         addErrorToController(uid:String!, message: String!): ControllerError
         #registerSale(input: SaleEventInput): Controller

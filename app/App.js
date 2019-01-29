@@ -8,6 +8,7 @@ const UserEntity = require("./entities/UserEntity")
 const RoleEntity = require("./entities/RoleEntity")
 const ControllerErrorEntity = require("./entities/ControllerErrorEntity")
 const EquipmentEntity = require("./entities/EquipmentEntity")
+const FiscalRegistrarEntity = require("./entities/FiscalRegistrarEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
@@ -17,12 +18,14 @@ const AddRoleColumnToUser_1544941511727 = require("./migrations/AddRoleColumnToU
 const CreateControllerErrors_1546796166078 = require("./migrations/CreateControllerErrors_1546796166078")
 const AddUserColumnToController_1546799900517 = require("./migrations/AddUserColumnToController_1546799900517")
 const CreateEquipment_1548762321802 = require("./migrations/CreateEquipment_1548762321802")
+const CreateFiscalRegistrar_1548765405824 = require("./migrations/CreateFiscalRegistrar_1548765405824")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
 const UserService = require("./services/UserService")
 const ControllerService = require("./services/ControllerService")
 const EquipmentService = require("./services/EquipmentService")
+const FiscalRegistrarService = require("./services/FiscalRegistrarService")
 
 const logger = require("./utils/logger")
 
@@ -37,7 +40,7 @@ class App {
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity, EquipmentEntity],
+            entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity, EquipmentEntity, FiscalRegistrarEntity],
             synchronize: false,
             logging: process.env.NODE_ENV !== "production",
             migrations: [
@@ -48,7 +51,8 @@ class App {
                 AddRoleColumnToUser_1544941511727,
                 CreateControllerErrors_1546796166078,
                 AddUserColumnToController_1546799900517,
-                CreateEquipment_1548762321802
+                CreateEquipment_1548762321802,
+                CreateFiscalRegistrar_1548765405824
             ],
             migrationsRun: true,
             cli: {
@@ -61,6 +65,7 @@ class App {
         const controllerErrorRepository = connection.getRepository(ControllerErrorEntity)
         const roleRepository = connection.getRepository(RoleEntity)
         const equipmentRepository = connection.getRepository(EquipmentEntity)
+        const fiscalRegistrarRepository = connection.getRepository(FiscalRegistrarEntity)
 
         const userService = new UserService({
             userRepository,
@@ -77,10 +82,15 @@ class App {
             equipmentRepository
         })
 
+        const fiscalRegistrarService = new FiscalRegistrarService({
+            fiscalRegistrarRepository
+        })
+
         const resolvers = new Resolvers({
             userService,
             controllerService,
-            equipmentService
+            equipmentService,
+            fiscalRegistrarService
         })
 
         const server = new ApolloServer({
