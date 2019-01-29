@@ -1,4 +1,4 @@
-class Controller {
+class ControllerState {
     constructor(id, coinAcceptor, billAcceptor, coinAmount, billAmount, dex1Bus, dex2Bus, exeBus, mdbBus) {
         this.id = id
         this.coinAcceptor = coinAcceptor
@@ -13,4 +13,4 @@ class Controller {
 
 }
 
-module.exports = Controller
+module.exports = ControllerState
