@@ -1,6 +1,6 @@
 const FiscalRegistrarDTO = require("../../models/dto/FiscalRegistrarDTO")
 
-function EquipmentMutations({fiscalRegistrarService}) {
+function FiscalRegistrarMutations({fiscalRegistrarService}) {
 
     const createFiscalRegistrar = async (root, args, context) => {
         const {input} = args
@@ -17,5 +17,5 @@ function EquipmentMutations({fiscalRegistrarService}) {
 
 }
 
-module.exports = EquipmentMutations
+module.exports = FiscalRegistrarMutations
 
