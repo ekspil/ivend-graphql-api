@@ -7,9 +7,12 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({ controllerErrorRepository, controllerRepository }) {
+    constructor({controllerErrorRepository, controllerRepository, equipmentService, fiscalRegistrarService, bankTerminalService}) {
         this.controllerRepository = controllerRepository
         this.controllerErrorRepository = controllerErrorRepository
+        this.equipmentService = equipmentService
+        this.fiscalRegistrarService = fiscalRegistrarService
+        this.bankTerminalService = bankTerminalService
 
         this.createController = this.createController.bind(this)
         this.getAll = this.getAll.bind(this)
@@ -17,20 +20,40 @@ class ControllerService {
         this.addErrorToController = this.addErrorToController.bind(this)
     }
 
-    async createController(uid, mode, user) {
-        if (!uid || !mode) {
-            throw new Error("UID and mode are required for controller creation")
-        }
-
+    async createController(input, user) {
         if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
             throw new NotAuthorized()
         }
+        const {name, uid, revision, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId} = input
 
-        //todo validation uid
-        //todo validation mode
+
+        const equipment = await this.equipmentService.findById(equipmentId, user)
+
+        if (!equipment) {
+            throw new Error("Equipment not found")
+        }
+
+        const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
+
+        if (!fiscalRegistrar) {
+            throw new Error("Fiscal registrar not found")
+        }
+
+        const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
+
+        if (!bankTerminal) {
+            throw new Error("Bank terminal not found")
+        }
+
         const controller = new Controller()
+        controller.name = name
         controller.uid = uid
+        controller.equipment = equipment
+        controller.revision = revision
+        controller.status = status
         controller.mode = mode
+        controller.fiscalRegistrar = fiscalRegistrar
+        controller.bankTerminal = bankTerminal
         controller.user = user
 
         return await this.controllerRepository.save(controller)
@@ -51,7 +74,7 @@ class ControllerService {
 
         //todo validation UID
 
-        return await this.controllerRepository.findOne({ uid: uid })
+        return await this.controllerRepository.findOne({uid: uid})
     }
 
 
@@ -84,7 +107,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        let controller = await this.controllerRepository.findOne({ uid: uid })
+        let controller = await this.controllerRepository.findOne({uid: uid})
 
         if (!controller) {
             return null

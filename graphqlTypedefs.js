@@ -5,6 +5,7 @@ const typeDefs = gql`
     scalar Timestamp
 
     type Controller {
+        id: Int!
         name: String!
         equipment: Equipment!
         uid: String!
@@ -12,6 +13,18 @@ const typeDefs = gql`
         status: ControllerStatus!
         mode: ControllerMode!
         fiscalRegistrar: FiscalRegistrar
+        bankTerminal: BankTerminal
+    }
+
+    input CreateControllerInput {
+        name: String!
+        equipmentId: Int!
+        uid: String!
+        revision: Int!
+        status: ControllerStatus!
+        mode: ControllerMode!
+        fiscalRegistrarId: Int!
+        bankTerminalId: Int!
     }
 
     type Equipment {
@@ -68,7 +81,7 @@ const typeDefs = gql`
         exeStatus: BusStatus,
         mdbStatus: BusStatus
     }
-
+    
     input CreateEquipmentInput {
         name: String!
     }
@@ -108,10 +121,10 @@ const typeDefs = gql`
 
     type Mutation {
         registerUser(email: String!, password: String!): User
-        createController(uid:String!, mode: String!): Controller
         createEquipment(input: CreateEquipmentInput!): Equipment
         createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
+        createController(input: CreateControllerInput!): Controller
         authController(uid:String!): String
         addErrorToController(uid:String!, message: String!): ControllerError
         #registerSale(input: SaleEventInput): Controller

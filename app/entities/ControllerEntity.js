@@ -12,10 +12,19 @@ module.exports = new EntitySchema({
             primary: true,
             generated: true
         },
+        name: {
+            type: "varchar"
+        },
         uid: {
             type: "varchar"
         },
+        revision: {
+            type: "int"
+        },
         mode: {
+            type: "varchar"
+        },
+        status: {
             type: "varchar"
         },
         accessKey: {
@@ -29,6 +38,33 @@ module.exports = new EntitySchema({
             type: "one-to-one",
             joinColumn: {
                 name: "user_id",
+                referencedColumnName: "id"
+            },
+            eager: true
+        },
+        equipment: {
+            target: "Equipment",
+            type: "one-to-one",
+            joinColumn: {
+                name: "equipment_id",
+                referencedColumnName: "id"
+            },
+            eager: true
+        },
+        fiscalRegistrar: {
+            target: "FiscalRegistrar",
+            type: "one-to-one",
+            joinColumn: {
+                name: "fiscal_registrar_id",
+                referencedColumnName: "id"
+            },
+            eager: true
+        },
+        bankTerminal: {
+            target: "BankTerminal",
+            type: "one-to-one",
+            joinColumn: {
+                name: "bank_terminal_id",
                 referencedColumnName: "id"
             },
             eager: true

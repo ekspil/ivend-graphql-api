@@ -21,6 +21,7 @@ const AddUserColumnToController_1546799900517 = require("./migrations/AddUserCol
 const CreateEquipment_1548762321802 = require("./migrations/CreateEquipment_1548762321802")
 const CreateFiscalRegistrar_1548765405824 = require("./migrations/CreateFiscalRegistrar_1548765405824")
 const CreateBankTerminal_1544941511727 = require("./migrations/CreateBankTerminal_1544941511727")
+const AddMoreColumnsToController_1548773174036 = require("./migrations/AddMoreColumnsToController_1548773174036")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
@@ -56,7 +57,8 @@ class App {
                 AddUserColumnToController_1546799900517,
                 CreateEquipment_1548762321802,
                 CreateFiscalRegistrar_1548765405824,
-                CreateBankTerminal_1544941511727
+                CreateBankTerminal_1544941511727,
+                AddMoreColumnsToController_1548773174036
             ],
             migrationsRun: true,
             cli: {
@@ -77,12 +79,6 @@ class App {
             roleRepository
         })
 
-        const controllerService = new ControllerService({
-            controllerRepository,
-            controllerErrorRepository
-        })
-
-
         const equipmentService = new EquipmentService({
             equipmentRepository
         })
@@ -94,6 +90,15 @@ class App {
         const bankTerminalService = new BankTerminalService({
             bankTerminalRepository
         })
+
+        const controllerService = new ControllerService({
+            controllerRepository,
+            controllerErrorRepository,
+            equipmentService,
+            fiscalRegistrarService,
+            bankTerminalService
+        })
+
 
         const resolvers = new Resolvers({
             userService,

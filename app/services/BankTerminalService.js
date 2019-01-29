@@ -9,6 +9,7 @@ class BankTerminalService {
         this.bankTerminalRepository = bankTerminalRepository
 
         this.createBankTerminal = this.createBankTerminal.bind(this)
+        this.findById = this.findById.bind(this)
     }
 
     async createBankTerminal(createBankTerminalInput, user) {
@@ -20,6 +21,14 @@ class BankTerminalService {
         bankTerminal.name = createBankTerminalInput.name
 
         return await this.bankTerminalRepository.save(bankTerminal)
+    }
+
+    async findById(id, user) {
+        if (!user || !user.checkPermission(Permission.READ_BANK_TERMINAL)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.bankTerminalRepository.findOne({id})
     }
 
 }

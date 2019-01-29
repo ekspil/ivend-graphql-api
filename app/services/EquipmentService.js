@@ -5,10 +5,11 @@ const Equipment = require("../models/Equipment")
 
 class EquipmentService {
 
-    constructor({ equipmentRepository }) {
+    constructor({equipmentRepository}) {
         this.equipmentRepository = equipmentRepository
 
         this.createEquipment = this.createEquipment.bind(this)
+        this.findById = this.findById.bind(this)
     }
 
     async createEquipment(createControllerInput, user) {
@@ -20,6 +21,14 @@ class EquipmentService {
         equipment.name = createControllerInput.name
 
         return await this.equipmentRepository.save(equipment)
+    }
+
+    async findById(id, user) {
+        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.equipmentRepository.findOne({id})
     }
 
 }

@@ -9,10 +9,11 @@ class FiscalRegistrarService {
         this.fiscalRegistrarRepository = fiscalRegistrarRepository
 
         this.createFiscalRegistrar = this.createFiscalRegistrar.bind(this)
+        this.findById = this.findById.bind(this)
     }
 
     async createFiscalRegistrar(createFiscalRegistrarInput, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
             throw new NotAuthorized()
         }
 
@@ -20,6 +21,14 @@ class FiscalRegistrarService {
         createFiscalRegistrar.name = createFiscalRegistrarInput.name
 
         return await this.fiscalRegistrarRepository.save(createFiscalRegistrar)
+    }
+
+    async findById(id, user) {
+        if (!user || !user.checkPermission(Permission.READ_FISCAL_REGISTRAR)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.fiscalRegistrarRepository.findOne({id})
     }
 
 }
