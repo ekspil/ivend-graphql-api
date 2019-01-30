@@ -1,4 +1,5 @@
 const ControllerDTO = require("../../models/dto/ControllerDTO")
+const GraphQLError = require("../../enum/GraphQLError")
 
 function ControllerQueries({controllerService}) {
 
@@ -9,7 +10,7 @@ function ControllerQueries({controllerService}) {
         const controller = await controllerService.getControllerById(id, user)
 
         if (!controller) {
-            throw new Error("Controller not found")
+            return null
         }
 
         return new ControllerDTO(controller)
@@ -30,7 +31,7 @@ function ControllerQueries({controllerService}) {
         const controller = await controllerService.getControllerByUID(uid, user)
 
         if (!controller) {
-            throw new Error("Controller not found")
+            return null
         }
 
         return new ControllerDTO(controller)
