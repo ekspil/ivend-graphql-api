@@ -52,11 +52,6 @@ const typeDefs = gql`
         phone: String
     }
 
-    type Query {
-        controller(uid: String!): Controller
-        controllers: [Controller]
-    }
-
     type SaleEvent {
         saleTime: Timestamp
         createTime: Timestamp,
@@ -119,6 +114,12 @@ const typeDefs = gql`
         CASHLESS
     }
 
+
+    type Query {
+        getController(id: Int): Controller
+        getControllers: [Controller]
+    }
+
     type Mutation {
         registerUser(email: String!, password: String!): User
         createEquipment(input: CreateEquipmentInput!): Equipment
@@ -129,7 +130,8 @@ const typeDefs = gql`
         addErrorToController(uid:String!, message: String!): ControllerError
         #registerSale(input: SaleEventInput): Controller
         #registerStateUpdate(input: UpdateStateEventInput): Controller
-    }
+   }
+   
 
 `
 

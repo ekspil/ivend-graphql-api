@@ -17,6 +17,7 @@ class ControllerService {
         this.createController = this.createController.bind(this)
         this.getAll = this.getAll.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
+        this.getControllerById = this.getControllerById.bind(this)
         this.addErrorToController = this.addErrorToController.bind(this)
     }
 
@@ -65,6 +66,14 @@ class ControllerService {
         }
 
         return await this.controllerRepository.find()
+    }
+
+    async getControllerById(id, user) {
+        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.controllerRepository.findOne({id})
     }
 
     async getControllerByUID(uid, user) {
