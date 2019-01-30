@@ -1,4 +1,4 @@
-const {gql} = require("apollo-server")
+const { gql } = require("apollo-server")
 
 const typeDefs = gql`
 
@@ -23,8 +23,18 @@ const typeDefs = gql`
         revision: Int!
         status: ControllerStatus!
         mode: ControllerMode!
-        fiscalRegistrarId: Int!
-        bankTerminalId: Int!
+        fiscalRegistrarId: Int
+        bankTerminalId: Int
+    }
+
+    input EditControllerInput {
+        name: String
+        equipmentId: Int
+        revision: Int
+        status: ControllerStatus
+        mode: ControllerMode
+        fiscalRegistrarId: Int
+        bankTerminalId: Int
     }
 
     type Equipment {
@@ -126,6 +136,7 @@ const typeDefs = gql`
         createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
+        editController(id:Int, input: EditControllerInput!): Controller
         authController(uid:String!): String
         addErrorToController(uid:String!, message: String!): ControllerError
         #registerSale(input: SaleEventInput): Controller
