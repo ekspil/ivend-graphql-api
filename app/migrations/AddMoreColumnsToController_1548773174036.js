@@ -11,23 +11,33 @@ class AddMoreColumnsToController_1548773174036 {
         }))
         await queryRunner.addColumn(tableName, new TableColumn({
             name: "equipment_id",
-            type: "int"
+            type: "int",
+            isNullable: false,
+            isUnique: false
         }))
         await queryRunner.addColumn(tableName, new TableColumn({
             name: "fiscal_registrar_id",
-            type: "int"
+            type: "int",
+            isNullable: true,
+            isUnique: false
         }))
         await queryRunner.addColumn(tableName, new TableColumn({
             name: "bank_terminal_id",
-            type: "int"
+            type: "int",
+            isNullable: true,
+            isUnique: false
         }))
         await queryRunner.addColumn(tableName, new TableColumn({
             name: "revision",
-            type: "int"
+            type: "varchar",
+            isNullable: false,
+            isUnique: false
         }))
         await queryRunner.addColumn(tableName, new TableColumn({
             name: "status",
-            type: "varchar"
+            type: "varchar",
+            isNullable: false,
+            isUnique: false
         }))
     }
 

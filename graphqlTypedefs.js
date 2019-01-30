@@ -20,7 +20,7 @@ const typeDefs = gql`
         name: String!
         equipmentId: Int!
         uid: String!
-        revision: Int!
+        revision: String!
         status: ControllerStatus!
         mode: ControllerMode!
         fiscalRegistrarId: Int

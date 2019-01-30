@@ -1,4 +1,4 @@
-const { Table } = require("typeorm")
+const {Table} = require("typeorm")
 
 const tableName = `controllers`
 
@@ -17,15 +17,20 @@ class CreateController_1544871592978 {
                 {
                     name: "uid",
                     type: "varchar",
+                    isNullable: false,
+                    isUnique: true
                 },
                 {
                     name: "mode",
-                    type: "varchar"
+                    type: "varchar",
+                    isNullable: false,
+                    isUnique: false
                 },
                 {
                     name: "accessKey",
                     type: "varchar",
-                    isNullable: true
+                    isNullable: false,
+                    isUnique: true
                 }
             ]
         }), true)
