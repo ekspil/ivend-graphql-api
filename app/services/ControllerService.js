@@ -66,6 +66,8 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
+        const {name, equipmentId, revision, status, mode, fiscalRegistrarId, bankTerminalId} = input
+
         const controller = await this.getControllerById(id, user)
 
         if (!controller) {
@@ -103,8 +105,6 @@ class ControllerService {
             controller.bankTerminal = bankTerminal
         }
 
-
-        const {name, equipmentId, revision, status, mode, fiscalRegistrarId, bankTerminalId} = input
 
         if (name) {
             controller.name = name
