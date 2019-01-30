@@ -15,6 +15,7 @@ class ControllerService {
         this.bankTerminalService = bankTerminalService
 
         this.createController = this.createController.bind(this)
+        this.editController = this.editController.bind(this)
         this.getAll = this.getAll.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
         this.getControllerById = this.getControllerById.bind(this)
@@ -60,6 +61,70 @@ class ControllerService {
         return await this.controllerRepository.save(controller)
     }
 
+    async editController(id, input, user) {
+        if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        const controller = await this.getControllerById(id, user)
+
+        if (!controller) {
+            throw new Error("Controller not found")
+        }
+
+        if (equipmentId) {
+            const equipment = await this.equipmentService.findById(equipmentId, user)
+
+            if (!equipment) {
+                throw new Error("Equipment not found")
+            }
+
+            controller.equipment = equipment
+        }
+
+        if (fiscalRegistrarId) {
+            const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
+
+            if (!fiscalRegistrar) {
+                throw new Error("Fiscal registrar not found")
+            }
+
+            controller.fiscalRegistrar = fiscalRegistrar
+        }
+
+
+        if (bankTerminalId) {
+            const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
+
+            if (!bankTerminal) {
+                throw new Error("Bank terminal not found")
+            }
+
+            controller.bankTerminal = bankTerminal
+        }
+
+
+        const {name, equipmentId, revision, status, mode, fiscalRegistrarId, bankTerminalId} = input
+
+        if (name) {
+            controller.name = name
+        }
+
+        if (revision) {
+            controller.revision = revision
+        }
+
+        if (status) {
+            controller.status = status
+        }
+
+        if (mode) {
+            controller.mode = mode
+        }
+
+        return await this.controllerRepository.save(controller)
+    }
+
     async getAll(user) {
         if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
             throw new NotAuthorized()
@@ -73,7 +138,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.controllerRepository.findOne({id})
+        return await this.controllerRepository.findOne({ id })
     }
 
     async getControllerByUID(uid, user) {
@@ -83,7 +148,7 @@ class ControllerService {
 
         //todo validation UID
 
-        return await this.controllerRepository.findOne({uid: uid})
+        return await this.controllerRepository.findOne({ uid: uid })
     }
 
 
@@ -116,7 +181,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        let controller = await this.controllerRepository.findOne({uid: uid})
+        let controller = await this.controllerRepository.findOne({ uid: uid })
 
         if (!controller) {
             return null
