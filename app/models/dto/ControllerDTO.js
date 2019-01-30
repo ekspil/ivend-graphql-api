@@ -12,8 +12,8 @@ class ControllerDTO {
         this.revision = revision
         this.status = status
         this.mode = mode
-        this.fiscalRegistrar = new FiscalRegistrarDTO(fiscalRegistrar)
-        this.bankTerminal = new BankTerminalDTO(bankTerminal)
+        this.fiscalRegistrar = fiscalRegistrar ? new FiscalRegistrarDTO(fiscalRegistrar): null
+        this.bankTerminal = bankTerminal ? new BankTerminalDTO(bankTerminal) : null
     }
 }
 
