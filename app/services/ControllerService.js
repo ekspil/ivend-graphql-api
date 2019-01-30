@@ -35,27 +35,36 @@ class ControllerService {
             throw new Error("Equipment not found")
         }
 
-        const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
-
-        if (!fiscalRegistrar) {
-            throw new Error("Fiscal registrar not found")
-        }
-
-        const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
-
-        if (!bankTerminal) {
-            throw new Error("Bank terminal not found")
-        }
-
         const controller = new Controller()
+
+        if (fiscalRegistrarId) {
+            const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
+
+            if (fiscalRegistrar) {
+                throw new Error("Fiscal registrar not found")
+            }
+
+            controller.fiscalRegistrar = fiscalRegistrar
+        }
+
+
+        if(bankTerminalId) {
+            const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
+
+            if (bankTerminal) {
+                throw new Error("Bank terminal not found")
+            }
+
+            controller.bankTerminal = bankTerminal
+        }
+
+
         controller.name = name
         controller.uid = uid
         controller.equipment = equipment
         controller.revision = revision
         controller.status = status
         controller.mode = mode
-        controller.fiscalRegistrar = fiscalRegistrar
-        controller.bankTerminal = bankTerminal
         controller.user = user
 
         return await this.controllerRepository.save(controller)
