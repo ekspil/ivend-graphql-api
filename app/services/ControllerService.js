@@ -138,17 +138,16 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.controllerRepository.findOne({ id })
+        return await this.controllerRepository.findOne({id})
     }
+
 
     async getControllerByUID(uid, user) {
         if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-        //todo validation UID
-
-        return await this.controllerRepository.findOne({ uid: uid })
+        return await this.controllerRepository.findOne({uid})
     }
 
 
@@ -181,7 +180,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        let controller = await this.controllerRepository.findOne({ uid: uid })
+        let controller = await this.controllerRepository.findOne({uid: uid})
 
         if (!controller) {
             return null

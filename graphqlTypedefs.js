@@ -126,7 +126,8 @@ const typeDefs = gql`
 
 
     type Query {
-        getController(id: Int): Controller
+        getController(id: Int!): Controller
+        getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
     }
 
