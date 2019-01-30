@@ -10,6 +10,7 @@ services:
       - "POSTGRES_USER=ivend"
       - "POSTGRES_PASSWORD=ivend"
       - "POSTGRES_DB=ivend"
+      - "NO_AUTH=1"
     ports:
       - "4000:4000"
     deploy:
