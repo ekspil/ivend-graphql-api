@@ -41,7 +41,15 @@ function ControllerMutations({controllerService}) {
         const {uid} = args
         const {user} = context
 
-        return await controllerService.generateAccessKey(uid, user)
+        let controller = await controllerService.getControllerByUID(uid, user)
+
+        if (!controller) {
+            return null
+        }
+
+        controller = await controllerService.generateAccessKey(uid, user)
+
+        return new ControllerDTO(controller)
 
     }
 

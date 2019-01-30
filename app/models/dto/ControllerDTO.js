@@ -4,7 +4,7 @@ const BankTerminalDTO = require("./BankTerminalDTO")
 
 class ControllerDTO {
 
-    constructor({id, name, equipment, uid, revision, status, mode, fiscalRegistrar, bankTerminal}) {
+    constructor({id, name, equipment, uid, revision, status, mode, fiscalRegistrar, bankTerminal, accessKey}) {
         this.id = id
         this.name = name
         this.equipment = new EquipmentDTO(equipment)
@@ -12,8 +12,9 @@ class ControllerDTO {
         this.revision = revision
         this.status = status
         this.mode = mode
-        this.fiscalRegistrar = fiscalRegistrar ? new FiscalRegistrarDTO(fiscalRegistrar): null
+        this.fiscalRegistrar = fiscalRegistrar ? new FiscalRegistrarDTO(fiscalRegistrar) : null
         this.bankTerminal = bankTerminal ? new BankTerminalDTO(bankTerminal) : null
+        this.accessKey = accessKey
     }
 }
 

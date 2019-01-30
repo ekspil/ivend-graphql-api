@@ -14,6 +14,7 @@ const typeDefs = gql`
         mode: ControllerMode!
         fiscalRegistrar: FiscalRegistrar
         bankTerminal: BankTerminal
+        accessKey: String
     }
 
     input CreateControllerInput {
@@ -138,7 +139,7 @@ const typeDefs = gql`
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
         editController(id:Int, input: EditControllerInput!): Controller
-        authController(uid:String!): String
+        authController(uid:String!): Controller
         addErrorToController(uid:String!, message: String!): ControllerError
         #registerSale(input: SaleEventInput): Controller
         #registerStateUpdate(input: UpdateStateEventInput): Controller

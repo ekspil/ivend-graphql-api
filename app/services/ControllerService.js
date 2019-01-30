@@ -197,10 +197,7 @@ class ControllerService {
 
         controller.accessKey = await this._generateRandomAccessKey()
 
-        controller = await this.controllerRepository.save(controller)
-
-        return controller.accessKey
-
+        return await this.controllerRepository.save(controller)
     }
 
 
