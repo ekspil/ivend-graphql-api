@@ -1,5 +1,4 @@
 const ControllerDTO = require("../../models/dto/ControllerDTO")
-const GraphQLError = require("../../enum/GraphQLError")
 
 function ControllerQueries({controllerService}) {
 
