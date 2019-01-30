@@ -29,7 +29,7 @@ class CreateController_1544871592978 {
                 {
                     name: "accessKey",
                     type: "varchar",
-                    isNullable: false,
+                    isNullable: true,
                     isUnique: true
                 }
             ]
