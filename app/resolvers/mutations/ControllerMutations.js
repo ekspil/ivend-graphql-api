@@ -35,7 +35,15 @@ function ControllerMutations({controllerService}) {
         }
 
     }
+    const registerControllerState = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
 
+        const controller = await controllerService.registerState(input, user)
+
+        return new ControllerDTO(controller)
+
+    }
 
     const authController = async (root, args, context) => {
         const {uid} = args
@@ -57,7 +65,8 @@ function ControllerMutations({controllerService}) {
         createController,
         editController,
         addErrorToController,
-        authController
+        authController,
+        registerControllerState
     }
 
 }

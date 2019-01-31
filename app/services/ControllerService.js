@@ -1,18 +1,20 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const Controller = require("../models/Controller")
+const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
-
 const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({controllerErrorRepository, controllerRepository, equipmentService, fiscalRegistrarService, bankTerminalService}) {
+    constructor({controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService, fiscalRegistrarService, bankTerminalService, eventsService}) {
         this.controllerRepository = controllerRepository
+        this.controllerStateRepository = controllerStateRepository
         this.controllerErrorRepository = controllerErrorRepository
         this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
+        this.eventsService = eventsService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -48,7 +50,7 @@ class ControllerService {
         }
 
 
-        if(bankTerminalId) {
+        if (bankTerminalId) {
             const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
 
             if (bankTerminal) {
@@ -196,6 +198,52 @@ class ControllerService {
         }
 
         controller.accessKey = await this._generateRandomAccessKey()
+
+        return await this.controllerRepository.save(controller)
+    }
+
+    async registerState(controllerStateInput, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        //todo start transaction
+
+        const {
+            controllerUid,
+            coinAcceptorStatus,
+            billAcceptorStatus,
+            coinAmount,
+            billAmount,
+            dex1Status,
+            dex2Status,
+            exeStatus,
+            mdbStatus,
+            signalStrength
+        } = controllerStateInput
+
+        const controller = await this.getControllerByUID(controllerUid, user)
+
+        if (!controller) {
+            throw new Error("Controller not found")
+        }
+
+        let controllerState = new ControllerState()
+        controllerState.coinAcceptorStatus = coinAcceptorStatus
+        controllerState.billAcceptorStatus = billAcceptorStatus
+        controllerState.coinAmount = coinAmount
+        controllerState.billAmount = billAmount
+        controllerState.dex1Status = dex1Status
+        controllerState.dex2Status = dex2Status
+        controllerState.exeStatus = exeStatus
+        controllerState.mdbStatus = mdbStatus
+        controllerState.signalStrength = signalStrength
+        controllerState.registrationTime = new Date()
+        controllerState.controller = controller
+
+        controllerState = await this.controllerStateRepository.save(controllerState)
+
+        controller.lastState = controllerState
 
         return await this.controllerRepository.save(controller)
     }

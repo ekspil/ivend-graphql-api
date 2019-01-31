@@ -10,6 +10,7 @@ const ControllerErrorEntity = require("./entities/ControllerErrorEntity")
 const EquipmentEntity = require("./entities/EquipmentEntity")
 const FiscalRegistrarEntity = require("./entities/FiscalRegistrarEntity")
 const BankTerminalEntity = require("./entities/BankTerminalEntity")
+const ControllerStateEntity = require("./entities/ControllerStateEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
@@ -22,6 +23,7 @@ const CreateEquipment_1548762321802 = require("./migrations/CreateEquipment_1548
 const CreateFiscalRegistrar_1548765405824 = require("./migrations/CreateFiscalRegistrar_1548765405824")
 const CreateBankTerminal_1544941511727 = require("./migrations/CreateBankTerminal_1544941511727")
 const AddMoreColumnsToController_1548773174036 = require("./migrations/AddMoreColumnsToController_1548773174036")
+const CreateControllerStates_1548951696291 = require("./migrations/CreateControllerStates_1548951696291")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
@@ -44,7 +46,16 @@ class App {
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            entities: [ControllerEntity, UserEntity, RoleEntity, ControllerErrorEntity, EquipmentEntity, FiscalRegistrarEntity, BankTerminalEntity],
+            entities: [
+                ControllerEntity,
+                UserEntity,
+                RoleEntity,
+                ControllerErrorEntity,
+                EquipmentEntity,
+                FiscalRegistrarEntity,
+                BankTerminalEntity,
+                ControllerStateEntity
+            ],
             synchronize: false,
             logging: process.env.NODE_ENV !== "production",
             migrations: [
@@ -58,7 +69,8 @@ class App {
                 CreateEquipment_1548762321802,
                 CreateFiscalRegistrar_1548765405824,
                 CreateBankTerminal_1544941511727,
-                AddMoreColumnsToController_1548773174036
+                AddMoreColumnsToController_1548773174036,
+                CreateControllerStates_1548951696291
             ],
             migrationsRun: true,
             cli: {
@@ -73,6 +85,7 @@ class App {
         const equipmentRepository = connection.getRepository(EquipmentEntity)
         const fiscalRegistrarRepository = connection.getRepository(FiscalRegistrarEntity)
         const bankTerminalRepository = connection.getRepository(BankTerminalEntity)
+        const controllerStateRepository = connection.getRepository(ControllerStateEntity)
 
         const userService = new UserService({
             userRepository,
@@ -93,6 +106,7 @@ class App {
 
         const controllerService = new ControllerService({
             controllerRepository,
+            controllerStateRepository,
             controllerErrorRepository,
             equipmentService,
             fiscalRegistrarService,

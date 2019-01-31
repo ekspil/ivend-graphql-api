@@ -14,7 +14,21 @@ const typeDefs = gql`
         mode: ControllerMode!
         fiscalRegistrar: FiscalRegistrar
         bankTerminal: BankTerminal
-        accessKey: String
+        accessKey: String,
+        lastState: ControllerState
+    }
+
+    type ControllerState {
+        coinAcceptorStatus: BusStatus!,
+        billAcceptorStatus: BusStatus!,
+        coinAmount: Float!,
+        billAmount: Float!,
+        dex1Status: BusStatus!,
+        dex2Status: BusStatus!,
+        exeStatus: BusStatus!,
+        mdbStatus: BusStatus!,
+        signalStrength: SignalStrength!,
+        registrationTime: Timestamp
     }
 
     input CreateControllerInput {
@@ -63,29 +77,17 @@ const typeDefs = gql`
         phone: String
     }
 
-    type SaleEvent {
-        saleTime: Timestamp
-        createTime: Timestamp,
-    }
-
-    input SaleItemInput {
-        id: Int
-    }
-
-    input SaleEventInput {
-        saleTime: Timestamp
-        items: [SaleItemInput!]!
-    }
-
-    input UpdateStateEventInput {
-        coinAcceptor: BusStatus,
-        billAcceptor: BusStatus,
-        coinAmount: Float,
-        billAmount: Float,
-        dex1Status: BusStatus,
-        dex2Status: BusStatus,
-        exeStatus: BusStatus,
-        mdbStatus: BusStatus
+    input ControllerStateInput {
+        controllerUid: String!
+        coinAcceptorStatus: BusStatus!,
+        billAcceptorStatus: BusStatus!,
+        coinAmount: Float!,
+        billAmount: Float!,
+        dex1Status: BusStatus!,
+        dex2Status: BusStatus!,
+        exeStatus: BusStatus!,
+        mdbStatus: BusStatus!,
+        signalStrength: SignalStrength!
     }
     
     input CreateEquipmentInput {
@@ -110,6 +112,14 @@ const typeDefs = gql`
         DISABLED,
         ERROR
     }
+
+
+    enum SignalStrength {
+        BAD,
+        GOOD,
+        MEDIUM
+    }
+
 
     enum ControllerStatus {
         ENABLED
@@ -142,7 +152,7 @@ const typeDefs = gql`
         authController(uid:String!): Controller
         addErrorToController(uid:String!, message: String!): ControllerError
         #registerSale(input: SaleEventInput): Controller
-        #registerStateUpdate(input: UpdateStateEventInput): Controller
+        registerControllerState(input: ControllerStateInput): Controller
    }
    
 

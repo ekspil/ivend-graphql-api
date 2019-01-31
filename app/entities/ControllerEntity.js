@@ -42,6 +42,15 @@ module.exports = new EntitySchema({
             },
             eager: true
         },
+        lastState: {
+            target: "ControllerState",
+            type: "one-to-one",
+            joinColumn: {
+                name: "last_state_id",
+                referencedColumnName: "id"
+            },
+            eager: true
+        },
         equipment: {
             target: "Equipment",
             type: "one-to-one",

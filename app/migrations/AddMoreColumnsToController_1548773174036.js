@@ -39,6 +39,12 @@ class AddMoreColumnsToController_1548773174036 {
             isNullable: false,
             isUnique: false
         }))
+        await queryRunner.addColumn(tableName, new TableColumn({
+            name: "last_state_id",
+            type: "int",
+            isNullable: true,
+            isUnique: true
+        }))
     }
 
     async down(queryRunner) {
