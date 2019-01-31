@@ -81,8 +81,8 @@ const typeDefs = gql`
         controllerUid: String!
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
-        coinAmount: Float!,
-        billAmount: Float!,
+        coinAmount: Int!,
+        billAmount: Int!,
         dex1Status: BusStatus!,
         dex2Status: BusStatus!,
         exeStatus: BusStatus!,
