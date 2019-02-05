@@ -60,6 +60,15 @@ module.exports = new EntitySchema({
             },
             eager: true
         },
+        itemMatrix: {
+            target: "ItemMatrix",
+            type: "one-to-one",
+            joinColumn: {
+                name: "item_matrix_id",
+                referencedColumnName: "id"
+            },
+            eager: true
+        },
         fiscalRegistrar: {
             target: "FiscalRegistrar",
             type: "one-to-one",

@@ -1,6 +1,7 @@
 const ControllerDTO = require("../../models/dto/ControllerDTO")
+const SaleDTO = require("../../models/dto/SaleDTO")
 
-function ControllerMutations({controllerService}) {
+function ControllerMutations({controllerService, saleService}) {
 
     const createController = async (root, args, context) => {
         const {input} = args
@@ -45,6 +46,16 @@ function ControllerMutations({controllerService}) {
 
     }
 
+    const registerSale = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const sale = await saleService.registerSale(input, user)
+
+        return new SaleDTO(sale)
+
+    }
+
     const authController = async (root, args, context) => {
         const {uid} = args
         const {user} = context
@@ -66,7 +77,8 @@ function ControllerMutations({controllerService}) {
         editController,
         addErrorToController,
         authController,
-        registerControllerState
+        registerControllerState,
+        registerSale
     }
 
 }

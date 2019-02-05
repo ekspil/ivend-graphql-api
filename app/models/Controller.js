@@ -1,5 +1,5 @@
 class Controller {
-    constructor(id, name, uid, equipment, revision, mode, status, accessKey, user, fiscalRegistrar, bankTerminal) {
+    constructor(id, name, uid, equipment, revision, mode, status, accessKey, user, fiscalRegistrar, bankTerminal, itemMatrix) {
         this.id = id
         this.name = name
         this.uid = uid
@@ -11,7 +11,10 @@ class Controller {
         this.equipment = equipment
         this.fiscalRegistrar = fiscalRegistrar
         this.bankTerminal = bankTerminal
+        this.itemMatrix = itemMatrix
     }
 }
 
 module.exports = Controller
+
+

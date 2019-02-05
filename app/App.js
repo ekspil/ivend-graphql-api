@@ -11,6 +11,10 @@ const EquipmentEntity = require("./entities/EquipmentEntity")
 const FiscalRegistrarEntity = require("./entities/FiscalRegistrarEntity")
 const BankTerminalEntity = require("./entities/BankTerminalEntity")
 const ControllerStateEntity = require("./entities/ControllerStateEntity")
+const ItemEntity = require("./entities/ItemEntity")
+const ItemMatrixEntity = require("./entities/ItemMatrixEntity")
+const SaleEntity = require("./entities/SaleEntity")
+const ButtonItemEntity = require("./entities/ButtonItemEntity")
 
 const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
 const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
@@ -24,6 +28,11 @@ const CreateFiscalRegistrar_1548765405824 = require("./migrations/CreateFiscalRe
 const CreateBankTerminal_1544941511727 = require("./migrations/CreateBankTerminal_1544941511727")
 const AddMoreColumnsToController_1548773174036 = require("./migrations/AddMoreColumnsToController_1548773174036")
 const CreateControllerStates_1548951696291 = require("./migrations/CreateControllerStates_1548951696291")
+const CreateItem_1549024284721 = require("./migrations/CreateItem_1549024284721")
+const CreateItemMatrix_1549024960721 = require("./migrations/CreateItemMatrix_1549024960721")
+const CreateSale_1549025045086 = require("./migrations/CreateSale_1549025045086")
+const CreateButtonItems_1549193067979 = require("./migrations/CreateButtonItems_1549193067979")
+const AddItemMatrixToController_1549371997460 = require("./migrations/AddItemMatrixToController_1549371997460")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
@@ -32,6 +41,10 @@ const ControllerService = require("./services/ControllerService")
 const EquipmentService = require("./services/EquipmentService")
 const FiscalRegistrarService = require("./services/FiscalRegistrarService")
 const BankTerminalService = require("./services/BankTerminalService")
+const SaleService = require("./services/SaleService")
+const ItemService = require("./services/ItemService")
+const ItemMatrixService = require("./services/ItemMatrixService")
+const ButtonItemService = require("./services/ButtonItemService")
 
 const logger = require("./utils/logger")
 
@@ -54,7 +67,11 @@ class App {
                 EquipmentEntity,
                 FiscalRegistrarEntity,
                 BankTerminalEntity,
-                ControllerStateEntity
+                ControllerStateEntity,
+                ItemEntity,
+                ItemMatrixEntity,
+                SaleEntity,
+                ButtonItemEntity
             ],
             synchronize: false,
             logging: process.env.NODE_ENV !== "production",
@@ -70,7 +87,12 @@ class App {
                 CreateFiscalRegistrar_1548765405824,
                 CreateBankTerminal_1544941511727,
                 AddMoreColumnsToController_1548773174036,
-                CreateControllerStates_1548951696291
+                CreateControllerStates_1548951696291,
+                CreateItem_1549024284721,
+                CreateItemMatrix_1549024960721,
+                CreateSale_1549025045086,
+                CreateButtonItems_1549193067979,
+                AddItemMatrixToController_1549371997460
             ],
             migrationsRun: true,
             cli: {
@@ -86,6 +108,10 @@ class App {
         const fiscalRegistrarRepository = connection.getRepository(FiscalRegistrarEntity)
         const bankTerminalRepository = connection.getRepository(BankTerminalEntity)
         const controllerStateRepository = connection.getRepository(ControllerStateEntity)
+        const saleRepository = connection.getRepository(SaleEntity)
+        const itemRepository = connection.getRepository(ItemEntity)
+        const itemMatrixRepository = connection.getRepository(ItemMatrixEntity)
+        const buttonItemRepository = connection.getRepository(ButtonItemEntity)
 
         const userService = new UserService({
             userRepository,
@@ -104,22 +130,34 @@ class App {
             bankTerminalRepository
         })
 
+
+        const itemService = new ItemService({itemRepository})
+
+        const buttonItemService = new ButtonItemService({buttonItemRepository, itemRepository, itemMatrixRepository})
+
+        const itemMatrixService = new ItemMatrixService({itemMatrixRepository, itemService, buttonItemService})
+
         const controllerService = new ControllerService({
             controllerRepository,
             controllerStateRepository,
             controllerErrorRepository,
             equipmentService,
             fiscalRegistrarService,
-            bankTerminalService
+            bankTerminalService,
+            itemMatrixService
         })
 
+        const saleService = new SaleService({saleRepository, controllerService, buttonItemService, itemService})
 
         const resolvers = new Resolvers({
             userService,
             controllerService,
             equipmentService,
             fiscalRegistrarService,
-            bankTerminalService
+            bankTerminalService,
+            saleService,
+            itemService,
+            itemMatrixService
         })
 
         const server = new ApolloServer({
