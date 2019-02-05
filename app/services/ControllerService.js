@@ -7,14 +7,14 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService, fiscalRegistrarService, bankTerminalService, eventsService}) {
+    constructor({controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService}) {
         this.controllerRepository = controllerRepository
         this.controllerStateRepository = controllerStateRepository
         this.controllerErrorRepository = controllerErrorRepository
         this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
-        this.eventsService = eventsService
+        this.itemMatrixService = itemMatrixService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -68,6 +68,9 @@ class ControllerService {
         controller.status = status
         controller.mode = mode
         controller.user = user
+
+        //todo add default itemMatrix
+        controller.itemMatrix = await this.itemMatrixService.createItemMatrix({buttons: []}, user)
 
         return await this.controllerRepository.save(controller)
     }
