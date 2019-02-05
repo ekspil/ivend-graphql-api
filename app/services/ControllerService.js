@@ -7,10 +7,9 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({
-                    controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService,
-                    fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService
-                }) {
+    constructor({ controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService,
+        fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService }) {
+
         this.controllerRepository = controllerRepository
         this.controllerStateRepository = controllerStateRepository
         this.controllerErrorRepository = controllerErrorRepository
