@@ -7,7 +7,10 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService}) {
+    constructor({
+                    controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService,
+                    fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService
+                }) {
         this.controllerRepository = controllerRepository
         this.controllerStateRepository = controllerStateRepository
         this.controllerErrorRepository = controllerErrorRepository
@@ -15,6 +18,7 @@ class ControllerService {
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
         this.itemMatrixService = itemMatrixService
+        this.buttonItemService = buttonItemService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -152,7 +156,15 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.controllerRepository.findOne({id})
+
+        const controller = await this.controllerRepository.findOne({id})
+        const {itemMatrix} = controller
+
+        if (controller) {
+            itemMatrix.buttons = await this.buttonItemService.getButtonItemsByItemMatrix(itemMatrix, user)
+        }
+
+        return controller
     }
 
 
@@ -161,7 +173,14 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.controllerRepository.findOne({uid})
+        const controller = await this.controllerRepository.findOne({uid})
+        const {itemMatrix} = controller
+
+        if (controller) {
+            itemMatrix.buttons = await this.buttonItemService.getButtonItemsByItemMatrix(itemMatrix, user)
+        }
+
+        return controller
     }
 
 

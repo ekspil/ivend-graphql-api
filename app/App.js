@@ -144,7 +144,8 @@ class App {
             equipmentService,
             fiscalRegistrarService,
             bankTerminalService,
-            itemMatrixService
+            itemMatrixService,
+            buttonItemService
         })
 
         const saleService = new SaleService({saleRepository, controllerService, buttonItemService, itemService})
