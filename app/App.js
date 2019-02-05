@@ -24,6 +24,11 @@ const CreateFiscalRegistrar_1548765405824 = require("./migrations/CreateFiscalRe
 const CreateBankTerminal_1544941511727 = require("./migrations/CreateBankTerminal_1544941511727")
 const AddMoreColumnsToController_1548773174036 = require("./migrations/AddMoreColumnsToController_1548773174036")
 const CreateControllerStates_1548951696291 = require("./migrations/CreateControllerStates_1548951696291")
+const CreateItem_1549024284721 = require("./migrations/CreateItem_1549024284721")
+const CreateItemMatrix_1549024960721 = require("./migrations/CreateItemMatrix_1549024960721")
+const CreateSale_1549025045086 = require("./migrations/CreateSale_1549025045086")
+const CreateButtonItems_1549193067979 = require("./migrations/CreateButtonItems_1549193067979")
+const AddItemMatrixToController_1549371997460 = require("./migrations/AddItemMatrixToController_1549371997460")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
@@ -70,7 +75,12 @@ class App {
                 CreateFiscalRegistrar_1548765405824,
                 CreateBankTerminal_1544941511727,
                 AddMoreColumnsToController_1548773174036,
-                CreateControllerStates_1548951696291
+                CreateControllerStates_1548951696291,
+                CreateItem_1549024284721,
+                CreateItemMatrix_1549024960721,
+                CreateSale_1549025045086,
+                CreateButtonItems_1549193067979,
+                AddItemMatrixToController_1549371997460
             ],
             migrationsRun: true,
             cli: {
