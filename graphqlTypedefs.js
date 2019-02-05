@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server")
+const {gql} = require("apollo-server")
 
 const typeDefs = gql`
 
@@ -16,6 +16,7 @@ const typeDefs = gql`
         bankTerminal: BankTerminal
         accessKey: String,
         lastState: ControllerState
+        itemMatrix: ItemMatrix!
     }
 
     type ControllerState {
@@ -40,6 +41,17 @@ const typeDefs = gql`
         mode: ControllerMode!
         fiscalRegistrarId: Int
         bankTerminalId: Int
+        itemMatrixId: Int  
+    }
+    
+    input CreateItemMatrixInput {
+        buttons: [CreateButtonItemInput!]!
+    }
+    
+    input CreateButtonItemInput {
+        buttonId: Int!
+        itemName: String!,
+        price: Float!
     }
 
     input EditControllerInput {
@@ -66,6 +78,24 @@ const typeDefs = gql`
         id: Int!
         name: String!
     }
+    
+    type ItemMatrix {
+        id: Int
+        buttons: [ButtonItem!]!
+    }
+    
+    type ButtonItem {
+        buttonId: Int
+        item: Item
+    }
+
+    type Sale {
+        id: Int!
+        buttonId: Int!
+        item: Item!
+        itemMatrix: ItemMatrix!
+        controller: Controller!
+    }
 
     type ControllerError {
         id: Int
@@ -75,6 +105,18 @@ const typeDefs = gql`
     type User {
         email: String!,
         phone: String
+    }
+
+    type Item {
+        id: Int,
+        name: String!
+        price: Float!
+        user: User!
+    }
+
+    input CreateItemInput {
+        name: String!
+        price: Float!
     }
 
     input ControllerStateInput {
@@ -89,7 +131,7 @@ const typeDefs = gql`
         mdbStatus: BusStatus!,
         signalStrength: SignalStrength!
     }
-    
+
     input CreateEquipmentInput {
         name: String!
     }
@@ -105,6 +147,11 @@ const typeDefs = gql`
     input ErrorEventInput {
         errorTime: Timestamp,
         message: String
+    }
+
+    input SaleEventInput {
+        controllerUid: String!
+        buttonId: Int
     }
 
     enum BusStatus {
@@ -140,6 +187,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
+        getItemMatrix(id: Int!): ItemMatrix
     }
 
     type Mutation {
@@ -148,13 +196,15 @@ const typeDefs = gql`
         createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
+        createItem(input: CreateItemInput!): Item
+        createItemMatrix(input: CreateItemMatrixInput!): ItemMatrix
         editController(id:Int, input: EditControllerInput!): Controller
         authController(uid:String!): Controller
         addErrorToController(uid:String!, message: String!): ControllerError
-        #registerSale(input: SaleEventInput): Controller
-        registerControllerState(input: ControllerStateInput): Controller
-   }
-   
+        registerControllerState(input: ControllerStateInput!): Controller
+        registerSale(input: SaleEventInput!): Sale
+    }
+
 
 `
 
