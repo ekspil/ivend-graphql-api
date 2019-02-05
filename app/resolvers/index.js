@@ -3,17 +3,23 @@ const Queries = require("./queries")
 
 const Resolvers = function (injects) {
 
-    const { userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService } = injects
+    const {
+        userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService,
+        saleService, itemService, itemMatrixService
+    } = injects
 
     const mutations = new Mutations({
         userService,
         controllerService,
         equipmentService,
         fiscalRegistrarService,
-        bankTerminalService
+        bankTerminalService,
+        saleService,
+        itemService,
+        itemMatrixService
     })
 
-    const queries = new Queries({ controllerService })
+    const queries = new Queries({controllerService, itemMatrixService})
 
     return {
         Query: queries,
