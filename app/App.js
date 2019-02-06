@@ -2,6 +2,7 @@ const {ApolloServer} = require("apollo-server")
 const {createConnection} = require("typeorm")
 const typeDefs = require("../graphqlTypedefs")
 const Resolvers = require("./resolvers")
+const Sequelize = require("sequelize")
 
 const ControllerEntity = require("./entities/ControllerEntity")
 const UserEntity = require("./entities/UserEntity")
@@ -46,11 +47,72 @@ const ItemService = require("./services/ItemService")
 const ItemMatrixService = require("./services/ItemMatrixService")
 const ButtonItemService = require("./services/ButtonItemService")
 
+const User = require("./models/sequelize/User")
+const BankTerminal = require("./models/sequelize/BankTerminal")
+const FiscalRegistrar = require("./models/sequelize/FiscalRegistrar")
+const Equipment = require("./models/sequelize/Equipment")
+const Item = require("./models/sequelize/Item")
+const Sale = require("./models/sequelize/Sale")
+const ButtonItem = require("./models/sequelize/ButtonItem")
+const ItemMatrix = require("./models/sequelize/ItemMatrix")
+const Controller = require("./models/sequelize/Controller")
+const ControllerState = require("./models/sequelize/ControllerState")
+const ControllerError = require("./models/sequelize/ControllerError")
+
 const logger = require("./utils/logger")
 
 class App {
 
     async start() {
+
+        const sequelize = new Sequelize(`${process.env.POSTGRES_DB}_seq`, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+            host: process.env.POSTGRES_HOST,
+            dialect: "postgres",
+            operatorsAliases: false,
+
+            pool: {
+                max: 5,
+                min: 0,
+                acquire: 30000,
+                idle: 10000
+            },
+        })
+
+        const UserModel = sequelize.define("users", User)
+        const BankTerminalModel = sequelize.define("bank_terminals", BankTerminal)
+        const FiscalRegistrarModel = sequelize.define("fiscal_registrars", FiscalRegistrar)
+        const EquipmentModel = sequelize.define("equipments", Equipment)
+        const ItemModel = sequelize.define("items", Item)
+        const SaleModel = sequelize.define("sales", Sale)
+        const ButtonItemModel = sequelize.define("button_items", ButtonItem)
+        const ItemMatrixModel = sequelize.define("item_matrixes", ItemMatrix)
+        const ControllerModel = sequelize.define("controllers", Controller)
+        const ControllerStateModel = sequelize.define("controller_states", ControllerState)
+        const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
+
+        ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
+
+        SaleModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+        SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
+        SaleModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
+
+        ButtonItemModel.belongsTo(ItemModel, {foreignKey: "item_id"})
+        ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
+
+        ItemMatrixModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        ItemMatrixModel.hasMany(ButtonItemModel, {foreignKey: "item_matrix_id"})
+
+        ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+
+        ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        ControllerModel.belongsTo(ControllerStateModel, {foreignKey: "last_state_id"})
+        ControllerModel.belongsTo(EquipmentModel, {foreignKey: "equipment_id"})
+        ControllerModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
+        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
+        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id"})
+
+        await sequelize.authenticate()
+        await sequelize.sync({force: true})
 
         const connection = await createConnection({
             type: "postgres",

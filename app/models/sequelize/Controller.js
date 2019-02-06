@@ -1,0 +1,36 @@
+const Sequelize = require("sequelize")
+
+const Controller = {
+    id: {
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    name: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    },
+    uid: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+    },
+    revision: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    },
+    mode: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    },
+    status: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    },
+    accessKey: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    }
+}
+
+module.exports = Controller
