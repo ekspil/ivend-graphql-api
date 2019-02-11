@@ -10,6 +10,7 @@ const User = {
     email: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
+        unique: true
     },
     phone: {
         type: Sequelize.DataTypes.TEXT,

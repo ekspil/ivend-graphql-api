@@ -12,7 +12,7 @@ function Mutations({userService, controllerService, equipmentService, fiscalRegi
     const equipmentMutations = new EquipmentMutations({equipmentService})
     const fiscalRegistrarMutations = new FiscalRegistrarMutations({fiscalRegistrarService})
     const bankTerminalMutations = new BankTerminalMutations({bankTerminalService})
-    const itemMutations = new ItemMutations({itemService, itemMatrixService})
+    const itemMutations = new ItemMutations({itemService, itemMatrixService, controllerService})
 
 
     return {

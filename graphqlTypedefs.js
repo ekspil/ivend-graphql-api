@@ -41,13 +41,14 @@ const typeDefs = gql`
         mode: ControllerMode!
         fiscalRegistrarId: Int
         bankTerminalId: Int
-        itemMatrixId: Int  
+        itemMatrixId: Int
     }
-    
+
     input CreateItemMatrixInput {
+        controllerId: Int!,
         buttons: [CreateButtonItemInput!]!
     }
-    
+
     input CreateButtonItemInput {
         buttonId: Int!
         itemName: String!,
@@ -78,12 +79,12 @@ const typeDefs = gql`
         id: Int!
         name: String!
     }
-    
+
     type ItemMatrix {
         id: Int
         buttons: [ButtonItem!]!
     }
-    
+
     type ButtonItem {
         buttonId: Int
         item: Item
@@ -182,6 +183,12 @@ const typeDefs = gql`
         CASHLESS
     }
 
+    input CreateItemInItemMatrixInput {
+        itemMatrixId: Int!,
+        buttonId: Int!,
+        itemName: String!,
+        price: Float!
+    }
 
     type Query {
         getController(id: Int!): Controller
@@ -198,6 +205,7 @@ const typeDefs = gql`
         createController(input: CreateControllerInput!): Controller
         createItem(input: CreateItemInput!): Item
         createItemMatrix(input: CreateItemMatrixInput!): ItemMatrix
+        createItemInItemMatrix(input: CreateItemInItemMatrixInput!): ItemMatrix
         editController(id:Int, input: EditControllerInput!): Controller
         authController(uid:String!): Controller
         addErrorToController(uid:String!, message: String!): ControllerError

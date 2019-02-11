@@ -1,39 +1,8 @@
+const Sequelize = require("sequelize")
 const {ApolloServer} = require("apollo-server")
 const {createConnection} = require("typeorm")
 const typeDefs = require("../graphqlTypedefs")
 const Resolvers = require("./resolvers")
-const Sequelize = require("sequelize")
-
-const ControllerEntity = require("./entities/ControllerEntity")
-const UserEntity = require("./entities/UserEntity")
-const RoleEntity = require("./entities/RoleEntity")
-const ControllerErrorEntity = require("./entities/ControllerErrorEntity")
-const EquipmentEntity = require("./entities/EquipmentEntity")
-const FiscalRegistrarEntity = require("./entities/FiscalRegistrarEntity")
-const BankTerminalEntity = require("./entities/BankTerminalEntity")
-const ControllerStateEntity = require("./entities/ControllerStateEntity")
-const ItemEntity = require("./entities/ItemEntity")
-const ItemMatrixEntity = require("./entities/ItemMatrixEntity")
-const SaleEntity = require("./entities/SaleEntity")
-const ButtonItemEntity = require("./entities/ButtonItemEntity")
-
-const CreateController_1544871592978 = require("./migrations/CreateController_1544871592978")
-const CreateUser_1544875175234 = require("./migrations/CreateUser_1544875175234")
-const CreateRoles_1544941386216 = require("./migrations/CreateRoles_1544941386216")
-const AddDefaultRoles_1544941511727 = require("./migrations/AddDefaultRoles_1544941511727")
-const AddRoleColumnToUser_1544941511727 = require("./migrations/AddRoleColumnToUser_1544941511727")
-const CreateControllerErrors_1546796166078 = require("./migrations/CreateControllerErrors_1546796166078")
-const AddUserColumnToController_1546799900517 = require("./migrations/AddUserColumnToController_1546799900517")
-const CreateEquipment_1548762321802 = require("./migrations/CreateEquipment_1548762321802")
-const CreateFiscalRegistrar_1548765405824 = require("./migrations/CreateFiscalRegistrar_1548765405824")
-const CreateBankTerminal_1544941511727 = require("./migrations/CreateBankTerminal_1544941511727")
-const AddMoreColumnsToController_1548773174036 = require("./migrations/AddMoreColumnsToController_1548773174036")
-const CreateControllerStates_1548951696291 = require("./migrations/CreateControllerStates_1548951696291")
-const CreateItem_1549024284721 = require("./migrations/CreateItem_1549024284721")
-const CreateItemMatrix_1549024960721 = require("./migrations/CreateItemMatrix_1549024960721")
-const CreateSale_1549025045086 = require("./migrations/CreateSale_1549025045086")
-const CreateButtonItems_1549193067979 = require("./migrations/CreateButtonItems_1549193067979")
-const AddItemMatrixToController_1549371997460 = require("./migrations/AddItemMatrixToController_1549371997460")
 
 const ContextResolver = require("./resolvers/ContextResolver")
 
@@ -90,143 +59,120 @@ class App {
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
 
-        ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        ItemModel.belongsTo(UserModel)
 
         SaleModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
         SaleModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
-        ButtonItemModel.belongsTo(ItemModel, {foreignKey: "item_id"})
-        ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
+        ButtonItemModel.belongsTo(ItemMatrixModel)
 
         ItemMatrixModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        ItemMatrixModel.hasMany(ButtonItemModel, {foreignKey: "item_matrix_id"})
+        ItemMatrixModel.hasMany(ButtonItemModel, {as: "buttons"})
+
+        ButtonItemModel.belongsTo(ItemModel)
 
         ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
+        // Controller relations
+
+        // Equipment
+        EquipmentModel.hasMany(ControllerModel, {foreignKey: "equipment_id", as: "equipment"})
+        ControllerModel.belongsTo(EquipmentModel, {foreignKey: "equipment_id", as: "equipment"})
+
+        // ItemMatrix
+        ControllerModel.hasOne(ItemMatrixModel, {foreignKey: "controller_id", as: "itemMatrix"})
+        ItemMatrixModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+
+
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        ControllerModel.belongsTo(ControllerStateModel, {foreignKey: "last_state_id"})
-        ControllerModel.belongsTo(EquipmentModel, {foreignKey: "equipment_id"})
-        ControllerModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
-        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
-        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id"})
+        ControllerModel.hasOne(ControllerStateModel, {foreignKey: "last_state_id"})
+
+        ControllerModel.hasOne(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
+        ControllerModel.hasOne(BankTerminalModel, {foreignKey: "bank_terminal_id"})
 
         await sequelize.authenticate()
         await sequelize.sync({force: true})
 
-        const connection = await createConnection({
-            type: "postgres",
-            host: process.env.POSTGRES_HOST,
-            port: process.env.POSTGRES_PORT,
-            username: process.env.POSTGRES_USER,
-            password: process.env.POSTGRES_PASSWORD,
-            database: process.env.POSTGRES_DB,
-            entities: [
-                ControllerEntity,
-                UserEntity,
-                RoleEntity,
-                ControllerErrorEntity,
-                EquipmentEntity,
-                FiscalRegistrarEntity,
-                BankTerminalEntity,
-                ControllerStateEntity,
-                ItemEntity,
-                ItemMatrixEntity,
-                SaleEntity,
-                ButtonItemEntity
-            ],
-            synchronize: false,
-            logging: process.env.NODE_ENV !== "production",
-            migrations: [
-                CreateController_1544871592978,
-                CreateUser_1544875175234,
-                CreateRoles_1544941386216,
-                AddDefaultRoles_1544941511727,
-                AddRoleColumnToUser_1544941511727,
-                CreateControllerErrors_1546796166078,
-                AddUserColumnToController_1546799900517,
-                CreateEquipment_1548762321802,
-                CreateFiscalRegistrar_1548765405824,
-                CreateBankTerminal_1544941511727,
-                AddMoreColumnsToController_1548773174036,
-                CreateControllerStates_1548951696291,
-                CreateItem_1549024284721,
-                CreateItemMatrix_1549024960721,
-                CreateSale_1549025045086,
-                CreateButtonItems_1549193067979,
-                AddItemMatrixToController_1549371997460
-            ],
-            migrationsRun: true,
-            cli: {
-                migrationsDir: "migrations"
-            }
+        // Map for injecting
+        const services = {
+            userService: undefined,
+            equipmentService: undefined,
+            fiscalRegistrarService: undefined,
+            bankTerminalService: undefined,
+            itemService: undefined,
+            buttonItemService: undefined,
+            controllerService: undefined,
+            saleService: undefined,
+        }
+
+        services.userService = new UserService({
+            UserModel
         })
 
-        const userRepository = connection.getRepository(UserEntity)
-        const controllerRepository = connection.getRepository(ControllerEntity)
-        const controllerErrorRepository = connection.getRepository(ControllerErrorEntity)
-        const roleRepository = connection.getRepository(RoleEntity)
-        const equipmentRepository = connection.getRepository(EquipmentEntity)
-        const fiscalRegistrarRepository = connection.getRepository(FiscalRegistrarEntity)
-        const bankTerminalRepository = connection.getRepository(BankTerminalEntity)
-        const controllerStateRepository = connection.getRepository(ControllerStateEntity)
-        const saleRepository = connection.getRepository(SaleEntity)
-        const itemRepository = connection.getRepository(ItemEntity)
-        const itemMatrixRepository = connection.getRepository(ItemMatrixEntity)
-        const buttonItemRepository = connection.getRepository(ButtonItemEntity)
-
-        const userService = new UserService({
-            userRepository,
-            roleRepository
+        services.equipmentService = new EquipmentService({
+            EquipmentModel
         })
 
-        const equipmentService = new EquipmentService({
-            equipmentRepository
+        services.fiscalRegistrarService = new FiscalRegistrarService({
+            FiscalRegistrarModel
         })
 
-        const fiscalRegistrarService = new FiscalRegistrarService({
-            fiscalRegistrarRepository
-        })
-
-        const bankTerminalService = new BankTerminalService({
-            bankTerminalRepository
+        services.bankTerminalService = new BankTerminalService({
+            BankTerminalModel
         })
 
 
-        const itemService = new ItemService({itemRepository})
+        services.itemService = new ItemService({ItemModel})
 
-        const buttonItemService = new ButtonItemService({buttonItemRepository, itemRepository, itemMatrixRepository})
-
-        const itemMatrixService = new ItemMatrixService({itemMatrixRepository, itemService, buttonItemService})
-
-        const controllerService = new ControllerService({
-            controllerRepository,
-            controllerStateRepository,
-            controllerErrorRepository,
-            equipmentService,
-            fiscalRegistrarService,
-            bankTerminalService,
-            itemMatrixService,
-            buttonItemService
+        services.buttonItemService = new ButtonItemService({
+            ButtonItemModel,
+            itemService: services.itemService,
+            itemMatrixService: services.itemMatrixService
         })
 
-        const saleService = new SaleService({saleRepository, controllerService, buttonItemService, itemService})
+        services.itemMatrixService = new ItemMatrixService({
+            ItemMatrixModel,
+            itemService: services.itemService,
+            buttonItemService: services.buttonItemService,
+            ButtonItemModel,
+            ItemModel,
+            UserModel
+        })
+
+        services.controllerService = new ControllerService({
+            ControllerModel,
+            ControllerStateModel,
+            ControllerErrorModel,
+            EquipmentModel,
+            ItemMatrixModel,
+            ButtonItemModel,
+            equipmentService: services.equipmentService,
+            fiscalRegistrarService: services.fiscalRegistrarService,
+            bankTerminalService: services.bankTerminalService,
+            itemMatrixService: services.itemMatrixService,
+            buttonItemService: services.buttonItemService
+        })
+
+        services.saleService = new SaleService({
+            SaleModel,
+            controllerService: services.controllerService,
+            buttonItemService: services.buttonItemService,
+            itemService: services.itemService
+        })
+
+        const user = await services.userService.registerUser("test", "test")
+        user.checkPermission = () => true
+        await services.equipmentService.createEquipment({name: "test"}, user)
 
         const resolvers = new Resolvers({
-            userService,
-            controllerService,
-            equipmentService,
-            fiscalRegistrarService,
-            bankTerminalService,
-            saleService,
-            itemService,
-            itemMatrixService
+            ...services
         })
 
         const server = new ApolloServer({
             typeDefs,
             resolvers,
-            context: new ContextResolver(userRepository),
+            context: new ContextResolver(UserModel),
             introspection: true,
             playground: true
         })

@@ -29,7 +29,7 @@ const Controller = {
     },
     accessKey: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+        allowNull: true
     }
 }
 

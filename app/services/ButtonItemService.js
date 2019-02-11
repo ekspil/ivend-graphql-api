@@ -4,10 +4,10 @@ const Permission = require("../enum/Permission")
 
 class ButtonItemService {
 
-    constructor({buttonItemRepository, itemRepository, itemMatrixRepository}) {
-        this.buttonItemRepository = buttonItemRepository
-        this.itemRepository = itemRepository
-        this.itemMatrixRepository = itemMatrixRepository
+    constructor({ButtonItemModel, itemService, itemMatrixService}) {
+        this.ButtonItem = ButtonItemModel
+        this.itemService = itemService
+        this.itemMatrixService = itemMatrixService
 
         this.createButtonItem = this.createButtonItem.bind(this)
         this.getButtonItemById = this.getButtonItemById.bind(this)
@@ -21,13 +21,13 @@ class ButtonItemService {
 
         const {buttonId, itemId, itemMatrixId} = input
 
-        const item = await this.itemRepository.findOne({id: itemId})
+        const item = await this.itemService.getItemById(itemId, user)
 
         if (!item) {
             throw new Error("Item not found")
         }
 
-        const itemMatrix = await this.itemMatrixRepository.findOne({id: itemMatrixId})
+        const itemMatrix = await this.itemService.getItemMatrixById(itemMatrixId, user)
 
         if (!itemMatrix) {
             throw new Error("ItemMatrix not found")
@@ -38,7 +38,7 @@ class ButtonItemService {
         buttonItem.item = item
         buttonItem.itemMatrix = itemMatrix
 
-        return await this.buttonItemRepository.save(buttonItem)
+        return await this.ButtonItem.create(buttonItem)
     }
 
     async getButtonItemById(id, user) {
@@ -46,7 +46,11 @@ class ButtonItemService {
             throw new NotAuthorized()
         }
 
-        return await this.buttonItemRepository.findOne({id})
+        return await this.ButtonItem.findOne({
+            where: {
+                id
+            }
+        })
     }
 
     async getButtonItemsByItemMatrix(itemMatrix, user) {
@@ -54,7 +58,7 @@ class ButtonItemService {
             throw new NotAuthorized()
         }
 
-        return await this.buttonItemRepository.find({
+        return await this.ButtonItem.find({
             where: {
                 itemMatrix
             }

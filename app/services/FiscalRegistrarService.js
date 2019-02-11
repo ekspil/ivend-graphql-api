@@ -5,8 +5,8 @@ const FiscalRegistrar = require("../models/FiscalRegistrar")
 
 class FiscalRegistrarService {
 
-    constructor({ fiscalRegistrarRepository }) {
-        this.fiscalRegistrarRepository = fiscalRegistrarRepository
+    constructor({FiscalRegistrarModel}) {
+        this.FiscalRegistrar = FiscalRegistrarModel
 
         this.createFiscalRegistrar = this.createFiscalRegistrar.bind(this)
         this.findById = this.findById.bind(this)
@@ -20,7 +20,7 @@ class FiscalRegistrarService {
         const createFiscalRegistrar = new FiscalRegistrar()
         createFiscalRegistrar.name = createFiscalRegistrarInput.name
 
-        return await this.fiscalRegistrarRepository.save(createFiscalRegistrar)
+        return await this.FiscalRegistrar.create(createFiscalRegistrar)
     }
 
     async findById(id, user) {
@@ -28,7 +28,11 @@ class FiscalRegistrarService {
             throw new NotAuthorized()
         }
 
-        return await this.fiscalRegistrarRepository.findOne({id})
+        return await this.FiscalRegistrar.findOne({
+            where: {
+                id
+            }
+        })
     }
 
 }

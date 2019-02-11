@@ -4,11 +4,11 @@ const Permission = require("../enum/Permission")
 
 class ItemService {
 
-    constructor({itemRepository}) {
-        this.itemRepository = itemRepository
+    constructor({ItemModel}) {
+        this.Item = ItemModel
 
         this.createItem = this.createItem.bind(this)
-        this.getButtonItemById = this.getItemById.bind(this)
+        this.getItemById = this.getItemById.bind(this)
     }
 
     async createItem(input, user) {
@@ -21,9 +21,9 @@ class ItemService {
         const item = new Item()
         item.name = name
         item.price = price
-        item.user = user
+        item.userId = user.id
 
-        return await this.itemRepository.save(item)
+        return await this.Item.create(item)
     }
 
     async getItemById(id, user) {
@@ -31,9 +31,12 @@ class ItemService {
             throw new NotAuthorized()
         }
 
-        return await this.itemRepository.findOne({id})
+        return await this.Item.findOne({
+            where: {
+                id
+            }
+        })
     }
-
 
 }
 

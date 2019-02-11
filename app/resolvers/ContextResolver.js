@@ -27,12 +27,16 @@ const parseAuthorizationHeader = async (header) => {
 }
 
 
-module.exports = function (userRepository) {
+module.exports = function (UserModel) {
 
     const authBasic = async (authCreds) => {
         const {username, password} = authCreds
 
-        const user = await userRepository.findOne({email: username})
+        const user = await UserModel.findOne({
+            where: {
+                email: username
+            }
+        })
 
         if (user) {
 

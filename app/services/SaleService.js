@@ -4,8 +4,8 @@ const Permission = require("../enum/Permission")
 
 class SaleService {
 
-    constructor({saleRepository, controllerService, buttonItemService, itemService}) {
-        this.saleRepository = saleRepository
+    constructor({SaleModel, controllerService, buttonItemService, itemService}) {
+        this.Sale = SaleModel
         this.controllerService = controllerService
         this.buttonItemService = buttonItemService
         this.itemService = itemService
@@ -54,7 +54,7 @@ class SaleService {
         sale.itemMatrix = itemMatrix
         sale.controller = controller
 
-        return await this.saleRepository.save(sale)
+        return await this.Sale.create(sale)
     }
 
 

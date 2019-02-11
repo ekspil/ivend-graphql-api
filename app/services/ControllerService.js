@@ -7,12 +7,18 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({ controllerErrorRepository, controllerRepository, controllerStateRepository, equipmentService,
-        fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService }) {
+    constructor({
+                    EquipmentModel, ItemMatrixModel, ButtonItemModel,
+                    ControllerModel, ControllerErrorModel, ControllerStateModel, equipmentService,
+                    fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService
+                }) {
 
-        this.controllerRepository = controllerRepository
-        this.controllerStateRepository = controllerStateRepository
-        this.controllerErrorRepository = controllerErrorRepository
+        this.Controller = ControllerModel
+        this.ControllerState = ControllerStateModel
+        this.ControllerError = ControllerErrorModel
+        this.Equipment = EquipmentModel
+        this.ButtonItem = ButtonItemModel
+        this.ItemMatrix = ItemMatrixModel
         this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
@@ -66,16 +72,41 @@ class ControllerService {
 
         controller.name = name
         controller.uid = uid
-        controller.equipment = equipment
         controller.revision = revision
         controller.status = status
         controller.mode = mode
         controller.user = user
 
-        //todo add default itemMatrix
-        controller.itemMatrix = await this.itemMatrixService.createItemMatrix({buttons: []}, user)
+        controller.equipment_id = equipment.id
 
-        return await this.controllerRepository.save(controller)
+
+        const savedController = await this.Controller.create(controller, {})
+
+        const itemMatrix = await this.itemMatrixService.createItemMatrix({buttons: []}, savedController, user)
+
+        const result = await this.Controller.find({
+            include: [
+                {
+                    model: this.Equipment,
+                    as: "equipment"
+                },
+                {
+                    model: this.ItemMatrix,
+                    as: "itemMatrix",
+                    include: [
+                        {
+                            model: this.ButtonItem,
+                            as: "buttons"
+                        }
+                    ]
+                }
+            ],
+            where: {
+                id: savedController.id
+            }
+        })
+
+        return result
     }
 
     async editController(id, input, user) {

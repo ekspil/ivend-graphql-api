@@ -5,11 +5,8 @@ const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
 
 class UserService {
 
-    constructor(injects) {
-        const { userRepository, roleRepository } = injects
-
-        this.userRepository = userRepository
-        this.roleRepository = roleRepository
+    constructor({ UserModel}) {
+        this.User = UserModel
 
         this.registerUser = this.registerUser.bind(this)
     }
@@ -21,17 +18,11 @@ class UserService {
 
         //todo ensure no user with such email exists
 
-        const role = await this.roleRepository.findOne({ name: "USER" })
-
-        if (!role) {
-            throw new Error("Unknown role USER")
-        }
-
         user.email = email
         user.passwordHash = await this.hashPassword(password)
-        user.role = role
+        user.role = "USER"
 
-        return await this.userRepository.save(user)
+        return await this.User.create(user)
     }
 
 

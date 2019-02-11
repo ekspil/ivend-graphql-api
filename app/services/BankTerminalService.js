@@ -5,8 +5,8 @@ const BankTerminal = require("../models/BankTerminal")
 
 class BankTerminalService {
 
-    constructor({ bankTerminalRepository }) {
-        this.bankTerminalRepository = bankTerminalRepository
+    constructor({ BankTerminalModel }) {
+        this.BankTerminal = BankTerminalModel
 
         this.createBankTerminal = this.createBankTerminal.bind(this)
         this.findById = this.findById.bind(this)
@@ -20,7 +20,7 @@ class BankTerminalService {
         const bankTerminal = new BankTerminal()
         bankTerminal.name = createBankTerminalInput.name
 
-        return await this.bankTerminalRepository.save(bankTerminal)
+        return await this.BankTerminal.create(bankTerminal)
     }
 
     async findById(id, user) {
@@ -28,7 +28,11 @@ class BankTerminalService {
             throw new NotAuthorized()
         }
 
-        return await this.bankTerminalRepository.findOne({id})
+        return await this.BankTerminal.findOne({
+            where: {
+                id
+            }
+        })
     }
 
 }
