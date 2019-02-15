@@ -154,6 +154,12 @@ const typeDefs = gql`
         controllerUid: String!
         buttonId: Int
     }
+    
+    input CreateUserInput {
+        phone: String!
+        email: String!
+        password: String!
+    }
 
     enum BusStatus {
         OK,
@@ -198,7 +204,7 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        registerUser(email: String!, password: String!): User
+        registerUser(input: CreateUserInput): User
         createEquipment(input: CreateEquipmentInput!): Equipment
         createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal

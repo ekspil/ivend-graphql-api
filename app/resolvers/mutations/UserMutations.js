@@ -1,9 +1,9 @@
 function UserMutations({ userService }) {
 
     const registerUser = async (root, args) => {
-        const { email, password } = args
+        const { input } = args
 
-        const user = await userService.registerUser(email, password)
+        const user = await userService.registerUser(input)
 
         return {
             email: user.email,

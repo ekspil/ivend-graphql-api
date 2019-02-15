@@ -10,4 +10,5 @@ app
     })
     .catch(e => {
         logger.error("Failed to start iVend GraphQL API." + e)
+        logger.error(e.stack)
     })

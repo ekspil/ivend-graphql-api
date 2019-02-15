@@ -160,7 +160,11 @@ class App {
             itemService: services.itemService
         })
 
-        const user = await services.userService.registerUser("test", "test")
+        const user = await services.userService.registerUser({
+            email: "test",
+            phone: "9999999999",
+            password: "test"
+        })
         user.checkPermission = () => true
         await services.equipmentService.createEquipment({name: "test"}, user)
 
