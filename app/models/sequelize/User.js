@@ -13,15 +13,16 @@ const User = {
         unique: true
     },
     phone: {
-        type: Sequelize.DataTypes.TEXT,
-        allowNull: true,
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     passwordHash: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false,
     },
     role: {
-        type: Sequelize.DataTypes.TEXT,
+        type: Sequelize.DataTypes.STRING,
         allowNull: false,
     }
 }
