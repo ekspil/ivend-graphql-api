@@ -7,11 +7,7 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({
-                    EquipmentModel, ItemMatrixModel, ButtonItemModel,
-                    ControllerModel, ControllerErrorModel, ControllerStateModel, equipmentService,
-                    fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService
-                }) {
+    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService}) {
 
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
@@ -82,7 +78,7 @@ class ControllerService {
 
         const savedController = await this.Controller.create(controller, {})
 
-        const itemMatrix = await this.itemMatrixService.createItemMatrix({buttons: []}, savedController, user)
+        await this.itemMatrixService.createItemMatrix({buttons: []}, savedController, user)
 
         const result = await this.Controller.find({
             include: [

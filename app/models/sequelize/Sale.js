@@ -10,7 +10,7 @@ const Sale = {
     buttonId: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
-        field: 'button_id'
+        field: "button_id"
     }
 }
 module.exports = Sale
