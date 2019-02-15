@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize")
 const {ApolloServer} = require("apollo-server")
-const {createConnection} = require("typeorm")
 const typeDefs = require("../graphqlTypedefs")
 const Resolvers = require("./resolvers")
 
