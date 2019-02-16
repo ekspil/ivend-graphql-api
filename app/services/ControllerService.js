@@ -7,7 +7,7 @@ const crypto = require("crypto")
 
 class ControllerService {
 
-    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService}) {
+    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService}) {
 
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
@@ -15,6 +15,7 @@ class ControllerService {
         this.Equipment = EquipmentModel
         this.ButtonItem = ButtonItemModel
         this.ItemMatrix = ItemMatrixModel
+        this.serviceService = serviceService
         this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
@@ -24,6 +25,7 @@ class ControllerService {
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
         this.getAll = this.getAll.bind(this)
+        this.getAllOfCurrentUser = this.getAllOfCurrentUser.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
         this.getControllerById = this.getControllerById.bind(this)
         this.addErrorToController = this.addErrorToController.bind(this)
@@ -33,7 +35,8 @@ class ControllerService {
         if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
             throw new NotAuthorized()
         }
-        const {name, uid, revision, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId} = input
+
+        const {name, uid, revision, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId, serviceIds} = input
 
 
         const equipment = await this.equipmentService.findById(equipmentId, user)
@@ -65,6 +68,19 @@ class ControllerService {
             controller.bankTerminal = bankTerminal
         }
 
+        if (serviceIds) {
+            const services = await Promise.all(serviceIds.map(async serviceId => {
+                const service = await this.serviceService.findById(serviceId, user)
+
+                if (!service) {
+                    throw new Error(`Service with id ${serviceId} not found`)
+                }
+
+                return service
+            }))
+
+            await this.serviceService.addServicesToUser(services, user)
+        }
 
         controller.name = name
         controller.uid = uid
@@ -174,7 +190,15 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.controllerRepository.find()
+        return await this.Controller.findAll()
+    }
+
+    async getAllOfCurrentUser(user) {
+        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Controller.findAll({where: {user_id: user.id}})
     }
 
     async getControllerById(id, user) {
@@ -182,12 +206,10 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
+        const controller = await this.Controller.findById(id)
 
-        const controller = await this.controllerRepository.findOne({id})
-        const {itemMatrix} = controller
-
-        if (controller) {
-            itemMatrix.buttons = await this.buttonItemService.getButtonItemsByItemMatrix(itemMatrix, user)
+        if (!controller) {
+            return null
         }
 
         return controller
@@ -199,11 +221,14 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const controller = await this.controllerRepository.findOne({uid})
-        const {itemMatrix} = controller
+        const controller = await this.Controller.findOne({
+            where: {
+                uid
+            }
+        })
 
-        if (controller) {
-            itemMatrix.buttons = await this.buttonItemService.getButtonItemsByItemMatrix(itemMatrix, user)
+        if (!controller) {
+            return null
         }
 
         return controller
@@ -239,7 +264,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        let controller = await this.controllerRepository.findOne({uid: uid})
+        let controller = await this.getControllerByUID(uid, user)
 
         if (!controller) {
             return null
@@ -247,7 +272,7 @@ class ControllerService {
 
         controller.accessKey = await this._generateRandomAccessKey()
 
-        return await this.controllerRepository.save(controller)
+        return await this.Controller.save(controller)
     }
 
     async registerState(controllerStateInput, user) {
@@ -289,7 +314,7 @@ class ControllerService {
         controllerState.registrationTime = new Date()
         controllerState.controller = controller
 
-        controllerState = await this.controllerStateRepository.save(controllerState)
+        controllerState = await this.ControllerState.create(controllerState)
 
         controller.lastState = controllerState
 

@@ -42,6 +42,7 @@ const typeDefs = gql`
         fiscalRegistrarId: Int
         bankTerminalId: Int
         itemMatrixId: Int
+        serviceIds: [Int]
     }
 
     input CreateItemMatrixInput {

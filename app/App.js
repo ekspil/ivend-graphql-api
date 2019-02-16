@@ -14,6 +14,7 @@ const SaleService = require("./services/SaleService")
 const ItemService = require("./services/ItemService")
 const ItemMatrixService = require("./services/ItemMatrixService")
 const ButtonItemService = require("./services/ButtonItemService")
+const ServiceService = require("./services/ServiceService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -26,6 +27,7 @@ const ItemMatrix = require("./models/sequelize/ItemMatrix")
 const Controller = require("./models/sequelize/Controller")
 const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
+const Service = require("./models/sequelize/Service")
 
 const logger = require("./utils/logger")
 
@@ -57,6 +59,7 @@ class App {
         const ControllerModel = sequelize.define("controllers", Controller)
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
+        const ServiceModel = sequelize.define("services", Service)
 
         ItemModel.belongsTo(UserModel)
 
@@ -90,6 +93,22 @@ class App {
         ControllerModel.hasOne(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
         ControllerModel.hasOne(BankTerminalModel, {foreignKey: "bank_terminal_id"})
 
+
+        const UserServicesModel = sequelize.define("user_services", {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: true
+            },
+            count: {
+                type: Sequelize.INTEGER,
+                allowNull: false
+            }
+        })
+
+        UserModel.belongsToMany(ServiceModel, {foreignKey: "user_id", otherKey: "service_id", through: UserServicesModel})
+        ServiceModel.hasMany(UserModel)
+
         await sequelize.authenticate()
         await sequelize.sync({force: true})
 
@@ -103,6 +122,7 @@ class App {
             buttonItemService: undefined,
             controllerService: undefined,
             saleService: undefined,
+            serviceService: undefined,
         }
 
         services.userService = new UserService({
@@ -120,6 +140,8 @@ class App {
         services.bankTerminalService = new BankTerminalService({
             BankTerminalModel
         })
+
+        services.serviceService = new ServiceService({ServiceModel, UserServicesModel})
 
 
         services.itemService = new ItemService({ItemModel})
@@ -150,7 +172,8 @@ class App {
             fiscalRegistrarService: services.fiscalRegistrarService,
             bankTerminalService: services.bankTerminalService,
             itemMatrixService: services.itemMatrixService,
-            buttonItemService: services.buttonItemService
+            buttonItemService: services.buttonItemService,
+            serviceService: services.serviceService
         })
 
         services.saleService = new SaleService({
@@ -160,13 +183,22 @@ class App {
             itemService: services.itemService
         })
 
-        const user = await services.userService.registerUser({
-            email: "test",
-            phone: "9999999999",
-            password: "test"
-        })
-        user.checkPermission = () => true
-        await services.equipmentService.createEquipment({name: "test"}, user)
+        const populateWithFakeData = async () => {
+
+            const user = await services.userService.registerUser({
+                email: "test",
+                phone: "9999999999",
+                password: "test"
+            })
+
+            user.checkPermission = () => true
+
+            await services.equipmentService.createEquipment({name: "test"}, user)
+
+            await services.serviceService.createService({name: "Telemetry", price: 1500}, user)
+        }
+
+        await populateWithFakeData()
 
         const resolvers = new Resolvers({
             ...services
@@ -185,6 +217,8 @@ class App {
         logger.info(`GraphQL Server ready at ${serverInfo.url}`)
 
     }
+
+
 }
 
 
