@@ -96,7 +96,7 @@ class ControllerService {
 
         await this.itemMatrixService.createItemMatrix({buttons: []}, savedController, user)
 
-        const result = await this.Controller.find({
+        return await this.Controller.find({
             include: [
                 {
                     model: this.Equipment,
@@ -117,8 +117,6 @@ class ControllerService {
                 id: savedController.id
             }
         })
-
-        return result
     }
 
     async editController(id, input, user) {
