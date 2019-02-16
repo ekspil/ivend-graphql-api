@@ -29,6 +29,27 @@ class ControllerService {
         this.getControllerByUID = this.getControllerByUID.bind(this)
         this.getControllerById = this.getControllerById.bind(this)
         this.addErrorToController = this.addErrorToController.bind(this)
+
+        this.controllerIncludes = [
+            {
+                model: this.Equipment,
+                as: "equipment"
+            },
+            {
+                model: this.ControllerState,
+                as: "lastState"
+            },
+            {
+                model: this.ItemMatrix,
+                as: "itemMatrix",
+                include: [
+                    {
+                        model: this.ButtonItem,
+                        as: "buttons"
+                    }
+                ]
+            }
+        ]
     }
 
     async createController(input, user) {
@@ -97,22 +118,7 @@ class ControllerService {
         await this.itemMatrixService.createItemMatrix({buttons: []}, savedController, user)
 
         return await this.Controller.find({
-            include: [
-                {
-                    model: this.Equipment,
-                    as: "equipment"
-                },
-                {
-                    model: this.ItemMatrix,
-                    as: "itemMatrix",
-                    include: [
-                        {
-                            model: this.ButtonItem,
-                            as: "buttons"
-                        }
-                    ]
-                }
-            ],
+            include: this.controllerIncludes,
             where: {
                 id: savedController.id
             }
@@ -180,7 +186,9 @@ class ControllerService {
             controller.mode = mode
         }
 
-        return await this.controllerRepository.save(controller)
+        await controller.save()
+
+        return this.getControllerById(id, user)
     }
 
     async getAll(user) {
@@ -188,7 +196,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.Controller.findAll()
+        return await this.Controller.findAll({include: this.controllerIncludes})
     }
 
     async getAllOfCurrentUser(user) {
@@ -196,7 +204,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.Controller.findAll({where: {user_id: user.id}})
+        return await this.Controller.findAll({include: this.controllerIncludes, where: {user_id: user.id}})
     }
 
     async getControllerById(id, user) {
@@ -204,7 +212,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const controller = await this.Controller.findById(id)
+        const controller = await this.Controller.findById(id, {include: this.controllerIncludes})
 
         if (!controller) {
             return null
@@ -222,7 +230,8 @@ class ControllerService {
         const controller = await this.Controller.findOne({
             where: {
                 uid
-            }
+            },
+            include: this.controllerIncludes
         })
 
         if (!controller) {
@@ -252,7 +261,7 @@ class ControllerService {
 
         const controllerError = new ControllerError()
         controllerError.message = message
-        controllerError.controller = controller
+        controllerError.controller_id = controller.id
 
         return await this.controllerErrorRepository.save(controllerError)
     }
@@ -262,7 +271,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        let controller = await this.getControllerByUID(uid, user)
+        const controller = await this.getControllerByUID(uid, user)
 
         if (!controller) {
             return null
@@ -270,7 +279,9 @@ class ControllerService {
 
         controller.accessKey = await hashingUtils.generateRandomAccessKey()
 
-        return await this.Controller.save(controller)
+        await controller.save()
+
+        return await this.getControllerById(controller.id, user)
     }
 
     async registerState(controllerStateInput, user) {
@@ -310,13 +321,15 @@ class ControllerService {
         controllerState.mdbStatus = mdbStatus
         controllerState.signalStrength = signalStrength
         controllerState.registrationTime = new Date()
-        controllerState.controller = controller
+        controllerState.controller_id = controller.id
 
         controllerState = await this.ControllerState.create(controllerState)
 
-        controller.lastState = controllerState
+        controller.last_state_id = controllerState.id
 
-        return await this.controllerRepository.save(controller)
+        await controller.save()
+
+        return await this.getControllerById(controller.id, user)
     }
 
 

@@ -90,7 +90,7 @@ class App {
 
 
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        ControllerModel.hasOne(ControllerStateModel, {foreignKey: "last_state_id"})
+        ControllerModel.belongsTo(ControllerStateModel, {foreignKey: "last_state_id", as: "lastState"})
 
         ControllerModel.hasOne(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
         ControllerModel.hasOne(BankTerminalModel, {foreignKey: "bank_terminal_id"})

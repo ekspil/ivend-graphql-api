@@ -46,6 +46,10 @@ const ControllerState = {
     registrationTime: {
         type: Sequelize.DataTypes.TIME,
         allowNull: false,
+    },
+    controller_id: {
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: false
     }
 }
 module.exports = ControllerState
