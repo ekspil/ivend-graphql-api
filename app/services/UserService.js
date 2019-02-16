@@ -1,6 +1,7 @@
 const {Op} = require("sequelize")
 const User = require("../models/User")
 const bcryptjs = require("bcryptjs")
+const hashingUtils = require("../utils/hashingUtils")
 
 const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
 
@@ -37,6 +38,36 @@ class UserService {
         user.role = "USER"
 
         return await this.User.create(user)
+    }
+
+    async requestToken(input) {
+        const {phone, password} = input
+
+        //todo validation
+
+        const user = await this.User.findOne({
+            where: {
+                phone
+            }
+        })
+
+        const passwordMatched = user && await bcryptjs.compare(password, user.passwordHash)
+
+        if (!user || !passwordMatched) {
+            throw new Error("Phone and password does not match")
+        }
+
+        const token = await hashingUtils.generateRandomAccessKey()
+
+        for (const token of Object.keys(global.tokens)) {
+            if(global.tokens[token] === user.id) {
+                delete global.tokens[token]
+            }
+        }
+
+        global.tokens[token] = user.id
+
+        return token
     }
 
     async hashPassword(password) {
