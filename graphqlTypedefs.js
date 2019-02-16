@@ -161,6 +161,11 @@ const typeDefs = gql`
         email: String!
         password: String!
     }
+    
+    input RequestTokenInput {
+        phone: String!
+        password: String!
+    }
 
     enum BusStatus {
         OK,
@@ -203,9 +208,10 @@ const typeDefs = gql`
         getControllers: [Controller]
         getItemMatrix(id: Int!): ItemMatrix
     }
-
+    
     type Mutation {
-        registerUser(input: CreateUserInput): User
+        registerUser(input: CreateUserInput!): User
+        requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
         createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
