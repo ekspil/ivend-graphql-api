@@ -7,7 +7,7 @@ const hashingUtils = require("../utils/hashingUtils")
 
 class ControllerService {
 
-    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService}) {
+    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService}) {
 
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
@@ -15,6 +15,7 @@ class ControllerService {
         this.Equipment = EquipmentModel
         this.ButtonItem = ButtonItemModel
         this.ItemMatrix = ItemMatrixModel
+        this.User = UserModel
         this.serviceService = serviceService
         this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
@@ -28,7 +29,8 @@ class ControllerService {
         this.getAllOfCurrentUser = this.getAllOfCurrentUser.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
         this.getControllerById = this.getControllerById.bind(this)
-        this.addErrorToController = this.addErrorToController.bind(this)
+        this.registerError = this.registerError.bind(this)
+        this.registerState = this.registerState.bind(this)
 
         this.controllerIncludes = [
             {
@@ -48,6 +50,10 @@ class ControllerService {
                         as: "buttons"
                     }
                 ]
+            },
+            {
+                model: this.User,
+                as: "user",
             }
         ]
     }
@@ -108,7 +114,7 @@ class ControllerService {
         controller.revision = revision
         controller.status = status
         controller.mode = mode
-        controller.user = user
+        controller.user_id = user.id
 
         controller.equipment_id = equipment.id
 
@@ -242,12 +248,14 @@ class ControllerService {
     }
 
 
-    async addErrorToController(uid, message, user) {
+    async registerError(input, user) {
         if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-        const controller = await this.getControllerByUID(uid, user)
+        const {controllerUid, message} = input
+
+        const controller = await this.getControllerByUID(controllerUid, user)
 
         if (!controller) {
             //todo custom error
@@ -263,7 +271,9 @@ class ControllerService {
         controllerError.message = message
         controllerError.controller_id = controller.id
 
-        return await this.controllerErrorRepository.save(controllerError)
+        await this.ControllerError.create(controllerError)
+
+        return await this.getControllerById(controller.id, user)
     }
 
     async generateAccessKey(uid, user) {

@@ -134,6 +134,11 @@ const typeDefs = gql`
         signalStrength: SignalStrength!
     }
 
+    input ControllerErrorInput {
+        controllerUid: String!
+        message: String!
+    }
+
     input CreateEquipmentInput {
         name: String!
     }
@@ -221,7 +226,7 @@ const typeDefs = gql`
         createItemInItemMatrix(input: CreateItemInItemMatrixInput!): ItemMatrix
         editController(id:Int, input: EditControllerInput!): Controller
         authController(uid:String!): Controller
-        addErrorToController(uid:String!, message: String!): ControllerError
+        registerControllerError(input: ControllerErrorInput!): Controller
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
     }

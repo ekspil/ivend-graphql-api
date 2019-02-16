@@ -170,6 +170,7 @@ class App {
             EquipmentModel,
             ItemMatrixModel,
             ButtonItemModel,
+            UserModel,
             equipmentService: services.equipmentService,
             fiscalRegistrarService: services.fiscalRegistrarService,
             bankTerminalService: services.bankTerminalService,
