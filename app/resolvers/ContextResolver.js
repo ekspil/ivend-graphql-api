@@ -9,17 +9,23 @@ const parseAuthorizationHeader = async (header) => {
     const value = splitted[1]
 
     if (method === "Basic") {
-        const credentials = Buffer.from(value, "base64")
-            .toString("ascii")
-            .split(":")
-
-        const username = credentials[0]
-        const password = credentials[1]
+        const [username, password] =
+            Buffer
+                .from(value, "base64")
+                .toString("ascii")
+                .split(":")
 
         return {
             type: "basic",
             username,
             password
+        }
+    }
+
+    if (method === "Bearer") {
+        return {
+            type: "bearer",
+            token: value,
         }
     }
 
@@ -29,12 +35,29 @@ const parseAuthorizationHeader = async (header) => {
 
 module.exports = function (UserModel) {
 
+    const populateUserInContext = async (user) => {
+        user.checkPermission = (permission) => {
+            if (process.env.NO_AUTH === "1") {
+                return true
+            }
+            const role = user.role.name
+
+            if (role === "ADMIN") {
+                return true
+            }
+
+            return RolePermissions[role] && RolePermissions[role].indexOf(permission) !== -1
+        }
+
+        return {user: user}
+    }
+
     const authBasic = async (authCreds) => {
         const {username, password} = authCreds
 
         const user = await UserModel.findOne({
             where: {
-                email: username
+                phone: username
             }
         })
 
@@ -43,23 +66,28 @@ module.exports = function (UserModel) {
             const equals = await bcryptjs.compare(password, user.passwordHash)
 
             if (equals) {
-
-                user.checkPermission = (permission) => {
-                    if (process.env.NO_AUTH === "1") {
-                        return true
-                    }
-                    const role = user.role.name
-
-                    if (role === "ADMIN") {
-                        return true
-                    }
-
-                    return RolePermissions[role] && RolePermissions[role].indexOf(permission) !== -1
-                }
-
-                return {user: user}
+                return populateUserInContext(user)
             }
         }
+    }
+
+    const authBearer = async (authCreds) => {
+        const {token} = authCreds
+
+        const userId = global.tokens[token]
+
+        if (userId) {
+            const user = await UserModel.findOne({
+                where: {
+                    id: userId
+                }
+            })
+
+            if (user) {
+                return populateUserInContext(user)
+            }
+        }
+
     }
 
     return async ({req}) => {
@@ -74,7 +102,8 @@ module.exports = function (UserModel) {
                 switch (type) {
                     case "basic":
                         return await authBasic(authCreds)
-                    default:
+                    case "bearer":
+                        return await authBearer(authCreds)
                 }
 
             } catch (e) {
