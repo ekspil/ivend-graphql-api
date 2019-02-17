@@ -14,7 +14,7 @@ class UserService {
     }
 
 
-    async registerUser(input) {
+    async registerUser(input, role) {
 
         const {email, phone, password} = input
 
@@ -35,7 +35,7 @@ class UserService {
         user.phone = phone
         user.email = email
         user.passwordHash = await this.hashPassword(password)
-        user.role = "USER"
+        user.role = role || "USER"
 
         return await this.User.create(user)
     }

@@ -28,6 +28,7 @@ const Controller = require("./models/sequelize/Controller")
 const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
+const Transaction = require("./models/sequelize/Transaction")
 
 const logger = require("./utils/logger")
 
@@ -62,6 +63,7 @@ class App {
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
+        sequelize.define("transactions", Transaction)
 
         ItemModel.belongsTo(UserModel)
 
@@ -193,6 +195,12 @@ class App {
                 phone: "9999999999",
                 password: "test"
             })
+
+            const aggregatorUser = await services.userService.registerUser({
+                email: "aggregator",
+                phone: "9999999991",
+                password: "aggregator"
+            }, "AGGREGATE")
 
             user.checkPermission = () => true
 
