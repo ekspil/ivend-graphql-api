@@ -28,7 +28,6 @@ const Controller = require("./models/sequelize/Controller")
 const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
-const Transaction = require("./models/sequelize/Transaction")
 
 const logger = require("./utils/logger")
 
@@ -63,7 +62,6 @@ class App {
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
-        sequelize.define("transactions", Transaction)
 
         ItemModel.belongsTo(UserModel)
 
