@@ -196,13 +196,16 @@ class App {
                 password: "test"
             })
 
+            user.checkPermission = () => true
+
             const aggregatorUser = await services.userService.registerUser({
                 email: "aggregator",
                 phone: "9999999991",
                 password: "aggregator"
             }, "AGGREGATE")
 
-            user.checkPermission = () => true
+            aggregatorUser.checkPermission = () => true
+
 
             await services.equipmentService.createEquipment({name: "test"}, user)
 

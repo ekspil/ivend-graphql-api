@@ -34,6 +34,14 @@ class EquipmentService {
             }
         })
     }
+
+    async getAllEquipments(user) {
+        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Equipment.findAll()
+    }
 }
 
 module.exports = EquipmentService

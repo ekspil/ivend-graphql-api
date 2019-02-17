@@ -19,7 +19,7 @@ const Resolvers = function (injects) {
         itemMatrixService
     })
 
-    const queries = new Queries({controllerService, itemMatrixService})
+    const queries = new Queries({controllerService, itemMatrixService, equipmentService})
 
     return {
         Query: queries,

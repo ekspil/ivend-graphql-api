@@ -211,6 +211,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
+        getEquipments: [Equipment]
         getItemMatrix(id: Int!): ItemMatrix
     }
     
