@@ -34,8 +34,8 @@ const typeDefs = gql`
 
     input CreateControllerInput {
         name: String!
-        equipmentId: Int!
         uid: String!
+        equipmentId: Int!
         revisionId: Int!
         status: ControllerStatus!
         mode: ControllerMode!
