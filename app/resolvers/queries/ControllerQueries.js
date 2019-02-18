@@ -1,6 +1,7 @@
 const ControllerDTO = require("../../models/dto/ControllerDTO")
+const RevisionDTO = require("../../models/dto/RevisionDTO")
 
-function ControllerQueries({controllerService}) {
+function ControllerQueries({controllerService, revisionService}) {
 
     const getController = async (root, args, context) => {
         const {id} = args
@@ -34,13 +35,21 @@ function ControllerQueries({controllerService}) {
         }
 
         return new ControllerDTO(controller)
+    }
 
+    const getRevisions = async (root, args, context) => {
+        const {user} = context
+
+        const revisions = await revisionService.getAll(user)
+
+        return revisions.map(revision => (new RevisionDTO(revision)))
     }
 
     return {
         getController,
         getControllers,
-        getControllerByUID
+        getControllerByUID,
+        getRevisions
     }
 
 }

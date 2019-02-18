@@ -5,7 +5,7 @@ const Resolvers = function (injects) {
 
     const {
         userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService,
-        saleService, itemService, itemMatrixService
+        saleService, itemService, itemMatrixService, revisionService
     } = injects
 
     const mutations = new Mutations({
@@ -16,10 +16,11 @@ const Resolvers = function (injects) {
         bankTerminalService,
         saleService,
         itemService,
-        itemMatrixService
+        itemMatrixService,
+        revisionService
     })
 
-    const queries = new Queries({controllerService, itemMatrixService, equipmentService})
+    const queries = new Queries({controllerService, itemMatrixService, equipmentService, revisionService})
 
     return {
         Query: queries,

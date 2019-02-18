@@ -14,10 +14,7 @@ const Controller = {
     uid: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,
-    },
-    revision: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+        unique: true
     },
     mode: {
         type: Sequelize.DataTypes.STRING,

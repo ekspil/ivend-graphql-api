@@ -9,7 +9,7 @@ const typeDefs = gql`
         name: String!
         equipment: Equipment!
         uid: String!
-        revision: Int!
+        revision: Revision!
         status: ControllerStatus!
         mode: ControllerMode!
         fiscalRegistrar: FiscalRegistrar
@@ -36,7 +36,7 @@ const typeDefs = gql`
         name: String!
         equipmentId: Int!
         uid: String!
-        revision: String!
+        revisionId: Int!
         status: ControllerStatus!
         mode: ControllerMode!
         fiscalRegistrarId: Int
@@ -59,7 +59,7 @@ const typeDefs = gql`
     input EditControllerInput {
         name: String
         equipmentId: Int
-        revision: Int
+        revisionId: Int
         status: ControllerStatus
         mode: ControllerMode
         fiscalRegistrarId: Int
@@ -114,6 +114,11 @@ const typeDefs = gql`
         name: String!
         price: Float!
         user: User!
+    }
+    
+    type Revision {
+        id: Int!
+        name: String!
     }
 
     input CreateItemInput {
@@ -207,11 +212,16 @@ const typeDefs = gql`
         price: Float!
     }
 
+    input CreateRevisionInput {
+        name: String!
+    }
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
         getEquipments: [Equipment]
+        getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
     }
     
@@ -225,6 +235,7 @@ const typeDefs = gql`
         createItem(input: CreateItemInput!): Item
         createItemMatrix(input: CreateItemMatrixInput!): ItemMatrix
         createItemInItemMatrix(input: CreateItemInItemMatrixInput!): ItemMatrix
+        createRevision(input: CreateRevisionInput!): Revision
         editController(id:Int, input: EditControllerInput!): Controller
         authController(uid:String!): Controller
         registerControllerError(input: ControllerErrorInput!): Controller

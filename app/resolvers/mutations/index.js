@@ -5,10 +5,10 @@ const FiscalRegistrarMutations = require("./FiscalRegistrarMutations")
 const BankTerminalMutations = require("./BankTerminalMutations")
 const ItemMutations = require("./ItemMutations")
 
-function Mutations({userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService, saleService, itemService, itemMatrixService}) {
+function Mutations({userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService, saleService, itemService, itemMatrixService, revisionService}) {
 
     const userMutations = new UserMutations({userService})
-    const controllerMutations = new ControllerMutations({controllerService, saleService})
+    const controllerMutations = new ControllerMutations({controllerService, saleService, revisionService})
     const equipmentMutations = new EquipmentMutations({equipmentService})
     const fiscalRegistrarMutations = new FiscalRegistrarMutations({fiscalRegistrarService})
     const bankTerminalMutations = new BankTerminalMutations({bankTerminalService})

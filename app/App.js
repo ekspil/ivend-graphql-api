@@ -15,6 +15,7 @@ const ItemService = require("./services/ItemService")
 const ItemMatrixService = require("./services/ItemMatrixService")
 const ButtonItemService = require("./services/ButtonItemService")
 const ServiceService = require("./services/ServiceService")
+const RevisionService = require("./services/RevisionService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -28,6 +29,7 @@ const Controller = require("./models/sequelize/Controller")
 const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
+const Revision = require("./models/sequelize/Revision")
 
 const logger = require("./utils/logger")
 
@@ -62,6 +64,7 @@ class App {
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
+        const RevisionModel = sequelize.define("revisions", Revision)
 
         ItemModel.belongsTo(UserModel)
 
@@ -79,10 +82,10 @@ class App {
         ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
         // Controller relations
-
-        // Equipment
-        EquipmentModel.hasMany(ControllerModel, {foreignKey: "equipment_id", as: "equipment"})
         ControllerModel.belongsTo(EquipmentModel, {foreignKey: "equipment_id", as: "equipment"})
+        ControllerModel.belongsTo(RevisionModel, {foreignKey: "revision_id", as: "revision"})
+        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id"})
+        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
 
         // ItemMatrix
         ControllerModel.hasOne(ItemMatrixModel, {foreignKey: "controller_id", as: "itemMatrix"})
@@ -92,9 +95,10 @@ class App {
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
         ControllerModel.belongsTo(ControllerStateModel, {foreignKey: "last_state_id", as: "lastState"})
 
-        ControllerModel.hasOne(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
-        ControllerModel.hasOne(BankTerminalModel, {foreignKey: "bank_terminal_id"})
-
+        EquipmentModel.hasMany(ControllerModel, {foreignKey: "equipment_id", as: "equipment"})
+        FiscalRegistrarModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
+        BankTerminalModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
+        RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
 
         const UserServicesModel = sequelize.define("user_services", {
             id: {
@@ -108,11 +112,17 @@ class App {
             }
         })
 
-        UserModel.belongsToMany(ServiceModel, {foreignKey: "user_id", otherKey: "service_id", through: UserServicesModel})
+        UserModel.belongsToMany(ServiceModel, {
+            foreignKey: "user_id",
+            otherKey: "service_id",
+            through: UserServicesModel
+        })
         ServiceModel.hasMany(UserModel)
 
         await sequelize.authenticate()
         await sequelize.sync({force: true})
+
+        let revisionService = undefined
 
         // Map for injecting
         const services = {
@@ -125,6 +135,7 @@ class App {
             controllerService: undefined,
             saleService: undefined,
             serviceService: undefined,
+            revisionService,
         }
 
         services.userService = new UserService({
@@ -163,6 +174,10 @@ class App {
             UserModel
         })
 
+        services.revisionService = new RevisionService({
+            RevisionModel
+        })
+
         services.controllerService = new ControllerService({
             ControllerModel,
             ControllerStateModel,
@@ -171,12 +186,14 @@ class App {
             ItemMatrixModel,
             ButtonItemModel,
             UserModel,
+            RevisionModel,
             equipmentService: services.equipmentService,
             fiscalRegistrarService: services.fiscalRegistrarService,
             bankTerminalService: services.bankTerminalService,
             itemMatrixService: services.itemMatrixService,
             buttonItemService: services.buttonItemService,
-            serviceService: services.serviceService
+            serviceService: services.serviceService,
+            revisionService: services.revisionService
         })
 
         services.saleService = new SaleService({
@@ -206,6 +223,8 @@ class App {
 
 
             await services.equipmentService.createEquipment({name: "test"}, user)
+
+            await services.revisionService.createRevision({name: "1"}, user)
 
             await services.serviceService.createService({name: "Telemetry", price: 1500}, user)
         }

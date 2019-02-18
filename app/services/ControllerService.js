@@ -7,7 +7,7 @@ const hashingUtils = require("../utils/hashingUtils")
 
 class ControllerService {
 
-    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService}) {
+    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService}) {
 
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
@@ -16,12 +16,15 @@ class ControllerService {
         this.ButtonItem = ButtonItemModel
         this.ItemMatrix = ItemMatrixModel
         this.User = UserModel
+        this.Revision = RevisionModel
         this.serviceService = serviceService
         this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
         this.itemMatrixService = itemMatrixService
         this.buttonItemService = buttonItemService
+        this.serviceService = serviceService
+        this.revisionService = revisionService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -40,6 +43,10 @@ class ControllerService {
             {
                 model: this.ControllerState,
                 as: "lastState"
+            },
+            {
+                model: this.Revision,
+                as: "revision"
             },
             {
                 model: this.ItemMatrix,
@@ -63,8 +70,17 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revision, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId, serviceIds} = input
+        const {name, uid, revisionId, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId, serviceIds} = input
 
+        const controller = new Controller()
+
+        const revision = await this.revisionService.getRevisionById(revisionId, user)
+
+        if (!revision) {
+            throw new Error("Revision not found")
+        }
+
+        controller.revision_id = revision.id
 
         const equipment = await this.equipmentService.findById(equipmentId, user)
 
@@ -72,7 +88,7 @@ class ControllerService {
             throw new Error("Equipment not found")
         }
 
-        const controller = new Controller()
+        controller.equipment_id = equipment.id
 
         if (fiscalRegistrarId) {
             const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
@@ -81,7 +97,7 @@ class ControllerService {
                 throw new Error("Fiscal registrar not found")
             }
 
-            controller.fiscalRegistrar = fiscalRegistrar
+            controller.fiscal_registrar_id = fiscalRegistrar.id
         }
 
 
@@ -92,7 +108,7 @@ class ControllerService {
                 throw new Error("Bank terminal not found")
             }
 
-            controller.bankTerminal = bankTerminal
+            controller.bank_terminal_id = bankTerminal.id
         }
 
         if (serviceIds) {
@@ -114,10 +130,8 @@ class ControllerService {
         controller.revision = revision
         controller.status = status
         controller.mode = mode
+
         controller.user_id = user.id
-
-        controller.equipment_id = equipment.id
-
 
         const savedController = await this.Controller.create(controller, {})
 
@@ -136,7 +150,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, equipmentId, revision, status, mode, fiscalRegistrarId, bankTerminalId} = input
+        const {name, equipmentId, revisionId, status, mode, fiscalRegistrarId, bankTerminalId} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -151,7 +165,17 @@ class ControllerService {
                 throw new Error("Equipment not found")
             }
 
-            controller.equipment = equipment
+            controller.equipment_id = equipment.id
+        }
+
+        if(revisionId) {
+            const revision = await this.revisionService.getRevisionById(revisionId, user)
+
+            if(!revision) {
+                throw new Error("Revision not found")
+            }
+
+            controller.revision_id = revision.id
         }
 
         if (fiscalRegistrarId) {
@@ -161,7 +185,7 @@ class ControllerService {
                 throw new Error("Fiscal registrar not found")
             }
 
-            controller.fiscalRegistrar = fiscalRegistrar
+            controller.fiscal_registrar_id = fiscalRegistrar.id
         }
 
 
@@ -172,16 +196,12 @@ class ControllerService {
                 throw new Error("Bank terminal not found")
             }
 
-            controller.bankTerminal = bankTerminal
+            controller.bank_terminal_id = bankTerminal.id
         }
 
 
         if (name) {
             controller.name = name
-        }
-
-        if (revision) {
-            controller.revision = revision
         }
 
         if (status) {
