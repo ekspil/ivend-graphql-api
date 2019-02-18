@@ -13,6 +13,7 @@ services:
       - "NO_AUTH=1"
     ports:
       - "4000:4000"
+    restart: always
     deploy:
       restart_policy:
         condition: on-failure
