@@ -27,7 +27,7 @@ class ButtonItemService {
             throw new Error("Item not found")
         }
 
-        const itemMatrix = await this.itemService.getItemMatrixById(itemMatrixId, user)
+        const itemMatrix = await this.itemMatrixService.getItemMatrixById(itemMatrixId, user)
 
         if (!itemMatrix) {
             throw new Error("ItemMatrix not found")
@@ -35,8 +35,8 @@ class ButtonItemService {
 
         const buttonItem = new ButtonItem()
         buttonItem.buttonId = buttonId
-        buttonItem.item = item
-        buttonItem.itemMatrix = itemMatrix
+        buttonItem.item_id = item.id
+        buttonItem.item_matrix_id = itemMatrix.id
 
         return await this.ButtonItem.create(buttonItem)
     }

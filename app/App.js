@@ -72,12 +72,12 @@ class App {
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
         SaleModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
-        ButtonItemModel.belongsTo(ItemMatrixModel)
+        ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
         ItemMatrixModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        ItemMatrixModel.hasMany(ButtonItemModel, {as: "buttons"})
+        ItemMatrixModel.hasMany(ButtonItemModel, {as: "buttons", foreignKey: "item_matrix_id"})
 
-        ButtonItemModel.belongsTo(ItemModel)
+        ButtonItemModel.belongsTo(ItemModel, {foreignKey: "item_id"})
 
         ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
@@ -122,8 +122,6 @@ class App {
         await sequelize.authenticate()
         await sequelize.sync({force: true})
 
-        let revisionService = undefined
-
         // Map for injecting
         const services = {
             userService: undefined,
@@ -135,7 +133,7 @@ class App {
             controllerService: undefined,
             saleService: undefined,
             serviceService: undefined,
-            revisionService,
+            revisionService: undefined,
         }
 
         services.userService = new UserService({
@@ -173,6 +171,8 @@ class App {
             ItemModel,
             UserModel
         })
+
+        services.buttonItemService.itemMatrixService = services.itemMatrixService
 
         services.revisionService = new RevisionService({
             RevisionModel

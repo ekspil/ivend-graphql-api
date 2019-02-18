@@ -32,7 +32,7 @@ class SaleService {
             throw new Error("Item matrix not found in this controller")
         }
 
-        const buttons = await this.buttonItemService.getButtonItemsByItemMatrix(itemMatrix, user)
+        const {buttons} = itemMatrix
 
         if (!buttons.some((buttonItem) => buttonItem.buttonId === buttonId)) {
             const name = "New item"
@@ -46,13 +46,15 @@ class SaleService {
             buttons.push(buttonItem)
         }
 
-        const [item] = buttons.filter((buttonItem) => buttonItem.buttonId === buttonId).map(buttonItem => buttonItem.item)
+        const [itemId] = buttons
+            .filter((buttonItem) => buttonItem.buttonId === buttonId)
+            .map(buttonItem => buttonItem.item_id)
 
         const sale = new Sale()
         sale.buttonId = buttonId
-        sale.item = item
-        sale.itemMatrix = itemMatrix
-        sale.controller = controller
+        sale.item_id = itemId
+        sale.item_matrix_id = itemMatrix.id
+        sale.controller_id = controller.id
 
         return await this.Sale.create(sale)
     }
