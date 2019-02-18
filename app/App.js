@@ -222,11 +222,25 @@ class App {
             aggregatorUser.checkPermission = () => true
 
 
-            await services.equipmentService.createEquipment({name: "test"}, user)
+            const equipment = await services.equipmentService.createEquipment({name: "test"}, user)
 
-            await services.revisionService.createRevision({name: "1"}, user)
+            const revision = await services.revisionService.createRevision({name: "1"}, user)
 
             await services.serviceService.createService({name: "Telemetry", price: 1500}, user)
+
+            // First test controller
+            // No bank terminal and fiscal registrar
+            // No applied services
+            const firstController = {
+                name: "First test controller",
+                uid: "10000003-1217",
+                equipmentId: equipment.id,
+                revisionId: revision.id,
+                status: "DISABLED",
+                mode: "MDB"
+            }
+
+            await services.controllerService.createController(firstController, user)
         }
 
         await populateWithFakeData()
