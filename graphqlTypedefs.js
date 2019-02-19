@@ -18,6 +18,17 @@ const typeDefs = gql`
         lastState: ControllerState
         itemMatrix: ItemMatrix!
         lastSaleTime: Timestamp
+        saleStats(period: Period): [ItemSalesStat!]!
+    }
+    
+    input Period {
+        from: Timestamp!
+        to: Timestamp!
+    }
+    
+    type ItemSalesStat {
+        item: Item!
+        amount: Int!
     }
 
     type ControllerState {

@@ -198,6 +198,7 @@ class App {
 
         services.saleService = new SaleService({
             SaleModel,
+            ItemModel,
             controllerService: services.controllerService,
             buttonItemService: services.buttonItemService,
             itemService: services.itemService

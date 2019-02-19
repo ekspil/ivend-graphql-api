@@ -1,17 +1,20 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const Sale = require("../models/Sale")
 const Permission = require("../enum/Permission")
+const ItemSaleStat = require("../models/ItemSaleStat")
 
 class SaleService {
 
-    constructor({SaleModel, controllerService, buttonItemService, itemService}) {
+    constructor({SaleModel, ItemModel, controllerService, buttonItemService, itemService}) {
         this.Sale = SaleModel
+        this.Item = ItemModel
         this.controllerService = controllerService
         this.buttonItemService = buttonItemService
         this.itemService = itemService
 
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
+        this.getItemSaleStats = this.getItemSaleStats.bind(this)
     }
 
     async registerSale(input, user) {
@@ -66,7 +69,7 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        return this.Sale.findOne({
+        return await this.Sale.findOne({
             where: {controller_id: controllerId},
             order: [
                 ["id", "DESC"],
@@ -74,6 +77,26 @@ class SaleService {
         })
     }
 
+    async getItemSaleStats(input, user) {
+        const {controllerId, period} = input
+
+        const {sequelize} = this.Sale
+
+        //todo groupby
+        const sales = await this.Sale.findAll({
+            where: {
+                controller_id: controllerId
+            },
+            attributes: ["item_id", [sequelize.fn("COUNT", "sales.id"), "amount"]],
+            group: ["item_id", "item.id"],
+            include: [{model: this.Item}],
+        })
+
+        return sales.map(sale => {
+            return (new ItemSaleStat(sale.item, Number(sale.dataValues.amount)))
+        })
+
+    }
 
 }
 
