@@ -22,7 +22,7 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const {controllerUid, buttonId} = input
+        const {controllerUid, type, buttonId} = input
 
         let controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
@@ -56,6 +56,7 @@ class SaleService {
 
         const sale = new Sale()
         sale.buttonId = buttonId
+        sale.type = type
         sale.item_id = itemId
         sale.item_matrix_id = itemMatrix.id
         sale.controller_id = controller.id

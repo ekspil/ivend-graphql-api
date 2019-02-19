@@ -7,6 +7,10 @@ const Sale = {
         primaryKey: true,
         autoIncrement: true
     },
+    type: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    },
     buttonId: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,

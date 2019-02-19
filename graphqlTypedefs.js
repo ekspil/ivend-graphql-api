@@ -107,6 +107,7 @@ const typeDefs = gql`
     type Sale {
         id: Int!
         buttonId: Int!
+        type: SaleType!
         item: Item!
         itemMatrix: ItemMatrix!
         controller: Controller!
@@ -177,7 +178,13 @@ const typeDefs = gql`
 
     input SaleEventInput {
         controllerUid: String!
-        buttonId: Int
+        buttonId: Int!
+        type: SaleType!
+    }
+    
+    enum SaleType {
+        CASH
+        CASHLESS
     }
     
     input CreateUserInput {
