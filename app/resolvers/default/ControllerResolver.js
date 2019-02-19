@@ -1,4 +1,5 @@
 const ItemSaleStatDTO = require("../../models/dto/ItemSaleStatDTO")
+const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 
 function ControllerResolver({saleService}) {
 
@@ -14,7 +15,7 @@ function ControllerResolver({saleService}) {
         return null
     }
 
-    const saleStats = async (obj, args, context) => {
+    const itemSaleStats = async (obj, args, context) => {
         const {user} = context
         const {period} = args
 
@@ -23,9 +24,19 @@ function ControllerResolver({saleService}) {
         return itemSaleStats.map(itemSaleStat => (new ItemSaleStatDTO(itemSaleStat)))
     }
 
+    const salesSummary = async (obj, args, context) => {
+        const {user} = context
+        const {period} = args
+
+        const salesSummary = await saleService.getSalesSummary({controllerId: obj.id, period}, user)
+
+        return new SalesSummaryDTO(salesSummary)
+    }
+
     return {
         lastSaleTime,
-        saleStats
+        itemSaleStats,
+        salesSummary
     }
 
 }

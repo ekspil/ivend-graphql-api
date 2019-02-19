@@ -18,7 +18,8 @@ const typeDefs = gql`
         lastState: ControllerState
         itemMatrix: ItemMatrix!
         lastSaleTime: Timestamp
-        saleStats(period: Period): [ItemSalesStat!]!
+        itemSaleStats(period: Period): [ItemSalesStat!]!
+        salesSummary(period: Period): SalesSummary
     }
     
     input Period {
@@ -29,6 +30,13 @@ const typeDefs = gql`
     type ItemSalesStat {
         item: Item!
         amount: Int!
+    }
+    
+    type SalesSummary {
+        salesCount: Int!
+        overallAmount: Int!
+        cashAmount: Int!
+        cashlessAmount: Int!
     }
 
     type ControllerState {

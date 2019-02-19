@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const Sale = require("../models/Sale")
 const Permission = require("../enum/Permission")
 const ItemSaleStat = require("../models/ItemSaleStat")
+const SalesSummary = require("../models/SalesSummary")
 
 class SaleService {
 
@@ -111,6 +112,100 @@ class SaleService {
         return sales.map(sale => {
             return (new ItemSaleStat(sale.item, Number(sale.dataValues.amount)))
         })
+
+    }
+
+    async getSalesSummary(input, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        const {controllerId, period} = input
+
+        const {sequelize} = this.Sale
+        const {Op} = sequelize
+
+        const where = {
+            controller_id: controllerId
+        }
+
+        if (period) {
+            const {from, to} = period
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
+        const salesSummaryByType = await this.Sale.findAll({
+            where,
+            attributes: [
+                "item_id",
+                "type",
+                [sequelize.fn("COUNT", "sales.id"), "overallCount"],
+                [sequelize.fn("sum", sequelize.col("item.price")), "overallAmount"]
+            ],
+            group: ["type", "sales.item_id", "item.id"],
+            include: [{model: this.Item}],
+        })
+
+        const salesSummary = new SalesSummary()
+
+        const cashSalesSummaries = salesSummaryByType.filter(salesSummary => salesSummary.type === "CASH")
+        const cashlessSalesSummaries = salesSummaryByType.filter(salesSummary => salesSummary.type === "CASHLESS")
+
+        if (cashSalesSummaries) {
+            const cashAmount = cashSalesSummaries.reduce((acc, cashSalesSummary) => {
+                if (!Number(cashSalesSummary.dataValues.overallAmount)) {
+                    return acc
+                }
+
+                return acc + Number(cashSalesSummary.dataValues.overallAmount)
+            }, 0)
+
+            salesSummary.cashAmount = cashAmount
+        }
+
+        if (cashlessSalesSummaries) {
+            const cashlessAmount = cashlessSalesSummaries.reduce((acc, cashlessSalesSummary) => {
+                if (!Number(cashlessSalesSummary.dataValues.overallAmount)) {
+                    return acc
+                }
+
+                return acc + Number(cashlessSalesSummary.dataValues.overallAmount)
+            }, 0)
+
+            salesSummary.cashlessAmount = cashlessAmount
+        }
+
+
+        const salesCount = salesSummaryByType.reduce((acc, salesSummary) => {
+            if (!Number(salesSummary.dataValues.overallCount)) {
+                return acc
+            }
+
+            const overallCount = Number(salesSummary.dataValues.overallCount)
+
+            return acc + overallCount
+        }, 0)
+
+        salesSummary.salesCount = salesCount
+
+        const overallAmount = salesSummaryByType.reduce((acc, salesSummary) => {
+            if (!Number(salesSummary.dataValues.overallAmount)) {
+                return acc
+            }
+
+            const overallAmount = Number(salesSummary.dataValues.overallAmount)
+
+            return acc + overallAmount
+        }, 0)
+
+        salesSummary.overallAmount = overallAmount
+
+        return salesSummary
+
 
     }
 
