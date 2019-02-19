@@ -30,7 +30,7 @@ const typeDefs = gql`
         exeStatus: BusStatus!,
         mdbStatus: BusStatus!,
         signalStrength: SignalStrength!,
-        registrationTime: Timestamp
+        registrationTime: Timestamp!
     }
 
     input CreateControllerInput {
