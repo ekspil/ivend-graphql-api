@@ -78,15 +78,30 @@ class SaleService {
     }
 
     async getItemSaleStats(input, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
         const {controllerId, period} = input
 
         const {sequelize} = this.Sale
+        const {Op} = sequelize
 
-        //todo groupby
+        const where = {
+            controller_id: controllerId
+        }
+
+        if (period) {
+            const {from, to} = period
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
         const sales = await this.Sale.findAll({
-            where: {
-                controller_id: controllerId
-            },
+            where,
             attributes: ["item_id", [sequelize.fn("COUNT", "sales.id"), "amount"]],
             group: ["item_id", "item.id"],
             include: [{model: this.Item}],
