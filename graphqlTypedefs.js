@@ -17,7 +17,7 @@ const typeDefs = gql`
         accessKey: String,
         lastState: ControllerState
         itemMatrix: ItemMatrix!
-        lastSaleTime: Timestamp!
+        lastSaleTime: Timestamp
     }
 
     type ControllerState {
