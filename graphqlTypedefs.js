@@ -140,6 +140,7 @@ const typeDefs = gql`
 
     input ControllerStateInput {
         controllerUid: String!
+        firmwareId: String!
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
         coinAmount: Int!,

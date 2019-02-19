@@ -323,6 +323,7 @@ class ControllerService {
 
         const {
             controllerUid,
+            firmwareId,
             coinAcceptorStatus,
             billAcceptorStatus,
             coinAmount,
@@ -341,6 +342,7 @@ class ControllerService {
         }
 
         let controllerState = new ControllerState()
+        controllerState.firmwareId = firmwareId
         controllerState.coinAcceptorStatus = coinAcceptorStatus
         controllerState.billAcceptorStatus = billAcceptorStatus
         controllerState.coinAmount = coinAmount
