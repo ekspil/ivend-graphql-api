@@ -44,7 +44,7 @@ const ControllerState = {
         allowNull: false,
     },
     registrationTime: {
-        type: Sequelize.DataTypes.TIME,
+        type: Sequelize.DataTypes.DATE,
         allowNull: false,
     },
     controller_id: {
