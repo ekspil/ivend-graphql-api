@@ -1,5 +1,6 @@
 const Mutations = require("./mutations")
 const Queries = require("./queries")
+const {GraphQLScalarType, Kind} = require("graphql")
 
 const Resolvers = function (injects) {
 
@@ -24,7 +25,24 @@ const Resolvers = function (injects) {
 
     return {
         Query: queries,
-        Mutation: mutations
+        Mutation: mutations,
+        Timestamp: new GraphQLScalarType({
+            name: "Timestamp",
+            description: "Timestamp in seconds since 1970, in UTC timezone",
+            parseValue(value) {
+                return new Date(value)
+            },
+            serialize(value) {
+                return value.getTime()
+            },
+            parseLiteral(ast) {
+                if (ast.kind === Kind.INT) {
+                    return new Date(Number(ast.value)) // ast value is always in string format
+                } else {
+                    throw new Error("Timestamp should be an integer representing seconds passed since 1 January 1970 (UTC)")
+                }
+            },
+        }),
     }
 }
 
