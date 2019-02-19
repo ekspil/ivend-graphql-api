@@ -37,7 +37,7 @@ const Resolvers = function (injects) {
             },
             parseLiteral(ast) {
                 if (ast.kind === Kind.INT) {
-                    return new Date(Number(ast.value)) // ast value is always in string format
+                    return new Date(Number(ast.value))
                 } else {
                     throw new Error("Timestamp should be an integer representing seconds passed since 1 January 1970 (UTC)")
                 }
