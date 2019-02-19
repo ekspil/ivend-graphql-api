@@ -32,6 +32,7 @@ const typeDefs = gql`
     }
 
     type ControllerState {
+        firmwareId: String!,
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
         coinAmount: Float!,
