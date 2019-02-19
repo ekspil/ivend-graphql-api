@@ -1,6 +1,7 @@
 const Mutations = require("./mutations")
 const Queries = require("./queries")
 const {GraphQLScalarType, Kind} = require("graphql")
+const DefaultResolvers = require("./default")
 
 const Resolvers = function (injects) {
 
@@ -21,11 +22,14 @@ const Resolvers = function (injects) {
         revisionService
     })
 
+    const defaultResolvers = new DefaultResolvers({saleService})
+
     const queries = new Queries({controllerService, itemMatrixService, equipmentService, revisionService})
 
     return {
         Query: queries,
         Mutation: mutations,
+        ...defaultResolvers,
         Timestamp: new GraphQLScalarType({
             name: "Timestamp",
             description: "Timestamp in seconds since 1970, in UTC timezone",

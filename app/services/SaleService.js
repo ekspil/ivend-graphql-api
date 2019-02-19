@@ -11,6 +11,7 @@ class SaleService {
         this.itemService = itemService
 
         this.registerSale = this.registerSale.bind(this)
+        this.getLastSale = this.getLastSale.bind(this)
     }
 
     async registerSale(input, user) {
@@ -57,6 +58,20 @@ class SaleService {
         sale.controller_id = controller.id
 
         return await this.Sale.create(sale)
+    }
+
+
+    async getLastSale(controllerId, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        return this.Sale.findOne({
+            where: {controller_id: controllerId},
+            order: [
+                ["id", "DESC"],
+            ]
+        })
     }
 
 
