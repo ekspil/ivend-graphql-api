@@ -1,4 +1,5 @@
 const ControllerDTO = require("../../models/dto/ControllerDTO")
+const ControllerErrorDTO = require("../../models/dto/ControllerErrorDTO")
 const RevisionDTO = require("../../models/dto/RevisionDTO")
 const SaleDTO = require("../../models/dto/SaleDTO")
 
@@ -26,9 +27,9 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         const {input} = args
         const {user} = context
 
-        const controller = await controllerService.registerError(input, user)
+        const controllerError = await controllerService.registerError(input, user)
 
-        return new ControllerDTO(controller)
+        return new ControllerErrorDTO(controllerError)
     }
 
     const registerControllerState = async (root, args, context) => {

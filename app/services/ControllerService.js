@@ -273,7 +273,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {controllerUid, message} = input
+        const {controllerUid, errorTime, message} = input
 
         const controller = await this.getControllerByUID(controllerUid, user)
 
@@ -290,10 +290,9 @@ class ControllerService {
         const controllerError = new ControllerError()
         controllerError.message = message
         controllerError.controller_id = controller.id
+        controllerError.errorTime = errorTime
 
-        await this.ControllerError.create(controllerError)
-
-        return await this.getControllerById(controller.id, user)
+        return await this.ControllerError.create(controllerError)
     }
 
     async generateAccessKey(uid, user) {

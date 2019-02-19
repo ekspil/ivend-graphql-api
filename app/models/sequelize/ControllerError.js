@@ -10,6 +10,10 @@ const ControllerError = {
     message: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false,
+    },
+    errorTime: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: false,
     }
 }
 module.exports = ControllerError

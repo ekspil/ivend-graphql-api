@@ -114,8 +114,9 @@ const typeDefs = gql`
     }
 
     type ControllerError {
-        id: Int
-        message: String
+        id: Int!
+        message: String!
+        errorTime: Timestamp!
     }
 
     type User {
@@ -157,6 +158,7 @@ const typeDefs = gql`
     input ControllerErrorInput {
         controllerUid: String!
         message: String!
+        errorTime: Timestamp!
     }
 
     input CreateEquipmentInput {
@@ -259,7 +261,7 @@ const typeDefs = gql`
         createRevision(input: CreateRevisionInput!): Revision
         editController(id:Int, input: EditControllerInput!): Controller
         authController(uid:String!): Controller
-        registerControllerError(input: ControllerErrorInput!): Controller
+        registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
     }

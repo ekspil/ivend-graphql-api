@@ -1,7 +1,8 @@
 class ControllerError {
-    constructor(id, message) {
+    constructor(id, message, errorTime) {
         this.id = id
         this.message = message
+        this.errorTime = errorTime
     }
 
 }
