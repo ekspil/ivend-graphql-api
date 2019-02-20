@@ -1,7 +1,8 @@
+const ControllerErrorDTO = require("../../models/dto/ControllerErrorDTO")
 const ItemSaleStatDTO = require("../../models/dto/ItemSaleStatDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 
-function ControllerResolver({saleService}) {
+function ControllerResolver({saleService, controllerService}) {
 
     const lastSaleTime = async (obj, args, context) => {
         const {user} = context
@@ -33,10 +34,33 @@ function ControllerResolver({saleService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
+    const errors = async (obj, args, context) => {
+        const {user} = context
+
+        const controllerErrors = await controllerService.getControllerErrors(obj.id, user)
+
+        return controllerErrors.map(controllerError => new ControllerErrorDTO(controllerError))
+    }
+
+
+    const lastErrorTime = async (obj, args, context) => {
+        const {user} = context
+
+        const controllerError = await controllerService.getLastControllerError(obj.id, user)
+
+        if(!controllerError) {
+            return null
+        }
+
+        return controllerError.errorTime
+    }
+
     return {
         lastSaleTime,
         itemSaleStats,
-        salesSummary
+        salesSummary,
+        errors,
+        lastErrorTime
     }
 
 }

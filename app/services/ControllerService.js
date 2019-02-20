@@ -32,6 +32,8 @@ class ControllerService {
         this.getAllOfCurrentUser = this.getAllOfCurrentUser.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
         this.getControllerById = this.getControllerById.bind(this)
+        this.getControllerErrors = this.getControllerErrors.bind(this)
+        this.getLastControllerError = this.getLastControllerError.bind(this)
         this.registerError = this.registerError.bind(this)
         this.registerState = this.registerState.bind(this)
 
@@ -265,6 +267,34 @@ class ControllerService {
         }
 
         return controller
+    }
+
+    async getControllerErrors(id, user) {
+        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.ControllerError.findAll({
+            where: {
+                controller_id: id
+            }
+        })
+    }
+
+
+    async getLastControllerError(id, user) {
+        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.ControllerError.findOne({
+            where: {
+                controller_id: id
+            },
+            order: [
+                ["id", "DESC"],
+            ]
+        })
     }
 
 

@@ -18,8 +18,10 @@ const typeDefs = gql`
         lastState: ControllerState
         itemMatrix: ItemMatrix!
         lastSaleTime: Timestamp
+        lastErrorTime: Timestamp
         itemSaleStats(period: Period): [ItemSalesStat!]!
         salesSummary(period: Period): SalesSummary
+        errors: [ControllerError!]!
     }
     
     input Period {
