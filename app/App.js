@@ -43,6 +43,7 @@ class App {
             host: process.env.POSTGRES_HOST,
             dialect: "postgres",
             operatorsAliases: false,
+            logging: process.env.NODE_ENV !== "production",
 
             pool: {
                 max: 5,
