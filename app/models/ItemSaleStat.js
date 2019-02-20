@@ -1,7 +1,7 @@
 class ItemSaleStat {
-    constructor(item, amount) {
+    constructor(item, salesSummary) {
         this.item = item
-        this.amount = amount
+        this.salesSummary = salesSummary
     }
 }
 

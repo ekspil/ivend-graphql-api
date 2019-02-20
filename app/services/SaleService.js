@@ -109,9 +109,12 @@ class SaleService {
             include: [{model: this.Item}],
         })
 
-        return sales.map(sale => {
-            return (new ItemSaleStat(sale.item, Number(sale.dataValues.amount)))
-        })
+        //todo move out to default resolver
+        return await Promise.all(sales.map(async sale => {
+            const itemId = sale.item.id
+            const salesSummaryByItem = await this.getSalesSummary({controllerId, period, itemId}, user)
+            return (new ItemSaleStat(sale.item, salesSummaryByItem))
+        }))
 
     }
 
@@ -120,13 +123,17 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const {controllerId, period} = input
+        const {controllerId, period, itemId} = input
 
         const {sequelize} = this.Sale
         const {Op} = sequelize
 
         const where = {
             controller_id: controllerId
+        }
+
+        if(itemId) {
+            where.item_id = itemId
         }
 
         if (period) {

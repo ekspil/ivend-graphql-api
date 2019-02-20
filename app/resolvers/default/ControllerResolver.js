@@ -25,7 +25,7 @@ function ControllerResolver({saleService, controllerService}) {
         return itemSaleStats.map(itemSaleStat => (new ItemSaleStatDTO(itemSaleStat)))
     }
 
-    const salesSummary = async (obj, args, context) => {
+    const overallSalesSummary = async (obj, args, context) => {
         const {user} = context
         const {period} = args
 
@@ -58,7 +58,7 @@ function ControllerResolver({saleService, controllerService}) {
     return {
         lastSaleTime,
         itemSaleStats,
-        salesSummary,
+        overallSalesSummary,
         errors,
         lastErrorTime
     }

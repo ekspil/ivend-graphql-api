@@ -20,7 +20,7 @@ const typeDefs = gql`
         lastSaleTime: Timestamp
         lastErrorTime: Timestamp
         itemSaleStats(period: Period): [ItemSalesStat!]!
-        salesSummary(period: Period): SalesSummary
+        overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
     }
     
@@ -31,7 +31,7 @@ const typeDefs = gql`
     
     type ItemSalesStat {
         item: Item!
-        amount: Int!
+        salesSummary: SalesSummary!
     }
     
     type SalesSummary {

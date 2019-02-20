@@ -2,9 +2,9 @@ const ItemDTO = require("./ItemDTO")
 
 class ItemSaleStatDTO {
 
-    constructor({item, amount}) {
+    constructor({item, salesSummary}) {
         this.item = item ? new ItemDTO(item) : null
-        this.amount = amount
+        this.salesSummary = salesSummary
     }
 }
 
