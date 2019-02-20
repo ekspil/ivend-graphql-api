@@ -15,6 +15,7 @@ class SaleService {
 
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
+        this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
         this.getItemSaleStats = this.getItemSaleStats.bind(this)
     }
 
@@ -73,6 +74,19 @@ class SaleService {
 
         return await this.Sale.findOne({
             where: {controller_id: controllerId},
+            order: [
+                ["id", "DESC"],
+            ]
+        })
+    }
+
+    async getLastSaleOfItem(itemId, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Sale.findOne({
+            where: {item_id: itemId},
             order: [
                 ["id", "DESC"],
             ]

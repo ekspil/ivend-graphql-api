@@ -32,6 +32,7 @@ const typeDefs = gql`
     type ItemSalesStat {
         item: Item!
         salesSummary: SalesSummary!
+        lastSaleTime: Timestamp!
     }
     
     type SalesSummary {
@@ -274,6 +275,7 @@ const typeDefs = gql`
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
+        #requestDeposit(amount: Int!, ): Sale
     }
 
 

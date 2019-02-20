@@ -1,10 +1,13 @@
 const ControllerResolver = require("./ControllerResolver")
+const ItemSalesStatResolver = require("./ItemSalesStatResolver")
 
-function DefaultResolvers({saleService, controllerService}) {
-    const controllerResolver = new ControllerResolver({saleService, controllerService})
+function DefaultResolvers({controllerService, saleService}) {
+    const controllerResolver = new ControllerResolver({controllerService, saleService})
+    const itemSalesStatResolver = new ItemSalesStatResolver({saleService})
 
     return {
-        Controller: controllerResolver
+        Controller: controllerResolver,
+        ItemSalesStat: itemSalesStatResolver
     }
 }
 
