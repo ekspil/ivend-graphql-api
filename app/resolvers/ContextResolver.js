@@ -79,7 +79,7 @@ module.exports = function ({UserModel, redis}) {
         if (userId) {
             const user = await UserModel.findOne({
                 where: {
-                    id: userId
+                    id: Number(userId)
                 }
             })
 
