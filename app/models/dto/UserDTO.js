@@ -1,9 +1,7 @@
 class UserDTO {
 
-    constructor({id, email, passwordHash, phone, role}) {
-        this.id = id
+    constructor({email, phone, role}) {
         this.email = email
-        this.passwordHash = passwordHash
         this.phone = phone
         this.role = role
     }

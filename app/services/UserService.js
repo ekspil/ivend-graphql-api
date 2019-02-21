@@ -1,3 +1,5 @@
+const NotAuthorized = require("../errors/NotAuthorized")
+const Permission = require("../enum/Permission")
 const {Op} = require("sequelize")
 const User = require("../models/User")
 const bcryptjs = require("bcryptjs")
@@ -11,6 +13,8 @@ class UserService {
         this.User = UserModel
 
         this.registerUser = this.registerUser.bind(this)
+        this.requestToken = this.requestToken.bind(this)
+        this.getProfile = this.getProfile.bind(this)
     }
 
 
@@ -60,7 +64,7 @@ class UserService {
         const token = await hashingUtils.generateRandomAccessKey()
 
         for (const token of Object.keys(global.tokens)) {
-            if(global.tokens[token] === user.id) {
+            if (global.tokens[token] === user.id) {
                 delete global.tokens[token]
             }
         }
@@ -68,6 +72,18 @@ class UserService {
         global.tokens[token] = user.id
 
         return token
+    }
+
+    async getProfile(user) {
+        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.User.findOne({
+            where: {
+                id: user.id
+            }
+        })
     }
 
     async hashPassword(password) {

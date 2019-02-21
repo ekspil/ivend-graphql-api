@@ -131,8 +131,9 @@ const typeDefs = gql`
     }
 
     type User {
-        email: String!,
-        phone: String
+        email: String!
+        phone: String!
+        role: String!
     }
 
     type Item {
@@ -257,6 +258,7 @@ const typeDefs = gql`
         getEquipments: [Equipment]
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
+        getProfile: User
     }
     
     type Mutation {
