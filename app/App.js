@@ -17,6 +17,7 @@ const ItemMatrixService = require("./services/ItemMatrixService")
 const ButtonItemService = require("./services/ButtonItemService")
 const ServiceService = require("./services/ServiceService")
 const RevisionService = require("./services/RevisionService")
+const DepositService = require("./services/DepositService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -31,6 +32,8 @@ const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
 const Revision = require("./models/sequelize/Revision")
+const Deposit = require("./models/sequelize/Deposit")
+const PaymentRequest = require("./models/sequelize/PaymentRequest")
 
 const redis = new Redis({
     port: process.env.REDIS_PORT,
@@ -74,6 +77,8 @@ class App {
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
         const RevisionModel = sequelize.define("revisions", Revision)
+        const DepositModel = sequelize.define("deposits", Deposit)
+        const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
 
         ItemModel.belongsTo(UserModel)
 
@@ -109,6 +114,9 @@ class App {
         BankTerminalModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
         RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
 
+        DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        DepositModel.belongsTo(PaymentRequestModel, {foreignKey: "payment_request_id", as: "paymentRequest"})
+
         const UserServicesModel = sequelize.define("user_services", {
             id: {
                 type: Sequelize.INTEGER,
@@ -143,6 +151,7 @@ class App {
             saleService: undefined,
             serviceService: undefined,
             revisionService: undefined,
+            depositService: undefined
         }
 
         services.userService = new UserService({
@@ -213,6 +222,8 @@ class App {
             buttonItemService: services.buttonItemService,
             itemService: services.itemService
         })
+
+        services.depositService = new DepositService({DepositModel, PaymentRequestModel})
 
         const populateWithFakeData = async () => {
 

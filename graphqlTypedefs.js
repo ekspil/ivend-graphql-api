@@ -29,6 +29,20 @@ const typeDefs = gql`
         to: Timestamp!
     }
     
+    type Deposit {
+        id: Int!
+        amount: Float!
+        status: PaymentStatus!
+        redirectUrl: String!
+    }
+    
+    enum PaymentStatus {
+        SUCCEDED
+        CANCELED
+        ERROR
+        PENDING
+    }
+    
     type ItemSalesStat {
         item: Item!
         salesSummary: SalesSummary!
@@ -277,7 +291,7 @@ const typeDefs = gql`
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
-        #requestDeposit(amount: Int!, ): Sale
+        requestDeposit(amount: Float!): Deposit
     }
 
 
