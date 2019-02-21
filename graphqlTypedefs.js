@@ -39,7 +39,6 @@ const typeDefs = gql`
     enum PaymentStatus {
         SUCCEDED
         CANCELED
-        ERROR
         PENDING
     }
     

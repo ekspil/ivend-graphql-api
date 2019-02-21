@@ -13,17 +13,7 @@ function DepositMutations({depositService}) {
         const {status, redirectUrl} = paymentRequest
         const {id} = deposit
 
-        let mappedStatus = null
-
-        switch (status) {
-            case "pending":
-                mappedStatus = "PENDING"
-                break
-            default:
-                throw new Error("Unknown status received from payment request")
-        }
-
-        return new DepositDTO({id, amount: paymentRequest.amount, status: mappedStatus, redirectUrl})
+        return new DepositDTO({id, amount: paymentRequest.amount, status, redirectUrl})
     }
 
 
