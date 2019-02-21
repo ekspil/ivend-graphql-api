@@ -33,7 +33,7 @@ const parseAuthorizationHeader = async (header) => {
 }
 
 
-module.exports = function (UserModel) {
+module.exports = function ({UserModel, redis}) {
 
     const populateUserInContext = async (user) => {
         user.checkPermission = (permission) => {
@@ -74,7 +74,7 @@ module.exports = function (UserModel) {
     const authBearer = async (authCreds) => {
         const {token} = authCreds
 
-        const userId = global.tokens[token]
+        const userId = await redis.hget("tokens", token)
 
         if (userId) {
             const user = await UserModel.findOne({

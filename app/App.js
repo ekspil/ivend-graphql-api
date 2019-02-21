@@ -1,3 +1,4 @@
+const Redis = require("ioredis")
 const Sequelize = require("sequelize")
 const {ApolloServer} = require("apollo-server")
 const typeDefs = require("../graphqlTypedefs")
@@ -30,6 +31,13 @@ const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
 const Revision = require("./models/sequelize/Revision")
+
+const redis = new Redis({
+    port: process.env.REDIS_PORT,
+    host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD,
+})
+
 
 const logger = require("./utils/logger")
 
@@ -138,7 +146,8 @@ class App {
         }
 
         services.userService = new UserService({
-            UserModel
+            UserModel,
+            redis
         })
 
         services.equipmentService = new EquipmentService({
@@ -254,7 +263,7 @@ class App {
         const server = new ApolloServer({
             typeDefs,
             resolvers,
-            context: new ContextResolver(UserModel),
+            context: new ContextResolver({UserModel, redis}),
             introspection: true,
             playground: true
         })

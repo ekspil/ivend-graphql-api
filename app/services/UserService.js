@@ -9,8 +9,9 @@ const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
 
 class UserService {
 
-    constructor({UserModel}) {
+    constructor({UserModel, redis}) {
         this.User = UserModel
+        this.redis = redis
 
         this.registerUser = this.registerUser.bind(this)
         this.requestToken = this.requestToken.bind(this)
@@ -63,13 +64,7 @@ class UserService {
 
         const token = await hashingUtils.generateRandomAccessKey()
 
-        for (const token of Object.keys(global.tokens)) {
-            if (global.tokens[token] === user.id) {
-                delete global.tokens[token]
-            }
-        }
-
-        global.tokens[token] = user.id
+        await this.redis.hset("tokens", token, user.id)
 
         return token
     }

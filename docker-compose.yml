@@ -10,6 +10,7 @@ services:
       - "POSTGRES_USER=ivend"
       - "POSTGRES_PASSWORD=ivend"
       - "POSTGRES_DB=ivend"
+      - "REDIS_HOST=cache"
       - "NO_AUTH=1"
     ports:
       - "4000:4000"
@@ -33,3 +34,6 @@ services:
         delay: 30s
         max_attempts: 5
         window: 15s
+  cache:
+    image: redis
+    restart: always
