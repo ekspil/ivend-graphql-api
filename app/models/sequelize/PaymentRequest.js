@@ -15,6 +15,10 @@ const PaymentRequest = {
         type: Sequelize.DataTypes.STRING,
         allowNull: false
     },
+    to: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+    },
     paymentId: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false
