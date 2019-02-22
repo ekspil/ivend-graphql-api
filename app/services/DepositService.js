@@ -39,7 +39,8 @@ class DepositService {
             // Request payment from the billing
 
             const body = JSON.stringify({
-                amount
+                amount,
+                to: user.phone
             })
 
             const response = await fetch(`${process.env.BILLING_URL}/api/v1/billing/createPayment`, {
