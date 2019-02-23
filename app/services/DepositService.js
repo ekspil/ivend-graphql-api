@@ -37,6 +37,7 @@ class DepositService {
             throw new Error("Another deposit already in process")
         }
 
+        //todo transaction here is overkill
         return this.Deposit.sequelize.transaction(async () => {
             // Request payment from the billing
 
