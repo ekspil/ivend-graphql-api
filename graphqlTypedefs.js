@@ -135,6 +135,7 @@ const typeDefs = gql`
         phone: String!
         role: String!
         notificationSettings: [NotificationSetting!]!
+        legalInfo: LegalInfo
     }
 
     type NotificationSetting {
@@ -268,6 +269,36 @@ const typeDefs = gql`
         sms: Boolean!
     }
 
+    type LegalInfo {
+        companyName: String!
+        city: String!
+        actualAddress: String!
+        inn: String!
+        ogrn: String!
+        legalAddress: String!
+        director: String!
+        directorPhone: String!
+        directorEmail: String!
+        contactPerson: String!
+        contactPhone: String!
+        contactEmail: String!
+    }
+
+    input LegalInfoInput {
+        companyName: String!
+        city: String!
+        actualAddress: String!
+        inn: String!
+        ogrn: String!
+        legalAddress: String!
+        director: String!
+        directorPhone: String!
+        directorEmail: String!
+        contactPerson: String!
+        contactPhone: String!
+        contactEmail: String!
+    }
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
@@ -295,7 +326,7 @@ const typeDefs = gql`
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
         updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
-        #requestDeposit(amount: Int!, ): Sale
+        updateLegalInfo(input: LegalInfoInput!): LegalInfo
     }
 
 

@@ -18,6 +18,7 @@ const ButtonItemService = require("./services/ButtonItemService")
 const ServiceService = require("./services/ServiceService")
 const RevisionService = require("./services/RevisionService")
 const NotificationSettingsService = require("./services/NotificationSettingsService")
+const LegalInfoService = require("./services/LegalInfoService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -33,6 +34,7 @@ const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
 const Revision = require("./models/sequelize/Revision")
 const NotificationSetting = require("./models/sequelize/NotificationSetting")
+const LegalInfo = require("./models/sequelize/LegalInfo")
 
 const redis = new Redis({
     port: process.env.REDIS_PORT,
@@ -77,7 +79,9 @@ class App {
         const ServiceModel = sequelize.define("services", Service)
         const RevisionModel = sequelize.define("revisions", Revision)
         const NotificationSettingModel = sequelize.define("notification_settings", NotificationSetting)
+        const LegalInfoModel = sequelize.define("legal_infos", LegalInfo)
 
+        UserModel.belongsTo(LegalInfoModel, {foreignKey: "legal_info_id", as: "legalInfo"})
         NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
         ItemModel.belongsTo(UserModel)
@@ -148,13 +152,16 @@ class App {
             saleService: undefined,
             serviceService: undefined,
             revisionService: undefined,
-            notificationSettingsService: undefined
+            notificationSettingsService: undefined,
+            legalInfoService: undefined
         }
 
         services.userService = new UserService({
             UserModel,
             redis
         })
+
+        services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
 
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
 
