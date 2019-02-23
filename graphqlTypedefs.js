@@ -23,18 +23,18 @@ const typeDefs = gql`
         overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
     }
-    
+
     input Period {
         from: Timestamp!
         to: Timestamp!
     }
-    
+
     type ItemSalesStat {
         item: Item!
         salesSummary: SalesSummary!
         lastSaleTime: Timestamp!
     }
-    
+
     type SalesSummary {
         salesCount: Int!
         overallAmount: Int!
@@ -134,6 +134,17 @@ const typeDefs = gql`
         email: String!
         phone: String!
         role: String!
+        notificationSettings: [NotificationSetting!]!
+    }
+
+    type NotificationSetting {
+        type: NotificationType!
+        email: Boolean!
+        sms: Boolean!
+    }
+
+    enum NotificationType {
+        CONTROLLER_NO_CONNECTION
     }
 
     type Item {
@@ -142,7 +153,7 @@ const typeDefs = gql`
         price: Float!
         user: User!
     }
-    
+
     type Revision {
         id: Int!
         name: String!
@@ -195,18 +206,18 @@ const typeDefs = gql`
         buttonId: Int!
         type: SaleType!
     }
-    
+
     enum SaleType {
         CASH
         CASHLESS
     }
-    
+
     input CreateUserInput {
         phone: String!
         email: String!
         password: String!
     }
-    
+
     input RequestTokenInput {
         phone: String!
         password: String!
@@ -251,6 +262,12 @@ const typeDefs = gql`
         name: String!
     }
 
+    input UpdateNotificationSettingInput {
+        type: NotificationType!
+        email: Boolean!
+        sms: Boolean!
+    }
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
@@ -260,7 +277,7 @@ const typeDefs = gql`
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
     }
-    
+
     type Mutation {
         registerUser(input: CreateUserInput!): User
         requestToken(input: RequestTokenInput!): String
@@ -277,6 +294,7 @@ const typeDefs = gql`
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
+        updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
         #requestDeposit(amount: Int!, ): Sale
     }
 

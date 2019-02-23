@@ -1,4 +1,6 @@
-function UserMutations({userService}) {
+const NotificationDTO = require("../../models/dto/NotificationDTO")
+
+function UserMutations({userService, notificationSettingsService}) {
 
     const registerUser = async (root, args) => {
         const {input} = args
@@ -18,7 +20,16 @@ function UserMutations({userService}) {
         return await userService.requestToken(input)
     }
 
-    return {registerUser, requestToken}
+    const updateNotificationSetting = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const notificationSetting = await notificationSettingsService.updateNotificationSetting(input, user)
+
+        return new NotificationDTO(notificationSetting)
+    }
+
+    return {registerUser, requestToken, updateNotificationSetting}
 
 }
 

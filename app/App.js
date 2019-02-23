@@ -17,6 +17,7 @@ const ItemMatrixService = require("./services/ItemMatrixService")
 const ButtonItemService = require("./services/ButtonItemService")
 const ServiceService = require("./services/ServiceService")
 const RevisionService = require("./services/RevisionService")
+const NotificationSettingsService = require("./services/NotificationSettingsService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -31,6 +32,7 @@ const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
 const Revision = require("./models/sequelize/Revision")
+const NotificationSetting = require("./models/sequelize/NotificationSetting")
 
 const redis = new Redis({
     port: process.env.REDIS_PORT,
@@ -74,6 +76,9 @@ class App {
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
         const RevisionModel = sequelize.define("revisions", Revision)
+        const NotificationSettingModel = sequelize.define("notification_settings", NotificationSetting)
+
+        NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
         ItemModel.belongsTo(UserModel)
 
@@ -143,12 +148,15 @@ class App {
             saleService: undefined,
             serviceService: undefined,
             revisionService: undefined,
+            notificationSettingsService: undefined
         }
 
         services.userService = new UserService({
             UserModel,
             redis
         })
+
+        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
 
         services.equipmentService = new EquipmentService({
             EquipmentModel
