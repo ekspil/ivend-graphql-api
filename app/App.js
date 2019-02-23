@@ -54,8 +54,6 @@ class App {
 
     async start() {
 
-        global.tokens = {}
-
         const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
             host: process.env.POSTGRES_HOST,
             dialect: "postgres",
@@ -130,7 +128,11 @@ class App {
         DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
         DepositModel.belongsTo(PaymentRequestModel, {foreignKey: "payment_request_id", as: "paymentRequest"})
 
-        ControllerModel.belongsToMany(ServiceModel, {through: "controller_services"})
+        ControllerModel.belongsToMany(ServiceModel, {
+            through: "controller_services",
+            foreignKey: "controller_id",
+            otherKey: "service_id"
+        })
 
         await sequelize.authenticate()
         await sequelize.sync({force: true})
@@ -222,6 +224,9 @@ class App {
             itemService: services.itemService
         })
 
+        services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
+        services.billingService = new BillingService({TransactionModel, PaymentRequestModel, DepositModel})
+        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.depositService = new DepositService({DepositModel, PaymentRequestModel})
 
         const populateWithFakeData = async () => {
@@ -247,7 +252,12 @@ class App {
 
             const revision = await services.revisionService.createRevision({name: "1"}, user)
 
-            await services.serviceService.createService({name: "Telemetry", price: 1500, billingType: "DAILY", type: "CONTROLLER"}, user)
+            await services.serviceService.createService({
+                name: "Telemetry",
+                price: 1500,
+                billingType: "DAILY",
+                type: "CONTROLLER"
+            }, user)
 
             // First test controller
             // No bank terminal and fiscal registrar
