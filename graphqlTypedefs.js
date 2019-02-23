@@ -23,7 +23,7 @@ const typeDefs = gql`
         overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
     }
-
+    
     input Period {
         from: Timestamp!
         to: Timestamp!
@@ -150,6 +150,7 @@ const typeDefs = gql`
         role: String!
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
+        balance: Float!
     }
 
     type NotificationSetting {

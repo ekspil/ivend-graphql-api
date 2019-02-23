@@ -2,7 +2,7 @@ const NotificationType = require("../../enum/NotificationType")
 const NotificationDTO = require("../../models/dto/NotificationDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 
-function ControllerResolver({notificationSettingsService, legalInfoService}) {
+function ControllerResolver({notificationSettingsService, legalInfoService, billingService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
@@ -35,9 +35,16 @@ function ControllerResolver({notificationSettingsService, legalInfoService}) {
         return new LegalInfoDTO(legalInfo)
     }
 
+    const balance = async (obj, args, context) => {
+        const {user} = context
+
+        return await billingService.getBalance(user)
+    }
+
     return {
         notificationSettings,
-        legalInfo
+        legalInfo,
+        balance
     }
 
 }

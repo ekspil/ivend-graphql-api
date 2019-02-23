@@ -20,6 +20,7 @@ const RevisionService = require("./services/RevisionService")
 const NotificationSettingsService = require("./services/NotificationSettingsService")
 const LegalInfoService = require("./services/LegalInfoService")
 const DepositService = require("./services/DepositService")
+const BillingService = require("./services/BillingService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -165,7 +166,8 @@ class App {
             revisionService: undefined,
             notificationSettingsService: undefined,
             legalInfoService: undefined,
-            depositService: undefined
+            depositService: undefined,
+            billingService: undefined
         }
 
         services.userService = new UserService({
@@ -176,6 +178,8 @@ class App {
         services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
 
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
+
+        services.billingService = new BillingService({TransactionModel, DepositModel, PaymentRequestModel})
 
         services.equipmentService = new EquipmentService({
             EquipmentModel
