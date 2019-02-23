@@ -81,6 +81,7 @@ class UserService {
         })
     }
 
+
     async hashPassword(password) {
         return await bcryptjs.hash(password, bcryptRounds)
     }

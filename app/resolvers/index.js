@@ -7,7 +7,7 @@ const Resolvers = function (injects) {
 
     const {
         userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService,
-        saleService, itemService, itemMatrixService, revisionService, depositService
+        saleService, itemService, itemMatrixService, revisionService, notificationSettingsService, legalInfoService, depositService
     } = injects
 
     const mutations = new Mutations({
@@ -20,10 +20,12 @@ const Resolvers = function (injects) {
         itemService,
         itemMatrixService,
         revisionService,
+        notificationSettingsService,
+        legalInfoService,
         depositService
     })
 
-    const defaultResolvers = new DefaultResolvers({saleService, controllerService, depositService})
+    const defaultResolvers = new DefaultResolvers({saleService, controllerService, notificationSettingsService, depositService})
 
     const queries = new Queries({controllerService, itemMatrixService, equipmentService, revisionService, userService})
 

@@ -23,11 +23,12 @@ const typeDefs = gql`
         overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
     }
-    
+
     input Period {
         from: Timestamp!
         to: Timestamp!
     }
+
     
     type Deposit {
         id: Int!
@@ -47,7 +48,7 @@ const typeDefs = gql`
         salesSummary: SalesSummary!
         lastSaleTime: Timestamp!
     }
-    
+
     type SalesSummary {
         salesCount: Int!
         overallAmount: Int!
@@ -147,6 +148,18 @@ const typeDefs = gql`
         email: String!
         phone: String!
         role: String!
+        notificationSettings: [NotificationSetting!]!
+        legalInfo: LegalInfo
+    }
+
+    type NotificationSetting {
+        type: NotificationType!
+        email: Boolean!
+        sms: Boolean!
+    }
+
+    enum NotificationType {
+        CONTROLLER_NO_CONNECTION
     }
 
     type Item {
@@ -155,7 +168,7 @@ const typeDefs = gql`
         price: Float!
         user: User!
     }
-    
+
     type Revision {
         id: Int!
         name: String!
@@ -208,18 +221,18 @@ const typeDefs = gql`
         buttonId: Int!
         type: SaleType!
     }
-    
+
     enum SaleType {
         CASH
         CASHLESS
     }
-    
+
     input CreateUserInput {
         phone: String!
         email: String!
         password: String!
     }
-    
+
     input RequestTokenInput {
         phone: String!
         password: String!
@@ -264,6 +277,42 @@ const typeDefs = gql`
         name: String!
     }
 
+    input UpdateNotificationSettingInput {
+        type: NotificationType!
+        email: Boolean!
+        sms: Boolean!
+    }
+
+    type LegalInfo {
+        companyName: String!
+        city: String!
+        actualAddress: String!
+        inn: String!
+        ogrn: String!
+        legalAddress: String!
+        director: String!
+        directorPhone: String!
+        directorEmail: String!
+        contactPerson: String!
+        contactPhone: String!
+        contactEmail: String!
+    }
+
+    input LegalInfoInput {
+        companyName: String!
+        city: String!
+        actualAddress: String!
+        inn: String!
+        ogrn: String!
+        legalAddress: String!
+        director: String!
+        directorPhone: String!
+        directorEmail: String!
+        contactPerson: String!
+        contactPhone: String!
+        contactEmail: String!
+    }
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
@@ -273,7 +322,7 @@ const typeDefs = gql`
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
     }
-    
+
     type Mutation {
         registerUser(input: CreateUserInput!): User
         requestToken(input: RequestTokenInput!): String
@@ -290,6 +339,8 @@ const typeDefs = gql`
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
+        updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
+        updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
     }
 

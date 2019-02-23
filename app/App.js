@@ -17,6 +17,8 @@ const ItemMatrixService = require("./services/ItemMatrixService")
 const ButtonItemService = require("./services/ButtonItemService")
 const ServiceService = require("./services/ServiceService")
 const RevisionService = require("./services/RevisionService")
+const NotificationSettingsService = require("./services/NotificationSettingsService")
+const LegalInfoService = require("./services/LegalInfoService")
 const DepositService = require("./services/DepositService")
 
 const User = require("./models/sequelize/User")
@@ -32,6 +34,8 @@ const ControllerState = require("./models/sequelize/ControllerState")
 const ControllerError = require("./models/sequelize/ControllerError")
 const Service = require("./models/sequelize/Service")
 const Revision = require("./models/sequelize/Revision")
+const NotificationSetting = require("./models/sequelize/NotificationSetting")
+const LegalInfo = require("./models/sequelize/LegalInfo")
 const Deposit = require("./models/sequelize/Deposit")
 const PaymentRequest = require("./models/sequelize/PaymentRequest")
 
@@ -77,6 +81,11 @@ class App {
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
         const RevisionModel = sequelize.define("revisions", Revision)
+        const NotificationSettingModel = sequelize.define("notification_settings", NotificationSetting)
+        const LegalInfoModel = sequelize.define("legal_infos", LegalInfo)
+
+        UserModel.belongsTo(LegalInfoModel, {foreignKey: "legal_info_id", as: "legalInfo"})
+        NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
 
@@ -151,6 +160,8 @@ class App {
             saleService: undefined,
             serviceService: undefined,
             revisionService: undefined,
+            notificationSettingsService: undefined,
+            legalInfoService: undefined,
             depositService: undefined
         }
 
@@ -158,6 +169,10 @@ class App {
             UserModel,
             redis
         })
+
+        services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
+
+        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
 
         services.equipmentService = new EquipmentService({
             EquipmentModel
