@@ -7,10 +7,6 @@ const PaymentRequest = {
         primaryKey: true,
         autoIncrement: true
     },
-    amount: {
-        type: Sequelize.DataTypes.DECIMAL,
-        allowNull: false
-    },
     idempotenceKey: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false

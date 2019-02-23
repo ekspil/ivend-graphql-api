@@ -21,6 +21,8 @@ class DepositService {
             throw new NotAuthorized()
         }
 
+
+        //todo move out to func
         const deposit = await this.Deposit.findOne({
             where: {
                 user_id: user.id
@@ -57,6 +59,7 @@ class DepositService {
                     const {paymentRequestId} = json
 
                     const deposit = new Deposit()
+                    deposit.amount = amount
                     deposit.payment_request_id = paymentRequestId
                     deposit.user_id = user.id
 

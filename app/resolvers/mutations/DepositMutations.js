@@ -13,7 +13,7 @@ function DepositMutations({depositService}) {
         const {status, redirectUrl} = paymentRequest
         const {id} = deposit
 
-        return new DepositDTO({id, amount: paymentRequest.amount, status, redirectUrl})
+        return new DepositDTO({id, amount: deposit.amount, status, redirectUrl})
     }
 
 
