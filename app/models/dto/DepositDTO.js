@@ -11,13 +11,13 @@ class DepositDTO {
                 this.status = "PENDING"
                 break
             case "succeeded":
-                this.status = "SUCCEDED"
+                this.status = "SUCCEEDED"
                 break
             case "canceled":
-                this.status = "CANCELED"
+                this.status = "CANCELLED"
                 break
             default:
-                throw new Error("Unknown status received from payment")
+                throw new Error("Unknown payment status")
         }
     }
 }
