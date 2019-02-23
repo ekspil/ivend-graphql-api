@@ -5,13 +5,12 @@ const Service = require("../models/Service")
 
 class ServiceService {
 
-    constructor({ServiceModel, UserServicesModel}) {
+    constructor({ServiceModel}) {
         this.Service = ServiceModel
-        this.UserServicesModel = UserServicesModel
 
         this.createService = this.createService.bind(this)
         this.findById = this.findById.bind(this)
-        this.addServicesToUser = this.addServicesToUser.bind(this)
+        this.getControllerServices = this.getControllerServices.bind(this)
     }
 
     async createService(createServiceInput, user) {
@@ -19,11 +18,13 @@ class ServiceService {
             throw new NotAuthorized()
         }
 
-        const {name, price} = createServiceInput
+        const {name, price, billingType, type} = createServiceInput
 
         const service = new Service()
         service.name = name
         service.price = price
+        service.billingType = billingType
+        service.type = type
 
         return await this.Service.create(service)
     }
@@ -40,6 +41,19 @@ class ServiceService {
         })
     }
 
+    async getControllerServices(user) {
+        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Service.findAll({
+            where: {
+                type: "CONTROLLER"
+            }
+        })
+    }
+
+/*
     async addServicesToUser(services, user) {
         if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
             throw new NotAuthorized()
@@ -61,7 +75,7 @@ class ServiceService {
                 })
             }
         }
-    }
+    }*/
 }
 
 module.exports = ServiceService

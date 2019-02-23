@@ -113,20 +113,6 @@ class ControllerService {
             controller.bank_terminal_id = bankTerminal.id
         }
 
-        if (serviceIds) {
-            const services = await Promise.all(serviceIds.map(async serviceId => {
-                const service = await this.serviceService.findById(serviceId, user)
-
-                if (!service) {
-                    throw new Error(`Service with id ${serviceId} not found`)
-                }
-
-                return service
-            }))
-
-            await this.serviceService.addServicesToUser(services, user)
-        }
-
         controller.name = name
         controller.uid = uid
         controller.revision = revision
@@ -138,6 +124,19 @@ class ControllerService {
         const savedController = await this.Controller.create(controller, {})
 
         await this.itemMatrixService.createItemMatrix({buttons: []}, savedController, user)
+
+        if (serviceIds) {
+            await Promise.all(serviceIds.map(async serviceId => {
+                const service = await this.serviceService.findById(serviceId, user)
+
+                if (!service) {
+                    throw new Error(`Service with id ${serviceId} not found`)
+                }
+
+                await savedController.addService(service)
+            }))
+
+        }
 
         return await this.Controller.find({
             include: this.controllerIncludes,

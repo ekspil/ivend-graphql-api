@@ -23,26 +23,26 @@ const typeDefs = gql`
         overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
     }
-    
+
     input Period {
         from: Timestamp!
         to: Timestamp!
     }
 
-    
+
     type Deposit {
         id: Int!
         amount: Float!
         status: PaymentStatus!
         redirectUrl: String!
     }
-    
+
     enum PaymentStatus {
         SUCCEEDED
         CANCELED
         PENDING
     }
-    
+
     type ItemSalesStat {
         item: Item!
         salesSummary: SalesSummary!
@@ -80,7 +80,7 @@ const typeDefs = gql`
         fiscalRegistrarId: Int
         bankTerminalId: Int
         itemMatrixId: Int
-        serviceIds: [Int]
+        serviceIds: [Int!]
     }
 
     input CreateItemMatrixInput {
@@ -315,6 +315,22 @@ const typeDefs = gql`
         contactEmail: String!
     }
 
+    type AvailableServices {
+        controller: [Service!]!
+    }
+
+    type Service {
+        id: Int!
+        name: String!
+        price: Float!
+        billingType: BillingType!
+    }
+
+    enum BillingType {
+        DAILY
+        MONTHLY
+    }
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
@@ -323,6 +339,7 @@ const typeDefs = gql`
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
+        getAvailableServices: AvailableServices!
     }
 
     type Mutation {

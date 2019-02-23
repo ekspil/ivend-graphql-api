@@ -13,7 +13,17 @@ const Service = {
     },
     price: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
+    },
+    // DAILY, MONTHY, etc...
+    billingType: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+    },
+    // applied to what? CONTROLLER, USER, etc ...
+    type: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
     }
 }
 

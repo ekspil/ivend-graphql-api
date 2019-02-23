@@ -130,24 +130,7 @@ class App {
         DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
         DepositModel.belongsTo(PaymentRequestModel, {foreignKey: "payment_request_id", as: "paymentRequest"})
 
-        const UserServicesModel = sequelize.define("user_services", {
-            id: {
-                type: Sequelize.INTEGER,
-                primaryKey: true,
-                autoIncrement: true
-            },
-            count: {
-                type: Sequelize.INTEGER,
-                allowNull: false
-            }
-        })
-
-        UserModel.belongsToMany(ServiceModel, {
-            foreignKey: "user_id",
-            otherKey: "service_id",
-            through: UserServicesModel
-        })
-        ServiceModel.hasMany(UserModel)
+        ControllerModel.belongsToMany(ServiceModel, {through: "controller_services"})
 
         await sequelize.authenticate()
         await sequelize.sync({force: true})
@@ -175,12 +158,6 @@ class App {
             redis
         })
 
-        services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
-
-        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
-
-        services.billingService = new BillingService({TransactionModel, DepositModel, PaymentRequestModel})
-
         services.equipmentService = new EquipmentService({
             EquipmentModel
         })
@@ -193,7 +170,7 @@ class App {
             BankTerminalModel
         })
 
-        services.serviceService = new ServiceService({ServiceModel, UserServicesModel})
+        services.serviceService = new ServiceService({ServiceModel})
 
 
         services.itemService = new ItemService({ItemModel})
@@ -270,7 +247,7 @@ class App {
 
             const revision = await services.revisionService.createRevision({name: "1"}, user)
 
-            await services.serviceService.createService({name: "Telemetry", price: 1500}, user)
+            await services.serviceService.createService({name: "Telemetry", price: 1500, billingType: "DAILY", type: "CONTROLLER"}, user)
 
             // First test controller
             // No bank terminal and fiscal registrar
@@ -281,7 +258,8 @@ class App {
                 equipmentId: equipment.id,
                 revisionId: revision.id,
                 status: "DISABLED",
-                mode: "MDB"
+                mode: "MDB",
+                serviceIds: [1]
             }
 
             await services.controllerService.createController(firstController, user)
