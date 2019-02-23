@@ -38,6 +38,7 @@ const NotificationSetting = require("./models/sequelize/NotificationSetting")
 const LegalInfo = require("./models/sequelize/LegalInfo")
 const Deposit = require("./models/sequelize/Deposit")
 const PaymentRequest = require("./models/sequelize/PaymentRequest")
+const Transaction = require("./models/sequelize/Transaction")
 
 const redis = new Redis({
     port: process.env.REDIS_PORT,
@@ -88,8 +89,10 @@ class App {
         NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
+        const TransactionModel = sequelize.define("transactions", Transaction)
 
         ItemModel.belongsTo(UserModel)
+        TransactionModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
         SaleModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
