@@ -151,6 +151,7 @@ const typeDefs = gql`
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
         balance: Float!
+        deposits: [Deposit!]!
     }
 
     type NotificationSetting {

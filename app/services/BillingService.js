@@ -9,7 +9,20 @@ class BillingService {
         this.Deposit = DepositModel
         this.PaymentRequest = PaymentRequestModel
 
+        this.getDeposits = this.getDeposits.bind(this)
         this.getBalance = this.getBalance.bind(this)
+    }
+
+    async getDeposits(user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        const where = {
+            user_id: user.id
+        }
+
+        return await this.Deposit.findAll({where, include: [{model: this.PaymentRequest, as: "paymentRequest"}]})
     }
 
     async getBalance(user) {
@@ -23,7 +36,7 @@ class BillingService {
 
         const balance = await this.Transaction.sum("amount", where)
 
-        if(Number.isNaN(balance)) {
+        if (Number.isNaN(balance)) {
             return 0
         }
 
