@@ -1,6 +1,5 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const Permission = require("../enum/Permission")
-const {Op} = require("sequelize")
 const LegalInfo = require("../models/LegalInfo")
 
 class LegalInfoService {

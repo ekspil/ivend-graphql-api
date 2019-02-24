@@ -127,7 +127,7 @@ class App {
         DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
         DepositModel.belongsTo(PaymentRequestModel, {foreignKey: "payment_request_id", as: "paymentRequest"})
 
-        const ControllerServiceModel = ControllerModel.belongsToMany(ServiceModel, {
+        ControllerModel.belongsToMany(ServiceModel, {
             through: "controller_services",
             foreignKey: "controller_id",
             otherKey: "service_id"
@@ -255,7 +255,7 @@ class App {
 
             const revision = await services.revisionService.createRevision({name: "1"}, user)
 
-            const telemetryService = await services.serviceService.createService({
+            await services.serviceService.createService({
                 name: "Telemetry",
                 price: 150,
                 billingType: "DAILY",
