@@ -41,7 +41,7 @@ const PaymentRequest = require("./models/sequelize/PaymentRequest")
 const Transaction = require("./models/sequelize/Transaction")
 
 const redis = new Redis({
-    port: process.env.REDIS_PORT,
+    port: process.env.REDIS_PORT || 6379,
     host: process.env.REDIS_HOST,
     password: process.env.REDIS_PASSWORD,
 })
