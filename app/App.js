@@ -19,7 +19,6 @@ const ServiceService = require("./services/ServiceService")
 const RevisionService = require("./services/RevisionService")
 const NotificationSettingsService = require("./services/NotificationSettingsService")
 const LegalInfoService = require("./services/LegalInfoService")
-const DepositService = require("./services/DepositService")
 const BillingService = require("./services/BillingService")
 
 const User = require("./models/sequelize/User")
@@ -151,7 +150,6 @@ class App {
             revisionService: undefined,
             notificationSettingsService: undefined,
             legalInfoService: undefined,
-            depositService: undefined,
             billingService: undefined
         }
 
@@ -227,14 +225,12 @@ class App {
         services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
         services.billingService = new BillingService({
             ControllerModel,
-            ControllerServiceModel,
+            DepositModel,
+            PaymentRequestModel,
             ServiceModel,
             TransactionModel,
-            PaymentRequestModel,
-            DepositModel
         })
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
-        services.depositService = new DepositService({DepositModel, PaymentRequestModel})
 
         const populateWithFakeData = async () => {
 
@@ -261,21 +257,7 @@ class App {
 
             const telemetryService = await services.serviceService.createService({
                 name: "Telemetry",
-                price: 500,
-                billingType: "DAILY",
-                type: "CONTROLLER"
-            }, user)
-
-            const fiscalService = await services.serviceService.createService({
-                name: "Fiscal",
-                price: 12,
-                billingType: "DAILY",
-                type: "CONTROLLER"
-            }, user)
-
-            const option1Service = await services.serviceService.createService({
-                name: "Option 1",
-                price: 290,
+                price: 150,
                 billingType: "DAILY",
                 type: "CONTROLLER"
             }, user)
@@ -290,7 +272,7 @@ class App {
                 revisionId: revision.id,
                 status: "DISABLED",
                 mode: "MDB",
-                serviceIds: [1, 2, 3]
+                serviceIds: [1]
             }
 
             await services.controllerService.createController(firstController, user)

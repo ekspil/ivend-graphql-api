@@ -1,12 +1,12 @@
 const DepositDTO = require("../../models/dto/DepositDTO")
 
-function DepositMutations({depositService}) {
+function DepositMutations({billingService}) {
 
     const requestDeposit = async (root, args, context) => {
         const {amount} = args
         const {user} = context
 
-        const deposit = await depositService.requestDeposit(amount, user)
+        const deposit = await billingService.requestDeposit(amount, user)
 
         const paymentRequest = await deposit.getPaymentRequest()
 
