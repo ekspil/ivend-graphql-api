@@ -19,5 +19,8 @@ spec:
         image: registry.gitlab.com/pshenmic/ivend/graphql
         ports:
         - containerPort: 80
+        envFrom:
+          - configMapRef:
+              name: graphql-config
       imagePullSecrets:
       - name: gitlabregistrycred
