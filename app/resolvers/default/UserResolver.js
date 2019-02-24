@@ -1,9 +1,9 @@
 const NotificationType = require("../../enum/NotificationType")
 const NotificationDTO = require("../../models/dto/NotificationDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
-const DepositDTO = require("../../models/dto/DepositDTO")
+const BillingDTO = require("../../models/dto/BillingDTO")
 
-function ControllerResolver({notificationSettingsService, legalInfoService, billingService}) {
+function ControllerResolver({notificationSettingsService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
@@ -36,30 +36,14 @@ function ControllerResolver({notificationSettingsService, legalInfoService, bill
         return new LegalInfoDTO(legalInfo)
     }
 
-    const balance = async (obj, args, context) => {
-        const {user} = context
-
-        return await billingService.getBalance(user)
-    }
-
-    const deposits = async (obj, args, context) => {
-        const {user} = context
-
-        const deposits = await billingService.getDeposits(user)
-
-        return deposits.map(deposit => (new DepositDTO({
-            id: deposit.id,
-            amount: deposit.amount,
-            status: deposit.paymentRequest.status,
-            redirectUrl: deposit.paymentRequest.redirectUrl
-        })))
+    const billing = async () => {
+        return new BillingDTO({})
     }
 
     return {
         notificationSettings,
         legalInfo,
-        balance,
-        deposits
+        billing
     }
 
 }

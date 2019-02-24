@@ -128,7 +128,7 @@ class App {
         DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
         DepositModel.belongsTo(PaymentRequestModel, {foreignKey: "payment_request_id", as: "paymentRequest"})
 
-        ControllerModel.belongsToMany(ServiceModel, {
+        const ControllerServiceModel = ControllerModel.belongsToMany(ServiceModel, {
             through: "controller_services",
             foreignKey: "controller_id",
             otherKey: "service_id"
@@ -225,7 +225,14 @@ class App {
         })
 
         services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
-        services.billingService = new BillingService({TransactionModel, PaymentRequestModel, DepositModel})
+        services.billingService = new BillingService({
+            ControllerModel,
+            ControllerServiceModel,
+            ServiceModel,
+            TransactionModel,
+            PaymentRequestModel,
+            DepositModel
+        })
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.depositService = new DepositService({DepositModel, PaymentRequestModel})
 
@@ -252,9 +259,23 @@ class App {
 
             const revision = await services.revisionService.createRevision({name: "1"}, user)
 
-            await services.serviceService.createService({
+            const telemetryService = await services.serviceService.createService({
                 name: "Telemetry",
-                price: 1500,
+                price: 500,
+                billingType: "DAILY",
+                type: "CONTROLLER"
+            }, user)
+
+            const fiscalService = await services.serviceService.createService({
+                name: "Fiscal",
+                price: 12,
+                billingType: "DAILY",
+                type: "CONTROLLER"
+            }, user)
+
+            const option1Service = await services.serviceService.createService({
+                name: "Option 1",
+                price: 290,
                 billingType: "DAILY",
                 type: "CONTROLLER"
             }, user)
@@ -269,7 +290,7 @@ class App {
                 revisionId: revision.id,
                 status: "DISABLED",
                 mode: "MDB",
-                serviceIds: [1]
+                serviceIds: [1, 2, 3]
             }
 
             await services.controllerService.createController(firstController, user)

@@ -143,6 +143,13 @@ const typeDefs = gql`
         message: String!
         errorTime: Timestamp!
     }
+    
+    type Billing {
+        balance: Float!
+        deposits: [Deposit!]!
+        dailyBill: Float!
+        daysLeft: Float!
+    }
 
     type User {
         email: String!
@@ -150,8 +157,7 @@ const typeDefs = gql`
         role: String!
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
-        balance: Float!
-        deposits: [Deposit!]!
+        billing: Billing!
     }
 
     type NotificationSetting {
