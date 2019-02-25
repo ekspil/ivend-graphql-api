@@ -127,6 +127,14 @@ class App {
         DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
         DepositModel.belongsTo(PaymentRequestModel, {foreignKey: "payment_request_id", as: "paymentRequest"})
 
+        sequelize.define("controller_services", {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: true
+            }
+        })
+
         ControllerModel.belongsToMany(ServiceModel, {
             through: "controller_services",
             foreignKey: "controller_id",
@@ -239,8 +247,15 @@ class App {
                 phone: "9999999999",
                 password: "test"
             })
-
             user.checkPermission = () => true
+
+            const user1 = await services.userService.registerUser({
+                email: "test22221",
+                phone: "9999999997",
+                password: "test234234"
+            })
+
+            user1.checkPermission = () => true
 
             const aggregatorUser = await services.userService.registerUser({
                 email: "aggregator",
@@ -263,8 +278,6 @@ class App {
             }, user)
 
             // First test controller
-            // No bank terminal and fiscal registrar
-            // No applied services
             const firstController = {
                 name: "First test controller",
                 uid: "10000003-1217",
@@ -275,7 +288,33 @@ class App {
                 serviceIds: [1]
             }
 
+
+            // First test controller
+            const secondController = {
+                name: "Second test controller",
+                uid: "10000003-1218",
+                equipmentId: equipment.id,
+                revisionId: revision.id,
+                status: "DISABLED",
+                mode: "MDB",
+                serviceIds: [1]
+            }
+
+
+            // First test controller
+            const thirdController = {
+                name: "Third test controller",
+                uid: "10000003-1219",
+                equipmentId: equipment.id,
+                revisionId: revision.id,
+                status: "DISABLED",
+                mode: "MDB",
+                serviceIds: [1]
+            }
+
             await services.controllerService.createController(firstController, user)
+            await services.controllerService.createController(secondController, user)
+            await services.controllerService.createController(thirdController, user1)
         }
 
         await populateWithFakeData()
