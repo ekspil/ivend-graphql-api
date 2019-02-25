@@ -11,6 +11,7 @@ class ServiceService {
         this.createService = this.createService.bind(this)
         this.findById = this.findById.bind(this)
         this.getControllerServices = this.getControllerServices.bind(this)
+        this.getServicesForController = this.getServicesForController.bind(this)
     }
 
     async createService(createServiceInput, user) {
@@ -41,6 +42,19 @@ class ServiceService {
         })
     }
 
+    async getServicesForController(id, user) {
+        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Service.findAll({
+            where: {
+                id,
+                type: "CONTROLLER"
+            }
+        })
+    }
+
     async getControllerServices(user) {
         if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
             throw new NotAuthorized()
@@ -53,29 +67,6 @@ class ServiceService {
         })
     }
 
-/*
-    async addServicesToUser(services, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
-            throw new NotAuthorized()
-        }
-
-        for (const service of services) {
-            // Check that such service exist in the user
-            const userService = await this.UserServicesModel.findOne({where: {service_id: service.id}})
-
-            if (userService) {
-                // If exist, update count
-                await userService.increment("count")
-            } else {
-                // If not, add
-                await user.addService(service, {
-                    through: {
-                        count: 1
-                    }
-                })
-            }
-        }
-    }*/
 }
 
 module.exports = ServiceService

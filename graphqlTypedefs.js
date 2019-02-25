@@ -22,6 +22,7 @@ const typeDefs = gql`
         itemSaleStats(period: Period): [ItemSalesStat!]!
         overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
+        services: [Service!]!
     }
 
     input Period {

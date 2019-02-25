@@ -26,7 +26,7 @@ const Resolvers = function (injects) {
         billingService
     })
 
-    const defaultResolvers = new DefaultResolvers({saleService, controllerService, notificationSettingsService, billingService})
+    const defaultResolvers = new DefaultResolvers({saleService, controllerService, notificationSettingsService, billingService, serviceService})
 
     const queries = new Queries({controllerService, itemMatrixService, equipmentService, revisionService, userService, serviceService})
 
