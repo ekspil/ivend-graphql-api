@@ -1,7 +1,7 @@
 const ItemDTO = require("../../models/dto/ItemDTO")
 const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
 
-function ItemMutations({itemService, itemMatrixService, controllerService}) {
+function ItemMutations({itemService, itemMatrixService}) {
 
     const createItem = async (root, args, context) => {
         const {input} = args
@@ -13,35 +13,29 @@ function ItemMutations({itemService, itemMatrixService, controllerService}) {
     }
 
 
-    const createItemMatrix = async (root, args, context) => {
+    const addButtonToItemMatrix = async (root, args, context) => {
         const {input} = args
         const {user} = context
 
-        const {controllerId} = input
-
-        const controller = await controllerService.getControllerById(controllerId, user)
-
-        const itemMatrix = await itemMatrixService.createItemMatrix(input, controller, user)
+        const itemMatrix = await itemMatrixService.addButtonToItemMatrix(input, user)
 
         return new ItemMatrixDTO(itemMatrix)
-
     }
-    const createItemInItemMatrix = async (root, args, context) => {
+
+
+    const removeButtonFromItemMatrix = async (root, args, context) => {
         const {input} = args
         const {user} = context
 
-        const result = await itemMatrixService.createItemInItemMatrix(input, user)
+        const itemMatrix = await itemMatrixService.removeButtonFromItemMatrix(input, user)
 
-        return new ItemMatrixDTO(result)
-
+        return new ItemMatrixDTO(itemMatrix)
     }
-
-
 
     return {
         createItem,
-        createItemMatrix,
-        createItemInItemMatrix
+        addButtonToItemMatrix,
+        removeButtonFromItemMatrix
     }
 
 }

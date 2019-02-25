@@ -15,22 +15,20 @@ class ItemMatrixService {
         this.buttonItemService = buttonItemService
 
         this.createItemMatrix = this.createItemMatrix.bind(this)
-        this.getItemFromMatrix = this.getItemFromMatrix.bind(this)
-        this.createItemInItemMatrix = this.createItemInItemMatrix.bind(this)
+        this.addButtonToItemMatrix = this.addButtonToItemMatrix.bind(this)
     }
 
-    async createItemMatrix(input, controller, user) {
+    async createItemMatrix(controllerId, user) {
         if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-
-        let itemMatrix = new ItemMatrix()
+        const itemMatrix = new ItemMatrix()
         itemMatrix.buttons = []
-        itemMatrix.user = user
-        itemMatrix.controller_id = controller.id
+        itemMatrix.user_id = user.id
+        itemMatrix.controller_id = controllerId
 
-        itemMatrix = await this.ItemMatrix.create(itemMatrix, {
+        return await this.ItemMatrix.create(itemMatrix, {
             include: [
                 {
                     model: this.ButtonItem,
@@ -38,59 +36,70 @@ class ItemMatrixService {
                 }
             ]
         })
-
-        // todo Check that all itemIds are exist
-        for (const createButtonItemInput of input.buttons) {
-            const {buttonId, price, itemName} = createButtonItemInput
-
-            const item = await this.itemService.createItem({name: itemName, price}, user)
-            await itemMatrix.addButton({buttonId, itemId: item.id})
-            const buttonItem = await this.buttonItemService.createButtonItem({
-                buttonId,
-                itemId: item.id,
-                itemMatrixId: itemMatrix.id
-            }, user)
-            await itemMatrix.addButton(buttonItem)
-            /*const buttonItem = await this.buttonItemService.createButtonItem({
-                buttonId,
-                itemId: item.id,
-                itemMatrixId: itemMatrix.id
-            }, user)*/
-        }
-
-        return itemMatrix
     }
 
-
-    async createItemInItemMatrix(input, user) {
+    async addButtonToItemMatrix(input, user) {
         if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-        const {itemMatrixId, buttonId, itemName, price} = input
+        const {itemMatrixId, buttonId, itemId} = input
 
-        let itemMatrix = await this.getItemMatrixById(itemMatrixId, user)
+        const item = await this.itemService.getItemById(itemId, user)
+
+        if (!item) {
+            throw new Error("Item not found")
+        }
+
+        const itemMatrix = await this.getItemMatrixById(itemMatrixId, user)
 
         if (!itemMatrix) {
             throw new Error("Item matrix not found")
         }
 
+        const {buttons} = itemMatrix
+
+        if (buttons.some(buttonItem => buttonItem.buttonId === buttonId)) {
+            throw new Error("Such buttonId already bound to this ItemMatrix")
+        }
+
         const buttonItem = new ButtonItem()
         buttonItem.buttonId = buttonId
-        buttonItem.itemMatrixId = itemMatrix.id
+        buttonItem.item_matrix_id = itemMatrix.id
+        buttonItem.item_id = item.id
 
-        const item = new Item()
-        item.name = itemName
-        item.price = price
+        await this.ButtonItem.create(buttonItem)
 
-        const resultItem = await this.itemService.createItem(item, user)
+        return this.getItemMatrixById(itemMatrixId, user)
+    }
 
+    async removeButtonFromItemMatrix(input, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
 
-        buttonItem.itemId = resultItem.id
+        const {itemMatrixId, buttonId} = input
 
-        const button = await itemMatrix.createButton(buttonItem)
+        const itemMatrix = await this.getItemMatrixById(itemMatrixId, user)
 
-        itemMatrix.buttons.push(button)
+        if (!itemMatrix) {
+            throw new Error("Item matrix not found")
+        }
+
+        const {buttons} = itemMatrix
+
+        if (!buttons.some(buttonItem => buttonItem.buttonId === buttonId)) {
+            throw new Error("No such buttonId in this ItemMatrix")
+        }
+
+        const [button] = buttons.filter(buttonItem => buttonItem.buttonId === buttonId)
+
+        if (!button) {
+            console.error("Unexpected situation, button from itemMatrix not found")
+            throw new Error("Internal server error")
+        }
+
+        await itemMatrix.removeButton(button)
 
         return this.getItemMatrixById(itemMatrixId, user)
     }
@@ -107,34 +116,13 @@ class ItemMatrixService {
                     model: this.ButtonItem,
                     as: "buttons",
                     include: [{
-                        model: this.Item,
-                        include: [{
-                            model: this.User
-                        }]
+                        model: this.Item
                     }]
                 }
             ]
         })
 
         return itemMatrix
-    }
-
-    async getItemFromMatrix(itemMatrix, buttonId, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
-            throw new NotAuthorized()
-        }
-
-        const {map} = itemMatrix
-
-        const itemId = map[buttonId]
-
-        if (!itemId) {
-            throw new Error(`Button with id ${buttonId} not registered on server`)
-        }
-
-        // Check that all ids are incremental
-        // Check that all itemIds are exist
-        return this.itemService.getButtonItemById(itemId, user)
     }
 
 

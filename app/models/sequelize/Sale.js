@@ -9,12 +9,12 @@ const Sale = {
     },
     type: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
     },
-    buttonId: {
-        type: Sequelize.DataTypes.INTEGER,
-        allowNull: false,
-        field: "button_id"
+    price: {
+        type: Sequelize.DataTypes.DECIMAL,
+        allowNull: false
     }
 }
+
 module.exports = Sale

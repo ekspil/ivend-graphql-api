@@ -173,12 +173,9 @@ const typeDefs = gql`
     type Item {
         id: Int,
         name: String!
-        price: Float!
-        user: User!
     }
 
-    type Revision {
-        id: Int!
+    type Revision {id: Int!
         name: String!
     }
 
@@ -227,6 +224,7 @@ const typeDefs = gql`
     input SaleEventInput {
         controllerUid: String!
         buttonId: Int!
+        price: Float!
         type: SaleType!
     }
 
@@ -274,11 +272,15 @@ const typeDefs = gql`
         CASHLESS
     }
 
-    input CreateItemInItemMatrixInput {
-        itemMatrixId: Int!,
-        buttonId: Int!,
-        itemName: String!,
-        price: Float!
+    input AddButtonToItemMatrixInput {
+        itemMatrixId: Int!
+        buttonId: Int!
+        itemId: Int!
+    }
+
+    input RemoveButtonFromItemMatrixInput {
+        itemMatrixId: Int!
+        buttonId: Int!
     }
 
     input CreateRevisionInput {
@@ -349,6 +351,10 @@ const typeDefs = gql`
     }
 
     type Mutation {
+        authController(uid:String!): Controller
+        registerControllerError(input: ControllerErrorInput!): ControllerError
+        registerControllerState(input: ControllerStateInput!): Controller
+        registerSale(input: SaleEventInput!): Sale
         registerUser(input: CreateUserInput!): User
         requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
@@ -356,14 +362,10 @@ const typeDefs = gql`
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
         createItem(input: CreateItemInput!): Item
-        createItemMatrix(input: CreateItemMatrixInput!): ItemMatrix
-        createItemInItemMatrix(input: CreateItemInItemMatrixInput!): ItemMatrix
+        addButtonToItemMatrix(input: AddButtonToItemMatrixInput!): ItemMatrix
+        removeButtonFromItemMatrix(input: RemoveButtonFromItemMatrixInput!): ItemMatrix
         createRevision(input: CreateRevisionInput!): Revision
         editController(id:Int, input: EditControllerInput!): Controller
-        authController(uid:String!): Controller
-        registerControllerError(input: ControllerErrorInput!): ControllerError
-        registerControllerState(input: ControllerStateInput!): Controller
-        registerSale(input: SaleEventInput!): Sale
         updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit

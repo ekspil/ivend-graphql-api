@@ -10,10 +10,6 @@ const Item = {
     name: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
-    },
-    price: {
-        type: Sequelize.DataTypes.DECIMAL,
-        allowNull: true,
     }
 }
 module.exports = Item

@@ -123,7 +123,7 @@ class ControllerService {
 
         const savedController = await this.Controller.create(controller, {})
 
-        await this.itemMatrixService.createItemMatrix({buttons: []}, savedController, user)
+        await this.itemMatrixService.createItemMatrix(savedController.id, user)
 
         if (serviceIds) {
             await Promise.all(serviceIds.map(async serviceId => {

@@ -14,7 +14,6 @@ const BankTerminalService = require("./services/BankTerminalService")
 const SaleService = require("./services/SaleService")
 const ItemService = require("./services/ItemService")
 const ItemMatrixService = require("./services/ItemMatrixService")
-const ButtonItemService = require("./services/ButtonItemService")
 const ServiceService = require("./services/ServiceService")
 const RevisionService = require("./services/RevisionService")
 const NotificationSettingsService = require("./services/NotificationSettingsService")
@@ -89,12 +88,11 @@ class App {
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
         const TransactionModel = sequelize.define("transactions", Transaction)
 
-        ItemModel.belongsTo(UserModel)
+        ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
         TransactionModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
         SaleModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
-        SaleModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
         ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
@@ -151,7 +149,6 @@ class App {
             fiscalRegistrarService: undefined,
             bankTerminalService: undefined,
             itemService: undefined,
-            buttonItemService: undefined,
             controllerService: undefined,
             saleService: undefined,
             serviceService: undefined,
@@ -183,22 +180,13 @@ class App {
 
         services.itemService = new ItemService({ItemModel})
 
-        services.buttonItemService = new ButtonItemService({
-            ButtonItemModel,
-            itemService: services.itemService,
-            itemMatrixService: services.itemMatrixService
-        })
-
         services.itemMatrixService = new ItemMatrixService({
             ItemMatrixModel,
             itemService: services.itemService,
-            buttonItemService: services.buttonItemService,
             ButtonItemModel,
             ItemModel,
             UserModel
         })
-
-        services.buttonItemService.itemMatrixService = services.itemMatrixService
 
         services.revisionService = new RevisionService({
             RevisionModel
@@ -217,7 +205,6 @@ class App {
             fiscalRegistrarService: services.fiscalRegistrarService,
             bankTerminalService: services.bankTerminalService,
             itemMatrixService: services.itemMatrixService,
-            buttonItemService: services.buttonItemService,
             serviceService: services.serviceService,
             revisionService: services.revisionService
         })
@@ -226,7 +213,6 @@ class App {
             SaleModel,
             ItemModel,
             controllerService: services.controllerService,
-            buttonItemService: services.buttonItemService,
             itemService: services.itemService
         })
 
@@ -267,6 +253,8 @@ class App {
 
 
             const equipment = await services.equipmentService.createEquipment({name: "test"}, user)
+
+            const coffeeItem = await services.itemService.createItem({name: "Coffee"}, user)
 
             const revision = await services.revisionService.createRevision({name: "1"}, user)
 

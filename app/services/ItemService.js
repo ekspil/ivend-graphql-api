@@ -16,12 +16,11 @@ class ItemService {
             throw new NotAuthorized()
         }
 
-        const {name, price} = input
+        const {name} = input
 
         const item = new Item()
         item.name = name
-        item.price = price
-        item.userId = user.id
+        item.user_id = user.id
 
         return await this.Item.create(item)
     }
@@ -30,6 +29,8 @@ class ItemService {
         if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
             throw new NotAuthorized()
         }
+
+        //todo reject if not authorized (user_id)
 
         return await this.Item.findOne({
             where: {

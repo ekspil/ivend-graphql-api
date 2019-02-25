@@ -24,31 +24,34 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const {controllerUid, type, buttonId} = input
+        //todo transaction
 
-        let controller = await this.controllerService.getControllerByUID(controllerUid, user)
+        const {controllerUid, type, price, buttonId} = input
+
+        const controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
         if (!controller) {
-            throw new Error("Error not found")
+            throw new Error("Controller not found")
         }
 
         const {itemMatrix} = controller
 
         if (!itemMatrix) {
-            throw new Error("Item matrix not found in this controller")
+            throw new Error("Item matrix not found for this controller")
         }
 
         const {buttons} = itemMatrix
 
         if (!buttons.some((buttonItem) => buttonItem.buttonId === buttonId)) {
-            const name = "New item"
-            const price = 1
-            const item = await this.itemService.createItem({name, price}, user)
+            const name = `Товар ${buttonId}`
+            const item = await this.itemService.createItem({name}, user)
+
             const buttonItem = await this.buttonItemService.createButtonItem({
                 buttonId,
                 itemId: item.id,
                 itemMatrixId: itemMatrix.id
             }, user)
+
             buttons.push(buttonItem)
         }
 
@@ -56,9 +59,15 @@ class SaleService {
             .filter((buttonItem) => buttonItem.buttonId === buttonId)
             .map(buttonItem => buttonItem.item_id)
 
+        if(!itemId) {
+            console.error("Unexpected situation, ItemId for sale not found")
+            throw new Error("Internal server error")
+        }
+
         const sale = new Sale()
         sale.buttonId = buttonId
         sale.type = type
+        sale.price = price
         sale.item_id = itemId
         sale.item_matrix_id = itemMatrix.id
         sale.controller_id = controller.id
@@ -146,7 +155,7 @@ class SaleService {
             controller_id: controllerId
         }
 
-        if(itemId) {
+        if (itemId) {
             where.item_id = itemId
         }
 
