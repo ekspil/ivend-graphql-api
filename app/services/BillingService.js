@@ -64,7 +64,13 @@ class BillingService {
         const dailyBill = await this.getDailyBill(user)
         const balance = await this.getBalance(user)
 
-        return Math.floor(balance / dailyBill)
+        const daysLeft = Math.floor(balance / dailyBill)
+
+        if(Number.isNaN(daysLeft)) {
+            return 0
+        }
+
+        return daysLeft
     }
 
     async getBalance(user) {
