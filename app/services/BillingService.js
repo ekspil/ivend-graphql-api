@@ -76,7 +76,7 @@ class BillingService {
             user_id: user.id
         }
 
-        const balance = await this.Transaction.sum("amount", where)
+        const balance = await this.Transaction.sum("amount", {where})
 
         if (Number.isNaN(balance)) {
             return 0
