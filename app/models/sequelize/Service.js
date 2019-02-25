@@ -12,7 +12,7 @@ const Service = {
         allowNull: false,
     },
     price: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.DECIMAL,
         allowNull: false,
     },
     // DAILY, MONTHY, etc...
