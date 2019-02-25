@@ -1,16 +1,17 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const Sale = require("../models/Sale")
+const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const ItemSaleStat = require("../models/ItemSaleStat")
 const SalesSummary = require("../models/SalesSummary")
 
 class SaleService {
 
-    constructor({SaleModel, ItemModel, controllerService, buttonItemService, itemService}) {
+    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService}) {
         this.Sale = SaleModel
         this.Item = ItemModel
+        this.ButtonItem = ButtonItemModel
         this.controllerService = controllerService
-        this.buttonItemService = buttonItemService
         this.itemService = itemService
 
         this.registerSale = this.registerSale.bind(this)
@@ -46,11 +47,12 @@ class SaleService {
             const name = `Товар ${buttonId}`
             const item = await this.itemService.createItem({name}, user)
 
-            const buttonItem = await this.buttonItemService.createButtonItem({
-                buttonId,
-                itemId: item.id,
-                itemMatrixId: itemMatrix.id
-            }, user)
+            const button = new ButtonItem()
+            button.buttonId = buttonId
+            button.item_id = item.id
+            button.item_matrix_id = itemMatrix.id
+
+            const buttonItem = await this.ButtonItem.create(button, user)
 
             buttons.push(buttonItem)
         }
@@ -59,7 +61,7 @@ class SaleService {
             .filter((buttonItem) => buttonItem.buttonId === buttonId)
             .map(buttonItem => buttonItem.item_id)
 
-        if(!itemId) {
+        if (!itemId) {
             console.error("Unexpected situation, ItemId for sale not found")
             throw new Error("Internal server error")
         }
@@ -174,7 +176,7 @@ class SaleService {
                 "item_id",
                 "type",
                 [sequelize.fn("COUNT", "sales.id"), "overallCount"],
-                [sequelize.fn("sum", sequelize.col("item.price")), "overallAmount"]
+                [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
             ],
             group: ["type", "sales.item_id", "item.id"],
             include: [{model: this.Item}],
