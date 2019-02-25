@@ -62,6 +62,7 @@ class SaleService {
             .map(buttonItem => buttonItem.item_id)
 
         if (!itemId) {
+            // eslint-disable-next-line no-console
             console.error("Unexpected situation, ItemId for sale not found")
             throw new Error("Internal server error")
         }

@@ -255,7 +255,7 @@ class App {
 
             const equipment = await services.equipmentService.createEquipment({name: "test"}, user)
 
-            const coffeeItem = await services.itemService.createItem({name: "Coffee"}, user)
+            await services.itemService.createItem({name: "Coffee"}, user)
 
             const revision = await services.revisionService.createRevision({name: "1"}, user)
 

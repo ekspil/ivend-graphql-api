@@ -1,6 +1,5 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const ItemMatrix = require("../models/ItemMatrix")
-const Item = require("../models/Item")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 
@@ -95,6 +94,7 @@ class ItemMatrixService {
         const [button] = buttons.filter(buttonItem => buttonItem.buttonId === buttonId)
 
         if (!button) {
+            // eslint-disable-next-line no-console
             console.error("Unexpected situation, button from itemMatrix not found")
             throw new Error("Internal server error")
         }
