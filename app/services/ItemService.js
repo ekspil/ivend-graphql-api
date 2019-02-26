@@ -39,6 +39,18 @@ class ItemService {
         })
     }
 
+    async getUserItems(user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Item.findAll({
+            where: {
+                user_id: user.id
+            }
+        })
+    }
+
 }
 
 module.exports = ItemService

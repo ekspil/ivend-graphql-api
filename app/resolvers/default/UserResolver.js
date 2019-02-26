@@ -1,9 +1,10 @@
 const NotificationType = require("../../enum/NotificationType")
 const NotificationDTO = require("../../models/dto/NotificationDTO")
+const ItemDTO = require("../../models/dto/ItemDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const BillingDTO = require("../../models/dto/BillingDTO")
 
-function ControllerResolver({notificationSettingsService}) {
+function UserResolver({notificationSettingsService, itemService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
@@ -36,6 +37,14 @@ function ControllerResolver({notificationSettingsService}) {
         return new LegalInfoDTO(legalInfo)
     }
 
+    const items = async (obj, args, context) => {
+        const {user} = context
+
+        const items = await itemService.getUserItems(user)
+
+        return items.map(item => (new ItemDTO(item)))
+    }
+
     const billing = async () => {
         return new BillingDTO({})
     }
@@ -43,10 +52,11 @@ function ControllerResolver({notificationSettingsService}) {
     return {
         notificationSettings,
         legalInfo,
-        billing
+        billing,
+        items
     }
 
 }
 
-module.exports = ControllerResolver
+module.exports = UserResolver
 

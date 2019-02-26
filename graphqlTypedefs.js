@@ -159,6 +159,7 @@ const typeDefs = gql`
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
         billing: Billing!
+        items: [Item!]!
     }
 
     type NotificationSetting {
