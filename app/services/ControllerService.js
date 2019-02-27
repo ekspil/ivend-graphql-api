@@ -121,7 +121,7 @@ class ControllerService {
 
         controller.user_id = user.id
 
-        const savedController = await this.Controller.create(controller, {})
+        const savedController = await this.Controller.create(controller)
 
         await this.itemMatrixService.createItemMatrix(savedController.id, user)
 
@@ -250,14 +250,12 @@ class ControllerService {
 
 
     async getControllerByUID(uid, user) {
-        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
-            throw new NotAuthorized()
-        }
 
         const controller = await this.Controller.findOne({
             where: {
                 uid
             },
+            nest: true,
             include: this.controllerIncludes
         })
 

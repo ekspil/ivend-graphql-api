@@ -9,7 +9,8 @@ const PaymentRequest = {
     },
     idempotenceKey: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        field: "idempotence_key"
     },
     to: {
         type: Sequelize.DataTypes.STRING,
@@ -17,15 +18,29 @@ const PaymentRequest = {
     },
     paymentId: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        field: "payment_id"
     },
     redirectUrl: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        field: "redirect_url"
     },
     status: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false
+    },
+    createdAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "created_at"
+    },
+    updatedAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "updated_at"
     }
 }
 

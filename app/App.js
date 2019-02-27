@@ -1,6 +1,6 @@
 const Redis = require("ioredis")
 const Sequelize = require("sequelize")
-const {ApolloServer} = require("apollo-server")
+const { ApolloServer } = require("apollo-server")
 const typeDefs = require("../graphqlTypedefs")
 const Resolvers = require("./resolvers")
 
@@ -38,6 +38,7 @@ const LegalInfo = require("./models/sequelize/LegalInfo")
 const Deposit = require("./models/sequelize/Deposit")
 const PaymentRequest = require("./models/sequelize/PaymentRequest")
 const Transaction = require("./models/sequelize/Transaction")
+const ControllerServices = require("./models/sequelize/ControllerServices")
 
 const redis = new Redis({
     port: 6379,
@@ -81,56 +82,74 @@ class App {
         const RevisionModel = sequelize.define("revisions", Revision)
         const NotificationSettingModel = sequelize.define("notification_settings", NotificationSetting)
         const LegalInfoModel = sequelize.define("legal_infos", LegalInfo)
-
-        UserModel.belongsTo(LegalInfoModel, {foreignKey: "legal_info_id", as: "legalInfo"})
-        NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
         const TransactionModel = sequelize.define("transactions", Transaction)
+        sequelize.define("controller_services", ControllerServices)
 
-        ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        TransactionModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        UserModel.belongsTo(LegalInfoModel, {
+            foreignKey: "legal_info_id",
+            as: "legalInfo"
+        })
 
-        SaleModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
-        SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
+        NotificationSettingModel.belongsTo(UserModel, { foreignKey: "user_id" })
 
-        ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
+        ItemModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        TransactionModel.belongsTo(UserModel, { foreignKey: "user_id" })
 
-        ItemMatrixModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        ItemMatrixModel.hasMany(ButtonItemModel, {as: "buttons", foreignKey: "item_matrix_id"})
+        SaleModel.belongsTo(ControllerModel, { foreignKey: "controller_id" })
+        SaleModel.belongsTo(ItemModel, { foreignKey: "item_id" })
 
-        ButtonItemModel.belongsTo(ItemModel, {foreignKey: "item_id"})
+        ButtonItemModel.belongsTo(ItemMatrixModel, { foreignKey: "item_matrix_id" })
 
-        ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+        ItemMatrixModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        ItemMatrixModel.hasMany(ButtonItemModel, {
+            as: "buttons",
+            foreignKey: "item_matrix_id"
+        })
+
+        ButtonItemModel.belongsTo(ItemModel, { foreignKey: "item_id" })
+
+        ControllerErrorModel.belongsTo(ControllerModel, { foreignKey: "controller_id" })
 
         // Controller relations
-        ControllerModel.belongsTo(EquipmentModel, {foreignKey: "equipment_id", as: "equipment"})
-        ControllerModel.belongsTo(RevisionModel, {foreignKey: "revision_id", as: "revision"})
-        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id"})
-        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
+        ControllerModel.belongsTo(EquipmentModel, {
+            foreignKey: "equipment_id",
+            as: "equipment"
+        })
+        ControllerModel.belongsTo(RevisionModel, {
+            foreignKey: "revision_id",
+            as: "revision"
+        })
+        ControllerModel.belongsTo(BankTerminalModel, { foreignKey: "bank_terminal_id" })
+        ControllerModel.belongsTo(FiscalRegistrarModel, { foreignKey: "fiscal_registrar_id" })
 
         // ItemMatrix
-        ControllerModel.hasOne(ItemMatrixModel, {foreignKey: "controller_id", as: "itemMatrix"})
-        ItemMatrixModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+        ControllerModel.hasOne(ItemMatrixModel, {
+            foreignKey: "controller_id",
+            as: "itemMatrix"
+        })
+        ItemMatrixModel.belongsTo(ControllerModel, { foreignKey: "controller_id" })
 
 
-        ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        ControllerModel.belongsTo(ControllerStateModel, {foreignKey: "last_state_id", as: "lastState"})
+        ControllerModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        ControllerModel.belongsTo(ControllerStateModel, {
+            foreignKey: "last_state_id",
+            as: "lastState"
+        })
 
-        EquipmentModel.hasMany(ControllerModel, {foreignKey: "equipment_id", as: "equipment"})
-        FiscalRegistrarModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
-        BankTerminalModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
-        RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
+        EquipmentModel.hasMany(ControllerModel, {
+            foreignKey: "equipment_id",
+            as: "equipment"
+        })
+        FiscalRegistrarModel.hasMany(ControllerModel, { foreignKey: "bank_terminal_id" })
+        BankTerminalModel.hasMany(ControllerModel, { foreignKey: "bank_terminal_id" })
+        RevisionModel.hasMany(ControllerModel, { foreignKey: "revision_id" })
 
-        DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
-        DepositModel.belongsTo(PaymentRequestModel, {foreignKey: "payment_request_id", as: "paymentRequest"})
-
-        sequelize.define("controller_services", {
-            id: {
-                type: Sequelize.INTEGER,
-                primaryKey: true,
-                autoIncrement: true
-            }
+        DepositModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        DepositModel.belongsTo(PaymentRequestModel, {
+            foreignKey: "payment_request_id",
+            as: "paymentRequest"
         })
 
         ControllerModel.belongsToMany(ServiceModel, {
@@ -140,7 +159,7 @@ class App {
         })
 
         await sequelize.authenticate()
-        await sequelize.sync({force: true})
+
 
         // Map for injecting
         const services = {
@@ -175,10 +194,10 @@ class App {
             BankTerminalModel
         })
 
-        services.serviceService = new ServiceService({ServiceModel})
+        services.serviceService = new ServiceService({ ServiceModel })
 
 
-        services.itemService = new ItemService({ItemModel})
+        services.itemService = new ItemService({ ItemModel })
 
         services.itemMatrixService = new ItemMatrixService({
             ItemMatrixModel,
@@ -217,7 +236,10 @@ class App {
             itemService: services.itemService
         })
 
-        services.legalInfoService = new LegalInfoService({UserModel, LegalInfoModel})
+        services.legalInfoService = new LegalInfoService({
+            UserModel,
+            LegalInfoModel
+        })
         services.billingService = new BillingService({
             ControllerModel,
             DepositModel,
@@ -225,7 +247,7 @@ class App {
             ServiceModel,
             TransactionModel,
         })
-        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
+        services.notificationSettingsService = new NotificationSettingsService({ NotificationSettingModel })
 
         const populateWithFakeData = async () => {
 
@@ -253,11 +275,11 @@ class App {
             aggregatorUser.checkPermission = () => true
 
 
-            const equipment = await services.equipmentService.createEquipment({name: "test"}, user)
+            const equipment = await services.equipmentService.createEquipment({ name: "test" }, user)
 
-            await services.itemService.createItem({name: "Coffee"}, user)
+            await services.itemService.createItem({ name: "Coffee" }, user)
 
-            const revision = await services.revisionService.createRevision({name: "1"}, user)
+            const revision = await services.revisionService.createRevision({ name: "1" }, user)
 
             await services.serviceService.createService({
                 name: "Telemetry",
@@ -306,7 +328,10 @@ class App {
             await services.controllerService.createController(thirdController, user1)
         }
 
-        await populateWithFakeData()
+        if (process.env.NODE_ENV === "development") {
+            await sequelize.sync({ force: true })
+            await populateWithFakeData()
+        }
 
         const resolvers = new Resolvers({
             ...services
@@ -315,9 +340,12 @@ class App {
         const server = new ApolloServer({
             typeDefs,
             resolvers,
-            context: new ContextResolver({UserModel, redis}),
-            introspection: true,
-            playground: true
+            context: new ContextResolver({
+                UserModel,
+                redis
+            }),
+            introspection: process.env.NODE_ENV === "development",
+            playground: process.env.NODE_ENV === "development"
         })
 
         const serverInfo = await server.listen()

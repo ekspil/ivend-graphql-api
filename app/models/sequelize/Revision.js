@@ -12,6 +12,18 @@ const Revision = {
         allowNull: false,
         unique: true
     },
+    createdAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "created_at"
+    },
+    updatedAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "updated_at"
+    }
 }
 module.exports = Revision
 

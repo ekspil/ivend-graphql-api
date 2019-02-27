@@ -1,15 +1,11 @@
 const Sequelize = require("sequelize")
 
-const Item = {
+const ControllerServices = {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
-    },
-    name: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -24,4 +20,4 @@ const Item = {
         field: "updated_at"
     }
 }
-module.exports = Item
+module.exports = ControllerServices

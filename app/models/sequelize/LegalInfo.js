@@ -8,65 +8,78 @@ const LegalInfo = {
         autoIncrement: true
     },
     companyName: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "company_name"
     },
     city: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "city"
     },
     actualAddress: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "actual_address"
     },
     inn: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "inn"
     },
     ogrn: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
-        field: "company_name"
+        field: "ogrn"
     },
     legalAddress: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "legal_address"
     },
     director: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "director"
     },
     directorPhone: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "director_phone"
     },
     directorEmail: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "director_email"
     },
     contactPerson: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "contact_person"
     },
     contactPhone: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "contact_phone"
     },
     contactEmail: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "contact_email"
+    },
+    createdAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "created_at"
+    },
+    updatedAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "updated_at"
     }
+
 }
 
 module.exports = LegalInfo

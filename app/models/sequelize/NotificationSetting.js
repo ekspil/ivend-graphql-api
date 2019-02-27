@@ -10,7 +10,7 @@ const Item = {
     type: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: false
     },
     email: {
         type: Sequelize.DataTypes.BOOLEAN,
@@ -19,6 +19,18 @@ const Item = {
     sms: {
         type: Sequelize.DataTypes.BOOLEAN,
         allowNull: true
+    },
+    createdAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "created_at"
+    },
+    updatedAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "updated_at"
     }
 }
 module.exports = Item

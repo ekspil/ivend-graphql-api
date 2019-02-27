@@ -16,6 +16,8 @@ services:
     ports:
       - "4000:4000"
     restart: always
+    depends_on:
+      - postgres
     deploy:
       restart_policy:
         condition: on-failure

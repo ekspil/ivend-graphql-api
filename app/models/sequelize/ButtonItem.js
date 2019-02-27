@@ -12,5 +12,17 @@ const ButtonItem = {
         allowNull: false,
         field: "button_id"
     },
+    createdAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "created_at"
+    },
+    updatedAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "updated_at"
+    }
 }
 module.exports = ButtonItem
