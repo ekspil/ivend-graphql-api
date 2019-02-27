@@ -250,6 +250,9 @@ class ControllerService {
 
 
     async getControllerByUID(uid, user) {
+        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
 
         const controller = await this.Controller.findOne({
             where: {
