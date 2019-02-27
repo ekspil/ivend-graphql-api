@@ -457,52 +457,6 @@ module.exports = {
             }
         })
 
-        // FiscalRegistrar
-        await queryInterface.createTable("fiscal_registrars", {
-            id: {
-                allowNull: false,
-                autoIncrement: true,
-                primaryKey: true,
-                type: Sequelize.BIGINT
-            },
-            type: {
-                type: Sequelize.TEXT,
-                allowNull: false,
-                unique: false
-            },
-            email: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                unique: false
-            },
-            sms: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                unique: false
-            },
-            created_at: {
-                type: Sequelize.DATE,
-                allowNull: true,
-                defaultValue: Sequelize.fn("NOW")
-            },
-            updated_at: {
-                type: Sequelize.DATE,
-                allowNull: true,
-                defaultValue: Sequelize.fn("NOW")
-            },
-            user_id: {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-                unique: false,
-                onUpdate: "restrict",
-                onDelete: "restrict",
-                references: {
-                    model: "users",
-                    key: "id"
-                }
-            }
-        })
-
         // PaymentRequest
         await queryInterface.createTable("payment_requests", {
             id: {
@@ -522,17 +476,17 @@ module.exports = {
                 unique: true
             },
             payment_id: {
-                type: Sequelize.BOOLEAN,
+                type: Sequelize.TEXT,
                 allowNull: false,
                 unique: true
             },
             redirect_url: {
-                type: Sequelize.BOOLEAN,
+                type: Sequelize.TEXT,
                 allowNull: false,
                 unique: true
             },
             status: {
-                type: Sequelize.BOOLEAN,
+                type: Sequelize.TEXT,
                 allowNull: false,
                 unique: false
             },
