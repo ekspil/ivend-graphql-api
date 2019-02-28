@@ -37,9 +37,6 @@ module.exports = function ({UserModel, redis}) {
 
     const populateUserInContext = async (user) => {
         user.checkPermission = (permission) => {
-            if (process.env.NO_AUTH === "1") {
-                return true
-            }
             const role = user.role.name
 
             if (role === "ADMIN") {
