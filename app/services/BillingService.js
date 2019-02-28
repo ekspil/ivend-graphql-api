@@ -21,7 +21,7 @@ class BillingService {
     }
 
     async getDeposits(user) {
-        if (!user || !user.checkPermission(Permission.GET_DEPOSITS)) {
+        if (!user || !user.checkPermission(Permission.GET_SELF_DEPOSITS)) {
             throw new NotAuthorized()
         }
 
