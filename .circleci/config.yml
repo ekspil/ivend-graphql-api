@@ -86,10 +86,10 @@ workflows:
                 - develop
       - docker_push_tagged:
           filters:
-            tags:
-              only: /^.*/
             branches:
               only: develop
+            tags:
+              only: /^.*/
           requires:
             - build
       - docker_push_develop:
