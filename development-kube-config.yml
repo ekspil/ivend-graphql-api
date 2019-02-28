@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: graphql
-        image: registry.gitlab.com/pshenmic/ivend/graphql:development
+        image: registry.gitlab.com/pshenmic/ivend/graphql:develop
         imagePullPolicy: Always
         ports:
           - containerPort: 4000
