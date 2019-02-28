@@ -89,7 +89,7 @@ workflows:
             branches:
               only: develop
             tags:
-              only: /^.*/
+              only: /.*/
           requires:
             - build
       - docker_push_develop:
