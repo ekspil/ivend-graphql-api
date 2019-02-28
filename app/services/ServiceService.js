@@ -47,6 +47,8 @@ class ServiceService {
             throw new NotAuthorized()
         }
 
+        //todo check access
+
         return await this.Service.findAll({
             where: {
                 id,

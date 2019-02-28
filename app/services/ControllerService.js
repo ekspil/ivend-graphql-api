@@ -239,6 +239,8 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
+        //todo access check
+
         const controller = await this.Controller.findById(id, {include: this.controllerIncludes})
 
         if (!controller) {
@@ -254,11 +256,12 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
+        //todo access check
+
         const controller = await this.Controller.findOne({
             where: {
                 uid
             },
-            nest: true,
             include: this.controllerIncludes
         })
 

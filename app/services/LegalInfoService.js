@@ -37,6 +37,8 @@ class LegalInfoService {
         legalInfo.contactPhone = contactPhone
         legalInfo.contactEmail = contactEmail
 
+        //todo ensure not legal info already created for this user
+
         return await this.LegalInfo.create(legalInfo)
     }
 
