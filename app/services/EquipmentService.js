@@ -13,7 +13,7 @@ class EquipmentService {
     }
 
     async createEquipment(createControllerInput, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.CREATE_EQUIPMENT)) {
             throw new NotAuthorized()
         }
 
@@ -24,7 +24,7 @@ class EquipmentService {
     }
 
     async findById(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.FIND_EQUIPMENT_BY_ID)) {
             throw new NotAuthorized()
         }
 
@@ -36,7 +36,7 @@ class EquipmentService {
     }
 
     async getAllEquipments(user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_EQUIPMENTS)) {
             throw new NotAuthorized()
         }
 

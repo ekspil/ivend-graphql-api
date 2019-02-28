@@ -14,7 +14,7 @@ class LegalInfoService {
 
 
     async createLegalInfo(input, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
+        if (!user || !user.checkPermission(Permission.CREATE_LEGAL_INFO)) {
             throw new NotAuthorized()
         }
 
@@ -42,7 +42,7 @@ class LegalInfoService {
 
 
     async updateLegalInfo(input, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
+        if (!user || !user.checkPermission(Permission.UPDATE_LEGAL_INFO)) {
             throw new NotAuthorized()
         }
 

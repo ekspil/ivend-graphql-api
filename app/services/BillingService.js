@@ -21,7 +21,7 @@ class BillingService {
     }
 
     async getDeposits(user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_DEPOSITS)) {
             throw new NotAuthorized()
         }
 
@@ -33,7 +33,7 @@ class BillingService {
     }
 
     async getDailyBill(user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_DAILY_BILL)) {
             throw new NotAuthorized()
         }
 
@@ -57,7 +57,7 @@ class BillingService {
     }
 
     async getDaysLeft(user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_DAYS_LEFT)) {
             throw new NotAuthorized()
         }
 
@@ -74,7 +74,7 @@ class BillingService {
     }
 
     async getBalance(user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_BALANCE)) {
             throw new NotAuthorized()
         }
 
@@ -92,7 +92,7 @@ class BillingService {
     }
 
     async requestDeposit(amount, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.REQUEST_DEPOSIT)) {
             throw new NotAuthorized()
         }
 

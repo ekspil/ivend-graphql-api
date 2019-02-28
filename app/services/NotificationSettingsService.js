@@ -14,7 +14,7 @@ class NotificationSettingsService {
 
 
     createNotificationSetting(input, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.CREATE_NOTIFICATION_SETTING)) {
             throw new NotAuthorized()
         }
 
@@ -31,7 +31,7 @@ class NotificationSettingsService {
     }
 
     async findAll(user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.FIND_ALL_NOTIFICATION_SETTINGS)) {
             throw new NotAuthorized()
         }
 
@@ -43,7 +43,7 @@ class NotificationSettingsService {
     }
 
     async findByType(type, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.FIND_NOTIFICATION_SETTING_BY_TYPE)) {
             throw new NotAuthorized()
         }
 
@@ -56,7 +56,7 @@ class NotificationSettingsService {
     }
 
     async updateNotificationSetting(input, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.UPDATE_NOTIFICATION_SETTING)) {
             throw new NotAuthorized()
         }
 

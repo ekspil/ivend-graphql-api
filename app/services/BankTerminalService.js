@@ -13,7 +13,7 @@ class BankTerminalService {
     }
 
     async createBankTerminal(createBankTerminalInput, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.CREATE_BANK_TERMINAL)) {
             throw new NotAuthorized()
         }
 
@@ -24,7 +24,7 @@ class BankTerminalService {
     }
 
     async findById(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_BANK_TERMINAL)) {
+        if (!user || !user.checkPermission(Permission.FIND_BANK_TERMINAL_BY_ID)) {
             throw new NotAuthorized()
         }
 

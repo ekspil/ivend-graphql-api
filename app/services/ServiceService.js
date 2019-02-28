@@ -15,7 +15,7 @@ class ServiceService {
     }
 
     async createService(createServiceInput, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.CREATE_SERVICE)) {
             throw new NotAuthorized()
         }
 
@@ -31,7 +31,7 @@ class ServiceService {
     }
 
     async findById(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.FIND_SERVICE_BY_ID)) {
             throw new NotAuthorized()
         }
 
@@ -43,7 +43,7 @@ class ServiceService {
     }
 
     async getServicesForController(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.GET_SERVICES_FOR_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
@@ -56,7 +56,7 @@ class ServiceService {
     }
 
     async getControllerServices(user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_SERVICES)) {
             throw new NotAuthorized()
         }
 

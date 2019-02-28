@@ -21,7 +21,7 @@ class SaleService {
     }
 
     async registerSale(input, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.REGISTER_SALE)) {
             throw new NotAuthorized()
         }
 
@@ -80,7 +80,7 @@ class SaleService {
 
 
     async getLastSale(controllerId, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_LAST_SALE)) {
             throw new NotAuthorized()
         }
 
@@ -93,7 +93,7 @@ class SaleService {
     }
 
     async getLastSaleOfItem(itemId, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_LAST_SALE_OF_ITEM)) {
             throw new NotAuthorized()
         }
 
@@ -106,7 +106,7 @@ class SaleService {
     }
 
     async getItemSaleStats(input, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_ITEM_SALE_STATS)) {
             throw new NotAuthorized()
         }
 
@@ -145,7 +145,7 @@ class SaleService {
     }
 
     async getSalesSummary(input, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()
         }
 
