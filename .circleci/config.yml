@@ -86,10 +86,6 @@ workflows:
                 - develop
       - docker_push_tagged:
           filters:
-            branches:
-              only:
-                  - master
-                  - develop
             tags:
               only: /.*/
           requires:
