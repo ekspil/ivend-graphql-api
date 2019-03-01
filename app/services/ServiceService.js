@@ -5,8 +5,9 @@ const Service = require("../models/Service")
 
 class ServiceService {
 
-    constructor({ServiceModel}) {
+    constructor({ServiceModel, controllerService}) {
         this.Service = ServiceModel
+        this.controllerService = controllerService
 
         this.createService = this.createService.bind(this)
         this.findById = this.findById.bind(this)
@@ -42,19 +43,15 @@ class ServiceService {
         })
     }
 
-    async getServicesForController(id, user) {
+    async getServicesForController(controllerId, user) {
         if (!user || !user.checkPermission(Permission.GET_SERVICES_FOR_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
         //todo check access
+        const controller = await this.controllerService.getControllerById(controllerId, user)
 
-        return await this.Service.findAll({
-            where: {
-                id,
-                type: "CONTROLLER"
-            }
-        })
+        return await controller.getServices()
     }
 
     async getControllerServices(user) {
