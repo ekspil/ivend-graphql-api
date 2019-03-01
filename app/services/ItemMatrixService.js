@@ -38,7 +38,7 @@ class ItemMatrixService {
     }
 
     async addButtonToItemMatrix(input, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.ADD_BUTTON_ITEM_TO_ITEM_MATRIX)) {
             throw new NotAuthorized()
         }
 
@@ -73,7 +73,7 @@ class ItemMatrixService {
     }
 
     async removeButtonFromItemMatrix(input, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.REMOVE_BUTTON_ITEM_FROM_ITEM_MATRIX)) {
             throw new NotAuthorized()
         }
 
@@ -105,7 +105,7 @@ class ItemMatrixService {
     }
 
     async getItemMatrixById(id, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_ITEM_MATRIX_BY_ID)) {
             throw new NotAuthorized()
         }
 

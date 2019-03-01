@@ -5,8 +5,9 @@ const Service = require("../models/Service")
 
 class ServiceService {
 
-    constructor({ServiceModel}) {
+    constructor({ServiceModel, controllerService}) {
         this.Service = ServiceModel
+        this.controllerService = controllerService
 
         this.createService = this.createService.bind(this)
         this.findById = this.findById.bind(this)
@@ -15,7 +16,7 @@ class ServiceService {
     }
 
     async createService(createServiceInput, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.CREATE_SERVICE)) {
             throw new NotAuthorized()
         }
 
@@ -31,7 +32,7 @@ class ServiceService {
     }
 
     async findById(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.FIND_SERVICE_BY_ID)) {
             throw new NotAuthorized()
         }
 
@@ -42,21 +43,19 @@ class ServiceService {
         })
     }
 
-    async getServicesForController(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+    async getServicesForController(controllerId, user) {
+        if (!user || !user.checkPermission(Permission.GET_SERVICES_FOR_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-        return await this.Service.findAll({
-            where: {
-                id,
-                type: "CONTROLLER"
-            }
-        })
+        //todo check access
+        const controller = await this.controllerService.getControllerById(controllerId, user)
+
+        return await controller.getServices()
     }
 
     async getControllerServices(user) {
-        if (!user || !user.checkPermission(Permission.READ_EQUIPMENT)) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_SERVICES)) {
             throw new NotAuthorized()
         }
 

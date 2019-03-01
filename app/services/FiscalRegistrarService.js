@@ -13,7 +13,7 @@ class FiscalRegistrarService {
     }
 
     async createFiscalRegistrar(createFiscalRegistrarInput, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
+        if (!user || !user.checkPermission(Permission.CREATE_FISCAL_REGISTRAR)) {
             throw new NotAuthorized()
         }
 
@@ -24,7 +24,7 @@ class FiscalRegistrarService {
     }
 
     async findById(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_FISCAL_REGISTRAR)) {
+        if (!user || !user.checkPermission(Permission.FIND_FISCAL_REGISTRAR_BY_ID)) {
             throw new NotAuthorized()
         }
 

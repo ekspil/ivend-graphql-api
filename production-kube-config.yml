@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphql
+  namespace: production
+  labels:
+    app: graphql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graphql
+  template:
+    metadata:
+      namespace: production
+      labels:
+        app: graphql
+    spec:
+      containers:
+      - name: graphql
+        image: registry.gitlab.com/pshenmic/ivend/graphql:1.0.0
+        ports:
+          - containerPort: 4000
+        envFrom:
+          - configMapRef:
+              name: graphql-config
+      imagePullSecrets:
+      - name: gitlabregistrycred

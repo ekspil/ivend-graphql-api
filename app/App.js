@@ -194,9 +194,6 @@ class App {
             BankTerminalModel
         })
 
-        services.serviceService = new ServiceService({ ServiceModel })
-
-
         services.itemService = new ItemService({ ItemModel })
 
         services.itemMatrixService = new ItemMatrixService({
@@ -227,6 +224,9 @@ class App {
             serviceService: services.serviceService,
             revisionService: services.revisionService
         })
+
+        services.serviceService = new ServiceService({ ServiceModel, controllerService:services.controllerService })
+        services.controllerService.serviceService = services.serviceService
 
         services.saleService = new SaleService({
             SaleModel,

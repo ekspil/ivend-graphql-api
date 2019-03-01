@@ -14,7 +14,7 @@ class LegalInfoService {
 
 
     async createLegalInfo(input, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
+        if (!user || !user.checkPermission(Permission.CREATE_LEGAL_INFO)) {
             throw new NotAuthorized()
         }
 
@@ -37,12 +37,14 @@ class LegalInfoService {
         legalInfo.contactPhone = contactPhone
         legalInfo.contactEmail = contactEmail
 
+        //todo ensure not legal info already created for this user
+
         return await this.LegalInfo.create(legalInfo)
     }
 
 
     async updateLegalInfo(input, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
+        if (!user || !user.checkPermission(Permission.UPDATE_LEGAL_INFO)) {
             throw new NotAuthorized()
         }
 

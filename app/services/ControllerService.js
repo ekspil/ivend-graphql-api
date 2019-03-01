@@ -68,7 +68,7 @@ class ControllerService {
     }
 
     async createController(input, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.CREATE_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
@@ -147,7 +147,7 @@ class ControllerService {
     }
 
     async editController(id, input, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.EDIT_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
@@ -219,7 +219,7 @@ class ControllerService {
     }
 
     async getAll(user) {
-        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
 
@@ -227,7 +227,7 @@ class ControllerService {
     }
 
     async getAllOfCurrentUser(user) {
-        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
             throw new NotAuthorized()
         }
 
@@ -235,9 +235,11 @@ class ControllerService {
     }
 
     async getControllerById(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
             throw new NotAuthorized()
         }
+
+        //todo access check
 
         const controller = await this.Controller.findById(id, {include: this.controllerIncludes})
 
@@ -250,15 +252,16 @@ class ControllerService {
 
 
     async getControllerByUID(uid, user) {
-        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_UID)) {
             throw new NotAuthorized()
         }
+
+        //todo access check
 
         const controller = await this.Controller.findOne({
             where: {
                 uid
             },
-            nest: true,
             include: this.controllerIncludes
         })
 
@@ -270,7 +273,7 @@ class ControllerService {
     }
 
     async getControllerErrors(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_ERRORS)) {
             throw new NotAuthorized()
         }
 
@@ -283,7 +286,7 @@ class ControllerService {
 
 
     async getLastControllerError(id, user) {
-        if (!user || !user.checkPermission(Permission.READ_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_ERRORS)) {
             throw new NotAuthorized()
         }
 
@@ -299,7 +302,7 @@ class ControllerService {
 
 
     async registerError(input, user) {
-        if (!user || !user.checkPermission(Permission.WRITE_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.REGISTER_CONTROLLER_ERROR)) {
             throw new NotAuthorized()
         }
 
@@ -326,7 +329,7 @@ class ControllerService {
     }
 
     async generateAccessKey(uid, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GENERATE_CONTROLLER_ACCESS_KEY)) {
             throw new NotAuthorized()
         }
 
@@ -344,7 +347,7 @@ class ControllerService {
     }
 
     async registerState(controllerStateInput, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.REGISTER_CONTROLLER_STATE)) {
             throw new NotAuthorized()
         }
 

@@ -70,7 +70,7 @@ class UserService {
     }
 
     async getProfile(user) {
-        if (!user || !user.checkPermission(Permission.WRITE_FISCAL_REGISTRAR)) {
+        if (!user || !user.checkPermission(Permission.GET_PROFILE)) {
             throw new NotAuthorized()
         }
 

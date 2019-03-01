@@ -12,7 +12,7 @@ class ItemService {
     }
 
     async createItem(input, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.CREATE_ITEM)) {
             throw new NotAuthorized()
         }
 
@@ -26,7 +26,7 @@ class ItemService {
     }
 
     async getItemById(id, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_ITEM_BY_ID)) {
             throw new NotAuthorized()
         }
 
@@ -40,7 +40,7 @@ class ItemService {
     }
 
     async getUserItems(user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_USER_ITEMS)) {
             throw new NotAuthorized()
         }
 

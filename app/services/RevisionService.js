@@ -13,7 +13,7 @@ class RevisionService {
     }
 
     async createRevision(input, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.CREATE_REVISION)) {
             throw new NotAuthorized()
         }
 
@@ -26,7 +26,7 @@ class RevisionService {
     }
 
     async getAll(user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_REVISIONS)) {
             throw new NotAuthorized()
         }
 
@@ -35,7 +35,7 @@ class RevisionService {
 
 
     async getRevisionById(id, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.GET_REVISION_BY_ID)) {
             throw new NotAuthorized()
         }
 

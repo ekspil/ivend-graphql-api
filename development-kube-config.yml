@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: graphql-deployment
+  name: graphql
+  namespace: development
   labels:
     app: graphql
 spec:
@@ -11,14 +12,16 @@ spec:
       app: graphql
   template:
     metadata:
+      namespace: development
       labels:
         app: graphql
     spec:
       containers:
       - name: graphql
-        image: registry.gitlab.com/pshenmic/ivend/graphql
+        image: registry.gitlab.com/pshenmic/ivend/graphql:develop
+        imagePullPolicy: Always
         ports:
-        - containerPort: 80
+          - containerPort: 4000
         envFrom:
           - configMapRef:
               name: graphql-config
