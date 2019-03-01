@@ -102,8 +102,6 @@ workflows:
               ignore: /.*/
             tags:
               only: /.*/
-          requires:
-            - build
       - docker_push_develop:
           filters:
             branches:
