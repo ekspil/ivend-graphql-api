@@ -43,7 +43,15 @@ const RolePermissions = {
     ],
     //ADMIN ROLE does not need permissions at all, he have access to all methods
     "ADMIN": [],
-    "AGGREGATE": [Permission.WRITE_CONTROLLER, Permission.AUTH_CONTROLLER],
+    "AGGREGATE": [
+        Permission.CREATE_ITEM,
+        Permission.GET_CONTROLLER_BY_ID,
+        Permission.GET_CONTROLLER_BY_UID,
+        Permission.GENERATE_CONTROLLER_ACCESS_KEY,
+        Permission.REGISTER_CONTROLLER_STATE,
+        Permission.REGISTER_SALE,
+        Permission.REGISTER_CONTROLLER_ERROR
+    ]
 }
 
 
