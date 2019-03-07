@@ -58,6 +58,7 @@ const Permission = {
     "GET_REVISION_BY_ID": "GET_REVISION_BY_ID",
 
     // SaleService
+    "CREATE_SALE": "CREATE_SALE",
     "REGISTER_SALE": "REGISTER_SALE",
     "GET_LAST_SALE": "GET_LAST_SALE",
     "GET_LAST_SALE_OF_ITEM": "GET_LAST_SALE_OF_ITEM",
