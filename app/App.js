@@ -350,6 +350,11 @@ class App {
                 UserModel,
                 redis
             }),
+            formatError: (error) => {
+                console.error(error)
+
+                return new Error("Internal server error")
+            },
             introspection: process.env.NODE_ENV === "development",
             playground: process.env.NODE_ENV === "development"
         })
