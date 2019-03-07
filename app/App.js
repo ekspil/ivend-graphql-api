@@ -2,6 +2,11 @@ const Redis = require("ioredis")
 const Sequelize = require("sequelize")
 const { ApolloServer } = require("apollo-server")
 const typeDefs = require("../graphqlTypedefs")
+
+const ControllerMode = require("./enum/ControllerMode")
+const ControllerStatus = require("./enum/ControllerStatus")
+const SaleType = require("./enum/SaleType")
+
 const Resolvers = require("./resolvers")
 
 const ContextResolver = require("./resolvers/ContextResolver")
@@ -53,7 +58,7 @@ class App {
 
     async start() {
 
-        const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+        const sequelizeOptions = {
             host: process.env.POSTGRES_HOST,
             dialect: "postgres",
             operatorsAliases: false,
@@ -65,7 +70,13 @@ class App {
                 acquire: 30000,
                 idle: 10000
             },
-        })
+        }
+
+        if (process.env.SQL_LOGS) {
+            sequelizeOptions.logging = !!Number(process.env.SQL_LOGS)
+        }
+
+        const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, sequelizeOptions)
 
         const UserModel = sequelize.define("users", User)
         const BankTerminalModel = sequelize.define("bank_terminals", BankTerminal)
@@ -250,21 +261,18 @@ class App {
         services.notificationSettingsService = new NotificationSettingsService({ NotificationSettingModel })
 
         const populateWithFakeData = async () => {
+            Array.prototype.randomElement = function () {
+                return this[Math.floor(Math.random() * this.length)]
+            }
 
-            const user = await services.userService.registerUser({
-                email: "test",
-                phone: "9999999999",
-                password: "test"
-            })
-            user.checkPermission = () => true
+            const adminUser = await services.userService.registerUser({
+                email: "admin",
+                phone: "9997777777",
+                password: "admin"
+            }, "ADMIN")
 
-            const user1 = await services.userService.registerUser({
-                email: "test22221",
-                phone: "9999999997",
-                password: "test234234"
-            })
+            adminUser.checkPermission = () => true
 
-            user1.checkPermission = () => true
 
             const aggregatorUser = await services.userService.registerUser({
                 email: "aggregator",
@@ -275,61 +283,171 @@ class App {
             aggregatorUser.checkPermission = () => true
 
 
-            const equipment = await services.equipmentService.createEquipment({ name: "test" }, user)
-
-            await services.itemService.createItem({ name: "Coffee" }, user)
-
-            const revision = await services.revisionService.createRevision({ name: "1" }, user)
-
+            const equipment = await services.equipmentService.createEquipment({name: "First equpment"}, adminUser)
+            const revision = await services.revisionService.createRevision({name: "1"}, adminUser)
             await services.serviceService.createService({
                 name: "Telemetry",
                 price: 150,
                 billingType: "DAILY",
                 type: "CONTROLLER"
-            }, user)
+            }, adminUser)
 
-            // First test controller
-            const firstController = {
-                name: "First test controller",
-                uid: "10000003-1217",
-                equipmentId: equipment.id,
-                revisionId: revision.id,
-                status: "DISABLED",
-                mode: "MDB",
-                serviceIds: [1]
+
+            // Create test user
+            const user = await services.userService.registerUser({
+                email: "test",
+                phone: "9999999999",
+                password: "test"
+            })
+            user.checkPermission = () => true
+
+            // Create some items for test user
+            const items = []
+
+            items.push(await services.itemService.createItem({name: "Кофе"}, user))
+            items.push(await services.itemService.createItem({name: "Какао"}, user))
+            items.push(await services.itemService.createItem({name: "Капучино"}, user))
+            items.push(await services.itemService.createItem({name: "Американо"}, user))
+            items.push(await services.itemService.createItem({name: "Горячее молоко"}, user))
+            items.push(await services.itemService.createItem({name: "Горячий шоколад"}, user))
+
+
+            const now = new Date()
+            const startDate = new Date()
+            startDate.setDate(now.getDate() - 3)
+
+
+            // Create 10 test controllers
+            for (let i = 0; i < 10; i++) {
+                const controllerInput = {
+                    name: `${i + 1} test controller`,
+                    uid: `10000003-${i + 1}`,
+                    equipmentId: equipment.id,
+                    revisionId: revision.id,
+                    status: Object.keys(ControllerStatus).randomElement(),
+                    mode: Object.keys(ControllerMode).randomElement(),
+                    serviceIds: [1]
+                }
+
+
+                const controller = await services.controllerService.createController(controllerInput, user)
+
+                console.log(`Created test controller uid: ${controller.uid}`)
+
+                for (const [index, item] of items.entries()) {
+                    await services.itemMatrixService.addButtonToItemMatrix({
+                        itemMatrixId: controller.itemMatrix.id,
+                        buttonId: index,
+                        itemId: item.id
+                    }, user)
+                }
+
+                const itemMatrix = await controller.getItemMatrix()
+                const buttons = await itemMatrix.getButtons()
+
+                // Generate sales for this controller from 3 days behind
+
+                // 15% chance to trigger sale in the hour
+                while (startDate < now) {
+                    const howManySalesInHour = [0, 1, 2, 3, 4].randomElement()
+
+                    for (let i = 0; i < howManySalesInHour; i++) {
+                        const randomButton = buttons.randomElement()
+                        const buttonId = randomButton.buttonId
+                        const type = Object.keys(SaleType).randomElement()
+                        const price = [10, 20, 40, 30, 50, 55, 15].randomElement()
+                        const item = await randomButton.getItem()
+                        const itemId = item.id
+                        const controllerId = controller.id
+                        const time = startDate
+
+                        const saleInput = {buttonId, type, price, itemId, controllerId, time}
+
+                        await services.saleService.createSale(saleInput, user)
+                    }
+
+                    const currentHour = startDate.getHours()
+                    startDate.setHours(currentHour + 1)
+                }
+
+                startDate.setDate(now.getDate() - 3)
             }
 
 
-            // First test controller
-            const secondController = {
-                name: "Second test controller",
-                uid: "10000003-1218",
-                equipmentId: equipment.id,
-                revisionId: revision.id,
-                status: "DISABLED",
-                mode: "MDB",
-                serviceIds: [1]
+            // Add deposit
+            await sequelize.queryInterface.bulkInsert("payment_requests", [{
+                idempotence_key: "test_key",
+                to: "9999999999",
+                payment_id: "test_payment_id",
+                redirect_url: "test",
+                status: "succeeded",
+                created_at: startDate,
+                updated_at: startDate
+            }])
+
+            const paymentRequests = await sequelize.query("SELECT * FROM payment_requests", {model: PaymentRequestModel})
+            const [paymentRequest] = paymentRequests.filter(paymentRequest => paymentRequest.dataValues.payment_id === "test_payment_id")
+
+            const amount = 50000
+
+            sequelize.queryInterface.bulkInsert("deposits", [{
+                amount,
+                user_id: user.id,
+                payment_request_id: paymentRequest.id,
+                created_at: startDate,
+                updated_at: startDate
+            }])
+            const deposits = await sequelize.query("SELECT * FROM deposits", {model: DepositModel})
+            const [deposit] = deposits.filter(deposit => Number(deposit.amount) === amount)
+
+            await sequelize.queryInterface.bulkInsert("transactions", [{
+                amount,
+                meta: `deposit_${deposit.id}`,
+                user_id: user.id,
+                created_at: startDate,
+                updated_at: startDate
+            }])
+
+
+            // Add transactions
+            const controllers = await services.controllerService.getAllOfCurrentUser(user)
+
+            //get start date
+
+            for (const controller of controllers) {
+                for (let i = 0; startDate < now; i++) {
+                    if (startDate.getHours() > 1) {
+                        startDate.setHours(0)
+                        startDate.setDate(startDate.getDate() + 1)
+                        continue
+                    }
+                    const billTime = new Date(startDate.getTime())
+                    billTime.setHours(1)
+                    billTime.setMinutes(0)
+
+                    const services = await controller.getServices()
+
+                    for (const service of services) {
+                        await sequelize.queryInterface.bulkInsert("transactions", [{
+                            amount: -service.price,
+                            meta: `${service.name.toLowerCase()}_${service.id}_${controller.id}`,
+                            user_id: user.id,
+                            created_at: startDate,
+                            updated_at: startDate
+                        }])
+                    }
+                    startDate.setDate(startDate.getDate() + 1)
+                }
+                startDate.setDate(now.getDate() - 3)
+                startDate.setHours(now.getHours())
+                startDate.setMinutes(now.getMinutes())
             }
 
 
-            // First test controller
-            const thirdController = {
-                name: "Third test controller",
-                uid: "10000003-1219",
-                equipmentId: equipment.id,
-                revisionId: revision.id,
-                status: "DISABLED",
-                mode: "MDB",
-                serviceIds: [1]
-            }
-
-            await services.controllerService.createController(firstController, user)
-            await services.controllerService.createController(secondController, user)
-            await services.controllerService.createController(thirdController, user1)
         }
 
         if (process.env.NODE_ENV === "development") {
-            await sequelize.sync({ force: true })
+            await sequelize.sync({force: true})
             await populateWithFakeData()
         }
 
@@ -344,6 +462,11 @@ class App {
                 UserModel,
                 redis
             }),
+            formatError: (error) => {
+                console.error(error)
+
+                return new Error("Internal server error")
+            },
             introspection: process.env.NODE_ENV === "development",
             playground: process.env.NODE_ENV === "development"
         })

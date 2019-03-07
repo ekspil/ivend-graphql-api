@@ -14,10 +14,34 @@ class SaleService {
         this.controllerService = controllerService
         this.itemService = itemService
 
+        this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
         this.getItemSaleStats = this.getItemSaleStats.bind(this)
+    }
+
+    async createSale(input, user) {
+        if (!user || !user.checkPermission(Permission.CREATE_SALE)) {
+            throw new NotAuthorized()
+        }
+
+        const {buttonId, type, price, itemId, itemMatrixId, controllerId, time} = input
+
+        const sale = new Sale()
+        sale.buttonId = buttonId
+        sale.type = type
+        sale.price = price
+        sale.item_id = itemId
+        sale.item_matrix_id = itemMatrixId
+        sale.controller_id = controllerId
+
+        if (time) {
+            sale.createdAt = time
+            sale.updatedAt = time
+        }
+
+        return await this.Sale.create(sale)
     }
 
     async registerSale(input, user) {
