@@ -332,7 +332,7 @@ class App {
 
                 const controller = await services.controllerService.createController(controllerInput, user)
 
-                console.log(`Created test controller uid: ${controller.uid}`)
+                logger.info(`Created test controller uid: ${controller.uid}`)
 
                 for (const [index, item] of items.entries()) {
                     await services.itemMatrixService.addButtonToItemMatrix({
@@ -463,7 +463,7 @@ class App {
                 redis
             }),
             formatError: (error) => {
-                console.error(error)
+                logger.error(error)
 
                 return new Error("Internal server error")
             },
