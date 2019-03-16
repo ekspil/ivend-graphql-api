@@ -24,6 +24,7 @@ const RevisionService = require("./services/RevisionService")
 const NotificationSettingsService = require("./services/NotificationSettingsService")
 const LegalInfoService = require("./services/LegalInfoService")
 const BillingService = require("./services/BillingService")
+const ReportService = require("./services/ReportService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -185,6 +186,7 @@ class App {
             revisionService: undefined,
             notificationSettingsService: undefined,
             legalInfoService: undefined,
+            reportService: undefined,
             billingService: undefined
         }
 
@@ -259,7 +261,7 @@ class App {
             TransactionModel,
         })
         services.notificationSettingsService = new NotificationSettingsService({ NotificationSettingModel })
-
+        services.reportService = new ReportService({})
         const populateWithFakeData = async () => {
             Array.prototype.randomElement = function () {
                 return this[Math.floor(Math.random() * this.length)]
