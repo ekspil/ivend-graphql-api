@@ -52,7 +52,7 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            docker build -t "registry.gitlab.com/pshenmic/ivend/graphql:develop" .
+            docker build -t "registry.gitlab.com/pshenmic/ivend/graphql:$CIRCLE_SHA1" .
             docker login registry.gitlab.com -u "pshenmic" -p "$GITLAB_TOKEN"
             docker push "registry.gitlab.com/pshenmic/ivend/graphql:$CIRCLE_SHA1"
 
