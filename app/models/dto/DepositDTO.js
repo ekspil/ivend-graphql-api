@@ -1,3 +1,5 @@
+const UnknownPaymentStatus = require("../../errors/UnknownPaymentStatus")
+
 class DepositDTO {
 
     constructor({id, amount, status, redirectUrl}) {
@@ -17,7 +19,7 @@ class DepositDTO {
                 this.status = "CANCELLED"
                 break
             default:
-                throw new Error("Unknown payment status")
+                throw new UnknownPaymentStatus
         }
     }
 }
