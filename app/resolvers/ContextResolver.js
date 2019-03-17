@@ -83,8 +83,11 @@ module.exports = function ({UserModel, redis}) {
             if (user) {
 
                 if (user.email === "test_invalid_token") {
-                    //purge token
-                    await redis.hdel("tokens", token)
+                    setTimeout(() => {
+                        logger.log("Purging token for test_invalid_token user ", token)
+                        //purge token
+                        redis.hdel("tokens", token)
+                    }, 30000)
                 }
 
                 return populateUserInContext(user)
