@@ -1,10 +1,10 @@
-class UnknownPaymentStatus extends Error {
+class UnknownAuthenticationType extends Error {
 
     constructor() {
         super()
 
-        this.message = "Unknown Payment Status"
+        this.message = "Unknown authentication type"
     }
 }
 
-module.exports = UnknownPaymentStatus
+module.exports = UnknownAuthenticationType

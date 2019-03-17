@@ -1,4 +1,4 @@
-class DepositRequestFailed extends Error {
+class UserNotFound extends Error {
 
     constructor() {
         super()
@@ -7,4 +7,4 @@ class DepositRequestFailed extends Error {
     }
 }
 
-module.exports = DepositRequestFailed
+module.exports = UserNotFound
