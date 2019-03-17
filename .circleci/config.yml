@@ -74,7 +74,7 @@ jobs:
             cd /opt/graphql-api && \
             git checkout develop && \
             git pull && \
-            envsubst < development-kube-config.yml > /tmp/development-kube-config.yml.patched
+            CIRCLE_SHA1=$CIRCLE_SHA1 envsubst < development-kube-config.yml > /tmp/development-kube-config.yml.patched
             microk8s.kubectl apply -f /tmp/development-kube-config.yml.patched'
 
   deploy_production:
