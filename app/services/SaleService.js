@@ -1,9 +1,13 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const ItemNotFound = require("../errors/ItemNotFound")
+const ControllerNotFound = require("../errors/ControllerNotFound")
+const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const Sale = require("../models/Sale")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const ItemSaleStat = require("../models/ItemSaleStat")
 const SalesSummary = require("../models/SalesSummary")
+const logger = require("../utils/logger")
 
 class SaleService {
 
@@ -56,13 +60,13 @@ class SaleService {
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
         if (!controller) {
-            throw new Error("Controller not found")
+            throw new ControllerNotFound
         }
 
         const {itemMatrix} = controller
 
         if (!itemMatrix) {
-            throw new Error("Item matrix not found for this controller")
+            throw new ItemMatrixNotFound()
         }
 
         const {buttons} = itemMatrix
@@ -86,9 +90,8 @@ class SaleService {
             .map(buttonItem => buttonItem.item_id)
 
         if (!itemId) {
-            // eslint-disable-next-line no-console
-            console.error("Unexpected situation, ItemId for sale not found")
-            throw new Error("Internal server error")
+            logger.error("Unexpected situation, ItemId for sale not found")
+            throw new ItemNotFound()
         }
 
         const sale = new Sale()

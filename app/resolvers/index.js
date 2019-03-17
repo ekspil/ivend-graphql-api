@@ -1,5 +1,6 @@
 const Mutations = require("./mutations")
 const Queries = require("./queries")
+const InvalidTimestampFormat = require("../errors/InvalidTimestampFormat")
 const {GraphQLScalarType, Kind} = require("graphql")
 const DefaultResolvers = require("./default")
 
@@ -62,7 +63,7 @@ const Resolvers = function (injects) {
                 if (ast.kind === Kind.INT) {
                     return new Date(Number(ast.value))
                 } else {
-                    throw new Error("Timestamp should be an integer representing seconds passed since 1 January 1970 (UTC)")
+                    throw new InvalidTimestampFormat()
                 }
             },
         }),

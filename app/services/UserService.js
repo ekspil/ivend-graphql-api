@@ -1,4 +1,6 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const UserExists = require("../errors/UserExists")
+const PhonePasswordMatchFailed = require("../errors/PhonePasswordMatchFailed")
 const Permission = require("../enum/Permission")
 const {Op} = require("sequelize")
 const User = require("../models/User")
@@ -33,7 +35,7 @@ class UserService {
         })
 
         if (users && users.length > 0) {
-            throw new Error("User with such email or phone already exists")
+            throw new UserExists()
         }
 
         const user = new User()
@@ -60,7 +62,7 @@ class UserService {
         const passwordMatched = user && await bcryptjs.compare(password, user.passwordHash)
 
         if (!user || !passwordMatched) {
-            throw new Error("Phone and password does not match")
+            throw new PhonePasswordMatchFailed()
         }
 
         const token = await hashingUtils.generateRandomAccessKey()

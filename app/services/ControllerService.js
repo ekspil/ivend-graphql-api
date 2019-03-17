@@ -1,4 +1,10 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const FiscalRegistrarNotFound = require("../errors/FiscalRegistrarNotFound")
+const RevisionNotFound = require("../errors/RevisionNotFound")
+const ControllerNotFound = require("../errors/ControllerNotFound")
+const ServiceNotFound = require("../errors/ServiceNotFound")
+const BankTerminalNotFound = require("../errors/BankTerminalNotFound")
+const EquipmentNotFound = require("../errors/EquipmentNotFound")
 const Controller = require("../models/Controller")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
@@ -79,7 +85,7 @@ class ControllerService {
         const revision = await this.revisionService.getRevisionById(revisionId, user)
 
         if (!revision) {
-            throw new Error("Revision not found")
+            throw new RevisionNotFound()
         }
 
         controller.revision_id = revision.id
@@ -87,7 +93,7 @@ class ControllerService {
         const equipment = await this.equipmentService.findById(equipmentId, user)
 
         if (!equipment) {
-            throw new Error("Equipment not found")
+            throw new EquipmentNotFound()
         }
 
         controller.equipment_id = equipment.id
@@ -96,7 +102,7 @@ class ControllerService {
             const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
 
             if (fiscalRegistrar) {
-                throw new Error("Fiscal registrar not found")
+                throw new FiscalRegistrarNotFound()
             }
 
             controller.fiscal_registrar_id = fiscalRegistrar.id
@@ -107,7 +113,7 @@ class ControllerService {
             const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
 
             if (bankTerminal) {
-                throw new Error("Bank terminal not found")
+                throw new BankTerminalNotFound()
             }
 
             controller.bank_terminal_id = bankTerminal.id
@@ -130,7 +136,7 @@ class ControllerService {
                 const service = await this.serviceService.findById(serviceId, user)
 
                 if (!service) {
-                    throw new Error(`Service with id ${serviceId} not found`)
+                    throw new ServiceNotFound()
                 }
 
                 await savedController.addService(service)
@@ -156,14 +162,14 @@ class ControllerService {
         const controller = await this.getControllerById(id, user)
 
         if (!controller) {
-            throw new Error("Controller not found")
+            throw new ControllerNotFound()
         }
 
         if (equipmentId) {
             const equipment = await this.equipmentService.findById(equipmentId, user)
 
             if (!equipment) {
-                throw new Error("Equipment not found")
+                throw new EquipmentNotFound()
             }
 
             controller.equipment_id = equipment.id
@@ -173,7 +179,7 @@ class ControllerService {
             const revision = await this.revisionService.getRevisionById(revisionId, user)
 
             if(!revision) {
-                throw new Error("Revision not found")
+                throw new RevisionNotFound()
             }
 
             controller.revision_id = revision.id
@@ -183,7 +189,7 @@ class ControllerService {
             const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
 
             if (!fiscalRegistrar) {
-                throw new Error("Fiscal registrar not found")
+                throw FiscalRegistrarNotFound
             }
 
             controller.fiscal_registrar_id = fiscalRegistrar.id
@@ -194,7 +200,7 @@ class ControllerService {
             const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
 
             if (!bankTerminal) {
-                throw new Error("Bank terminal not found")
+                throw new BankTerminalNotFound()
             }
 
             controller.bank_terminal_id = bankTerminal.id
@@ -312,7 +318,7 @@ class ControllerService {
 
         if (!controller) {
             //todo custom error
-            throw new Error("Controller not found")
+            throw new ControllerNotFound()
         }
 
         //check controller belongs to user
@@ -370,7 +376,7 @@ class ControllerService {
         const controller = await this.getControllerByUID(controllerUid, user)
 
         if (!controller) {
-            throw new Error("Controller not found")
+            throw new ControllerNotFound()
         }
 
         let controllerState = new ControllerState()

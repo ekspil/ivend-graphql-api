@@ -1,4 +1,6 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const AnotherDepositPending = require("../errors/AnotherDepositPending")
+const DepositRequestFailed = require("../errors/DepositRequestFailed")
 const Permission = require("../enum/Permission")
 const Deposit = require("../models/Deposit")
 const fetch = require("node-fetch")
@@ -119,7 +121,7 @@ class BillingService {
         })
 
         if (deposit && deposit.paymentRequest.status === "pending") {
-            throw new Error("Another deposit already in process")
+            throw new AnotherDepositPending()
         }
 
         //todo transaction here is overkill
@@ -157,7 +159,7 @@ class BillingService {
                     })
 
                 default:
-                    throw new Error("Unknown error during creating payment request")
+                    throw new DepositRequestFailed()
             }
 
 
