@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const Permission = require("../enum/Permission")
 const Deposit = require("../models/Deposit")
 const fetch = require("node-fetch")
+const {Op} = require("sequelize")
 
 
 class BillingService {
@@ -20,13 +21,22 @@ class BillingService {
         this.requestDeposit = this.requestDeposit.bind(this)
     }
 
-    async getDeposits(user) {
+    async getDeposits(period, user) {
         if (!user || !user.checkPermission(Permission.GET_SELF_DEPOSITS)) {
             throw new NotAuthorized()
         }
 
         const where = {
             user_id: user.id
+        }
+
+        if (period) {
+            const {from, to} = period
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
         }
 
         return await this.Deposit.findAll({where, include: [{model: this.PaymentRequest, as: "paymentRequest"}]})

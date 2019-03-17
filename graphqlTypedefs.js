@@ -147,7 +147,7 @@ const typeDefs = gql`
     
     type Billing {
         balance: Float!
-        deposits: [Deposit!]!
+        deposits(period: Period): [Deposit!]!
         dailyBill: Float!
         daysLeft: Float!
     }
