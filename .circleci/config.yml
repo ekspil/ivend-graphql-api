@@ -70,11 +70,14 @@ jobs:
       - run:
           name: Deploy
           command: |
-            ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts && ssh root@$DEPLOY_SERVER CIRCLE_SHA1=$CIRCLE_SHA1 'source /opt/.env && \
+            ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts &&
+            echo "CIRCLE_SHA1=$CIRCLE_SHA1" > ./sshenv &&
+            scp ./sshenv root@$DEPLOY_SERVER:~/.ssh/environment &&
+            ssh root@$DEPLOY_SERVER 'source /opt/.env && \
             cd /opt/graphql-api && \
             git checkout develop && \
             git pull && \
-            envsubst < development-kube-config.yml > /tmp/development-kube-config.yml.patched
+            envsubst < development-kube-config.yml > /tmp/development-kube-config.yml.patched && \
             microk8s.kubectl apply -f /tmp/development-kube-config.yml.patched'
 
   deploy_production:
