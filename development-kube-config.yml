@@ -31,10 +31,10 @@ spec:
           httpGet:
             path: /graphql
             port: 4000
-            initialDelaySeconds: 30
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
         envFrom:
           - configMapRef:
               name: graphql-config
