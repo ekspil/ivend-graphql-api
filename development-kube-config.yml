@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: graphql
-        image: registry.gitlab.com/pshenmic/ivend/graphql:develop
+        image: registry.gitlab.com/pshenmic/ivend/graphql:$CIRCLE_SHA1
         imagePullPolicy: Always
         ports:
           - containerPort: 4000

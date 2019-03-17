@@ -69,8 +69,13 @@ jobs:
 
       - run:
           name: Deploy
-          command: ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts && ssh root@$DEPLOY_SERVER 'source /opt/.env && cd /opt/graphql-api && git checkout develop && git pull && microk8s.kubectl apply -f development-kube-config.yml'
-
+          command: |
+            ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts && ssh root@$DEPLOY_SERVER 'source /opt/.env && \
+            cd /opt/graphql-api && \
+            git checkout develop && \
+            git pull && \
+            envsubst < development-kube-config.yml > /tmp/development-kube-config.yml.patched
+            microk8s.kubectl apply -f /tmp/development-kube-config.yml.patched'
 
   deploy_production:
     docker:
