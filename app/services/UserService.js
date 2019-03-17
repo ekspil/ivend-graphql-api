@@ -4,6 +4,7 @@ const {Op} = require("sequelize")
 const User = require("../models/User")
 const bcryptjs = require("bcryptjs")
 const hashingUtils = require("../utils/hashingUtils")
+const logger = require("../utils/logger")
 
 const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
 
@@ -65,6 +66,15 @@ class UserService {
         const token = await hashingUtils.generateRandomAccessKey()
 
         await this.redis.hset("tokens", token, user.id)
+
+
+        if (user.email === "test_invalid_token") {
+            setTimeout(() => {
+                logger.info("Purging token for test_invalid_token user ", token)
+                //purge token
+                this.redis.hdel("tokens", token)
+            }, 5000)
+        }
 
         return token
     }
