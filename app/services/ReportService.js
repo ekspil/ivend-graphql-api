@@ -1,6 +1,7 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const Permission = require("../enum/Permission")
 const fetch = require("node-fetch")
+const logger = require("../utils/logger")
 
 class ReportService {
 
@@ -30,7 +31,7 @@ class ReportService {
         })
 
         if (!(response.status === 200)) {
-            console.error("Unexpected status code returned from Excel microservice: " + response.status)
+            logger.error("Unexpected status code returned from Excel microservice: " + response.status)
             throw new Error("Internal server error")
         }
 
