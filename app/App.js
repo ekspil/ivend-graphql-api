@@ -303,6 +303,14 @@ class App {
             })
             user.checkPermission = () => true
 
+            // Create test user with invalid token
+            const invalidTokenUser = await services.userService.registerUser({
+                email: "test_invalid_token",
+                phone: "9999949999",
+                password: "test_invalid_token"
+            })
+            invalidTokenUser.checkPermission = () => true
+
             // Create some items for test user
             const items = []
 
