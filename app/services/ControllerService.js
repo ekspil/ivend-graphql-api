@@ -245,9 +245,17 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        //todo access check
+        const options = {
+            include: this.controllerIncludes
+        }
 
-        const controller = await this.Controller.findById(id, {include: this.controllerIncludes})
+        if (user.role !== "ADMIN") {
+            options.where = {
+                user_id: user.id
+            }
+        }
+
+        const controller = await this.Controller.findById(id, options)
 
         if (!controller) {
             return null
@@ -262,14 +270,20 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        //todo access check
-
-        const controller = await this.Controller.findOne({
+        const options = {
+            include: this.controllerIncludes,
             where: {
                 uid
-            },
-            include: this.controllerIncludes
-        })
+            }
+        }
+
+        if (user.role !== "ADMIN") {
+            options.where = {
+                user_id: user.id
+            }
+        }
+
+        const controller = await this.Controller.findOne(options)
 
         if (!controller) {
             return null
