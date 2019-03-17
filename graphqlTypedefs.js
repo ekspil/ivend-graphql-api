@@ -341,6 +341,19 @@ const typeDefs = gql`
         MONTHLY
     }
 
+    type ExcelReport {
+        url: String!
+    }
+
+    input GenerateExcelInput {
+        rows: [RowDataInput!]!
+    }
+    
+    input RowDataInput {
+        cells: [String!]!
+    }
+
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
@@ -371,6 +384,7 @@ const typeDefs = gql`
         updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
+        generateExcel(input: GenerateExcelInput!): ExcelReport
     }
 
 
