@@ -54,7 +54,7 @@ jobs:
           command: |
             docker build -t "registry.gitlab.com/pshenmic/ivend/graphql:develop" .
             docker login registry.gitlab.com -u "pshenmic" -p "$GITLAB_TOKEN"
-            docker push "registry.gitlab.com/pshenmic/ivend/graphql:develop"
+            docker push "registry.gitlab.com/pshenmic/ivend/graphql:$CIRCLE_SHA1"
 
   deploy_develop:
     docker:
