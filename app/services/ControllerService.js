@@ -246,13 +246,12 @@ class ControllerService {
         }
 
         const options = {
-            include: this.controllerIncludes
+            include: this.controllerIncludes,
+            where: {}
         }
 
         if (user.role !== "ADMIN") {
-            options.where = {
-                user_id: user.id
-            }
+            options.where.user_id = user.id
         }
 
         const controller = await this.Controller.findById(id, options)
@@ -277,10 +276,8 @@ class ControllerService {
             }
         }
 
-        if (user.role !== "ADMIN") {
-            options.where = {
-                user_id: user.id
-            }
+        if (!["ADMIN", "AGGREGATE"].some(role => user.role === role)) {
+            options.where.user_id = user.id
         }
 
         const controller = await this.Controller.findOne(options)
