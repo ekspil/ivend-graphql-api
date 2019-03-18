@@ -1,16 +1,23 @@
 const Sequelize = require("sequelize")
 
-const BankTerminal = {
+const Machine = {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
+    number: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
+    },
     name: {
         type: Sequelize.DataTypes.TEXT,
-        allowNull: false,
-        unique: true
+        allowNull: false
+    },
+    place: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -25,4 +32,4 @@ const BankTerminal = {
         field: "updated_at"
     }
 }
-module.exports = BankTerminal
+module.exports = Machine

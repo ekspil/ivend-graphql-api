@@ -1,6 +1,6 @@
 const Redis = require("ioredis")
 const Sequelize = require("sequelize")
-const { ApolloServer } = require("apollo-server")
+const {ApolloServer} = require("apollo-server")
 const typeDefs = require("../graphqlTypedefs")
 
 const ControllerMode = require("./enum/ControllerMode")
@@ -25,6 +25,7 @@ const NotificationSettingsService = require("./services/NotificationSettingsServ
 const LegalInfoService = require("./services/LegalInfoService")
 const BillingService = require("./services/BillingService")
 const ReportService = require("./services/ReportService")
+const MachineService = require("./services/MachineService")
 
 const User = require("./models/sequelize/User")
 const BankTerminal = require("./models/sequelize/BankTerminal")
@@ -45,6 +46,9 @@ const Deposit = require("./models/sequelize/Deposit")
 const PaymentRequest = require("./models/sequelize/PaymentRequest")
 const Transaction = require("./models/sequelize/Transaction")
 const ControllerServices = require("./models/sequelize/ControllerServices")
+const Machine = require("./models/sequelize/Machine")
+const MachineGroup = require("./models/sequelize/MachineGroup")
+const MachineType = require("./models/sequelize/MachineType")
 
 const redis = new Redis({
     port: 6379,
@@ -97,6 +101,10 @@ class App {
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
         const TransactionModel = sequelize.define("transactions", Transaction)
+        const MachineModel = sequelize.define("machines", Machine)
+        const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
+        const MachineTypeModel = sequelize.define("machine_types", MachineType)
+
         sequelize.define("controller_services", ControllerServices)
 
         UserModel.belongsTo(LegalInfoModel, {
@@ -104,25 +112,25 @@ class App {
             as: "legalInfo"
         })
 
-        NotificationSettingModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
-        ItemModel.belongsTo(UserModel, { foreignKey: "user_id" })
-        TransactionModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        TransactionModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
-        SaleModel.belongsTo(ControllerModel, { foreignKey: "controller_id" })
-        SaleModel.belongsTo(ItemModel, { foreignKey: "item_id" })
+        SaleModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+        SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
 
-        ButtonItemModel.belongsTo(ItemMatrixModel, { foreignKey: "item_matrix_id" })
+        ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
-        ItemMatrixModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        ItemMatrixModel.belongsTo(UserModel, {foreignKey: "user_id"})
         ItemMatrixModel.hasMany(ButtonItemModel, {
             as: "buttons",
             foreignKey: "item_matrix_id"
         })
 
-        ButtonItemModel.belongsTo(ItemModel, { foreignKey: "item_id" })
+        ButtonItemModel.belongsTo(ItemModel, {foreignKey: "item_id"})
 
-        ControllerErrorModel.belongsTo(ControllerModel, { foreignKey: "controller_id" })
+        ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
         // Controller relations
         ControllerModel.belongsTo(EquipmentModel, {
@@ -133,18 +141,18 @@ class App {
             foreignKey: "revision_id",
             as: "revision"
         })
-        ControllerModel.belongsTo(BankTerminalModel, { foreignKey: "bank_terminal_id" })
-        ControllerModel.belongsTo(FiscalRegistrarModel, { foreignKey: "fiscal_registrar_id" })
+        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id"})
+        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
 
         // ItemMatrix
         ControllerModel.hasOne(ItemMatrixModel, {
             foreignKey: "controller_id",
             as: "itemMatrix"
         })
-        ItemMatrixModel.belongsTo(ControllerModel, { foreignKey: "controller_id" })
+        ItemMatrixModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
 
-        ControllerModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
         ControllerModel.belongsTo(ControllerStateModel, {
             foreignKey: "last_state_id",
             as: "lastState"
@@ -154,11 +162,11 @@ class App {
             foreignKey: "equipment_id",
             as: "equipment"
         })
-        FiscalRegistrarModel.hasMany(ControllerModel, { foreignKey: "bank_terminal_id" })
-        BankTerminalModel.hasMany(ControllerModel, { foreignKey: "bank_terminal_id" })
-        RevisionModel.hasMany(ControllerModel, { foreignKey: "revision_id" })
+        FiscalRegistrarModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
+        BankTerminalModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
+        RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
 
-        DepositModel.belongsTo(UserModel, { foreignKey: "user_id" })
+        DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
         DepositModel.belongsTo(PaymentRequestModel, {
             foreignKey: "payment_request_id",
             as: "paymentRequest"
@@ -168,6 +176,27 @@ class App {
             through: "controller_services",
             foreignKey: "controller_id",
             otherKey: "service_id"
+        })
+
+        MachineModel.belongsTo(EquipmentModel, {
+            foreignKey: "equipment_id",
+            as: "equipment"
+        })
+        MachineModel.belongsTo(MachineGroupModel, {
+            foreignKey: "machine_group_id",
+            as: "group"
+        })
+        MachineModel.belongsTo(MachineTypeModel, {
+            foreignKey: "machine_type_id",
+            as: "type"
+        })
+        MachineModel.belongsTo(UserModel, {
+            foreignKey: "user_id",
+            as: "user"
+        })
+        MachineGroupModel.belongsTo(UserModel, {
+            foreignKey: "user_id",
+            as: "user"
         })
 
         await sequelize.authenticate()
@@ -187,7 +216,8 @@ class App {
             notificationSettingsService: undefined,
             legalInfoService: undefined,
             reportService: undefined,
-            billingService: undefined
+            billingService: undefined,
+            machineService: undefined
         }
 
         services.userService = new UserService({
@@ -207,7 +237,7 @@ class App {
             BankTerminalModel
         })
 
-        services.itemService = new ItemService({ ItemModel })
+        services.itemService = new ItemService({ItemModel})
 
         services.itemMatrixService = new ItemMatrixService({
             ItemMatrixModel,
@@ -238,7 +268,7 @@ class App {
             revisionService: services.revisionService
         })
 
-        services.serviceService = new ServiceService({ ServiceModel, controllerService:services.controllerService })
+        services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
         services.controllerService.serviceService = services.serviceService
 
         services.saleService = new SaleService({
@@ -260,8 +290,15 @@ class App {
             ServiceModel,
             TransactionModel,
         })
-        services.notificationSettingsService = new NotificationSettingsService({ NotificationSettingModel })
+        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.reportService = new ReportService({})
+        services.machineService = new MachineService({
+            MachineModel,
+            MachineGroupModel,
+            MachineTypeModel,
+            equipmentService: services.equipmentService
+        })
+
         const populateWithFakeData = async () => {
             Array.prototype.randomElement = function () {
                 return this[Math.floor(Math.random() * this.length)]
@@ -311,6 +348,9 @@ class App {
             })
             invalidTokenUser.checkPermission = () => true
 
+
+            const generalMachineType = await services.machineService.createMachineType({name: "Общий"}, adminUser)
+
             // Create some items for test user
             const items = []
 
@@ -328,7 +368,7 @@ class App {
 
 
             // Create 10 test controllers
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 1; i++) {
                 const controllerInput = {
                     name: `${i + 1} test controller`,
                     uid: `10000003-${i + 1}`,

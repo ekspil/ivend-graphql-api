@@ -144,7 +144,7 @@ const typeDefs = gql`
         message: String!
         errorTime: Timestamp!
     }
-    
+
     type Billing {
         balance: Float!
         deposits(period: Period): [Deposit!]!
@@ -348,16 +348,56 @@ const typeDefs = gql`
     input GenerateExcelInput {
         rows: [RowDataInput!]!
     }
-    
+
     input RowDataInput {
         cells: [String!]!
     }
 
+    type MachineGroup {
+        id: Int!
+        name: String!
+    }
 
+    type MachineType {
+        id: Int!
+        name: String!
+    }
+
+    type Machine {
+        id: Int!
+        number: String!
+        name: String!
+        place: String!
+        group: MachineGroup!
+        equipment: Equipment!
+        type: MachineType!
+    }
+    
+    input CreateMachineInput {
+        number: String!
+        name: String!
+        place: String!
+        groupId: Int!
+        typeId: Int!
+        equipmentId: Int!
+    }
+
+    input CreateMachineGroupInput {
+        name: String!
+    }
+
+    input CreateMachineTypeInput {
+        name: String!
+    }
+    
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
+        getMachineById: [Machine]
+        getMachines: [MachineType]
+        getMachineGroups: [MachineGroup]
+        getMachineTypes: [MachineType]
         getEquipments: [Equipment]
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
@@ -376,6 +416,9 @@ const typeDefs = gql`
         createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
+        createMachine(input: CreateMachineInput!): Machine
+        createMachineType(input: CreateMachineTypeInput!): MachineType
+        createMachineGroup(input: CreateMachineGroupInput!): MachineGroup
         createItem(input: CreateItemInput!): Item
         addButtonToItemMatrix(input: AddButtonToItemMatrixInput!): ItemMatrix
         removeButtonFromItemMatrix(input: RemoveButtonFromItemMatrixInput!): ItemMatrix
@@ -386,8 +429,6 @@ const typeDefs = gql`
         requestDeposit(amount: Float!): Deposit
         generateExcel(input: GenerateExcelInput!): ExcelReport
     }
-
-
 `
 
 module.exports = typeDefs
