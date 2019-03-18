@@ -456,7 +456,7 @@ class App {
 
         }
 
-        if (process.env.NODE_ENV === "development") {
+        if (Number(process.env.FORCE_SYNC) === 1) {
             await sequelize.sync({force: true})
             await populateWithFakeData()
         }
