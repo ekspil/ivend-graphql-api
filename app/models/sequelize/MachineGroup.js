@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize")
 
-const BankTerminal = {
+const MachineGroup = {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
@@ -9,8 +9,7 @@ const BankTerminal = {
     },
     name: {
         type: Sequelize.DataTypes.TEXT,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -25,4 +24,4 @@ const BankTerminal = {
         field: "updated_at"
     }
 }
-module.exports = BankTerminal
+module.exports = MachineGroup
