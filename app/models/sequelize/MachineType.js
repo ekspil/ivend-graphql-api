@@ -9,7 +9,8 @@ const MachineType = {
     },
     name: {
         type: Sequelize.DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,

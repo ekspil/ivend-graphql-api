@@ -14,7 +14,7 @@ module.exports = {
             name: {
                 type: Sequelize.TEXT,
                 allowNull: false,
-                unique: false
+                unique: true
             },
             created_at: {
                 type: Sequelize.DATE,
@@ -39,7 +39,7 @@ module.exports = {
             name: {
                 type: Sequelize.TEXT,
                 allowNull: false,
-                unique: true
+                unique: false
             },
             user_id: {
                 type: Sequelize.BIGINT,

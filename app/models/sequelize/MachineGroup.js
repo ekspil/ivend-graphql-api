@@ -9,7 +9,8 @@ const MachineGroup = {
     },
     name: {
         type: Sequelize.DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
+        unique: false
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
