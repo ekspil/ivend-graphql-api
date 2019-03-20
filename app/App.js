@@ -349,7 +349,7 @@ class App {
             invalidTokenUser.checkPermission = () => true
 
 
-            const generalMachineType = await services.machineService.createMachineType({name: "Общий"}, adminUser)
+            await services.machineService.createMachineType({name: "Общий"}, adminUser)
 
             // Create some items for test user
             const items = []
