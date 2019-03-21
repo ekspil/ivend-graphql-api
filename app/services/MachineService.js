@@ -38,6 +38,7 @@ class MachineService {
         machine.number = number
         machine.name = name
         machine.place = place
+        machine.user_id = user.id
 
         const machineGroup = await this.getMachineGroupById(groupId, user)
 
