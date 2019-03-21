@@ -35,7 +35,8 @@ const Resolvers = function (injects) {
         notificationSettingsService,
         billingService,
         serviceService,
-        itemService
+        itemService,
+        machineService
     })
 
     const queries = new Queries({
