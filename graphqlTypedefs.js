@@ -395,7 +395,7 @@ const typeDefs = gql`
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
         getMachineById: [Machine]
-        getMachines: [MachineType]
+        getMachines: [Machine]
         getMachineGroups: [MachineGroup]
         getMachineTypes: [MachineType]
         getEquipments: [Equipment]
