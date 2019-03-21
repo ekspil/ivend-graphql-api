@@ -69,7 +69,7 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        return await this.Machine.find({
+        return await this.Machine.findAll({
             where: {
                 user_id: user.id
             }
@@ -122,7 +122,7 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        return await this.MachineGroup.find({
+        return await this.MachineGroup.findAll({
             where: {
                 user_id: user.id
             }
@@ -161,7 +161,7 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        return await this.MachineType.find()
+        return await this.MachineType.findAll()
     }
 }
 
