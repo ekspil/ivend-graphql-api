@@ -44,7 +44,8 @@ const Resolvers = function (injects) {
         equipmentService,
         revisionService,
         userService,
-        serviceService
+        serviceService,
+        machineService
     })
 
     return {
