@@ -205,6 +205,7 @@ class SaleService {
                 throw new Error("Internal server error")
             }
 
+            logger.info(JSON.stringify(resp))
             const {Data} = resp
             const {Device} = resp
 
