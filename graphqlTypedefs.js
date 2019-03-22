@@ -132,11 +132,11 @@ const typeDefs = gql`
 
     type Sale {
         id: Int!
-        buttonId: Int!
         type: SaleType!
         item: Item!
         itemMatrix: ItemMatrix!
         controller: Controller!
+        sqr: String
     }
 
     type ControllerError {

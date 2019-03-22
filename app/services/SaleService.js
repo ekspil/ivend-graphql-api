@@ -2,12 +2,14 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
+const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
 const Sale = require("../models/Sale")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const ItemSaleStat = require("../models/ItemSaleStat")
 const SalesSummary = require("../models/SalesSummary")
 const logger = require("../utils/logger")
+const fetch = require("node-fetch")
 
 class SaleService {
 
@@ -23,6 +25,96 @@ class SaleService {
         this.getLastSale = this.getLastSale.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
         this.getItemSaleStats = this.getItemSaleStats.bind(this)
+
+
+        // Create OFD auth
+        this
+            ._authOFD()
+            .then(({AuthToken, ExpirationDateUtc}) => {
+                this.OFD = {AuthToken, ExpirationDateUtc}
+            })
+            .catch(e => {
+                console.error(e)
+                process.exit(1)
+            })
+
+    }
+
+    async _authOFD() {
+        const response = await fetch(`https://ferma.ofd.ru/api/Authorization/CreateAuthToken`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({
+                Login: process.env.OFD_LOGIN,
+                Password: process.env.OFD_PASSWORD
+            })
+        })
+
+        if (!(response.status === 200)) {
+            throw new OFDUnknownStatus()
+        }
+
+        const resp = await response.json()
+        return resp.Data
+    }
+
+    async _registerReceiptOFD(sale, controller, user) {
+        if (!this.OFD) {
+            logger.error("OFD is not authenticated yet")
+            throw new Error("Internal server error")
+        }
+        const {ExpirationDateUtc} = this.OFD
+
+        if (ExpirationDateUtc) {
+            const date = new Date(ExpirationDateUtc)
+            if (new Date() > date) {
+                logger.info(`OFD token expired, requesting again [${new Date()}]`)
+                const {AuthToken, ExpirationDateUtc} = await this._authOFD()
+                this.OFD = {AuthToken, ExpirationDateUtc}
+            }
+        }
+
+        const legalInfo = await controller.user.getLegalInfo()
+
+        if (!legalInfo) {
+            throw new Error("LegalInfo is not set")
+        }
+
+        const body = {
+            Request: {
+                Inn: legalInfo.inn,
+                Type: "Income",
+                InvoiceId: `${controller.uid}.${new Date()}`,
+                LocalDate: new Date(),
+                CustomerReceipt: {
+                    TaxationSystem: "Common",
+                    Email: controller.uid === "10000026-1217" ? "admin@avtobar.ru" : "pay@ivend.pro",
+                    Phone: user.phone,
+                    Items: [
+                        {
+                            Label: "string",
+                            Price: sale.price,
+                            Quantity: 1,
+                            Amount: sale.price,
+                            Vat: "Vat0"
+                        }
+                    ]
+                }
+            }
+        }
+
+        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/receipt?AuthToken=${this.OFD.AuthToken}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify(body)
+        })
+
+
+        return await response.json()
     }
 
     async createSale(input, user) {
@@ -101,6 +193,29 @@ class SaleService {
         sale.item_id = itemId
         sale.item_matrix_id = itemMatrix.id
         sale.controller_id = controller.id
+
+        const lastState = await controller.getLastState()
+
+        if (lastState && lastState.firmwareId !== "emulator") {
+            //register sale on OFD
+            const resp = await this._registerReceiptOFD(sale, controller, user)
+
+            if (resp.Error) {
+                logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
+                throw new Error("Internal server error")
+            }
+
+            const {Data} = resp
+            const {Device} = resp
+
+            const sqr = `t=${Data.ReceiptDateUtc}&s=${price}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
+
+            const createdSale = await this.Sale.create(sale)
+
+            createdSale.sqr = sqr
+
+            return createdSale
+        }
 
         return await this.Sale.create(sale)
     }
