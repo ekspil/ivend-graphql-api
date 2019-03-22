@@ -120,7 +120,7 @@ class SaleService {
     async _checkReceiptOFD(receiptID) {
         const body = {
             Request: {
-                RecieptId: receiptID
+                ReceiptId: receiptID
             }
         }
 
@@ -228,6 +228,10 @@ class SaleService {
             const {ReceiptId} = resp.Data
 
             const receiptInfo = await this._checkReceiptOFD(ReceiptId)
+            if (receiptInfo.Error) {
+                logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
+                throw new Error("Internal server error")
+            }
             logger.info(JSON.stringify(receiptInfo))
             const {Data} = receiptInfo
             const {Device} = resp
