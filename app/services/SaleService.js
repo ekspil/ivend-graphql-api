@@ -242,9 +242,9 @@ class SaleService {
             }
 
             const {Data} = receiptInfo
-            const {Device} = resp
+            const {Device, ReceiptDateUtc} = Data
 
-            const sqr = `t=${Data.ReceiptDateUtc}&s=${price}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
+            const sqr = `t=${ReceiptDateUtc}&s=${price}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
 
             const createdSale = await this.Sale.create(sale)
 
