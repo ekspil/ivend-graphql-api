@@ -1,5 +1,6 @@
 const MachineGroupDTO = require("../../models/dto/MachineGroupDTO")
 const MachineTypeDTO = require("../../models/dto/MachineTypeDTO")
+const MachineLogDTO = require("../../models/dto/MachineLogDTO")
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
 
 function MachineResolver({machineService}) {
@@ -34,10 +35,21 @@ function MachineResolver({machineService}) {
         return new MachineTypeDTO(type)
     }
 
+    const logs = async () => {
+        //const {user} = context
+
+        //const machine = await machineService.getMachineById(obj.id, user)
+
+        const logs = []
+
+        return logs.map(log => (new MachineLogDTO(log)))
+    }
+
     return {
         group,
         equipment,
-        type
+        type,
+        logs
     }
 
 }
