@@ -135,7 +135,7 @@ class SaleService {
         const receiptInfo = await response.json()
 
         if (receiptInfo.Error) {
-            logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
+            logger.error(`Error response from OFD: [${receiptInfo.Error.Code}]` + receiptInfo.Error.Message)
             throw new Error("Internal server error")
         }
 
