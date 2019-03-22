@@ -18,6 +18,10 @@ function MachineQueries({machineService}) {
 
         const machine = await machineService.getMachineById(id, user)
 
+        if (!machine) {
+            return null
+        }
+
         return new MachineDTO(machine)
     }
 
