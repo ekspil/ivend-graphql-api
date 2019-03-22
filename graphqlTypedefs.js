@@ -371,6 +371,13 @@ const typeDefs = gql`
         group: MachineGroup!
         equipment: Equipment!
         type: MachineType!
+        logs: [MachineLog!]!
+    }
+    
+    type MachineLog {
+        type: String!
+        message: String!
+        time: Timestamp!
     }
     
     input CreateMachineInput {
