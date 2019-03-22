@@ -401,7 +401,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
-        getMachineById: [Machine]
+        getMachineById(id: Int!): [Machine]
         getMachines: [Machine]
         getMachineGroups: [MachineGroup]
         getMachineTypes: [MachineType]
