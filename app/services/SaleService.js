@@ -117,6 +117,25 @@ class SaleService {
         return await response.json()
     }
 
+    async _checkReceiptOFD(receiptID) {
+        const body = {
+            Request: {
+                RecieptId: receiptID
+            }
+        }
+
+        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/status?AuthToken=${this.OFD.AuthToken}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify(body)
+        })
+
+
+        return await response.json()
+    }
+
     async createSale(input, user) {
         if (!user || !user.checkPermission(Permission.CREATE_SALE)) {
             throw new NotAuthorized()
@@ -206,7 +225,11 @@ class SaleService {
             }
 
             logger.info(JSON.stringify(resp))
-            const {Data} = resp
+            const {ReceiptId} = resp.Data
+
+            const receiptInfo = await this._checkReceiptOFD(ReceiptId)
+            logger.info(JSON.stringify(receiptInfo))
+            const {Data} = receiptInfo
             const {Device} = resp
 
             const sqr = `t=${Data.ReceiptDateUtc}&s=${price}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
