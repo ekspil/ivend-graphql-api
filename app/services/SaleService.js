@@ -132,8 +132,14 @@ class SaleService {
             body: JSON.stringify(body)
         })
 
+        const receiptInfo = await response.json()
 
-        return await response.json()
+        if (receiptInfo.Error) {
+            logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
+            throw new Error("Internal server error")
+        }
+
+        return receiptInfo
     }
 
     async createSale(input, user) {
@@ -227,12 +233,14 @@ class SaleService {
             logger.info(JSON.stringify(resp))
             const {ReceiptId} = resp.Data
 
-            const receiptInfo = await this._checkReceiptOFD(ReceiptId)
-            if (receiptInfo.Error) {
-                logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
-                throw new Error("Internal server error")
-            }
+            let receiptInfo = await this._checkReceiptOFD(ReceiptId)
             logger.info(JSON.stringify(receiptInfo))
+
+            while (receiptInfo.Data.StatusCode === 0) {
+                receiptInfo = await this._checkReceiptOFD(ReceiptId)
+                logger.info(JSON.stringify(receiptInfo))
+            }
+
             const {Data} = receiptInfo
             const {Device} = resp
 
