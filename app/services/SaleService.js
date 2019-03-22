@@ -34,7 +34,7 @@ class SaleService {
                 this.OFD = {AuthToken, ExpirationDateUtc}
             })
             .catch(e => {
-                console.error(e)
+                logger.error(e)
                 process.exit(1)
             })
 
