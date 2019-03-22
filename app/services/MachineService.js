@@ -82,7 +82,7 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        return await this.Machine.find({
+        return await this.Machine.findOne({
             where: {
                 id: id,
                 user_id: user.id
