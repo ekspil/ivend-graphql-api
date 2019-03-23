@@ -244,7 +244,21 @@ class SaleService {
             const {Data} = receiptInfo
             const {Device, ReceiptDateUtc} = Data
 
-            const sqr = `t=${ReceiptDateUtc}&s=${price}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
+
+            const getTwoDigitDateFormat = (monthOrDate) => {
+                return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
+            }
+
+            const receiptDateUtcDate = new Date(ReceiptDateUtc)
+            let mappedReceiptDate = ""
+            mappedReceiptDate += receiptDateUtcDate.getFullYear() + ""
+            mappedReceiptDate += getTwoDigitDateFormat((receiptDateUtcDate.getMonth() + 1)) + ""
+            mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getDay()) + ""
+            mappedReceiptDate += "T"
+            mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getHours())
+            mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
+
+            const sqr = `t=${mappedReceiptDate}&s=${price}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
 
             const createdSale = await this.Sale.create(sale)
 
