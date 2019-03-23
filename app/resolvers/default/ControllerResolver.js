@@ -4,7 +4,7 @@ const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const ServiceDTO = require("../../models/dto/ServiceDTO")
 const MachineDTO = require("../../models/dto/MachineDTO")
 
-function ControllerResolver({saleService, controllerService, serviceService, machineService}) {
+function ControllerResolver({saleService, controllerService, serviceService}) {
 
     const lastSaleTime = async (obj, args, context) => {
         const {user} = context

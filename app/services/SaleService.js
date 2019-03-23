@@ -249,7 +249,7 @@ class SaleService {
                 return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
             }
 
-            const receiptDateUtcDate = new Date("2019-03-23T13:09:00")
+            const receiptDateUtcDate = new Date(ReceiptDateUtc)
             let mappedReceiptDate = ""
             mappedReceiptDate += receiptDateUtcDate.getFullYear() + ""
             mappedReceiptDate += getTwoDigitDateFormat((receiptDateUtcDate.getMonth() + 1)) + ""
