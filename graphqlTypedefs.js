@@ -271,13 +271,25 @@ const typeDefs = gql`
     }
 
     enum ControllerMode {
-        mdb
-        exe
-        cashless
-        cashless free
-        exe
-        exe
-        exe
+        mdb	   
+        exe	   
+        cashless	   
+        cashless_free	   
+        exe_ph	   
+        mdb_D   
+        exe_D	   
+        exe_ph_D	   
+        cashless_D	   
+        mdb_C	   
+        exe_C	   
+        exe_ph_C
+        cashless_C	   
+        ps_p	   
+        ps_m_D	   
+        ps_M_D	   
+        ps_m_C	   
+        ps_M_C	   
+        mdb2
     }
 
     input AddButtonToItemMatrixInput {
