@@ -90,7 +90,7 @@ class SaleService {
                 LocalDate: new Date(),
                 CustomerReceipt: {
                     TaxationSystem: "Common",
-                    Email: controller.uid === "10000026-1217" ? "admin@avtobar.ru" : "pay@ivend.pro",
+                    Email: "support@ivend.pro",
                     Phone: user.phone,
                     Items: [
                         {
