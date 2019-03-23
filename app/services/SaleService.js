@@ -258,7 +258,7 @@ class SaleService {
             mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getHours())
             mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
 
-            const sqr = `t=${mappedReceiptDate}&s=${price}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
+            const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
 
             const createdSale = await this.Sale.create(sale)
 
