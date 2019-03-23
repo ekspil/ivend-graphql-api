@@ -11,6 +11,7 @@ const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
 const hashingUtils = require("../utils/hashingUtils")
+const logger = require("../utils/logger")
 
 class ControllerService {
 
