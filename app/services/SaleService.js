@@ -262,8 +262,6 @@ class SaleService {
         createdSale.sqr = sqr
 
         return createdSale
-
-        return await this.Sale.create(sale)
     }
 
 
