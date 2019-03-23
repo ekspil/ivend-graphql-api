@@ -267,7 +267,7 @@ class ControllerService {
         const controller = await this.Controller.findById(id, options)
 
         if (!controller) {
-            console.log(`Controller{${id}} not found for User{${user.id}}`)
+            logger.info(`Controller{${id}} not found for User{${user.id}}`)
             return null
         }
 
