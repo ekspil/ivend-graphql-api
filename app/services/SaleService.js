@@ -253,7 +253,7 @@ class SaleService {
             let mappedReceiptDate = ""
             mappedReceiptDate += receiptDateUtcDate.getFullYear() + ""
             mappedReceiptDate += getTwoDigitDateFormat((receiptDateUtcDate.getMonth() + 1)) + ""
-            mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getDay()) + ""
+            mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getDate()) + ""
             mappedReceiptDate += "T"
             mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getHours())
             mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
