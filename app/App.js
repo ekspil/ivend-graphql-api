@@ -151,7 +151,7 @@ class App {
         })
         ItemMatrixModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
-
+        ControllerModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
         ControllerModel.belongsTo(ControllerStateModel, {
             foreignKey: "last_state_id",
@@ -251,6 +251,13 @@ class App {
             RevisionModel
         })
 
+        services.machineService = new MachineService({
+            MachineModel,
+            MachineGroupModel,
+            MachineTypeModel,
+            equipmentService: services.equipmentService
+        })
+
         services.controllerService = new ControllerService({
             ControllerModel,
             ControllerStateModel,
@@ -265,7 +272,8 @@ class App {
             bankTerminalService: services.bankTerminalService,
             itemMatrixService: services.itemMatrixService,
             serviceService: services.serviceService,
-            revisionService: services.revisionService
+            revisionService: services.revisionService,
+            machineService: services.machineService
         })
 
         services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
@@ -292,12 +300,7 @@ class App {
         })
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.reportService = new ReportService({})
-        services.machineService = new MachineService({
-            MachineModel,
-            MachineGroupModel,
-            MachineTypeModel,
-            equipmentService: services.equipmentService
-        })
+
 
         const populateWithFakeData = async () => {
             Array.prototype.randomElement = function () {

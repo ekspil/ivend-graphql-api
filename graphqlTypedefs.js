@@ -23,6 +23,7 @@ const typeDefs = gql`
         overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
         services: [Service!]!
+        machine: Machine!
     }
 
     input Period {
@@ -74,6 +75,7 @@ const typeDefs = gql`
     input CreateControllerInput {
         name: String!
         uid: String!
+        machineId: Int!
         equipmentId: Int!
         revisionId: Int!
         status: ControllerStatus!
@@ -269,9 +271,13 @@ const typeDefs = gql`
     }
 
     enum ControllerMode {
-        MDB
-        EXE
-        CASHLESS
+        mdb
+        exe
+        cashless
+        cashless free
+        exe
+        exe
+        exe
     }
 
     input AddButtonToItemMatrixInput {

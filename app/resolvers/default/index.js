@@ -5,7 +5,7 @@ const BillingResolver = require("./BillingResolver")
 const MachineResolver = require("./MachineResolver")
 
 function DefaultResolvers({controllerService, saleService, notificationSettingsService, billingService, serviceService, itemService, machineService}) {
-    const controllerResolver = new ControllerResolver({controllerService, saleService, serviceService})
+    const controllerResolver = new ControllerResolver({controllerService, saleService, serviceService, machineService})
     const itemSalesStatResolver = new ItemSalesStatResolver({saleService})
     const userResolver = new UserResolver({notificationSettingsService, itemService})
     const billingResolver = new BillingResolver({billingService})

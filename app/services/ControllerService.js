@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const FiscalRegistrarNotFound = require("../errors/FiscalRegistrarNotFound")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
+const MachineNotFound = require("../errors/MachineNotFound")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const BankTerminalNotFound = require("../errors/BankTerminalNotFound")
 const EquipmentNotFound = require("../errors/EquipmentNotFound")
@@ -13,7 +14,7 @@ const hashingUtils = require("../utils/hashingUtils")
 
 class ControllerService {
 
-    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService}) {
+    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService, machineService}) {
 
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
@@ -31,6 +32,7 @@ class ControllerService {
         this.buttonItemService = buttonItemService
         this.serviceService = serviceService
         this.revisionService = revisionService
+        this.machineService = machineService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -78,9 +80,17 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId, serviceIds} = input
+        const {name, uid, revisionId, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId, serviceIds, machineId} = input
 
         const controller = new Controller()
+
+        const machine = await this.machineService.getMachineById(machineId, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        controller.machine_id = machine.id
 
         const revision = await this.revisionService.getRevisionById(revisionId, user)
 
@@ -175,10 +185,10 @@ class ControllerService {
             controller.equipment_id = equipment.id
         }
 
-        if(revisionId) {
+        if (revisionId) {
             const revision = await this.revisionService.getRevisionById(revisionId, user)
 
-            if(!revision) {
+            if (!revision) {
                 throw new RevisionNotFound()
             }
 
