@@ -9,7 +9,7 @@ class ControllerDTO {
     constructor({id, name, equipment, uid, revision, status, mode, fiscalRegistrar, bankTerminal, accessKey, lastState, itemMatrix}) {
         this.id = id
         this.name = name
-        this.equipment = new EquipmentDTO(equipment)
+        this.equipment = equipment ? new EquipmentDTO(equipment) : null
         this.uid = uid
         this.revision = revision
         this.status = status
