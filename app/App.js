@@ -154,10 +154,6 @@ class App {
             as: "lastState"
         })
 
-        EquipmentModel.hasMany(ControllerModel, {
-            foreignKey: "equipment_id",
-            as: "equipment"
-        })
         FiscalRegistrarModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
         BankTerminalModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
         RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
