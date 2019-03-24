@@ -14,12 +14,10 @@ const logger = require("../utils/logger")
 
 class ControllerService {
 
-    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService, machineService}) {
-
+    constructor({ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService, machineService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
-        this.Equipment = EquipmentModel
         this.ButtonItem = ButtonItemModel
         this.ItemMatrix = ItemMatrixModel
         this.User = UserModel
@@ -46,10 +44,6 @@ class ControllerService {
         this.authController = this.authController.bind(this)
 
         this.controllerIncludes = [
-            {
-                model: this.Equipment,
-                as: "equipment"
-            },
             {
                 model: this.ControllerState,
                 as: "lastState"
