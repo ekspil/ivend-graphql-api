@@ -398,7 +398,7 @@ class ControllerService {
         }
 
         controller.firmwareId = firmwareId
-        controller.accessKey = await hashingUtils.generateRandomAccessKey()
+        controller.accessKey = await hashingUtils.generateRandomAccessKey(4)
 
         await controller.save()
 
