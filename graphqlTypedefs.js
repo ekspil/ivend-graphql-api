@@ -7,7 +7,6 @@ const typeDefs = gql`
     type Controller {
         id: Int!
         name: String!
-        equipment: Equipment
         uid: String!
         revision: Revision!
         status: ControllerStatus!
@@ -24,6 +23,7 @@ const typeDefs = gql`
         errors: [ControllerError!]!
         services: [Service!]!
         machine: Machine!
+        firmwareId: String
     }
 
     input Period {
@@ -59,7 +59,6 @@ const typeDefs = gql`
     }
 
     type ControllerState {
-        firmwareId: String!,
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
         coinAmount: Float!,
@@ -76,7 +75,6 @@ const typeDefs = gql`
         name: String!
         uid: String!
         machineId: Int!
-        equipmentId: Int!
         revisionId: Int!
         status: ControllerStatus!
         mode: ControllerMode!
@@ -99,7 +97,6 @@ const typeDefs = gql`
 
     input EditControllerInput {
         name: String
-        equipmentId: Int
         revisionId: Int
         status: ControllerStatus
         mode: ControllerMode
@@ -429,9 +426,15 @@ const typeDefs = gql`
         getProfile: User
         getAvailableServices: AvailableServices!
     }
+    
+    input AuthControllerInput {
+        controllerUid: String!
+        firmwareId: String!
+    }
+    
 
     type Mutation {
-        authController(uid:String!): Controller
+        authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale

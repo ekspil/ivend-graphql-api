@@ -5,7 +5,6 @@ const ControllerNotFound = require("../errors/ControllerNotFound")
 const MachineNotFound = require("../errors/MachineNotFound")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const BankTerminalNotFound = require("../errors/BankTerminalNotFound")
-const EquipmentNotFound = require("../errors/EquipmentNotFound")
 const Controller = require("../models/Controller")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
@@ -15,7 +14,7 @@ const logger = require("../utils/logger")
 
 class ControllerService {
 
-    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService, machineService}) {
+    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService, machineService}) {
 
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
@@ -26,7 +25,6 @@ class ControllerService {
         this.User = UserModel
         this.Revision = RevisionModel
         this.serviceService = serviceService
-        this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
         this.itemMatrixService = itemMatrixService
@@ -45,6 +43,7 @@ class ControllerService {
         this.getLastControllerError = this.getLastControllerError.bind(this)
         this.registerError = this.registerError.bind(this)
         this.registerState = this.registerState.bind(this)
+        this.authController = this.authController.bind(this)
 
         this.controllerIncludes = [
             {
@@ -81,7 +80,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId, serviceIds, machineId} = input
+        const {name, uid, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, serviceIds, machineId} = input
 
         const controller = new Controller()
 
@@ -100,14 +99,6 @@ class ControllerService {
         }
 
         controller.revision_id = revision.id
-
-        const equipment = await this.equipmentService.findById(equipmentId, user)
-
-        if (!equipment) {
-            throw new EquipmentNotFound()
-        }
-
-        controller.equipment_id = equipment.id
 
         if (fiscalRegistrarId) {
             const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
@@ -168,22 +159,12 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, equipmentId, revisionId, status, mode, fiscalRegistrarId, bankTerminalId} = input
+        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId} = input
 
         const controller = await this.getControllerById(id, user)
 
         if (!controller) {
             throw new ControllerNotFound()
-        }
-
-        if (equipmentId) {
-            const equipment = await this.equipmentService.findById(equipmentId, user)
-
-            if (!equipment) {
-                throw new EquipmentNotFound()
-            }
-
-            controller.equipment_id = equipment.id
         }
 
         if (revisionId) {
@@ -357,23 +338,6 @@ class ControllerService {
         return await this.ControllerError.create(controllerError)
     }
 
-    async generateAccessKey(uid, user) {
-        if (!user || !user.checkPermission(Permission.GENERATE_CONTROLLER_ACCESS_KEY)) {
-            throw new NotAuthorized()
-        }
-
-        const controller = await this.getControllerByUID(uid, user)
-
-        if (!controller) {
-            return null
-        }
-
-        controller.accessKey = await hashingUtils.generateRandomAccessKey(4)
-
-        await controller.save()
-
-        return await this.getControllerById(controller.id, user)
-    }
 
     async registerState(controllerStateInput, user) {
         if (!user || !user.checkPermission(Permission.REGISTER_CONTROLLER_STATE)) {
@@ -425,6 +389,27 @@ class ControllerService {
         return await this.getControllerById(controller.id, user)
     }
 
+
+    async authController(input, user) {
+        if (!user || !user.checkPermission(Permission.REGISTER_CONTROLLER_STATE)) {
+            throw new NotAuthorized()
+        }
+
+        const {controllerUid, firmwareId} = input
+
+        const controller = await this.getControllerByUID(controllerUid, user)
+
+        if (!controller) {
+            throw new ControllerNotFound()
+        }
+
+        controller.firmwareId = firmwareId
+        controller.accessKey = await hashingUtils.generateRandomAccessKey()
+
+        await controller.save()
+
+        return await this.getControllerById(controller.id, user)
+    }
 
 }
 

@@ -133,10 +133,6 @@ class App {
         ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
         // Controller relations
-        ControllerModel.belongsTo(EquipmentModel, {
-            foreignKey: "equipment_id",
-            as: "equipment"
-        })
         ControllerModel.belongsTo(RevisionModel, {
             foreignKey: "revision_id",
             as: "revision"
@@ -353,6 +349,7 @@ class App {
 
 
             await services.machineService.createMachineType({name: "Общий"}, adminUser)
+            await services.machineService.createMachineGroup({name: "Общий"}, user)
 
             // Create some items for test user
             const items = []
@@ -372,6 +369,16 @@ class App {
 
             // Create 10 test controllers
             for (let i = 0; i < 1; i++) {
+                const machine = await services.machineService.createMachine({
+                    "number": "1-" + i,
+                    "name": i + " machine",
+                    "place": "Place",
+                    "groupId": 1,
+                    "typeId": 1,
+                    "equipmentId": 1
+                }, user)
+
+
                 const controllerInput = {
                     name: `${i + 1} test controller`,
                     uid: `10000003-${i + 1}`,
@@ -379,7 +386,8 @@ class App {
                     revisionId: revision.id,
                     status: Object.keys(ControllerStatus).randomElement(),
                     mode: Object.keys(ControllerMode).randomElement(),
-                    serviceIds: [1]
+                    serviceIds: [1],
+                    machineId: machine.id
                 }
 
 
