@@ -7,7 +7,7 @@ const typeDefs = gql`
     type Controller {
         id: Int!
         name: String!
-        equipment: Equipment!
+        equipment: Equipment
         uid: String!
         revision: Revision!
         status: ControllerStatus!
