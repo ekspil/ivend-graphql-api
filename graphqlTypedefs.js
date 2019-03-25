@@ -403,7 +403,7 @@ const typeDefs = gql`
     }
 
     input EditMachineInput {
-        machineId: String!
+        machineId: Int!
         number: String
         name: String
         place: String
