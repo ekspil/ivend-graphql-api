@@ -1,4 +1,5 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const MachineNotFound = require("../errors/MachineNotFound")
 const MachineGroupNotFound = require("../errors/MachineGroupNotFound")
 const MachineTypeNotFound = require("../errors/MachineTypeNotFound")
 const EquipmentNotFound = require("../errors/EquipmentNotFound")
@@ -16,6 +17,7 @@ class MachineService {
         this.equipmentService = equipmentService
 
         this.createMachine = this.createMachine.bind(this)
+        this.editMachine = this.editMachine.bind(this)
         this.getMachineById = this.getMachineById.bind(this)
         this.getAllMachinesOfUser = this.getAllMachinesOfUser.bind(this)
         this.createMachineGroup = this.createMachineGroup.bind(this)
@@ -63,6 +65,50 @@ class MachineService {
         machine.machine_type_id = machineType.id
 
         return await this.Machine.create(machine)
+    }
+
+    async editMachine(input, user) {
+        if (!user || !user.checkPermission(Permission.EDIT_MACHINE)) {
+            throw new NotAuthorized()
+        }
+
+        const {machineId, number, name, place, groupId, typeId} = input
+
+        const machine = await this.getMachineById(machineId, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        if (groupId) {
+            const machineGroup = await this.getMachineGroupById(groupId, user)
+
+            if (!machineGroup) {
+                throw new MachineGroupNotFound()
+            }
+        }
+
+        if (typeId) {
+            const machineType = await this.getMachineTypeById(typeId, user)
+
+            if (!machineType) {
+                throw new MachineTypeNotFound()
+            }
+        }
+
+        if (number) {
+            machine.number = number
+        }
+
+        if (name) {
+            machine.name = name
+        }
+
+        if (place) {
+            machine.place = place
+        }
+
+        return await machine.save()
     }
 
     async getAllMachinesOfUser(user) {

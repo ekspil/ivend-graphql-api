@@ -403,6 +403,15 @@ const typeDefs = gql`
         equipmentId: Int!
     }
 
+    input EditMachineInput {
+        machineId: String!
+        number: String
+        name: String
+        place: String
+        groupId: Int
+        typeId: Int
+    }
+
     input CreateMachineGroupInput {
         name: String!
     }
@@ -444,6 +453,7 @@ const typeDefs = gql`
         createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
         createMachine(input: CreateMachineInput!): Machine
+        editMachine(input: EditMachineInput!): Machine
         createMachineType(input: CreateMachineTypeInput!): MachineType
         createMachineGroup(input: CreateMachineGroupInput!): MachineGroup
         createItem(input: CreateItemInput!): Item

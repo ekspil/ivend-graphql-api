@@ -13,6 +13,14 @@ function MachineMutations({machineService}) {
 
         return new MachineDTO(machine)
     }
+    const editMachine = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const machine = await machineService.editMachine(input, user)
+
+        return new MachineDTO(machine)
+    }
 
     const createMachineType = async (root, args, context) => {
         const {input} = args
@@ -34,6 +42,7 @@ function MachineMutations({machineService}) {
 
     return {
         createMachine,
+        editMachine,
         createMachineType,
         createMachineGroup
     }

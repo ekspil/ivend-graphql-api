@@ -41,6 +41,7 @@ const RolePermissions = {
         Permission.GET_CONTROLLER_SERVICES,
         Permission.GET_PROFILE,
         Permission.CREATE_MACHINE,
+        Permission.EDIT_MACHINE,
         Permission.CREATE_MACHINE_GROUP,
         Permission.GET_MACHINE_GROUP_BY_ID,
         Permission.GET_MACHINE_TYPE_BY_ID,
