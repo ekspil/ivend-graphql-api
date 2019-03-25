@@ -86,6 +86,8 @@ class MachineService {
             if (!machineGroup) {
                 throw new MachineGroupNotFound()
             }
+
+            machine.machine_group_id = machineGroup.id
         }
 
         if (typeId) {
@@ -94,6 +96,8 @@ class MachineService {
             if (!machineType) {
                 throw new MachineTypeNotFound()
             }
+
+            machine.machine_type_id = machineType.id
         }
 
         if (number) {
