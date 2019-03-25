@@ -182,7 +182,6 @@ const typeDefs = gql`
 
     input CreateItemInput {
         name: String!
-        price: Float!
     }
 
     input ControllerStateInput {
