@@ -256,6 +256,7 @@ class App {
             ControllerErrorModel,
             EquipmentModel,
             ItemMatrixModel,
+            ItemModel,
             ButtonItemModel,
             UserModel,
             RevisionModel,
