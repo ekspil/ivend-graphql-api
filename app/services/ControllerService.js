@@ -157,12 +157,18 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId} = input
+        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, machineId} = input
 
         const controller = await this.getControllerById(id, user)
 
         if (!controller) {
             throw new ControllerNotFound()
+        }
+
+        if(machineId) {
+            const machine = await this.machineService.getMachineById(machineId, user)
+
+            controller.machine_id = machine.id
         }
 
         if (revisionId) {

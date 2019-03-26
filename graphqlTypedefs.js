@@ -102,6 +102,7 @@ const typeDefs = gql`
         mode: ControllerMode
         fiscalRegistrarId: Int
         bankTerminalId: Int
+        machineId: Int
     }
 
     type Equipment {
