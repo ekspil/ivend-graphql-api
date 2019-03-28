@@ -414,6 +414,7 @@ class ControllerService {
             throw new ControllerNotFound()
         }
 
+        controller.registrationTime = new Date()
         controller.firmwareId = firmwareId
         controller.accessKey = await hashingUtils.generateRandomAccessKey(4)
 

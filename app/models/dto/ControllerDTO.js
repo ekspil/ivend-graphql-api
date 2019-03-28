@@ -5,7 +5,7 @@ const ItemMatrixDTO = require("./ItemMatrixDTO")
 
 class ControllerDTO {
 
-    constructor({id, name, uid, revision, status, mode, fiscalRegistrar, bankTerminal, accessKey, lastState, itemMatrix, firmwareId}) {
+    constructor({id, name, uid, revision, status, mode, fiscalRegistrar, bankTerminal, accessKey, lastState, itemMatrix, firmwareId, registrationTime}) {
         this.id = id
         this.name = name
         this.uid = uid
@@ -18,6 +18,7 @@ class ControllerDTO {
         this.lastState = lastState ? new ControllerStateDTO(lastState) : null
         this.itemMatrix = itemMatrix ? new ItemMatrixDTO(itemMatrix) : null
         this.firmwareId = firmwareId
+        this.registrationTime = registrationTime
     }
 }
 

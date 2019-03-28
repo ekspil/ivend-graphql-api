@@ -1,5 +1,5 @@
 class Controller {
-    constructor(id, name, uid, revision, mode, status, accessKey, user, fiscalRegistrar, bankTerminal, itemMatrix, firmwareId) {
+    constructor(id, name, uid, revision, mode, status, accessKey, user, fiscalRegistrar, bankTerminal, itemMatrix, firmwareId, registrationTime) {
         this.id = id
         this.name = name
         this.uid = uid
@@ -12,6 +12,7 @@ class Controller {
         this.bankTerminal = bankTerminal
         this.itemMatrix = itemMatrix
         this.firmwareId = firmwareId
+        this.registrationTime = registrationTime
     }
 }
 

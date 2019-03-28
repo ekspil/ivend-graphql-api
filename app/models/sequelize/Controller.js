@@ -34,6 +34,11 @@ const Controller = {
         allowNull: true,
         field: "firmware_id"
     },
+    registrationTime: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        field: "registration_time"
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

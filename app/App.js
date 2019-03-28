@@ -308,7 +308,6 @@ class App {
 
             adminUser.checkPermission = () => true
 
-
             const aggregatorUser = await services.userService.registerUser({
                 email: "aggregator",
                 phone: "9999999991",

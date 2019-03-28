@@ -24,6 +24,7 @@ const typeDefs = gql`
         services: [Service!]!
         machine: Machine!
         firmwareId: String
+        registrationTime: Timestamp
     }
 
     input Period {
