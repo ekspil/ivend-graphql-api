@@ -104,6 +104,7 @@ const typeDefs = gql`
         fiscalRegistrarId: Int
         bankTerminalId: Int
         machineId: Int
+        serviceIds: [Int!]
     }
 
     type Equipment {

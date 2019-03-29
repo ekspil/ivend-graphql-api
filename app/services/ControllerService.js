@@ -132,16 +132,7 @@ class ControllerService {
         await this.itemMatrixService.createItemMatrix(savedController.id, user)
 
         if (serviceIds) {
-            await Promise.all(serviceIds.map(async serviceId => {
-                const service = await this.serviceService.findById(serviceId, user)
-
-                if (!service) {
-                    throw new ServiceNotFound()
-                }
-
-                await savedController.addService(service)
-            }))
-
+            await this._applyServices(serviceIds, savedController, user)
         }
 
         return await this.Controller.find({
@@ -152,12 +143,26 @@ class ControllerService {
         })
     }
 
+    async _applyServices(serviceIds, controller, user) {
+        const services = await Promise.all(serviceIds.map(async serviceId => {
+            const service = await this.serviceService.findById(serviceId, user)
+
+            if (!service) {
+                throw new ServiceNotFound()
+            }
+
+            return service
+        }))
+
+        await controller.setServices(services)
+    }
+
     async editController(id, input, user) {
         if (!user || !user.checkPermission(Permission.EDIT_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, machineId} = input
+        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, machineId, serviceIds} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -207,6 +212,10 @@ class ControllerService {
             }
 
             controller.bank_terminal_id = bankTerminal.id
+        }
+
+        if (serviceIds) {
+            await this._applyServices(serviceIds, controller, user)
         }
 
 
