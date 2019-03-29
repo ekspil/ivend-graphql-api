@@ -7,11 +7,6 @@ const ControllerState = {
         primaryKey: true,
         autoIncrement: true
     },
-    firmwareId: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-        field: "firmware_id"
-    },
     coinAcceptorStatus: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,

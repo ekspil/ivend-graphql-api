@@ -51,16 +51,10 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
     }
 
     const authController = async (root, args, context) => {
-        const {uid} = args
+        const {input} = args
         const {user} = context
 
-        let controller = await controllerService.getControllerByUID(uid, user)
-
-        if (!controller) {
-            return null
-        }
-
-        controller = await controllerService.generateAccessKey(uid, user)
+        const controller = await controllerService.authController(input, user)
 
         return new ControllerDTO(controller)
     }

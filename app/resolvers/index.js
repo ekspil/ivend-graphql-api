@@ -35,7 +35,8 @@ const Resolvers = function (injects) {
         notificationSettingsService,
         billingService,
         serviceService,
-        itemService
+        itemService,
+        machineService
     })
 
     const queries = new Queries({
@@ -44,7 +45,8 @@ const Resolvers = function (injects) {
         equipmentService,
         revisionService,
         userService,
-        serviceService
+        serviceService,
+        machineService
     })
 
     return {

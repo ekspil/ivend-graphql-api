@@ -1,4 +1,3 @@
-const EquipmentDTO = require("./EquipmentDTO")
 const FiscalRegistrarDTO = require("./FiscalRegistrarDTO")
 const BankTerminalDTO = require("./BankTerminalDTO")
 const ControllerStateDTO = require("./ControllerStateDTO")
@@ -6,10 +5,9 @@ const ItemMatrixDTO = require("./ItemMatrixDTO")
 
 class ControllerDTO {
 
-    constructor({id, name, equipment, uid, revision, status, mode, fiscalRegistrar, bankTerminal, accessKey, lastState, itemMatrix}) {
+    constructor({id, name, uid, revision, status, mode, fiscalRegistrar, bankTerminal, accessKey, lastState, itemMatrix, firmwareId, registrationTime}) {
         this.id = id
         this.name = name
-        this.equipment = new EquipmentDTO(equipment)
         this.uid = uid
         this.revision = revision
         this.status = status
@@ -19,6 +17,8 @@ class ControllerDTO {
         this.accessKey = accessKey
         this.lastState = lastState ? new ControllerStateDTO(lastState) : null
         this.itemMatrix = itemMatrix ? new ItemMatrixDTO(itemMatrix) : null
+        this.firmwareId = firmwareId
+        this.registrationTime = registrationTime
     }
 }
 

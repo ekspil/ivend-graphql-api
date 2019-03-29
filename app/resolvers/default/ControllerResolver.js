@@ -2,6 +2,7 @@ const ControllerErrorDTO = require("../../models/dto/ControllerErrorDTO")
 const ItemSaleStatDTO = require("../../models/dto/ItemSaleStatDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const ServiceDTO = require("../../models/dto/ServiceDTO")
+const MachineDTO = require("../../models/dto/MachineDTO")
 
 function ControllerResolver({saleService, controllerService, serviceService}) {
 
@@ -64,13 +65,24 @@ function ControllerResolver({saleService, controllerService, serviceService}) {
         return services.map(service => (new ServiceDTO(service)))
     }
 
+    const machine = async (obj, args, context) => {
+        const {user} = context
+
+        const controller = await controllerService.getControllerById(obj.id, user)
+
+        const machine = await controller.getMachine()
+
+        return new MachineDTO(machine)
+    }
+
     return {
         lastSaleTime,
         itemSaleStats,
         overallSalesSummary,
         errors,
         lastErrorTime,
-        services
+        services,
+        machine
     }
 
 }

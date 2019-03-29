@@ -2,35 +2,35 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const FiscalRegistrarNotFound = require("../errors/FiscalRegistrarNotFound")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
+const MachineNotFound = require("../errors/MachineNotFound")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const BankTerminalNotFound = require("../errors/BankTerminalNotFound")
-const EquipmentNotFound = require("../errors/EquipmentNotFound")
 const Controller = require("../models/Controller")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
 const hashingUtils = require("../utils/hashingUtils")
+const logger = require("../utils/logger")
 
 class ControllerService {
 
-    constructor({EquipmentModel, ItemMatrixModel, ButtonItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, equipmentService, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService}) {
-
+    constructor({ItemMatrixModel, ButtonItemModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService, machineService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
-        this.Equipment = EquipmentModel
         this.ButtonItem = ButtonItemModel
+        this.Item = ItemModel
         this.ItemMatrix = ItemMatrixModel
         this.User = UserModel
         this.Revision = RevisionModel
         this.serviceService = serviceService
-        this.equipmentService = equipmentService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
         this.itemMatrixService = itemMatrixService
         this.buttonItemService = buttonItemService
         this.serviceService = serviceService
         this.revisionService = revisionService
+        this.machineService = machineService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -42,12 +42,9 @@ class ControllerService {
         this.getLastControllerError = this.getLastControllerError.bind(this)
         this.registerError = this.registerError.bind(this)
         this.registerState = this.registerState.bind(this)
+        this.authController = this.authController.bind(this)
 
         this.controllerIncludes = [
-            {
-                model: this.Equipment,
-                as: "equipment"
-            },
             {
                 model: this.ControllerState,
                 as: "lastState"
@@ -62,7 +59,10 @@ class ControllerService {
                 include: [
                     {
                         model: this.ButtonItem,
-                        as: "buttons"
+                        as: "buttons",
+                        include: [{
+                            model: this.Item
+                        }]
                     }
                 ]
             },
@@ -78,9 +78,17 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, equipmentId, fiscalRegistrarId, bankTerminalId, serviceIds} = input
+        const {name, uid, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, serviceIds, machineId} = input
 
         const controller = new Controller()
+
+        const machine = await this.machineService.getMachineById(machineId, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        controller.machine_id = machine.id
 
         const revision = await this.revisionService.getRevisionById(revisionId, user)
 
@@ -89,14 +97,6 @@ class ControllerService {
         }
 
         controller.revision_id = revision.id
-
-        const equipment = await this.equipmentService.findById(equipmentId, user)
-
-        if (!equipment) {
-            throw new EquipmentNotFound()
-        }
-
-        controller.equipment_id = equipment.id
 
         if (fiscalRegistrarId) {
             const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
@@ -157,7 +157,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, equipmentId, revisionId, status, mode, fiscalRegistrarId, bankTerminalId} = input
+        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, machineId} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -165,20 +165,23 @@ class ControllerService {
             throw new ControllerNotFound()
         }
 
-        if (equipmentId) {
-            const equipment = await this.equipmentService.findById(equipmentId, user)
+        if (machineId) {
+            const machine = await this.machineService.getMachineById(machineId, user)
 
-            if (!equipment) {
-                throw new EquipmentNotFound()
+            if (!machine) {
+                throw new MachineNotFound()
             }
 
-            controller.equipment_id = equipment.id
+            controller.machine_id = machine.id
+
+        } else {
+            controller.machine_id = null
         }
 
-        if(revisionId) {
+        if (revisionId) {
             const revision = await this.revisionService.getRevisionById(revisionId, user)
 
-            if(!revision) {
+            if (!revision) {
                 throw new RevisionNotFound()
             }
 
@@ -257,6 +260,7 @@ class ControllerService {
         const controller = await this.Controller.findById(id, options)
 
         if (!controller) {
+            logger.info(`Controller{${id}} not found for User{${user.id}}`)
             return null
         }
 
@@ -345,23 +349,6 @@ class ControllerService {
         return await this.ControllerError.create(controllerError)
     }
 
-    async generateAccessKey(uid, user) {
-        if (!user || !user.checkPermission(Permission.GENERATE_CONTROLLER_ACCESS_KEY)) {
-            throw new NotAuthorized()
-        }
-
-        const controller = await this.getControllerByUID(uid, user)
-
-        if (!controller) {
-            return null
-        }
-
-        controller.accessKey = await hashingUtils.generateRandomAccessKey()
-
-        await controller.save()
-
-        return await this.getControllerById(controller.id, user)
-    }
 
     async registerState(controllerStateInput, user) {
         if (!user || !user.checkPermission(Permission.REGISTER_CONTROLLER_STATE)) {
@@ -413,6 +400,28 @@ class ControllerService {
         return await this.getControllerById(controller.id, user)
     }
 
+
+    async authController(input, user) {
+        if (!user || !user.checkPermission(Permission.REGISTER_CONTROLLER_STATE)) {
+            throw new NotAuthorized()
+        }
+
+        const {controllerUid, firmwareId} = input
+
+        const controller = await this.getControllerByUID(controllerUid, user)
+
+        if (!controller) {
+            throw new ControllerNotFound()
+        }
+
+        controller.registrationTime = new Date()
+        controller.firmwareId = firmwareId
+        controller.accessKey = await hashingUtils.generateRandomAccessKey(4)
+
+        await controller.save()
+
+        return await this.getControllerById(controller.id, user)
+    }
 
 }
 

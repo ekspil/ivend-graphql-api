@@ -133,10 +133,6 @@ class App {
         ControllerErrorModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
         // Controller relations
-        ControllerModel.belongsTo(EquipmentModel, {
-            foreignKey: "equipment_id",
-            as: "equipment"
-        })
         ControllerModel.belongsTo(RevisionModel, {
             foreignKey: "revision_id",
             as: "revision"
@@ -151,17 +147,13 @@ class App {
         })
         ItemMatrixModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
 
-
+        ControllerModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
         ControllerModel.belongsTo(ControllerStateModel, {
             foreignKey: "last_state_id",
             as: "lastState"
         })
 
-        EquipmentModel.hasMany(ControllerModel, {
-            foreignKey: "equipment_id",
-            as: "equipment"
-        })
         FiscalRegistrarModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
         BankTerminalModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
         RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
@@ -251,12 +243,20 @@ class App {
             RevisionModel
         })
 
+        services.machineService = new MachineService({
+            MachineModel,
+            MachineGroupModel,
+            MachineTypeModel,
+            equipmentService: services.equipmentService
+        })
+
         services.controllerService = new ControllerService({
             ControllerModel,
             ControllerStateModel,
             ControllerErrorModel,
             EquipmentModel,
             ItemMatrixModel,
+            ItemModel,
             ButtonItemModel,
             UserModel,
             RevisionModel,
@@ -265,7 +265,8 @@ class App {
             bankTerminalService: services.bankTerminalService,
             itemMatrixService: services.itemMatrixService,
             serviceService: services.serviceService,
-            revisionService: services.revisionService
+            revisionService: services.revisionService,
+            machineService: services.machineService
         })
 
         services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
@@ -292,12 +293,7 @@ class App {
         })
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.reportService = new ReportService({})
-        services.machineService = new MachineService({
-            MachineModel,
-            MachineGroupModel,
-            MachineTypeModel,
-            equipmentService: services.equipmentService
-        })
+
 
         const populateWithFakeData = async () => {
             Array.prototype.randomElement = function () {
@@ -311,7 +307,6 @@ class App {
             }, "ADMIN")
 
             adminUser.checkPermission = () => true
-
 
             const aggregatorUser = await services.userService.registerUser({
                 email: "aggregator",
@@ -350,6 +345,7 @@ class App {
 
 
             await services.machineService.createMachineType({name: "Общий"}, adminUser)
+            await services.machineService.createMachineGroup({name: "Общий"}, user)
 
             // Create some items for test user
             const items = []
@@ -369,6 +365,16 @@ class App {
 
             // Create 10 test controllers
             for (let i = 0; i < 1; i++) {
+                const machine = await services.machineService.createMachine({
+                    "number": "1-" + i,
+                    "name": i + " machine",
+                    "place": "Place",
+                    "groupId": 1,
+                    "typeId": 1,
+                    "equipmentId": 1
+                }, user)
+
+
                 const controllerInput = {
                     name: `${i + 1} test controller`,
                     uid: `10000003-${i + 1}`,
@@ -376,7 +382,8 @@ class App {
                     revisionId: revision.id,
                     status: Object.keys(ControllerStatus).randomElement(),
                     mode: Object.keys(ControllerMode).randomElement(),
-                    serviceIds: [1]
+                    serviceIds: [1],
+                    machineId: machine.id
                 }
 
 

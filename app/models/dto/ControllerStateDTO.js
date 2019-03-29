@@ -1,8 +1,7 @@
 class ControllerStateDTO {
 
-    constructor({id, firmwareId, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime}) {
+    constructor({id, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime}) {
         this.id = id
-        this.firmwareId = firmwareId
         this.coinAcceptorStatus = coinAcceptorStatus
         this.billAcceptorStatus = billAcceptorStatus
         this.coinAmount = coinAmount

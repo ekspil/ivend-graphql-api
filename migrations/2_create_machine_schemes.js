@@ -120,6 +120,17 @@ module.exports = {
                     key: "id"
                 }
             },
+            user_id: {
+                type: Sequelize.BIGINT,
+                allowNull: false,
+                unique: false,
+                onUpdate: "restrict",
+                onDelete: "restrict",
+                references: {
+                    model: "users",
+                    key: "id"
+                }
+            },
             created_at: {
                 type: Sequelize.DATE,
                 allowNull: true,

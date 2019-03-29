@@ -2,12 +2,14 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
+const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
 const Sale = require("../models/Sale")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const ItemSaleStat = require("../models/ItemSaleStat")
 const SalesSummary = require("../models/SalesSummary")
 const logger = require("../utils/logger")
+const fetch = require("node-fetch")
 
 class SaleService {
 
@@ -23,6 +25,121 @@ class SaleService {
         this.getLastSale = this.getLastSale.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
         this.getItemSaleStats = this.getItemSaleStats.bind(this)
+
+
+        // Create OFD auth
+        this
+            ._authOFD()
+            .then(({AuthToken, ExpirationDateUtc}) => {
+                this.OFD = {AuthToken, ExpirationDateUtc}
+            })
+            .catch(e => {
+                logger.error(e)
+                process.exit(1)
+            })
+
+    }
+
+    async _authOFD() {
+        const response = await fetch(`https://ferma.ofd.ru/api/Authorization/CreateAuthToken`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({
+                Login: process.env.OFD_LOGIN,
+                Password: process.env.OFD_PASSWORD
+            })
+        })
+
+        if (!(response.status === 200)) {
+            throw new OFDUnknownStatus()
+        }
+
+        const resp = await response.json()
+        return resp.Data
+    }
+
+    async _registerReceiptOFD(sale, controller, user) {
+        if (!this.OFD) {
+            logger.error("OFD is not authenticated yet")
+            throw new Error("Internal server error")
+        }
+        const {ExpirationDateUtc} = this.OFD
+
+        if (ExpirationDateUtc) {
+            const date = new Date(ExpirationDateUtc)
+            if (new Date() > date) {
+                logger.info(`OFD token expired, requesting again [${new Date()}]`)
+                const {AuthToken, ExpirationDateUtc} = await this._authOFD()
+                this.OFD = {AuthToken, ExpirationDateUtc}
+            }
+        }
+
+        const legalInfo = await controller.user.getLegalInfo()
+
+        if (!legalInfo) {
+            throw new Error("LegalInfo is not set")
+        }
+
+        const body = {
+            Request: {
+                Inn: legalInfo.inn,
+                Type: "Income",
+                InvoiceId: `${controller.uid}.${new Date()}`,
+                LocalDate: new Date(),
+                CustomerReceipt: {
+                    TaxationSystem: "Common",
+                    Email: "support@ivend.pro",
+                    Phone: user.phone,
+                    Items: [
+                        {
+                            Label: "string",
+                            Price: sale.price,
+                            Quantity: 1,
+                            Amount: sale.price,
+                            Vat: "Vat0"
+                        }
+                    ]
+                }
+            }
+        }
+
+        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/receipt?AuthToken=${this.OFD.AuthToken}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify(body)
+        })
+
+
+        return await response.json()
+    }
+
+    async _checkReceiptOFD(receiptID) {
+        const body = {
+            Request: {
+                ReceiptId: receiptID
+            }
+        }
+
+        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/status?AuthToken=${this.OFD.AuthToken}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify(body)
+        })
+
+        const receiptInfo = await response.json()
+
+        if (receiptInfo.Error) {
+            logger.error(`Error response from OFD: [${receiptInfo.Error.Code}]` + receiptInfo.Error.Message)
+            throw new Error("Internal server error")
+        }
+
+        return receiptInfo
     }
 
     async createSale(input, user) {
@@ -102,7 +219,49 @@ class SaleService {
         sale.item_matrix_id = itemMatrix.id
         sale.controller_id = controller.id
 
-        return await this.Sale.create(sale)
+        //register sale on OFD
+        const resp = await this._registerReceiptOFD(sale, controller, user)
+
+        if (resp.Error) {
+            logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
+            throw new Error("Internal server error")
+        }
+
+        logger.info(JSON.stringify(resp))
+        const {ReceiptId} = resp.Data
+
+        let receiptInfo = await this._checkReceiptOFD(ReceiptId)
+        logger.info(JSON.stringify(receiptInfo))
+
+        while (receiptInfo.Data.StatusCode === 0) {
+            receiptInfo = await this._checkReceiptOFD(ReceiptId)
+            logger.info(JSON.stringify(receiptInfo))
+        }
+
+        const {Data} = receiptInfo
+        const {Device, ReceiptDateUtc} = Data
+
+
+        const getTwoDigitDateFormat = (monthOrDate) => {
+            return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
+        }
+
+        const receiptDateUtcDate = new Date(ReceiptDateUtc)
+        let mappedReceiptDate = ""
+        mappedReceiptDate += receiptDateUtcDate.getFullYear() + ""
+        mappedReceiptDate += getTwoDigitDateFormat((receiptDateUtcDate.getMonth() + 1)) + ""
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getDate()) + ""
+        mappedReceiptDate += "T"
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getHours())
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
+
+        const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
+
+        const createdSale = await this.Sale.create(sale)
+
+        createdSale.sqr = sqr
+
+        return createdSale
     }
 
 

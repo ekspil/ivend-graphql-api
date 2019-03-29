@@ -1,7 +1,7 @@
 const ControllerMode = {
-    "MDB": "MDB",
-    "EXE": "EXE",
-    "CASHLESS": "CASHLESS"
+    "mdb": "mdb",
+    "exe": "exe",
+    "cashless": "cashless"
 }
 
 module.exports = ControllerMode

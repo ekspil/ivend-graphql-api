@@ -23,7 +23,7 @@ class ItemMatrixService {
     }
 
     async createItemMatrix(controllerId, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+        if (!user || !user.checkPermission(Permission.CREATE_ITEM_MATRIX)) {
             throw new NotAuthorized()
         }
 
