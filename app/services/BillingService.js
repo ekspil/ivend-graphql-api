@@ -78,7 +78,7 @@ class BillingService {
 
         const daysLeft = Math.floor(balance / dailyBill)
 
-        if(Number.isNaN(daysLeft)) {
+        if(!isFinite(daysLeft)) {
             return 0
         }
 
@@ -96,7 +96,7 @@ class BillingService {
 
         const balance = await this.Transaction.sum("amount", {where})
 
-        if (Number.isNaN(balance)) {
+        if (!isFinite(balance)) {
             return 0
         }
 
