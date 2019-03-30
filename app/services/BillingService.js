@@ -58,7 +58,32 @@ class BillingService {
             }
         })
 
-        return controllersWithServices.reduce((acc, controllerWithServices) => {
+        const mapped = await Promise.all(controllersWithServices.map(async (controllerWithServices) => {
+            const {services} = controllerWithServices
+
+            const mappedServices = await Promise.all(services.map(async (service) => {
+                if (service.billingType === "MONTHLY") {
+                    const {sequelize} = this.Service
+
+                    const [datePart] = await sequelize.query("SELECT DATE_PART('days',  DATE_TRUNC('month', NOW())  + '1 MONTH'::INTERVAL  - '1 DAY'::INTERVAL)",
+                        {type: sequelize.QueryTypes.SELECT}
+                    )
+                    const daysInMonth = datePart.date_part
+
+                    const [dayPriceResult] = await sequelize.query("SELECT ROUND(:price::NUMERIC / :days::NUMERIC, 2) as day_price",
+                        {replacements: {price: service.price, days: daysInMonth}, type: sequelize.QueryTypes.SELECT}
+                    )
+
+                    return {price: dayPriceResult.day_price}
+                }
+
+                return {price: service.price}
+            }))
+
+            return {services: mappedServices}
+        }))
+
+        return mapped.reduce((acc, controllerWithServices) => {
             const {services} = controllerWithServices
 
             return acc + services.reduce((acc, service) => {
@@ -78,7 +103,7 @@ class BillingService {
 
         const daysLeft = Math.floor(balance / dailyBill)
 
-        if(!isFinite(daysLeft)) {
+        if (!isFinite(daysLeft)) {
             return 0
         }
 
