@@ -321,8 +321,8 @@ class App {
             const revision = await services.revisionService.createRevision({name: "1"}, adminUser)
             await services.serviceService.createService({
                 name: "Telemetry",
-                price: 150,
-                billingType: "DAILY",
+                price: 100,
+                billingType: "MONTHLY",
                 type: "CONTROLLER"
             }, adminUser)
 
