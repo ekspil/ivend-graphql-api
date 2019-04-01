@@ -50,6 +50,8 @@ const Machine = require("./models/sequelize/Machine")
 const MachineGroup = require("./models/sequelize/MachineGroup")
 const MachineType = require("./models/sequelize/MachineType")
 
+const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
+
 const redis = new Redis({
     port: 6379,
     host: process.env.REDIS_HOST,
@@ -117,7 +119,7 @@ class App {
         ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
         TransactionModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
-        SaleModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+        SaleModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
 
         ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
@@ -137,15 +139,8 @@ class App {
             foreignKey: "revision_id",
             as: "revision"
         })
-        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id"})
-        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id"})
-
-        // ItemMatrix
-        ControllerModel.hasOne(ItemMatrixModel, {
-            foreignKey: "controller_id",
-            as: "itemMatrix"
-        })
-        ItemMatrixModel.belongsTo(ControllerModel, {foreignKey: "controller_id"})
+        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id", as: "bankTerminal"})
+        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id", as: "fiscalRegistrar"})
 
         ControllerModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
@@ -168,6 +163,16 @@ class App {
             through: "controller_services",
             foreignKey: "controller_id",
             otherKey: "service_id"
+        })
+
+        MachineModel.belongsTo(ItemMatrixModel, {
+            foreignKey: "item_matrix_id",
+            as: "itemMatrix"
+        })
+
+        MachineModel.belongsTo(EquipmentModel, {
+            foreignKey: "controller_id",
+            as: "controller"
         })
 
         MachineModel.belongsTo(EquipmentModel, {
@@ -236,7 +241,7 @@ class App {
             itemService: services.itemService,
             ButtonItemModel,
             ItemModel,
-            UserModel
+            UserModel,
         })
 
         services.revisionService = new RevisionService({
@@ -247,7 +252,9 @@ class App {
             MachineModel,
             MachineGroupModel,
             MachineTypeModel,
-            equipmentService: services.equipmentService
+            equipmentService: services.equipmentService,
+            itemMatrixService: services.itemMatrixService,
+            controllerService: services.controllerService
         })
 
         services.controllerService = new ControllerService({
@@ -277,7 +284,8 @@ class App {
             ItemModel,
             ButtonItemModel,
             controllerService: services.controllerService,
-            itemService: services.itemService
+            itemService: services.itemService,
+            machineService: services.machineService
         })
 
         services.legalInfoService = new LegalInfoService({
@@ -365,15 +373,6 @@ class App {
 
             // Create 10 test controllers
             for (let i = 0; i < 1; i++) {
-                const machine = await services.machineService.createMachine({
-                    "number": "1-" + i,
-                    "name": i + " machine",
-                    "place": "Place",
-                    "groupId": 1,
-                    "typeId": 1,
-                    "equipmentId": 1
-                }, user)
-
 
                 const controllerInput = {
                     name: `${i + 1} test controller`,
@@ -383,23 +382,37 @@ class App {
                     status: Object.keys(ControllerStatus).randomElement(),
                     mode: Object.keys(ControllerMode).randomElement(),
                     serviceIds: [1],
-                    machineId: machine.id
                 }
 
-
                 const controller = await services.controllerService.createController(controllerInput, user)
+
+                const machine = await services.machineService.createMachine({
+                    number: "1-" + i,
+                    name: i + " machine",
+                    place: "Place",
+                    groupId: 1,
+                    typeId: 1,
+                    equipmentId: 1,
+                    controllerId: controller.id
+                }, user)
 
                 logger.info(`Created test controller uid: ${controller.uid}`)
 
                 for (const [index, item] of items.entries()) {
+                    const itemMatrix = await machine.getItemMatrix()
+
+                    if (!itemMatrix) {
+                        throw new ItemMatrixNotFound()
+                    }
+
                     await services.itemMatrixService.addButtonToItemMatrix({
-                        itemMatrixId: controller.itemMatrix.id,
+                        itemMatrixId: itemMatrix.id,
                         buttonId: index,
                         itemId: item.id
                     }, user)
                 }
 
-                const itemMatrix = await controller.getItemMatrix()
+                const itemMatrix = await machine.getItemMatrix()
                 const buttons = await itemMatrix.getButtons()
 
                 // Generate sales for this controller from 3 days behind

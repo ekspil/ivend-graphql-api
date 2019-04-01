@@ -36,7 +36,8 @@ const Resolvers = function (injects) {
         billingService,
         serviceService,
         itemService,
-        machineService
+        machineService,
+        itemMatrixService
     })
 
     const queries = new Queries({

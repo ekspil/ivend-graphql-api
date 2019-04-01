@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const MachineNotFound = require("../errors/MachineNotFound")
 const MachineGroupNotFound = require("../errors/MachineGroupNotFound")
 const MachineTypeNotFound = require("../errors/MachineTypeNotFound")
+const ControllerNotFound = require("../errors/ControllerNotFound")
 const EquipmentNotFound = require("../errors/EquipmentNotFound")
 const Machine = require("../models/Machine")
 const MachineGroup = require("../models/MachineGroup")
@@ -10,15 +11,18 @@ const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, MachineGroupModel, MachineTypeModel, equipmentService}) {
+    constructor({MachineModel, MachineGroupModel, MachineTypeModel, equipmentService, itemMatrixService, controllerService}) {
         this.Machine = MachineModel
         this.MachineGroup = MachineGroupModel
         this.MachineType = MachineTypeModel
         this.equipmentService = equipmentService
+        this.itemMatrixService = itemMatrixService
+        this.controllerService = controllerService
 
         this.createMachine = this.createMachine.bind(this)
         this.editMachine = this.editMachine.bind(this)
         this.getMachineById = this.getMachineById.bind(this)
+        this.getMachineByControllerId = this.getMachineByControllerId.bind(this)
         this.getAllMachinesOfUser = this.getAllMachinesOfUser.bind(this)
         this.createMachineGroup = this.createMachineGroup.bind(this)
         this.getMachineGroupById = this.getMachineGroupById.bind(this)
@@ -64,7 +68,13 @@ class MachineService {
         machine.machine_group_id = machineGroup.id
         machine.machine_type_id = machineType.id
 
-        return await this.Machine.create(machine)
+        const savedMachine = await this.Machine.create(machine)
+
+        const itemMatrix = await this.itemMatrixService.createItemMatrix(machine.id, user)
+
+        savedMachine.item_matrix_id = itemMatrix.id
+
+        return savedMachine.save()
     }
 
     async editMachine(input, user) {
@@ -72,12 +82,22 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        const {machineId, number, name, place, groupId, typeId} = input
+        const {machineId, controllerId, number, name, place, groupId, typeId} = input
 
         const machine = await this.getMachineById(machineId, user)
 
         if (!machine) {
             throw new MachineNotFound()
+        }
+
+        if (controllerId) {
+            const controller = await this.controllerService.getControllerById(controllerId, user)
+
+            if (!controller) {
+                throw new ControllerNotFound()
+            }
+
+            machine.controller_id = controller.id
         }
 
         if (groupId) {
@@ -135,6 +155,20 @@ class MachineService {
         return await this.Machine.findOne({
             where: {
                 id: id,
+                user_id: user.id
+            }
+        })
+    }
+
+
+    async getMachineByControllerId(controllerId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_BY_CONTROLLER_ID)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Machine.findOne({
+            where: {
+                controller_id: controllerId,
                 user_id: user.id
             }
         })

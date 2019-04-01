@@ -14,19 +14,17 @@ const logger = require("../utils/logger")
 
 class ControllerService {
 
-    constructor({ItemMatrixModel, ButtonItemModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, fiscalRegistrarService, bankTerminalService, itemMatrixService, buttonItemService, serviceService, revisionService, machineService}) {
+    constructor({ButtonItemModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, fiscalRegistrarService, bankTerminalService, buttonItemService, serviceService, revisionService, machineService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
         this.ButtonItem = ButtonItemModel
         this.Item = ItemModel
-        this.ItemMatrix = ItemMatrixModel
         this.User = UserModel
         this.Revision = RevisionModel
         this.serviceService = serviceService
         this.fiscalRegistrarService = fiscalRegistrarService
         this.bankTerminalService = bankTerminalService
-        this.itemMatrixService = itemMatrixService
         this.buttonItemService = buttonItemService
         this.serviceService = serviceService
         this.revisionService = revisionService
@@ -54,19 +52,6 @@ class ControllerService {
                 as: "revision"
             },
             {
-                model: this.ItemMatrix,
-                as: "itemMatrix",
-                include: [
-                    {
-                        model: this.ButtonItem,
-                        as: "buttons",
-                        include: [{
-                            model: this.Item
-                        }]
-                    }
-                ]
-            },
-            {
                 model: this.User,
                 as: "user",
             }
@@ -78,17 +63,9 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, serviceIds, machineId} = input
+        const {name, uid, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, serviceIds} = input
 
         const controller = new Controller()
-
-        const machine = await this.machineService.getMachineById(machineId, user)
-
-        if (!machine) {
-            throw new MachineNotFound()
-        }
-
-        controller.machine_id = machine.id
 
         const revision = await this.revisionService.getRevisionById(revisionId, user)
 
@@ -129,8 +106,6 @@ class ControllerService {
 
         const savedController = await this.Controller.create(controller)
 
-        await this.itemMatrixService.createItemMatrix(savedController.id, user)
-
         if (serviceIds) {
             await this._applyServices(serviceIds, savedController, user)
         }
@@ -162,25 +137,12 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, machineId, serviceIds} = input
+        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, serviceIds} = input
 
         const controller = await this.getControllerById(id, user)
 
         if (!controller) {
             throw new ControllerNotFound()
-        }
-
-        if (machineId) {
-            const machine = await this.machineService.getMachineById(machineId, user)
-
-            if (!machine) {
-                throw new MachineNotFound()
-            }
-
-            controller.machine_id = machine.id
-
-        } else {
-            controller.machine_id = null
         }
 
         if (revisionId) {

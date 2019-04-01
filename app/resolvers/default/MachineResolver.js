@@ -2,6 +2,7 @@ const MachineGroupDTO = require("../../models/dto/MachineGroupDTO")
 const MachineTypeDTO = require("../../models/dto/MachineTypeDTO")
 const MachineLogDTO = require("../../models/dto/MachineLogDTO")
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
+const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
 
 function MachineResolver({machineService}) {
 
@@ -45,11 +46,26 @@ function MachineResolver({machineService}) {
         return logs.map(log => (new MachineLogDTO(log)))
     }
 
+    const itemMatrix = async (obj, args, context) => {
+        const {user} = context
+
+        const machine = await machineService.getMachineById(obj.id, user)
+
+        const itemMatrix = await machine.getItemMatrix()
+
+        if (!itemMatrix) {
+            return null
+        }
+
+        return new ItemMatrixDTO(itemMatrix)
+    }
+
     return {
         group,
         equipment,
         type,
-        logs
+        logs,
+        itemMatrix
     }
 
 }

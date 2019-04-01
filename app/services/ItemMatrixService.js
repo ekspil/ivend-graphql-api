@@ -22,7 +22,7 @@ class ItemMatrixService {
         this.addButtonToItemMatrix = this.addButtonToItemMatrix.bind(this)
     }
 
-    async createItemMatrix(controllerId, user) {
+    async createItemMatrix(machineId, user) {
         if (!user || !user.checkPermission(Permission.CREATE_ITEM_MATRIX)) {
             throw new NotAuthorized()
         }
@@ -30,7 +30,7 @@ class ItemMatrixService {
         const itemMatrix = new ItemMatrix()
         itemMatrix.buttons = []
         itemMatrix.user_id = user.id
-        itemMatrix.controller_id = controllerId
+        itemMatrix.machine_id = machineId
 
         return await this.ItemMatrix.create(itemMatrix, {
             include: [

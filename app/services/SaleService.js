@@ -1,5 +1,6 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
+const MachineNotFound = require("../errors/MachineNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
@@ -13,12 +14,13 @@ const fetch = require("node-fetch")
 
 class SaleService {
 
-    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService}) {
+    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService}) {
         this.Sale = SaleModel
         this.Item = ItemModel
         this.ButtonItem = ButtonItemModel
         this.controllerService = controllerService
         this.itemService = itemService
+        this.machineService = machineService
 
         this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
@@ -27,6 +29,18 @@ class SaleService {
         this.getItemSaleStats = this.getItemSaleStats.bind(this)
 
 
+        if (process.env.OFD_LOGIN && process.env.OFD_PASSWORD) {
+            // Create OFD auth
+            this
+                ._authOFD()
+                .then(({AuthToken, ExpirationDateUtc}) => {
+                    this.OFD = {AuthToken, ExpirationDateUtc}
+                })
+                .catch(e => {
+                    logger.error(e)
+                    process.exit(1)
+                })
+        }
 
     }
 
@@ -170,7 +184,13 @@ class SaleService {
             throw new ControllerNotFound
         }
 
-        const {itemMatrix} = controller
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        const {itemMatrix} = machine
 
         if (!itemMatrix) {
             throw new ItemMatrixNotFound()

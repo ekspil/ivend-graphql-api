@@ -15,16 +15,16 @@ const typeDefs = gql`
         bankTerminal: BankTerminal
         accessKey: String,
         lastState: ControllerState
-        itemMatrix: ItemMatrix!
         lastSaleTime: Timestamp
         lastErrorTime: Timestamp
         itemSaleStats(period: Period): [ItemSalesStat!]!
         overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
         services: [Service!]!
-        machine: Machine!
+        machine: Machine
         firmwareId: String
         registrationTime: Timestamp
+        user: User!
     }
 
     input Period {
@@ -75,7 +75,6 @@ const typeDefs = gql`
     input CreateControllerInput {
         name: String!
         uid: String!
-        machineId: Int!
         revisionId: Int!
         status: ControllerStatus!
         mode: ControllerMode!
@@ -103,7 +102,6 @@ const typeDefs = gql`
         mode: ControllerMode
         fiscalRegistrarId: Int
         bankTerminalId: Int
-        machineId: Int
         serviceIds: [Int!]
     }
 
@@ -386,6 +384,7 @@ const typeDefs = gql`
         place: String!
         group: MachineGroup!
         equipment: Equipment!
+        itemMatrix: ItemMatrix
         type: MachineType!
         logs: [MachineLog!]!
     }
@@ -403,6 +402,7 @@ const typeDefs = gql`
         groupId: Int!
         typeId: Int!
         equipmentId: Int!
+        controllerId: Int
     }
 
     input EditMachineInput {
