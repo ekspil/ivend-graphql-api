@@ -4,10 +4,7 @@ module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.addColumn("machines", "controller_id",
             {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-                unique: true,
-                defaultValue: 0
+                type: Sequelize.BIGINT
             })
     },
     down: async () => {
