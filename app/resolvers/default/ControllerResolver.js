@@ -127,7 +127,7 @@ function ControllerResolver({saleService, controllerService, serviceService, mac
 
         const controllerUser = await controller.getUser()
 
-        return new UserDTO(fiscalRegistrar)
+        return new UserDTO(controllerUser)
     }
 
     return {
