@@ -6,7 +6,8 @@ module.exports = {
             {
                 type: Sequelize.BIGINT,
                 allowNull: false,
-                unique: true
+                unique: true,
+                defaultValue: 0
             })
     },
     down: async () => {
