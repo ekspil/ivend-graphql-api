@@ -27,16 +27,6 @@ class SaleService {
         this.getItemSaleStats = this.getItemSaleStats.bind(this)
 
 
-        // Create OFD auth
-        this
-            ._authOFD()
-            .then(({AuthToken, ExpirationDateUtc}) => {
-                this.OFD = {AuthToken, ExpirationDateUtc}
-            })
-            .catch(e => {
-                logger.error(e)
-                process.exit(1)
-            })
 
     }
 
@@ -94,7 +84,7 @@ class SaleService {
                     Phone: user.phone,
                     Items: [
                         {
-                            Label: "string",
+                            Label: sale.item.name,
                             Price: sale.price,
                             Quantity: 1,
                             Amount: sale.price,
