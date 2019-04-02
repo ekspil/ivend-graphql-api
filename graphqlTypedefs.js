@@ -15,7 +15,6 @@ const typeDefs = gql`
         bankTerminal: BankTerminal
         accessKey: String,
         lastState: ControllerState
-        lastSaleTime: Timestamp
         lastErrorTime: Timestamp
         errors: [ControllerError!]!
         services: [Service!]!

@@ -6,19 +6,7 @@ const ControllerStateDTO = require("../../models/dto/ControllerStateDTO")
 const BankTerminalDTO = require("../../models/dto/BankTerminalDTO")
 const FiscalRegistrarDTO = require("../../models/dto/FiscalRegistrarDTO")
 
-function ControllerResolver({saleService, controllerService, serviceService, machineService}) {
-
-    const lastSaleTime = async (obj, args, context) => {
-        const {user} = context
-
-        const lastSale = await saleService.getLastSale(obj.id, user)
-
-        if (lastSale) {
-            return lastSale.createdAt
-        }
-
-        return null
-    }
+function ControllerResolver({controllerService, serviceService, machineService}) {
 
     const errors = async (obj, args, context) => {
         const {user} = context
@@ -115,7 +103,6 @@ function ControllerResolver({saleService, controllerService, serviceService, mac
         bankTerminal,
         fiscalRegistrar,
         lastState,
-        lastSaleTime,
         errors,
         lastErrorTime,
         services,
