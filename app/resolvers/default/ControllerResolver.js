@@ -42,6 +42,10 @@ function ControllerResolver({controllerService, serviceService, machineService})
 
         const machine = await machineService.getMachineByControllerId(obj.id, user)
 
+        if (!machine) {
+            return null
+        }
+
         return new MachineDTO(machine)
     }
 
