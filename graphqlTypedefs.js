@@ -167,7 +167,7 @@ const typeDefs = gql`
     type Item {
         id: Int,
         name: String!
-        salesSummary: SalesSummary
+        salesSummary(period: Period): SalesSummary
         lastSaleTime: Timestamp
     }
 
@@ -380,7 +380,7 @@ const typeDefs = gql`
         equipment: Equipment!
         itemMatrix: ItemMatrix
         type: MachineType!
-        salesSummary: SalesSummary
+        salesSummary(period: Period): SalesSummary
         logs: [MachineLog!]!
     }
     

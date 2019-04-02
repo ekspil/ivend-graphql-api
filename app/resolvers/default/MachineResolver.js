@@ -63,8 +63,9 @@ function MachineResolver({machineService, saleService}) {
 
     const salesSummary = async (obj, args, context) => {
         const {user} = context
+        const {period} = args
 
-        const salesSummary = await saleService.getSalesSummary({machineId: obj.id}, user)
+        const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
 
         if (!salesSummary) {
             return null
