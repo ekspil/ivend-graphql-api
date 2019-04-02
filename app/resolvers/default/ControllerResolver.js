@@ -1,6 +1,4 @@
 const ControllerErrorDTO = require("../../models/dto/ControllerErrorDTO")
-const ItemSaleStatDTO = require("../../models/dto/ItemSaleStatDTO")
-const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const ServiceDTO = require("../../models/dto/ServiceDTO")
 const MachineDTO = require("../../models/dto/MachineDTO")
 const UserDTO = require("../../models/dto/UserDTO")
