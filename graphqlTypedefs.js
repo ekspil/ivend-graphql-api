@@ -17,8 +17,6 @@ const typeDefs = gql`
         lastState: ControllerState
         lastSaleTime: Timestamp
         lastErrorTime: Timestamp
-        itemSaleStats(period: Period): [ItemSalesStat!]!
-        overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
         services: [Service!]!
         machine: Machine
@@ -44,12 +42,6 @@ const typeDefs = gql`
         SUCCEEDED
         CANCELLED
         PENDING
-    }
-
-    type ItemSalesStat {
-        item: Item!
-        salesSummary: SalesSummary!
-        lastSaleTime: Timestamp!
     }
 
     type SalesSummary {
@@ -175,6 +167,8 @@ const typeDefs = gql`
     type Item {
         id: Int,
         name: String!
+        salesSummary: SalesSummary
+        lastSaleTime: Timestamp
     }
 
     type Revision {id: Int!
@@ -386,6 +380,7 @@ const typeDefs = gql`
         equipment: Equipment!
         itemMatrix: ItemMatrix
         type: MachineType!
+        salesSummary: SalesSummary
         logs: [MachineLog!]!
     }
     

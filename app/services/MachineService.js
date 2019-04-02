@@ -37,13 +37,14 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        const {number, name, place, groupId, typeId, equipmentId} = input
+        const {number, name, place, groupId, typeId, equipmentId, controllerId} = input
 
         const machine = new Machine()
 
         machine.number = number
         machine.name = name
         machine.place = place
+        machine.controller_id = controllerId
         machine.user_id = user.id
 
         const machineGroup = await this.getMachineGroupById(groupId, user)

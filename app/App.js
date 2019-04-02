@@ -428,10 +428,10 @@ class App {
                         const price = [10, 20, 40, 30, 50, 55, 15].randomElement()
                         const item = await randomButton.getItem()
                         const itemId = item.id
-                        const controllerId = controller.id
+                        const machineId = machine.id
                         const time = startDate
 
-                        const saleInput = {buttonId, type, price, itemId, controllerId, time}
+                        const saleInput = {buttonId, type, price, itemId, machineId, time}
 
                         await services.saleService.createSale(saleInput, user)
                     }

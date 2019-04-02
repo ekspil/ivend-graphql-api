@@ -7,7 +7,6 @@ const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
 const Sale = require("../models/Sale")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
-const ItemSaleStat = require("../models/ItemSaleStat")
 const SalesSummary = require("../models/SalesSummary")
 const logger = require("../utils/logger")
 const fetch = require("node-fetch")
@@ -26,8 +25,6 @@ class SaleService {
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
-        this.getItemSaleStats = this.getItemSaleStats.bind(this)
-
 
         if (process.env.OFD_LOGIN && process.env.OFD_PASSWORD) {
             // Create OFD auth
@@ -151,7 +148,7 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const {buttonId, type, price, itemId, itemMatrixId, controllerId, time} = input
+        const {buttonId, type, price, itemId, itemMatrixId, machineId, time} = input
 
         const sale = new Sale()
         sale.buttonId = buttonId
@@ -159,7 +156,7 @@ class SaleService {
         sale.price = price
         sale.item_id = itemId
         sale.item_matrix_id = itemMatrixId
-        sale.controller_id = controllerId
+        sale.machine_id = machineId
 
         if (time) {
             sale.createdAt = time
@@ -184,19 +181,22 @@ class SaleService {
             throw new ControllerNotFound
         }
 
-        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+        //todo fix that
+        controller.user.checkPermission = () => true
+
+        const machine = await this.machineService.getMachineByControllerId(controller.id, controller.user)
 
         if (!machine) {
             throw new MachineNotFound()
         }
 
-        const {itemMatrix} = machine
+        const itemMatrix = await machine.getItemMatrix()
 
         if (!itemMatrix) {
             throw new ItemMatrixNotFound()
         }
 
-        const {buttons} = itemMatrix
+        const buttons = await itemMatrix.getButtons()
 
         if (!buttons.some((buttonItem) => buttonItem.buttonId === buttonId)) {
             const name = `Товар ${buttonId}`
@@ -222,12 +222,14 @@ class SaleService {
         }
 
         const sale = new Sale()
-        sale.buttonId = buttonId
         sale.type = type
         sale.price = price
         sale.item_id = itemId
-        sale.item_matrix_id = itemMatrix.id
-        sale.controller_id = controller.id
+        sale.machine_id = machine.id
+
+        if (!process.env.OFD_LOGIN || !process.env.OFD_PASSWORD) {
+            return await this.Sale.create(sale)
+        }
 
         //register sale on OFD
         const resp = await this._registerReceiptOFD(sale, controller, user)
@@ -301,57 +303,20 @@ class SaleService {
         })
     }
 
-    async getItemSaleStats(input, user) {
-        if (!user || !user.checkPermission(Permission.GET_ITEM_SALE_STATS)) {
-            throw new NotAuthorized()
-        }
-
-        const {controllerId, period} = input
-
-        const {sequelize} = this.Sale
-        const {Op} = sequelize
-
-        const where = {
-            controller_id: controllerId
-        }
-
-        if (period) {
-            const {from, to} = period
-
-            where.createdAt = {
-                [Op.lt]: to,
-                [Op.gt]: from
-            }
-        }
-
-        const sales = await this.Sale.findAll({
-            where,
-            attributes: ["item_id", [sequelize.fn("COUNT", "sales.id"), "amount"]],
-            group: ["item_id", "item.id"],
-            include: [{model: this.Item}],
-        })
-
-        //todo move out to default resolver
-        return await Promise.all(sales.map(async sale => {
-            const itemId = sale.item.id
-            const salesSummaryByItem = await this.getSalesSummary({controllerId, period, itemId}, user)
-            return (new ItemSaleStat(sale.item, salesSummaryByItem))
-        }))
-
-    }
-
     async getSalesSummary(input, user) {
         if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()
         }
 
-        const {controllerId, period, itemId} = input
+        const {machineId, period, itemId} = input
 
         const {sequelize} = this.Sale
         const {Op} = sequelize
 
-        const where = {
-            controller_id: controllerId
+        const where = {}
+
+        if (machineId) {
+            where.machine_id = machineId
         }
 
         if (itemId) {

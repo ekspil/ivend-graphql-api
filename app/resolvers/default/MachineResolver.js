@@ -3,8 +3,9 @@ const MachineTypeDTO = require("../../models/dto/MachineTypeDTO")
 const MachineLogDTO = require("../../models/dto/MachineLogDTO")
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
 const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
+const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 
-function MachineResolver({machineService}) {
+function MachineResolver({machineService, saleService}) {
 
     const group = async (obj, args, context) => {
         const {user} = context
@@ -60,7 +61,20 @@ function MachineResolver({machineService}) {
         return new ItemMatrixDTO(itemMatrix)
     }
 
+    const salesSummary = async (obj, args, context) => {
+        const {user} = context
+
+        const salesSummary = await saleService.getSalesSummary({machineId: obj.id}, user)
+
+        if (!salesSummary) {
+            return null
+        }
+
+        return new SalesSummaryDTO(salesSummary)
+    }
+
     return {
+        salesSummary,
         group,
         equipment,
         type,

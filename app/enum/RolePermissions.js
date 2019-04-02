@@ -60,7 +60,8 @@ const RolePermissions = {
         Permission.AUTH_CONTROLLER,
         Permission.REGISTER_CONTROLLER_STATE,
         Permission.REGISTER_SALE,
-        Permission.REGISTER_CONTROLLER_ERROR
+        Permission.REGISTER_CONTROLLER_ERROR,
+        Permission.GET_MACHINE_BY_CONTROLLER_ID
     ]
 }
 

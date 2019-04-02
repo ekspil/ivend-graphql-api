@@ -22,24 +22,6 @@ function ControllerResolver({saleService, controllerService, serviceService, mac
         return null
     }
 
-    const itemSaleStats = async (obj, args, context) => {
-        const {user} = context
-        const {period} = args
-
-        const itemSaleStats = await saleService.getItemSaleStats({controllerId: obj.id, period}, user)
-
-        return itemSaleStats.map(itemSaleStat => (new ItemSaleStatDTO(itemSaleStat)))
-    }
-
-    const overallSalesSummary = async (obj, args, context) => {
-        const {user} = context
-        const {period} = args
-
-        const salesSummary = await saleService.getSalesSummary({controllerId: obj.id, period}, user)
-
-        return new SalesSummaryDTO(salesSummary)
-    }
-
     const errors = async (obj, args, context) => {
         const {user} = context
 
@@ -136,8 +118,6 @@ function ControllerResolver({saleService, controllerService, serviceService, mac
         fiscalRegistrar,
         lastState,
         lastSaleTime,
-        itemSaleStats,
-        overallSalesSummary,
         errors,
         lastErrorTime,
         services,
