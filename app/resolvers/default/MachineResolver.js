@@ -74,7 +74,20 @@ function MachineResolver({machineService, saleService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
+    const lastSaleTime = async (obj, args, context) => {
+        const {user} = context
+
+        const sale = await saleService.getLastSale(obj.id, user)
+
+        if (!sale) {
+            return null
+        }
+
+        return sale.createdAt
+    }
+
     return {
+        lastSaleTime,
         salesSummary,
         group,
         equipment,

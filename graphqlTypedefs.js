@@ -381,6 +381,7 @@ const typeDefs = gql`
         type: MachineType!
         salesSummary(period: Period): SalesSummary
         logs: [MachineLog!]!
+        lastSaleTime: Timestamp
     }
     
     type MachineLog {

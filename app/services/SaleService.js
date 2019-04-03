@@ -277,13 +277,13 @@ class SaleService {
     }
 
 
-    async getLastSale(controllerId, user) {
+    async getLastSale(machineId, user) {
         if (!user || !user.checkPermission(Permission.GET_LAST_SALE)) {
             throw new NotAuthorized()
         }
 
         return await this.Sale.findOne({
-            where: {controller_id: controllerId},
+            where: {machine_id: machineId},
             order: [
                 ["id", "DESC"],
             ]
