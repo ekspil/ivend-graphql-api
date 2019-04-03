@@ -4,6 +4,7 @@ const MachineLogDTO = require("../../models/dto/MachineLogDTO")
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
 const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
+const ControllerDTO = require("../../models/dto/ControllerDTO")
 
 function MachineResolver({machineService, saleService}) {
 
@@ -86,7 +87,23 @@ function MachineResolver({machineService, saleService}) {
         return sale.createdAt
     }
 
+
+    const controller = async (obj, args, context) => {
+        const {user} = context
+
+        const machine = await machineService.getMachineById(obj.id, user)
+
+        const controller =  await machine.getController()
+
+        if (!controller) {
+            return null
+        }
+
+        return new ControllerDTO(controller)
+    }
+
     return {
+        controller,
         lastSaleTime,
         salesSummary,
         group,

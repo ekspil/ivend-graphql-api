@@ -382,6 +382,7 @@ const typeDefs = gql`
         salesSummary(period: Period): SalesSummary
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
+        controller: Controller
     }
     
     type MachineLog {
