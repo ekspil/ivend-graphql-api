@@ -4,7 +4,7 @@ module.exports = {
     up: async (queryInterface,) => {
 
         await queryInterface.addIndex(
-            "controllers",
+            "machines",
             ["controller_id"],
             {
                 indexName: "controllers_controller_id_key",
