@@ -11,21 +11,15 @@ const logger = require("../utils/logger")
 
 class ControllerService {
 
-    constructor({ButtonItemModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, fiscalRegistrarService, bankTerminalService, buttonItemService, serviceService, revisionService, machineService}) {
+    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, serviceService, revisionService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
-        this.ButtonItem = ButtonItemModel
         this.Item = ItemModel
         this.User = UserModel
         this.Revision = RevisionModel
         this.serviceService = serviceService
-        this.fiscalRegistrarService = fiscalRegistrarService
-        this.bankTerminalService = bankTerminalService
-        this.buttonItemService = buttonItemService
-        this.serviceService = serviceService
         this.revisionService = revisionService
-        this.machineService = machineService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)

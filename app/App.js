@@ -258,22 +258,14 @@ class App {
         })
 
         services.controllerService = new ControllerService({
-            ControllerModel,
-            ControllerStateModel,
-            ControllerErrorModel,
-            EquipmentModel,
-            ItemMatrixModel,
             ItemModel,
-            ButtonItemModel,
+            ControllerModel,
+            ControllerErrorModel,
+            ControllerStateModel,
             UserModel,
             RevisionModel,
-            equipmentService: services.equipmentService,
-            fiscalRegistrarService: services.fiscalRegistrarService,
-            bankTerminalService: services.bankTerminalService,
-            itemMatrixService: services.itemMatrixService,
-            serviceService: services.serviceService,
             revisionService: services.revisionService,
-            machineService: services.machineService
+            serviceService: services.serviceService
         })
 
         services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
