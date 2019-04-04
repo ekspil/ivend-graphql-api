@@ -37,45 +37,47 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        const {number, name, place, groupId, typeId, equipmentId, controllerId} = input
+        return this.Machine.sequelize.transaction(async (transaction) => {
+            const {number, name, place, groupId, typeId, equipmentId, controllerId} = input
 
-        const machine = new Machine()
+            let machine = new Machine()
 
-        machine.number = number
-        machine.name = name
-        machine.place = place
-        machine.controller_id = controllerId
-        machine.user_id = user.id
+            machine.number = number
+            machine.name = name
+            machine.place = place
+            machine.controller_id = controllerId
+            machine.user_id = user.id
 
-        const machineGroup = await this.getMachineGroupById(groupId, user)
+            const machineGroup = await this.getMachineGroupById(groupId, user)
 
-        if (!machineGroup) {
-            throw new MachineGroupNotFound()
-        }
+            if (!machineGroup) {
+                throw new MachineGroupNotFound()
+            }
 
-        const machineType = await this.getMachineTypeById(typeId, user)
+            const machineType = await this.getMachineTypeById(typeId, user)
 
-        if (!machineType) {
-            throw new MachineTypeNotFound()
-        }
+            if (!machineType) {
+                throw new MachineTypeNotFound()
+            }
 
-        const equipment = await this.equipmentService.findById(equipmentId, user)
+            const equipment = await this.equipmentService.findById(equipmentId, user)
 
-        if (!equipment) {
-            throw new EquipmentNotFound()
-        }
+            if (!equipment) {
+                throw new EquipmentNotFound()
+            }
 
-        machine.equipment_id = equipment.id
-        machine.machine_group_id = machineGroup.id
-        machine.machine_type_id = machineType.id
+            machine.equipment_id = equipment.id
+            machine.machine_group_id = machineGroup.id
+            machine.machine_type_id = machineType.id
 
-        const savedMachine = await this.Machine.create(machine)
+            machine = await this.Machine.create(machine, {transaction})
 
-        const itemMatrix = await this.itemMatrixService.createItemMatrix(machine.id, user)
+            const itemMatrix = await this.itemMatrixService.createItemMatrix(machine.id, user, transaction)
 
-        savedMachine.item_matrix_id = itemMatrix.id
+            machine.item_matrix_id = itemMatrix.id
 
-        return savedMachine.save()
+            return machine.save({transaction})
+        })
     }
 
     async editMachine(input, user) {
