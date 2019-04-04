@@ -22,7 +22,7 @@ class ItemMatrixService {
         this.addButtonToItemMatrix = this.addButtonToItemMatrix.bind(this)
     }
 
-    async createItemMatrix(machineId, user) {
+    async createItemMatrix(machineId, user, transaction) {
         if (!user || !user.checkPermission(Permission.CREATE_ITEM_MATRIX)) {
             throw new NotAuthorized()
         }
@@ -38,7 +38,8 @@ class ItemMatrixService {
                     model: this.ButtonItem,
                     as: "buttons"
                 }
-            ]
+            ],
+            transaction
         })
     }
 
