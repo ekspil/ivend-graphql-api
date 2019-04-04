@@ -1,9 +1,7 @@
 const NotAuthorized = require("../errors/NotAuthorized")
-const FiscalRegistrarNotFound = require("../errors/FiscalRegistrarNotFound")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const ServiceNotFound = require("../errors/ServiceNotFound")
-const BankTerminalNotFound = require("../errors/BankTerminalNotFound")
 const Controller = require("../models/Controller")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
@@ -62,7 +60,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, serviceIds} = input
+        const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, serviceIds} = input
 
         const controller = new Controller()
 
@@ -74,32 +72,14 @@ class ControllerService {
 
         controller.revision_id = revision.id
 
-        if (fiscalRegistrarId) {
-            const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
-
-            if (fiscalRegistrar) {
-                throw new FiscalRegistrarNotFound()
-            }
-
-            controller.fiscal_registrar_id = fiscalRegistrar.id
-        }
-
-
-        if (bankTerminalId) {
-            const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
-
-            if (bankTerminal) {
-                throw new BankTerminalNotFound()
-            }
-
-            controller.bank_terminal_id = bankTerminal.id
-        }
-
         controller.name = name
         controller.uid = uid
         controller.revision = revision
         controller.status = status
         controller.mode = mode
+        controller.readStatMode = readStatMode
+        controller.bankTerminalMode = bankTerminalMode
+        controller.fiscalizationMode = fiscalizationMode
 
         controller.user_id = user.id
 
@@ -136,7 +116,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, fiscalRegistrarId, bankTerminalId, serviceIds} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, serviceIds} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -154,26 +134,6 @@ class ControllerService {
             controller.revision_id = revision.id
         }
 
-        if (fiscalRegistrarId) {
-            const fiscalRegistrar = await this.fiscalRegistrarService.findById(fiscalRegistrarId, user)
-
-            if (!fiscalRegistrar) {
-                throw FiscalRegistrarNotFound
-            }
-
-            controller.fiscal_registrar_id = fiscalRegistrar.id
-        }
-
-
-        if (bankTerminalId) {
-            const bankTerminal = await this.bankTerminalService.findById(bankTerminalId, user)
-
-            if (!bankTerminal) {
-                throw new BankTerminalNotFound()
-            }
-
-            controller.bank_terminal_id = bankTerminal.id
-        }
 
         if (serviceIds) {
             await this._applyServices(serviceIds, controller, user)
@@ -190,6 +150,18 @@ class ControllerService {
 
         if (mode) {
             controller.mode = mode
+        }
+
+        if (readStatMode) {
+            controller.readStatMode = readStatMode
+        }
+
+        if (bankTerminalMode) {
+            controller.bankTerminalMode = bankTerminalMode
+        }
+
+        if (fiscalizationMode) {
+            controller.fiscalizationMode = fiscalizationMode
         }
 
         await controller.save()

@@ -3,8 +3,6 @@ const ServiceDTO = require("../../models/dto/ServiceDTO")
 const MachineDTO = require("../../models/dto/MachineDTO")
 const UserDTO = require("../../models/dto/UserDTO")
 const ControllerStateDTO = require("../../models/dto/ControllerStateDTO")
-const BankTerminalDTO = require("../../models/dto/BankTerminalDTO")
-const FiscalRegistrarDTO = require("../../models/dto/FiscalRegistrarDTO")
 
 function ControllerResolver({controllerService, serviceService, machineService}) {
 
@@ -63,34 +61,6 @@ function ControllerResolver({controllerService, serviceService, machineService})
         return new ControllerStateDTO(controllerState)
     }
 
-    const bankTerminal = async (obj, args, context) => {
-        const {user} = context
-
-        const controller = await controllerService.getControllerById(obj.id, user)
-
-        const bankTerminal = await controller.getBankTerminal()
-
-        if (!bankTerminal) {
-            return null
-        }
-
-        return new BankTerminalDTO(bankTerminal)
-    }
-
-    const fiscalRegistrar = async (obj, args, context) => {
-        const {user} = context
-
-        const controller = await controllerService.getControllerById(obj.id, user)
-
-        const fiscalRegistrar = await controller.getFiscalRegistrar()
-
-        if (!fiscalRegistrar) {
-            return null
-        }
-
-        return new FiscalRegistrarDTO(fiscalRegistrar)
-    }
-
 
     const user = async (obj, args, context) => {
         const {user} = context
@@ -104,8 +74,6 @@ function ControllerResolver({controllerService, serviceService, machineService})
 
     return {
         user,
-        bankTerminal,
-        fiscalRegistrar,
         lastState,
         errors,
         lastErrorTime,

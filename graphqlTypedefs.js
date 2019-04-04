@@ -6,13 +6,13 @@ const typeDefs = gql`
 
     type Controller {
         id: Int!
-        name: String!
         uid: String!
-        revision: Revision!
         status: ControllerStatus!
         mode: ControllerMode!
-        fiscalRegistrar: FiscalRegistrar
-        bankTerminal: BankTerminal
+        readStatMode: ReadStatMode!
+        bankTerminalMode: BankTerminalMode!
+        fiscalizationMode: FiscalizationMode!
+        revision: Revision!
         accessKey: String,
         lastState: ControllerState
         lastErrorTime: Timestamp
@@ -22,6 +22,24 @@ const typeDefs = gql`
         firmwareId: String
         registrationTime: Timestamp
         user: User!
+    }
+
+    enum ReadStatMode {
+        COINBOX
+        MACHINE
+        COINBOX_MACHINE
+    }
+
+    enum BankTerminalMode {
+        NO_BANK_TERMINAL
+        INPAS
+        SBERBANK
+    }
+
+    enum FiscalizationMode {
+        NO_FISCAL
+        UNAPPROVED
+        APPROVED
     }
 
     input Period {
@@ -64,14 +82,23 @@ const typeDefs = gql`
     }
 
     input CreateControllerInput {
-        name: String!
         uid: String!
-        revisionId: Int!
         status: ControllerStatus!
         mode: ControllerMode!
-        fiscalRegistrarId: Int
-        bankTerminalId: Int
-        itemMatrixId: Int
+        readStatMode: ReadStatMode!
+        bankTerminalMode: BankTerminalMode!
+        fiscalizationMode: FiscalizationMode!
+        revisionId: Int!
+        serviceIds: [Int!]
+    }
+
+    input EditControllerInput {
+        status: ControllerStatus
+        mode: ControllerMode
+        readStatMode: ReadStatMode
+        bankTerminalMode: BankTerminalMode
+        fiscalizationMode: FiscalizationMode
+        revisionId: Int
         serviceIds: [Int!]
     }
 
@@ -84,16 +111,6 @@ const typeDefs = gql`
         buttonId: Int!
         itemName: String!,
         price: Float!
-    }
-
-    input EditControllerInput {
-        name: String
-        revisionId: Int
-        status: ControllerStatus
-        mode: ControllerMode
-        fiscalRegistrarId: Int
-        bankTerminalId: Int
-        serviceIds: [Int!]
     }
 
     type Equipment {
@@ -260,24 +277,24 @@ const typeDefs = gql`
     }
 
     enum ControllerMode {
-        mdb	   
-        exe	   
-        cashless	   
-        cashless_free	   
-        exe_ph	   
-        mdb_D   
-        exe_D	   
-        exe_ph_D	   
-        cashless_D	   
-        mdb_C	   
-        exe_C	   
+        mdb
+        exe
+        cashless
+        cashless_free
+        exe_ph
+        mdb_D
+        exe_D
+        exe_ph_D
+        cashless_D
+        mdb_C
+        exe_C
         exe_ph_C
-        cashless_C	   
-        ps_p	   
-        ps_m_D	   
-        ps_M_D	   
-        ps_m_C	   
-        ps_M_C	   
+        cashless_C
+        ps_p
+        ps_m_D
+        ps_M_D
+        ps_m_C
+        ps_M_C
         mdb2
     }
 
@@ -384,13 +401,13 @@ const typeDefs = gql`
         lastSaleTime: Timestamp
         controller: Controller
     }
-    
+
     type MachineLog {
         type: String!
         message: String!
         time: Timestamp!
     }
-    
+
     input CreateMachineInput {
         number: String!
         name: String!
@@ -417,7 +434,7 @@ const typeDefs = gql`
     input CreateMachineTypeInput {
         name: String!
     }
-    
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
@@ -432,12 +449,12 @@ const typeDefs = gql`
         getProfile: User
         getAvailableServices: AvailableServices!
     }
-    
+
     input AuthControllerInput {
         controllerUid: String!
         firmwareId: String!
     }
-    
+
 
     type Mutation {
         authController(input: AuthControllerInput!): Controller
