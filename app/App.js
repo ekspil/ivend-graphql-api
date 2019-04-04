@@ -142,7 +142,6 @@ class App {
         ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id", as: "bankTerminal"})
         ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id", as: "fiscalRegistrar"})
 
-        ControllerModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
         ControllerModel.belongsTo(ControllerStateModel, {
             foreignKey: "last_state_id",
@@ -170,7 +169,7 @@ class App {
             as: "itemMatrix"
         })
 
-        MachineModel.belongsTo(EquipmentModel, {
+        MachineModel.belongsTo(ControllerModel, {
             foreignKey: "controller_id",
             as: "controller"
         })
@@ -248,14 +247,6 @@ class App {
             RevisionModel
         })
 
-        services.machineService = new MachineService({
-            MachineModel,
-            MachineGroupModel,
-            MachineTypeModel,
-            equipmentService: services.equipmentService,
-            itemMatrixService: services.itemMatrixService,
-            controllerService: services.controllerService
-        })
 
         services.controllerService = new ControllerService({
             ItemModel,
@@ -266,6 +257,15 @@ class App {
             RevisionModel,
             revisionService: services.revisionService,
             serviceService: services.serviceService
+        })
+
+        services.machineService = new MachineService({
+            MachineModel,
+            MachineGroupModel,
+            MachineTypeModel,
+            equipmentService: services.equipmentService,
+            itemMatrixService: services.itemMatrixService,
+            controllerService: services.controllerService
         })
 
         services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
