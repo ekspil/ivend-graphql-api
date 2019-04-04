@@ -83,7 +83,7 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        const {machineId, controllerId, number, name, place, groupId, typeId} = input
+        const {machineId, equipmentId, controllerId, number, name, place, groupId, typeId} = input
 
         const machine = await this.getMachineById(machineId, user)
 
@@ -99,6 +99,16 @@ class MachineService {
             }
 
             machine.controller_id = controller.id
+        }
+
+        if (equipmentId) {
+            const equipment = await this.equipmentService.findById(equipmentId, user)
+
+            if (!equipment) {
+                throw new EquipmentNotFound()
+            }
+
+            machine.equipment_id = equipment.id
         }
 
         if (groupId) {
