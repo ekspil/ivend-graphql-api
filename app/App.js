@@ -432,7 +432,7 @@ class App {
 
             const amount = 50000
 
-            sequelize.queryInterface.bulkInsert("deposits", [{
+            await sequelize.queryInterface.bulkInsert("deposits", [{
                 amount,
                 user_id: user.id,
                 payment_request_id: paymentRequest.id,
