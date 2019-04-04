@@ -14,8 +14,6 @@ const ContextResolver = require("./resolvers/ContextResolver")
 const UserService = require("./services/UserService")
 const ControllerService = require("./services/ControllerService")
 const EquipmentService = require("./services/EquipmentService")
-const FiscalRegistrarService = require("./services/FiscalRegistrarService")
-const BankTerminalService = require("./services/BankTerminalService")
 const SaleService = require("./services/SaleService")
 const ItemService = require("./services/ItemService")
 const ItemMatrixService = require("./services/ItemMatrixService")
@@ -28,8 +26,6 @@ const ReportService = require("./services/ReportService")
 const MachineService = require("./services/MachineService")
 
 const User = require("./models/sequelize/User")
-const BankTerminal = require("./models/sequelize/BankTerminal")
-const FiscalRegistrar = require("./models/sequelize/FiscalRegistrar")
 const Equipment = require("./models/sequelize/Equipment")
 const Item = require("./models/sequelize/Item")
 const Sale = require("./models/sequelize/Sale")
@@ -86,8 +82,6 @@ class App {
         const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, sequelizeOptions)
 
         const UserModel = sequelize.define("users", User)
-        const BankTerminalModel = sequelize.define("bank_terminals", BankTerminal)
-        const FiscalRegistrarModel = sequelize.define("fiscal_registrars", FiscalRegistrar)
         const EquipmentModel = sequelize.define("equipments", Equipment)
         const ItemModel = sequelize.define("items", Item)
         const SaleModel = sequelize.define("sales", Sale)
@@ -139,8 +133,6 @@ class App {
             foreignKey: "revision_id",
             as: "revision"
         })
-        ControllerModel.belongsTo(BankTerminalModel, {foreignKey: "bank_terminal_id", as: "bankTerminal"})
-        ControllerModel.belongsTo(FiscalRegistrarModel, {foreignKey: "fiscal_registrar_id", as: "fiscalRegistrar"})
 
         ControllerModel.belongsTo(UserModel, {foreignKey: "user_id"})
         ControllerModel.belongsTo(ControllerStateModel, {
@@ -148,8 +140,6 @@ class App {
             as: "lastState"
         })
 
-        FiscalRegistrarModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
-        BankTerminalModel.hasMany(ControllerModel, {foreignKey: "bank_terminal_id"})
         RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
 
         DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
@@ -202,8 +192,6 @@ class App {
         const services = {
             userService: undefined,
             equipmentService: undefined,
-            fiscalRegistrarService: undefined,
-            bankTerminalService: undefined,
             itemService: undefined,
             controllerService: undefined,
             saleService: undefined,
@@ -223,14 +211,6 @@ class App {
 
         services.equipmentService = new EquipmentService({
             EquipmentModel
-        })
-
-        services.fiscalRegistrarService = new FiscalRegistrarService({
-            FiscalRegistrarModel
-        })
-
-        services.bankTerminalService = new BankTerminalService({
-            BankTerminalModel
         })
 
         services.itemService = new ItemService({ItemModel})

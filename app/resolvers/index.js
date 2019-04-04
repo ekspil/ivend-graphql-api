@@ -7,7 +7,7 @@ const DefaultResolvers = require("./default")
 const Resolvers = function (injects) {
 
     const {
-        userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService,
+        userService, controllerService, equipmentService,
         saleService, itemService, itemMatrixService, revisionService, notificationSettingsService,
         legalInfoService, billingService, serviceService, reportService, machineService
     } = injects
@@ -16,8 +16,6 @@ const Resolvers = function (injects) {
         userService,
         controllerService,
         equipmentService,
-        fiscalRegistrarService,
-        bankTerminalService,
         saleService,
         itemService,
         itemMatrixService,

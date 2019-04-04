@@ -118,16 +118,6 @@ const typeDefs = gql`
         name: String!
     }
 
-    type FiscalRegistrar {
-        id: Int!
-        name: String!
-    }
-
-    type BankTerminal {
-        id: Int!
-        name: String!
-    }
-
     type ItemMatrix {
         id: Int
         buttons: [ButtonItem!]!
@@ -218,13 +208,6 @@ const typeDefs = gql`
         name: String!
     }
 
-    input CreateFiscalRegistrarInput {
-        name: String!
-    }
-
-    input CreateBankTerminalInput {
-        name: String!
-    }
 
     input ErrorEventInput {
         errorTime: Timestamp,
@@ -466,8 +449,6 @@ const typeDefs = gql`
         registerUser(input: CreateUserInput!): User
         requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
-        createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
-        createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
         createMachine(input: CreateMachineInput!): Machine
         editMachine(input: EditMachineInput!): Machine
