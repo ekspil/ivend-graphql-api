@@ -151,15 +151,20 @@ class MachineService {
     }
 
     async getMachineById(id, user) {
-        if (!user || !user.checkPermission(Permission.GET_ALL_SELF_MACHINES)) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_BY_ID)) {
             throw new NotAuthorized()
         }
 
+        const where = {
+            id
+        }
+
+        if (!["ADMIN", "AGGREGATE"].some(role => user.role === role)) {
+            where.user_id = user.id
+        }
+
         return await this.Machine.findOne({
-            where: {
-                id: id,
-                user_id: user.id
-            }
+            where
         })
     }
 
@@ -169,12 +174,15 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        return await this.Machine.findOne({
-            where: {
-                controller_id: controllerId,
-                user_id: user.id
-            }
-        })
+        const where = {
+            controller_id: controllerId,
+        }
+
+        if (!["ADMIN", "AGGREGATE"].some(role => user.role === role)) {
+            where.user_id = user.id
+        }
+
+        return await this.Machine.findOne({where})
     }
 
     async createMachineGroup(input, user) {
