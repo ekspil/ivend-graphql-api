@@ -20,6 +20,10 @@ function ItemResolver({saleService}) {
 
         const lastSale = await saleService.getLastSaleOfItem(obj.id, user)
 
+        if (!lastSale) {
+            return null
+        }
+
         return lastSale.createdAt
     }
 
