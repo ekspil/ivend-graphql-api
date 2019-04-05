@@ -227,12 +227,17 @@ class SaleService {
         sale.item_id = itemId
         sale.machine_id = machine.id
 
+        const createdSale = await this.Sale.create(sale)
+
         if (!process.env.OFD_LOGIN || !process.env.OFD_PASSWORD) {
-            return await this.Sale.create(sale)
+            return createdSale
         }
 
+        const item = await createdSale.getItem()
+        createdSale.item = item
+
         //register sale on OFD
-        const resp = await this._registerReceiptOFD(sale, controller, user)
+        const resp = await this._registerReceiptOFD(createdSale, controller, user)
 
         if (resp.Error) {
             logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
@@ -268,8 +273,6 @@ class SaleService {
         mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
 
         const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
-
-        const createdSale = await this.Sale.create(sale)
 
         createdSale.sqr = sqr
 
