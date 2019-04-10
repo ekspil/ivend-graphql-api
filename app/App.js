@@ -66,7 +66,10 @@ class App {
             dialect: "postgres",
             operatorsAliases: false,
             logging: process.env.NODE_ENV !== "production",
-
+            ssl: true,
+            dialectOptions: {
+                ssl: true
+            },
             pool: {
                 max: 5,
                 min: 0,

@@ -6,7 +6,13 @@ module.exports = {
         host: process.env.POSTGRES_HOST,
         dialect: "postgres",
         seederStorage: "sequelize",
-        migrationStorageTableName: "sequelize_meta"
+        migrationStorageTableName: "sequelize_meta",
+        "ssl":true,
+        "dialectOptions":{
+            "ssl":{
+                "require":true
+            }
+        }
     },
     production: {
         username: process.env.POSTGRES_USER,
@@ -15,6 +21,12 @@ module.exports = {
         host: process.env.POSTGRES_HOST,
         dialect: "postgres",
         seederStorage: "sequelize",
-        migrationStorageTableName: "sequelize_meta"
+        migrationStorageTableName: "sequelize_meta",
+        ssl:true,
+        dialectOptions:{
+            ssl:{
+                require:true
+            }
+        }
     }
 }
