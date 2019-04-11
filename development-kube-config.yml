@@ -7,6 +7,11 @@ metadata:
     app: graphql
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   selector:
     matchLabels:
       app: graphql
@@ -18,10 +23,18 @@ spec:
     spec:
       containers:
       - name: graphql
-        image: registry.gitlab.com/pshenmic/ivend/graphql:develop
+        image: registry.gitlab.com/pshenmic/ivend/graphql:$CIRCLE_SHA1
         imagePullPolicy: Always
         ports:
           - containerPort: 4000
+        readinessProbe:
+          httpGet:
+            path: /.well-known/apollo/server-health
+            port: 4000
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
         envFrom:
           - configMapRef:
               name: graphql-config

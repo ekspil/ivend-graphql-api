@@ -1,29 +1,30 @@
 const Mutations = require("./mutations")
 const Queries = require("./queries")
+const InvalidTimestampFormat = require("../errors/InvalidTimestampFormat")
 const {GraphQLScalarType, Kind} = require("graphql")
 const DefaultResolvers = require("./default")
 
 const Resolvers = function (injects) {
 
     const {
-        userService, controllerService, equipmentService, fiscalRegistrarService, bankTerminalService,
+        userService, controllerService, equipmentService,
         saleService, itemService, itemMatrixService, revisionService, notificationSettingsService,
-        legalInfoService, billingService, serviceService
+        legalInfoService, billingService, serviceService, reportService, machineService
     } = injects
 
     const mutations = new Mutations({
         userService,
         controllerService,
         equipmentService,
-        fiscalRegistrarService,
-        bankTerminalService,
         saleService,
         itemService,
         itemMatrixService,
         revisionService,
         notificationSettingsService,
         legalInfoService,
-        billingService
+        billingService,
+        reportService,
+        machineService
     })
 
     const defaultResolvers = new DefaultResolvers({
@@ -32,7 +33,9 @@ const Resolvers = function (injects) {
         notificationSettingsService,
         billingService,
         serviceService,
-        itemService
+        itemService,
+        machineService,
+        itemMatrixService
     })
 
     const queries = new Queries({
@@ -41,7 +44,8 @@ const Resolvers = function (injects) {
         equipmentService,
         revisionService,
         userService,
-        serviceService
+        serviceService,
+        machineService
     })
 
     return {
@@ -61,7 +65,7 @@ const Resolvers = function (injects) {
                 if (ast.kind === Kind.INT) {
                     return new Date(Number(ast.value))
                 } else {
-                    throw new Error("Timestamp should be an integer representing seconds passed since 1 January 1970 (UTC)")
+                    throw new InvalidTimestampFormat()
                 }
             },
         }),

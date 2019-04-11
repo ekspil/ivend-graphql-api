@@ -6,23 +6,40 @@ const typeDefs = gql`
 
     type Controller {
         id: Int!
-        name: String!
-        equipment: Equipment!
         uid: String!
-        revision: Revision!
         status: ControllerStatus!
         mode: ControllerMode!
-        fiscalRegistrar: FiscalRegistrar
-        bankTerminal: BankTerminal
+        readStatMode: ReadStatMode!
+        bankTerminalMode: BankTerminalMode!
+        fiscalizationMode: FiscalizationMode!
+        revision: Revision!
         accessKey: String,
         lastState: ControllerState
-        itemMatrix: ItemMatrix!
-        lastSaleTime: Timestamp
         lastErrorTime: Timestamp
-        itemSaleStats(period: Period): [ItemSalesStat!]!
-        overallSalesSummary(period: Period): SalesSummary
         errors: [ControllerError!]!
         services: [Service!]!
+        machine: Machine
+        firmwareId: String
+        registrationTime: Timestamp
+        user: User!
+    }
+
+    enum ReadStatMode {
+        COINBOX
+        MACHINE
+        COINBOX_MACHINE
+    }
+
+    enum BankTerminalMode {
+        NO_BANK_TERMINAL
+        INPAS
+        SBERBANK
+    }
+
+    enum FiscalizationMode {
+        NO_FISCAL
+        UNAPPROVED
+        APPROVED
     }
 
     input Period {
@@ -44,12 +61,6 @@ const typeDefs = gql`
         PENDING
     }
 
-    type ItemSalesStat {
-        item: Item!
-        salesSummary: SalesSummary!
-        lastSaleTime: Timestamp!
-    }
-
     type SalesSummary {
         salesCount: Int!
         overallAmount: Int!
@@ -58,7 +69,6 @@ const typeDefs = gql`
     }
 
     type ControllerState {
-        firmwareId: String!,
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
         coinAmount: Float!,
@@ -72,15 +82,23 @@ const typeDefs = gql`
     }
 
     input CreateControllerInput {
-        name: String!
         uid: String!
-        equipmentId: Int!
-        revisionId: Int!
         status: ControllerStatus!
         mode: ControllerMode!
-        fiscalRegistrarId: Int
-        bankTerminalId: Int
-        itemMatrixId: Int
+        readStatMode: ReadStatMode!
+        bankTerminalMode: BankTerminalMode!
+        fiscalizationMode: FiscalizationMode!
+        revisionId: Int!
+        serviceIds: [Int!]
+    }
+
+    input EditControllerInput {
+        status: ControllerStatus
+        mode: ControllerMode
+        readStatMode: ReadStatMode
+        bankTerminalMode: BankTerminalMode
+        fiscalizationMode: FiscalizationMode
+        revisionId: Int
         serviceIds: [Int!]
     }
 
@@ -95,27 +113,7 @@ const typeDefs = gql`
         price: Float!
     }
 
-    input EditControllerInput {
-        name: String
-        equipmentId: Int
-        revisionId: Int
-        status: ControllerStatus
-        mode: ControllerMode
-        fiscalRegistrarId: Int
-        bankTerminalId: Int
-    }
-
     type Equipment {
-        id: Int!
-        name: String!
-    }
-
-    type FiscalRegistrar {
-        id: Int!
-        name: String!
-    }
-
-    type BankTerminal {
         id: Int!
         name: String!
     }
@@ -132,11 +130,11 @@ const typeDefs = gql`
 
     type Sale {
         id: Int!
-        buttonId: Int!
         type: SaleType!
         item: Item!
         itemMatrix: ItemMatrix!
         controller: Controller!
+        sqr: String
     }
 
     type ControllerError {
@@ -144,10 +142,10 @@ const typeDefs = gql`
         message: String!
         errorTime: Timestamp!
     }
-    
+
     type Billing {
         balance: Float!
-        deposits: [Deposit!]!
+        deposits(period: Period): [Deposit!]!
         dailyBill: Float!
         daysLeft: Float!
     }
@@ -175,6 +173,8 @@ const typeDefs = gql`
     type Item {
         id: Int,
         name: String!
+        salesSummary(period: Period): SalesSummary
+        lastSaleTime: Timestamp
     }
 
     type Revision {id: Int!
@@ -183,12 +183,10 @@ const typeDefs = gql`
 
     input CreateItemInput {
         name: String!
-        price: Float!
     }
 
     input ControllerStateInput {
         controllerUid: String!
-        firmwareId: String!
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
         coinAmount: Int!,
@@ -210,13 +208,6 @@ const typeDefs = gql`
         name: String!
     }
 
-    input CreateFiscalRegistrarInput {
-        name: String!
-    }
-
-    input CreateBankTerminalInput {
-        name: String!
-    }
 
     input ErrorEventInput {
         errorTime: Timestamp,
@@ -269,9 +260,25 @@ const typeDefs = gql`
     }
 
     enum ControllerMode {
-        MDB
-        EXE
-        CASHLESS
+        mdb
+        exe
+        cashless
+        cashless_free
+        exe_ph
+        mdb_D
+        exe_D
+        exe_ph_D
+        cashless_D
+        mdb_C
+        exe_C
+        exe_ph_C
+        cashless_C
+        ps_p
+        ps_m_D
+        ps_M_D
+        ps_m_C
+        ps_M_C
+        mdb2
     }
 
     input AddButtonToItemMatrixInput {
@@ -341,10 +348,85 @@ const typeDefs = gql`
         MONTHLY
     }
 
+    type ExcelReport {
+        url: String!
+    }
+
+    input GenerateExcelInput {
+        rows: [RowDataInput!]!
+    }
+
+    input RowDataInput {
+        cells: [String!]!
+    }
+
+    type MachineGroup {
+        id: Int!
+        name: String!
+    }
+
+    type MachineType {
+        id: Int!
+        name: String!
+    }
+
+    type Machine {
+        id: Int!
+        number: String!
+        name: String!
+        place: String!
+        group: MachineGroup!
+        equipment: Equipment!
+        itemMatrix: ItemMatrix
+        type: MachineType!
+        salesSummary(period: Period): SalesSummary
+        logs: [MachineLog!]!
+        lastSaleTime: Timestamp
+        controller: Controller
+    }
+
+    type MachineLog {
+        type: String!
+        message: String!
+        time: Timestamp!
+    }
+
+    input CreateMachineInput {
+        number: String!
+        name: String!
+        place: String!
+        groupId: Int!
+        typeId: Int!
+        equipmentId: Int!
+        controllerId: Int
+    }
+
+    input EditMachineInput {
+        machineId: Int!
+        number: String
+        name: String
+        place: String
+        groupId: Int
+        typeId: Int
+        controllerId: Int
+    }
+
+    input CreateMachineGroupInput {
+        name: String!
+    }
+
+    input CreateMachineTypeInput {
+        name: String!
+    }
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
+        getMachineById(id: Int!): Machine
+        getMachines: [Machine]
+        getMachineGroups: [MachineGroup]
+        getMachineTypes: [MachineType]
         getEquipments: [Equipment]
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
@@ -352,17 +434,25 @@ const typeDefs = gql`
         getAvailableServices: AvailableServices!
     }
 
+    input AuthControllerInput {
+        controllerUid: String!
+        firmwareId: String!
+    }
+
+
     type Mutation {
-        authController(uid:String!): Controller
+        authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
         registerUser(input: CreateUserInput!): User
         requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
-        createFiscalRegistrar(input: CreateFiscalRegistrarInput!): FiscalRegistrar
-        createBankTerminal(input: CreateBankTerminalInput!): BankTerminal
         createController(input: CreateControllerInput!): Controller
+        createMachine(input: CreateMachineInput!): Machine
+        editMachine(input: EditMachineInput!): Machine
+        createMachineType(input: CreateMachineTypeInput!): MachineType
+        createMachineGroup(input: CreateMachineGroupInput!): MachineGroup
         createItem(input: CreateItemInput!): Item
         addButtonToItemMatrix(input: AddButtonToItemMatrixInput!): ItemMatrix
         removeButtonFromItemMatrix(input: RemoveButtonFromItemMatrixInput!): ItemMatrix
@@ -371,9 +461,8 @@ const typeDefs = gql`
         updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
+        generateExcel(input: GenerateExcelInput!): ExcelReport
     }
-
-
 `
 
 module.exports = typeDefs

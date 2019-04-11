@@ -1,4 +1,4 @@
-class BankTerminalDTO {
+class MachineTypeDTO {
 
     constructor({id, name}) {
         this.id = id
@@ -6,4 +6,4 @@ class BankTerminalDTO {
     }
 }
 
-module.exports = BankTerminalDTO
+module.exports = MachineTypeDTO

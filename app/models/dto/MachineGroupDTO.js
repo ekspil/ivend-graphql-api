@@ -1,4 +1,4 @@
-class FiscalRegistrarDTO {
+class MachineGroupDTO {
 
     constructor({id, name}) {
         this.id = id
@@ -6,4 +6,4 @@ class FiscalRegistrarDTO {
     }
 }
 
-module.exports = FiscalRegistrarDTO
+module.exports = MachineGroupDTO

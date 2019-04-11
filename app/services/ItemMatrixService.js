@@ -1,7 +1,12 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
+const ButtonIdAlreadyBound = require("../errors/ButtonIdAlreadyBound")
+const ButtonIdNotFound = require("../errors/ButtonIdNotFound")
+const ItemNotFound = require("../errors/ItemNotFound")
 const ItemMatrix = require("../models/ItemMatrix")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
+const logger = require("../utils/logger")
 
 class ItemMatrixService {
 
@@ -17,15 +22,15 @@ class ItemMatrixService {
         this.addButtonToItemMatrix = this.addButtonToItemMatrix.bind(this)
     }
 
-    async createItemMatrix(controllerId, user) {
-        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+    async createItemMatrix(machineId, user, transaction) {
+        if (!user || !user.checkPermission(Permission.CREATE_ITEM_MATRIX)) {
             throw new NotAuthorized()
         }
 
         const itemMatrix = new ItemMatrix()
         itemMatrix.buttons = []
         itemMatrix.user_id = user.id
-        itemMatrix.controller_id = controllerId
+        itemMatrix.machine_id = machineId
 
         return await this.ItemMatrix.create(itemMatrix, {
             include: [
@@ -33,7 +38,8 @@ class ItemMatrixService {
                     model: this.ButtonItem,
                     as: "buttons"
                 }
-            ]
+            ],
+            transaction
         })
     }
 
@@ -47,19 +53,19 @@ class ItemMatrixService {
         const item = await this.itemService.getItemById(itemId, user)
 
         if (!item) {
-            throw new Error("Item not found")
+            throw new ItemNotFound()
         }
 
         const itemMatrix = await this.getItemMatrixById(itemMatrixId, user)
 
         if (!itemMatrix) {
-            throw new Error("Item matrix not found")
+            throw new ItemMatrixNotFound
         }
 
         const {buttons} = itemMatrix
 
         if (buttons.some(buttonItem => buttonItem.buttonId === buttonId)) {
-            throw new Error("Such buttonId already bound to this ItemMatrix")
+            throw new ButtonIdAlreadyBound()
         }
 
         const buttonItem = new ButtonItem()
@@ -82,21 +88,20 @@ class ItemMatrixService {
         const itemMatrix = await this.getItemMatrixById(itemMatrixId, user)
 
         if (!itemMatrix) {
-            throw new Error("Item matrix not found")
+            throw new ItemMatrixNotFound()
         }
 
         const {buttons} = itemMatrix
 
         if (!buttons.some(buttonItem => buttonItem.buttonId === buttonId)) {
-            throw new Error("No such buttonId in this ItemMatrix")
+            throw new ButtonIdNotFound()
         }
 
         const [button] = buttons.filter(buttonItem => buttonItem.buttonId === buttonId)
 
         if (!button) {
-            // eslint-disable-next-line no-console
-            console.error("Unexpected situation, button from itemMatrix not found")
-            throw new Error("Internal server error")
+            logger.error("Unexpected situation, button from itemMatrix not found")
+            throw new ButtonIdNotFound()
         }
 
         await itemMatrix.removeButton(button)

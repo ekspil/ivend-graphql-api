@@ -7,10 +7,6 @@ const Controller = {
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-    },
     uid: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,
@@ -28,6 +24,31 @@ const Controller = {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,
         field: "access_key"
+    },
+    readStatMode: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true,
+        field: "read_stat_mode"
+    },
+    bankTerminalMode: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true,
+        field: "bank_terminal_mode"
+    },
+    fiscalizationMode: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true,
+        field: "fiscalization_mode"
+    },
+    firmwareId: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true,
+        field: "firmware_id"
+    },
+    registrationTime: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        field: "registration_time"
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,

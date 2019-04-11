@@ -11,8 +11,9 @@ function BillingResolver({billingService}) {
 
     const deposits = async (obj, args, context) => {
         const {user} = context
+        const {period} = args
 
-        const deposits = await billingService.getDeposits(user)
+        const deposits = await billingService.getDeposits(period, user)
 
         return deposits.map(deposit => (new DepositDTO({
             id: deposit.id,

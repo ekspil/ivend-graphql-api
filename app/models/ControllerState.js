@@ -1,7 +1,6 @@
 class ControllerState {
-    constructor(id, firmwareId, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime, controller) {
+    constructor(id, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime, controller) {
         this.id = id
-        this.firmwareId = firmwareId
         this.coinAcceptorStatus = coinAcceptorStatus
         this.billAcceptorStatus = billAcceptorStatus
         this.coinAmount = coinAmount

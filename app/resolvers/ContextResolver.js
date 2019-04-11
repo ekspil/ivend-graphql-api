@@ -1,6 +1,7 @@
 const bcryptjs = require("bcryptjs")
 
 const RolePermissions = require("../enum/RolePermissions")
+const UnknownAuthenticationType = require("../errors/UnknownAuthenticationType")
 const logger = require("../utils/logger")
 
 const parseAuthorizationHeader = async (header) => {
@@ -29,7 +30,7 @@ const parseAuthorizationHeader = async (header) => {
         }
     }
 
-    throw new Error("Unknown authenticate type")
+    throw new UnknownAuthenticationType()
 }
 
 
@@ -81,6 +82,7 @@ module.exports = function ({UserModel, redis}) {
             })
 
             if (user) {
+
                 return populateUserInContext(user)
             }
         }

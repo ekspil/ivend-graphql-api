@@ -40,6 +40,16 @@ const RolePermissions = {
         Permission.GET_SERVICES_FOR_CONTROLLER,
         Permission.GET_CONTROLLER_SERVICES,
         Permission.GET_PROFILE,
+        Permission.CREATE_MACHINE,
+        Permission.EDIT_MACHINE,
+        Permission.CREATE_MACHINE_GROUP,
+        Permission.GET_MACHINE_GROUP_BY_ID,
+        Permission.GET_MACHINE_TYPE_BY_ID,
+        Permission.GET_ALL_SELF_MACHINES,
+        Permission.GET_ALL_SELF_MACHINE_GROUPS,
+        Permission.GET_ALL_MACHINE_TYPES,
+        Permission.GET_MACHINE_BY_ID,
+        Permission.GET_MACHINE_BY_CONTROLLER_ID
     ],
     //ADMIN ROLE does not need permissions at all, he have access to all methods
     "ADMIN": [],
@@ -47,10 +57,11 @@ const RolePermissions = {
         Permission.CREATE_ITEM,
         Permission.GET_CONTROLLER_BY_ID,
         Permission.GET_CONTROLLER_BY_UID,
-        Permission.GENERATE_CONTROLLER_ACCESS_KEY,
+        Permission.AUTH_CONTROLLER,
         Permission.REGISTER_CONTROLLER_STATE,
         Permission.REGISTER_SALE,
-        Permission.REGISTER_CONTROLLER_ERROR
+        Permission.REGISTER_CONTROLLER_ERROR,
+        Permission.GET_MACHINE_BY_CONTROLLER_ID
     ]
 }
 

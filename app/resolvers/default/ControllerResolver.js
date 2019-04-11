@@ -1,39 +1,10 @@
 const ControllerErrorDTO = require("../../models/dto/ControllerErrorDTO")
-const ItemSaleStatDTO = require("../../models/dto/ItemSaleStatDTO")
-const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const ServiceDTO = require("../../models/dto/ServiceDTO")
+const MachineDTO = require("../../models/dto/MachineDTO")
+const UserDTO = require("../../models/dto/UserDTO")
+const ControllerStateDTO = require("../../models/dto/ControllerStateDTO")
 
-function ControllerResolver({saleService, controllerService, serviceService}) {
-
-    const lastSaleTime = async (obj, args, context) => {
-        const {user} = context
-
-        const lastSale = await saleService.getLastSale(obj.id, user)
-
-        if (lastSale) {
-            return lastSale.createdAt
-        }
-
-        return null
-    }
-
-    const itemSaleStats = async (obj, args, context) => {
-        const {user} = context
-        const {period} = args
-
-        const itemSaleStats = await saleService.getItemSaleStats({controllerId: obj.id, period}, user)
-
-        return itemSaleStats.map(itemSaleStat => (new ItemSaleStatDTO(itemSaleStat)))
-    }
-
-    const overallSalesSummary = async (obj, args, context) => {
-        const {user} = context
-        const {period} = args
-
-        const salesSummary = await saleService.getSalesSummary({controllerId: obj.id, period}, user)
-
-        return new SalesSummaryDTO(salesSummary)
-    }
+function ControllerResolver({controllerService, serviceService, machineService}) {
 
     const errors = async (obj, args, context) => {
         const {user} = context
@@ -64,13 +35,50 @@ function ControllerResolver({saleService, controllerService, serviceService}) {
         return services.map(service => (new ServiceDTO(service)))
     }
 
+    const machine = async (obj, args, context) => {
+        const {user} = context
+
+        const machine = await machineService.getMachineByControllerId(obj.id, user)
+
+        if (!machine) {
+            return null
+        }
+
+        return new MachineDTO(machine)
+    }
+
+    const lastState = async (obj, args, context) => {
+        const {user} = context
+
+        const controller = await controllerService.getControllerById(obj.id, user)
+
+        const controllerState = await controller.getLastState()
+
+        if (!controllerState) {
+            return null
+        }
+
+        return new ControllerStateDTO(controllerState)
+    }
+
+
+    const user = async (obj, args, context) => {
+        const {user} = context
+
+        const controller = await controllerService.getControllerById(obj.id, user)
+
+        const controllerUser = await controller.getUser()
+
+        return new UserDTO(controllerUser)
+    }
+
     return {
-        lastSaleTime,
-        itemSaleStats,
-        overallSalesSummary,
+        user,
+        lastState,
         errors,
         lastErrorTime,
-        services
+        services,
+        machine
     }
 
 }

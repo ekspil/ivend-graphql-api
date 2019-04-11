@@ -1,10 +1,10 @@
-class BankTerminal {
-
+class MachineGroup {
     constructor(id, name) {
         this.id = id
         this.name = name
     }
-
 }
 
-module.exports = BankTerminal
+module.exports = MachineGroup
+
+

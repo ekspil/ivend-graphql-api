@@ -1,23 +1,169 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const ItemNotFound = require("../errors/ItemNotFound")
+const MachineNotFound = require("../errors/MachineNotFound")
+const ControllerNotFound = require("../errors/ControllerNotFound")
+const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
+const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
 const Sale = require("../models/Sale")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
-const ItemSaleStat = require("../models/ItemSaleStat")
 const SalesSummary = require("../models/SalesSummary")
+const logger = require("../utils/logger")
+const fetch = require("node-fetch")
 
 class SaleService {
 
-    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService}) {
+    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService}) {
         this.Sale = SaleModel
         this.Item = ItemModel
         this.ButtonItem = ButtonItemModel
         this.controllerService = controllerService
         this.itemService = itemService
+        this.machineService = machineService
 
+        this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
-        this.getItemSaleStats = this.getItemSaleStats.bind(this)
+
+        if (process.env.OFD_LOGIN && process.env.OFD_PASSWORD) {
+            // Create OFD auth
+            this
+                ._authOFD()
+                .then(({AuthToken, ExpirationDateUtc}) => {
+                    this.OFD = {AuthToken, ExpirationDateUtc}
+                })
+                .catch(e => {
+                    logger.error(e)
+                    process.exit(1)
+                })
+        }
+
+    }
+
+    async _authOFD() {
+        const response = await fetch(`https://ferma.ofd.ru/api/Authorization/CreateAuthToken`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({
+                Login: process.env.OFD_LOGIN,
+                Password: process.env.OFD_PASSWORD
+            })
+        })
+
+        if (!(response.status === 200)) {
+            throw new OFDUnknownStatus()
+        }
+
+        const resp = await response.json()
+        return resp.Data
+    }
+
+    async _registerReceiptOFD(sale, controller, user) {
+        if (!this.OFD) {
+            logger.error("OFD is not authenticated yet")
+            throw new Error("Internal server error")
+        }
+        const {ExpirationDateUtc} = this.OFD
+
+        if (ExpirationDateUtc) {
+            const date = new Date(ExpirationDateUtc)
+            if (new Date() > date) {
+                logger.info(`OFD token expired, requesting again [${new Date()}]`)
+                const {AuthToken, ExpirationDateUtc} = await this._authOFD()
+                this.OFD = {AuthToken, ExpirationDateUtc}
+            }
+        }
+
+        const legalInfo = await controller.user.getLegalInfo()
+
+        if (!legalInfo) {
+            throw new Error("LegalInfo is not set")
+        }
+
+        const body = {
+            Request: {
+                Inn: legalInfo.inn,
+                Type: "Income",
+                InvoiceId: `${controller.uid}.${new Date()}`,
+                LocalDate: new Date(),
+                CustomerReceipt: {
+                    TaxationSystem: "Common",
+                    Email: "support@ivend.pro",
+                    Phone: user.phone,
+                    Items: [
+                        {
+                            Label: sale.item.name,
+                            Price: sale.price,
+                            Quantity: 1,
+                            Amount: sale.price,
+                            Vat: "Vat0"
+                        }
+                    ]
+                }
+            }
+        }
+
+        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/receipt?AuthToken=${this.OFD.AuthToken}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify(body)
+        })
+
+
+        return await response.json()
+    }
+
+    async _checkReceiptOFD(receiptID) {
+        const body = {
+            Request: {
+                ReceiptId: receiptID
+            }
+        }
+
+        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/status?AuthToken=${this.OFD.AuthToken}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify(body)
+        })
+
+        const receiptInfo = await response.json()
+
+        if (receiptInfo.Error) {
+            logger.error(`Error response from OFD: [${receiptInfo.Error.Code}]` + receiptInfo.Error.Message)
+            throw new Error("Internal server error")
+        }
+
+        return receiptInfo
+    }
+
+    async createSale(input, user) {
+        if (!user || !user.checkPermission(Permission.CREATE_SALE)) {
+            throw new NotAuthorized()
+        }
+
+        const {buttonId, type, price, itemId, itemMatrixId, machineId, time} = input
+
+        const sale = new Sale()
+        sale.buttonId = buttonId
+        sale.type = type
+        sale.price = price
+        sale.item_id = itemId
+        sale.item_matrix_id = itemMatrixId
+        sale.machine_id = machineId
+
+        if (time) {
+            sale.createdAt = time
+            sale.updatedAt = time
+        }
+
+        return await this.Sale.create(sale)
     }
 
     async registerSale(input, user) {
@@ -32,16 +178,25 @@ class SaleService {
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
         if (!controller) {
-            throw new Error("Controller not found")
+            throw new ControllerNotFound
         }
 
-        const {itemMatrix} = controller
+        //todo fix that
+        controller.user.checkPermission = () => true
+
+        const machine = await this.machineService.getMachineByControllerId(controller.id, controller.user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        const itemMatrix = await machine.getItemMatrix()
 
         if (!itemMatrix) {
-            throw new Error("Item matrix not found for this controller")
+            throw new ItemMatrixNotFound()
         }
 
-        const {buttons} = itemMatrix
+        const buttons = await itemMatrix.getButtons()
 
         if (!buttons.some((buttonItem) => buttonItem.buttonId === buttonId)) {
             const name = `Товар ${buttonId}`
@@ -62,30 +217,76 @@ class SaleService {
             .map(buttonItem => buttonItem.item_id)
 
         if (!itemId) {
-            // eslint-disable-next-line no-console
-            console.error("Unexpected situation, ItemId for sale not found")
-            throw new Error("Internal server error")
+            logger.error("Unexpected situation, ItemId for sale not found")
+            throw new ItemNotFound()
         }
 
         const sale = new Sale()
-        sale.buttonId = buttonId
         sale.type = type
         sale.price = price
         sale.item_id = itemId
-        sale.item_matrix_id = itemMatrix.id
-        sale.controller_id = controller.id
+        sale.machine_id = machine.id
 
-        return await this.Sale.create(sale)
+        const createdSale = await this.Sale.create(sale)
+
+        if (!process.env.OFD_LOGIN || !process.env.OFD_PASSWORD) {
+            return createdSale
+        }
+
+        const item = await createdSale.getItem()
+        createdSale.item = item
+
+        //register sale on OFD
+        const resp = await this._registerReceiptOFD(createdSale, controller, user)
+
+        if (resp.Error) {
+            logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
+            throw new Error("Internal server error")
+        }
+
+        logger.info(JSON.stringify(resp))
+        const {ReceiptId} = resp.Data
+
+        let receiptInfo = await this._checkReceiptOFD(ReceiptId)
+        logger.info(JSON.stringify(receiptInfo))
+
+        while (receiptInfo.Data.StatusCode === 0) {
+            receiptInfo = await this._checkReceiptOFD(ReceiptId)
+            logger.info(JSON.stringify(receiptInfo))
+        }
+
+        const {Data} = receiptInfo
+        const {Device, ReceiptDateUtc} = Data
+
+
+        const getTwoDigitDateFormat = (monthOrDate) => {
+            return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
+        }
+
+        const receiptDateUtcDate = new Date(ReceiptDateUtc)
+        let mappedReceiptDate = ""
+        mappedReceiptDate += receiptDateUtcDate.getFullYear() + ""
+        mappedReceiptDate += getTwoDigitDateFormat((receiptDateUtcDate.getMonth() + 1)) + ""
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getDate()) + ""
+        mappedReceiptDate += "T"
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getHours())
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
+
+        const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
+
+        createdSale.sqr = sqr
+
+        return createdSale
     }
 
 
-    async getLastSale(controllerId, user) {
+    async getLastSale(machineId, user) {
         if (!user || !user.checkPermission(Permission.GET_LAST_SALE)) {
             throw new NotAuthorized()
         }
 
         return await this.Sale.findOne({
-            where: {controller_id: controllerId},
+            where: {machine_id: machineId},
             order: [
                 ["id", "DESC"],
             ]
@@ -105,57 +306,20 @@ class SaleService {
         })
     }
 
-    async getItemSaleStats(input, user) {
-        if (!user || !user.checkPermission(Permission.GET_ITEM_SALE_STATS)) {
-            throw new NotAuthorized()
-        }
-
-        const {controllerId, period} = input
-
-        const {sequelize} = this.Sale
-        const {Op} = sequelize
-
-        const where = {
-            controller_id: controllerId
-        }
-
-        if (period) {
-            const {from, to} = period
-
-            where.createdAt = {
-                [Op.lt]: to,
-                [Op.gt]: from
-            }
-        }
-
-        const sales = await this.Sale.findAll({
-            where,
-            attributes: ["item_id", [sequelize.fn("COUNT", "sales.id"), "amount"]],
-            group: ["item_id", "item.id"],
-            include: [{model: this.Item}],
-        })
-
-        //todo move out to default resolver
-        return await Promise.all(sales.map(async sale => {
-            const itemId = sale.item.id
-            const salesSummaryByItem = await this.getSalesSummary({controllerId, period, itemId}, user)
-            return (new ItemSaleStat(sale.item, salesSummaryByItem))
-        }))
-
-    }
-
     async getSalesSummary(input, user) {
         if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()
         }
 
-        const {controllerId, period, itemId} = input
+        const {machineId, period, itemId} = input
 
         const {sequelize} = this.Sale
         const {Op} = sequelize
 
-        const where = {
-            controller_id: controllerId
+        const where = {}
+
+        if (machineId) {
+            where.machine_id = machineId
         }
 
         if (itemId) {

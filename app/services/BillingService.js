@@ -1,7 +1,10 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const AnotherDepositPending = require("../errors/AnotherDepositPending")
+const DepositRequestFailed = require("../errors/DepositRequestFailed")
 const Permission = require("../enum/Permission")
 const Deposit = require("../models/Deposit")
 const fetch = require("node-fetch")
+const {Op} = require("sequelize")
 
 
 class BillingService {
@@ -20,13 +23,22 @@ class BillingService {
         this.requestDeposit = this.requestDeposit.bind(this)
     }
 
-    async getDeposits(user) {
+    async getDeposits(period, user) {
         if (!user || !user.checkPermission(Permission.GET_SELF_DEPOSITS)) {
             throw new NotAuthorized()
         }
 
         const where = {
             user_id: user.id
+        }
+
+        if (period) {
+            const {from, to} = period
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
         }
 
         return await this.Deposit.findAll({where, include: [{model: this.PaymentRequest, as: "paymentRequest"}]})
@@ -46,14 +58,39 @@ class BillingService {
             }
         })
 
-        return controllersWithServices.reduce((acc, controllerWithServices) => {
+        const mapped = await Promise.all(controllersWithServices.map(async (controllerWithServices) => {
+            const {services} = controllerWithServices
+
+            const mappedServices = await Promise.all(services.map(async (service) => {
+                if (service.billingType === "MONTHLY") {
+                    const {sequelize} = this.Service
+
+                    const [datePart] = await sequelize.query("SELECT DATE_PART('days',  DATE_TRUNC('month', NOW())  + '1 MONTH'::INTERVAL  - '1 DAY'::INTERVAL)",
+                        {type: sequelize.QueryTypes.SELECT}
+                    )
+                    const daysInMonth = datePart.date_part
+
+                    const [dayPriceResult] = await sequelize.query("SELECT ROUND(:price::NUMERIC / :days::NUMERIC, 2) as day_price",
+                        {replacements: {price: service.price, days: daysInMonth}, type: sequelize.QueryTypes.SELECT}
+                    )
+
+                    return {price: dayPriceResult.day_price}
+                }
+
+                return {price: service.price}
+            }))
+
+            return {services: mappedServices}
+        }))
+
+        return mapped.reduce((acc, controllerWithServices) => {
             const {services} = controllerWithServices
 
             return acc + services.reduce((acc, service) => {
                 return acc + Number(service.price)
             }, 0)
 
-        }, 0)
+        }, 0).toFixed(2)
     }
 
     async getDaysLeft(user) {
@@ -66,7 +103,7 @@ class BillingService {
 
         const daysLeft = Math.floor(balance / dailyBill)
 
-        if(Number.isNaN(daysLeft)) {
+        if (!isFinite(daysLeft)) {
             return 0
         }
 
@@ -84,7 +121,7 @@ class BillingService {
 
         const balance = await this.Transaction.sum("amount", {where})
 
-        if (Number.isNaN(balance)) {
+        if (!isFinite(balance)) {
             return 0
         }
 
@@ -109,7 +146,7 @@ class BillingService {
         })
 
         if (deposit && deposit.paymentRequest.status === "pending") {
-            throw new Error("Another deposit already in process")
+            throw new AnotherDepositPending()
         }
 
         //todo transaction here is overkill
@@ -147,7 +184,7 @@ class BillingService {
                     })
 
                 default:
-                    throw new Error("Unknown error during creating payment request")
+                    throw new DepositRequestFailed()
             }
 
 

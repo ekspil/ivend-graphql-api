@@ -8,6 +8,10 @@ function ItemQueries({itemMatrixService}) {
 
         const itemMatrix = await itemMatrixService.getItemMatrixById(id, user)
 
+        if (!itemMatrix) {
+            return null
+        }
+
         return new ItemMatrixDTO(itemMatrix)
 
     }

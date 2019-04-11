@@ -1,15 +1,23 @@
 const Sequelize = require("sequelize")
 
-const FiscalRegistrar = {
+const Machine = {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
+    number: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
+    },
     name: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
+    },
+    place: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -24,5 +32,4 @@ const FiscalRegistrar = {
         field: "updated_at"
     }
 }
-module.exports = FiscalRegistrar
-
+module.exports = Machine

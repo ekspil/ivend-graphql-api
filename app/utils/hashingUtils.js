@@ -1,11 +1,9 @@
 const crypto = require("crypto")
 
-const keyLength = 16
-
-async function generateRandomAccessKey() {
+async function generateRandomAccessKey(length) {
     return new Promise((res, rej) => {
-        const buf = Buffer.alloc(keyLength)
-        crypto.randomFill(buf, 0, keyLength, (err, buf) => {
+        const buf = Buffer.alloc(length || 16)
+        crypto.randomFill(buf, 0, length || 16, (err, buf) => {
             if (err) {
                 return rej(err)
             }
