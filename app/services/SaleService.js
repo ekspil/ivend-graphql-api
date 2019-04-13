@@ -213,6 +213,7 @@ class SaleService {
             buttons.push(buttonItem)
         }
 
+        logger.info(JSON.stringify(buttons))
         const [itemId] = buttons
             .filter((buttonItem) => buttonItem.buttonId === buttonId)
             .map(buttonItem => buttonItem.item_id)
