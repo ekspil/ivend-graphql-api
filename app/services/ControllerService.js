@@ -84,7 +84,6 @@ class ControllerService {
         }
 
         return await this.Controller.find({
-            include: this.controllerIncludes,
             where: {
                 id: savedController.id
             }
@@ -210,7 +209,6 @@ class ControllerService {
         }
 
         const options = {
-            include: this.controllerIncludes,
             where: {
                 uid
             }
