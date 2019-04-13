@@ -12,9 +12,10 @@ const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
 
 class UserService {
 
-    constructor({UserModel, redis}) {
+    constructor({UserModel, redis, machineService}) {
         this.User = UserModel
         this.redis = redis
+        this.machineService = machineService
 
         this.registerUser = this.registerUser.bind(this)
         this.requestToken = this.requestToken.bind(this)
@@ -23,29 +24,36 @@ class UserService {
 
 
     async registerUser(input, role) {
+        return this.User.sequelize.transaction(async (transaction) => {
+            const {email, phone, password} = input
 
-        const {email, phone, password} = input
+            //todo validation
 
-        //todo validation
+            const users = await this.User.findAll({
+                where: {
+                    [Op.or]: [{email}, {phone}]
+                }
+            })
 
-        const users = await this.User.findAll({
-            where: {
-                [Op.or]: [{email}, {phone}]
+            if (users && users.length > 0) {
+                throw new UserExists()
             }
+
+            let user = new User()
+
+            user.phone = phone
+            user.email = email
+            user.passwordHash = await this.hashPassword(password)
+            user.role = role || "USER"
+
+            user = await this.User.create(user, {transaction})
+
+            user.checkPermission = () => true
+
+            await this.machineService.createMachineGroup({name: process.env.DEFAULT_MACHINE_GROUP_NAME}, user, transaction)
+
+            return user
         })
-
-        if (users && users.length > 0) {
-            throw new UserExists()
-        }
-
-        const user = new User()
-
-        user.phone = phone
-        user.email = email
-        user.passwordHash = await this.hashPassword(password)
-        user.role = role || "USER"
-
-        return await this.User.create(user)
     }
 
     async requestToken(input) {

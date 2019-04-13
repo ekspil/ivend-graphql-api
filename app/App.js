@@ -207,10 +207,7 @@ class App {
             machineService: undefined
         }
 
-        services.userService = new UserService({
-            UserModel,
-            redis
-        })
+
 
         services.equipmentService = new EquipmentService({
             EquipmentModel
@@ -249,6 +246,12 @@ class App {
             equipmentService: services.equipmentService,
             itemMatrixService: services.itemMatrixService,
             controllerService: services.controllerService
+        })
+
+        services.userService = new UserService({
+            UserModel,
+            redis,
+            machineService: services.machineService
         })
 
         services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
