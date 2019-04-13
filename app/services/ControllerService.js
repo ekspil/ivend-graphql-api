@@ -220,7 +220,7 @@ class ControllerService {
             options.where.user_id = user.id
         }
 
-        logger.info("options", JSON.stringify(options))
+        logger.info(`options ${JSON.stringify(options)}`)
 
         const controller = await this.Controller.findOne(options)
 
