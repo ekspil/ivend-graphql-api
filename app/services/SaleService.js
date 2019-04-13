@@ -184,10 +184,7 @@ class SaleService {
             throw new ControllerNotFound
         }
 
-        const controllerUser = controller.getUser()
-        controllerUser.checkPermission = () => true
-
-        const machine = await this.machineService.getMachineByControllerId(controller.id, controllerUser)
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
 
         if (!machine) {
             throw new MachineNotFound()
