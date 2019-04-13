@@ -197,6 +197,7 @@ class SaleService {
         }
 
         const buttons = await itemMatrix.getButtons()
+        logger.info(JSON.stringify(buttons))
 
         if (!buttons.some((buttonItem) => buttonItem.buttonId === buttonId)) {
             const name = `Товар ${buttonId}`
