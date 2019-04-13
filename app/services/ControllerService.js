@@ -217,6 +217,7 @@ class ControllerService {
         }
 
         if (!["ADMIN", "AGGREGATE"].some(role => user.role === role)) {
+            logger.info("user.role", user.role, "  ", user.id)
             options.where.user_id = user.id
         }
 
