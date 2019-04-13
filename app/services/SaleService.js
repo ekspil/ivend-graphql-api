@@ -199,7 +199,7 @@ class SaleService {
         const buttons = await itemMatrix.getButtons()
         logger.info(JSON.stringify(buttons))
 
-        if (!buttons.some((buttonItem) => buttonItem.buttonId === buttonId)) {
+        if (!buttons.some((buttonItem) => Number(buttonItem.buttonId) === buttonId)) {
             const name = `Товар ${buttonId}`
             const item = await this.itemService.createItem({name}, user)
 
@@ -215,7 +215,7 @@ class SaleService {
 
         logger.info(JSON.stringify(buttons))
         const [itemId] = buttons
-            .filter((buttonItem) => buttonItem.buttonId === buttonId)
+            .filter((buttonItem) => Number(buttonItem.buttonId) === buttonId)
             .map(buttonItem => buttonItem.item_id)
 
         if (!itemId) {
