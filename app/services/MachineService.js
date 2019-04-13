@@ -185,7 +185,7 @@ class MachineService {
         return await this.Machine.findOne({where})
     }
 
-    async createMachineGroup(input, user) {
+    async createMachineGroup(input, user, transaction) {
         if (!user || !user.checkPermission(Permission.CREATE_MACHINE_GROUP)) {
             throw new NotAuthorized()
         }
@@ -197,7 +197,7 @@ class MachineService {
         machineGroup.name = name
         machineGroup.user_id = user.id
 
-        return await this.MachineGroup.create(machineGroup)
+        return await this.MachineGroup.create(machineGroup, {transaction})
     }
 
     async getMachineGroupById(id, user) {
