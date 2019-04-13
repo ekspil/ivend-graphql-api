@@ -77,7 +77,10 @@ class SaleService {
             }
         }
 
-        const legalInfo = await controller.user.getLegalInfo()
+        const controllerUser = await controller.getUser()
+        controllerUser.checkPermission = () => true
+
+        const legalInfo = await controllerUser.getLegalInfo()
 
         if (!legalInfo) {
             throw new Error("LegalInfo is not set")
@@ -181,10 +184,10 @@ class SaleService {
             throw new ControllerNotFound
         }
 
-        //todo fix that
-        controller.user.checkPermission = () => true
+        const controllerUser = controller.getUser()
+        controllerUser.checkPermission = () => true
 
-        const machine = await this.machineService.getMachineByControllerId(controller.id, controller.user)
+        const machine = await this.machineService.getMachineByControllerId(controller.id, controllerUser)
 
         if (!machine) {
             throw new MachineNotFound()
