@@ -32,21 +32,6 @@ class ControllerService {
         this.registerError = this.registerError.bind(this)
         this.registerState = this.registerState.bind(this)
         this.authController = this.authController.bind(this)
-
-        this.controllerIncludes = [
-            {
-                model: this.ControllerState,
-                as: "lastState"
-            },
-            {
-                model: this.Revision,
-                as: "revision"
-            },
-            {
-                model: this.User,
-                as: "user",
-            }
-        ]
     }
 
     async createController(input, user) {
@@ -167,7 +152,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.Controller.findAll({include: this.controllerIncludes})
+        return await this.Controller.findAll()
     }
 
     async getAllOfCurrentUser(user) {
@@ -175,7 +160,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.Controller.findAll({include: this.controllerIncludes, where: {user_id: user.id}})
+        return await this.Controller.findAll({where: {user_id: user.id}})
     }
 
     async getControllerById(id, user) {
@@ -184,7 +169,6 @@ class ControllerService {
         }
 
         const options = {
-            include: this.controllerIncludes,
             where: {}
         }
 
