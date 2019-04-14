@@ -2,6 +2,7 @@ const ControllerErrorDTO = require("../../models/dto/ControllerErrorDTO")
 const ServiceDTO = require("../../models/dto/ServiceDTO")
 const MachineDTO = require("../../models/dto/MachineDTO")
 const UserDTO = require("../../models/dto/UserDTO")
+const RevisionDTO = require("../../models/dto/RevisionDTO")
 const ControllerStateDTO = require("../../models/dto/ControllerStateDTO")
 
 function ControllerResolver({controllerService, serviceService, machineService}) {
@@ -72,8 +73,20 @@ function ControllerResolver({controllerService, serviceService, machineService})
         return new UserDTO(controllerUser)
     }
 
+
+    const revision = async (obj, args, context) => {
+        const {user} = context
+
+        const controller = await controllerService.getControllerById(obj.id, user)
+
+        const revision = await controller.getRevision()
+
+        return new RevisionDTO(revision)
+    }
+
     return {
         user,
+        revision,
         lastState,
         errors,
         lastErrorTime,
