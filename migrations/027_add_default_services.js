@@ -5,7 +5,7 @@ module.exports = {
         await queryInterface.bulkInsert("services", [{
             name: "Telemetry",
             price: 100,
-            billingType: "MONTHLY",
+            billing_type: "MONTHLY",
             type: "CONTROLLER",
             created_at: new Date(),
             updated_at: new Date()
