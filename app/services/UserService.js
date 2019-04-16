@@ -1,6 +1,8 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const UserExists = require("../errors/UserExists")
 const PhonePasswordMatchFailed = require("../errors/PhonePasswordMatchFailed")
+const SmsCodeMatchFailed = require("../errors/SmsCodeMatchFailed")
+const SmsCodeTimeout = require("../errors/SmsCodeTimeout")
 const PhoneNotValid = require("../errors/PhoneNotValid")
 const Permission = require("../enum/Permission")
 const {Op} = require("sequelize")
@@ -53,11 +55,11 @@ class UserService {
                 const timeoutDate = new Date(Number(timeoutTimestamp))
 
                 if (smsCode !== code) {
-                    throw new Error("SMS code does not match")
+                    throw new SmsCodeMatchFailed()
                 }
 
                 if (new Date() > timeoutDate) {
-                    throw new Error("SMS code timed out")
+                    throw new SmsCodeTimeout()
                 }
 
             }
