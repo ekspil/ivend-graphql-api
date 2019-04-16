@@ -19,6 +19,7 @@ class BillingService {
         this.getDeposits = this.getDeposits.bind(this)
         this.getDailyBill = this.getDailyBill.bind(this)
         this.getDaysLeft = this.getDaysLeft.bind(this)
+        this.getDepositById = this.getDepositById.bind(this)
         this.getBalance = this.getBalance.bind(this)
         this.requestDeposit = this.requestDeposit.bind(this)
     }
@@ -126,6 +127,19 @@ class BillingService {
         }
 
         return balance
+    }
+
+    async getDepositById(id, user) {
+        if (!user || !user.checkPermission(Permission.GET_DEPOSIT_BY_ID)) {
+            throw new NotAuthorized()
+        }
+
+        const where = {
+            id,
+            user_id: user.id
+        }
+
+        return await this.Deposit.findOne({where})
     }
 
     async requestDeposit(amount, user) {

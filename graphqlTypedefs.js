@@ -52,6 +52,7 @@ const typeDefs = gql`
         id: Int!
         amount: Float!
         status: PaymentStatus!
+        timestamp: Timestamp!
         redirectUrl: String!
     }
 

@@ -4,6 +4,7 @@ const BillingResolver = require("./BillingResolver")
 const MachineResolver = require("./MachineResolver")
 const ItemMatrixResolver = require("./ItemMatrixResolver")
 const ItemResolver = require("./ItemResolver")
+const DepositResolver = require("./DepositResolver")
 
 function DefaultResolvers({controllerService, saleService, notificationSettingsService, billingService, serviceService, itemService, machineService, itemMatrixService}) {
     const controllerResolver = new ControllerResolver({controllerService, saleService, serviceService, machineService})
@@ -12,6 +13,7 @@ function DefaultResolvers({controllerService, saleService, notificationSettingsS
     const machineResolver = new MachineResolver({machineService, saleService})
     const itemMatrixResolver = new ItemMatrixResolver({itemMatrixService})
     const itemResolver = new ItemResolver({saleService})
+    const depositResolver = new DepositResolver({billingService})
 
     return {
         Controller: controllerResolver,
@@ -19,7 +21,8 @@ function DefaultResolvers({controllerService, saleService, notificationSettingsS
         Billing: billingResolver,
         Machine: machineResolver,
         ItemMatrix: itemMatrixResolver,
-        Item: itemResolver
+        Item: itemResolver,
+        Deposit: depositResolver
     }
 }
 

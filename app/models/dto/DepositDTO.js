@@ -2,10 +2,11 @@ const UnknownPaymentStatus = require("../../errors/UnknownPaymentStatus")
 
 class DepositDTO {
 
-    constructor({id, amount, status, redirectUrl}) {
+    constructor({id, amount, status, redirectUrl, timestamp}) {
         this.id = id
         this.amount = amount
         this.redirectUrl = redirectUrl
+        this.timestamp = timestamp
 
         switch (status) {
             case "pending":
