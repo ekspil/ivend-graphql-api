@@ -330,8 +330,8 @@ class App {
             invalidTokenUser.checkPermission = () => true
 
 
-            await services.machineService.createMachineType({name: "Общий"}, adminUser)
-            await services.machineService.createMachineGroup({name: "Общий"}, user)
+            const machineType = await services.machineService.createMachineType({name: "Общий"}, adminUser)
+            const machineGroup = await services.machineService.createMachineGroup({name: "Общий"}, user)
 
             // Create some items for test user
             const items = []
@@ -368,9 +368,9 @@ class App {
                     number: "1-" + i,
                     name: i + " machine",
                     place: "Place",
-                    groupId: 1,
-                    typeId: 1,
-                    equipmentId: 1,
+                    groupId: machineGroup.id,
+                    typeId: machineType.id,
+                    equipmentId: equipment.id,
                     controllerId: controller.id
                 }, user)
 
