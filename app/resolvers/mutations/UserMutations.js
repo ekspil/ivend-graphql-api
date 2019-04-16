@@ -52,7 +52,14 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
     }
 
 
-    return {registerUser, requestToken, updateNotificationSetting, updateLegalInfo, generateExcel}
+    const requestRegistrationSms = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        return await userService.requestRegistrationSms(input, user)
+    }
+
+    return {registerUser, requestToken, updateNotificationSetting, updateLegalInfo, generateExcel, requestRegistrationSms}
 
 }
 

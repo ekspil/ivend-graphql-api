@@ -231,6 +231,7 @@ const typeDefs = gql`
         phone: String!
         email: String!
         password: String!
+        code: String!
     }
 
     input RequestTokenInput {
@@ -439,7 +440,10 @@ const typeDefs = gql`
         controllerUid: String!
         firmwareId: String!
     }
-
+    
+    input Registration1StepInput {
+        phone: String!
+    }
 
     type Mutation {
         authController(input: AuthControllerInput!): Controller
@@ -463,6 +467,7 @@ const typeDefs = gql`
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
         generateExcel(input: GenerateExcelInput!): ExcelReport
+        requestRegistrationSms(input: Registration1StepInput!): Timestamp
     }
 `
 

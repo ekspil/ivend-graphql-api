@@ -282,6 +282,10 @@ class App {
 
 
         const populateWithFakeData = async () => {
+            const registrationEnabled = process.env.SMS_REGISTRATION_ENABLED
+
+            process.env.SMS_REGISTRATION_ENABLED = "0"
+
             Array.prototype.randomElement = function () {
                 return this[Math.floor(Math.random() * this.length)]
             }
@@ -491,6 +495,7 @@ class App {
                 startDate.setMinutes(now.getMinutes())
             }
 
+            process.env.SMS_REGISTRATION_ENABLED = registrationEnabled
 
         }
 
