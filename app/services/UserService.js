@@ -23,6 +23,7 @@ class UserService {
         this.registerUser = this.registerUser.bind(this)
         this.requestToken = this.requestToken.bind(this)
         this.getProfile = this.getProfile.bind(this)
+        this.requestRegistrationSms = this.requestRegistrationSms.bind(this)
     }
 
 
@@ -134,6 +135,16 @@ class UserService {
 
         if (!Number(process.env.SMS_REGISTRATION_ENABLED)) {
             throw new Error("Sms registration is not enabled")
+        }
+
+        const user = await this.User.findOne({
+            where: {
+                phone
+            }
+        })
+
+        if (user) {
+            throw new UserExists()
         }
 
         const currentCode = await this.redis.hget(`registration_${phone}`, "code")
