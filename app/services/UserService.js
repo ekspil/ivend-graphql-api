@@ -156,6 +156,7 @@ class UserService {
             const requestAgainDate = new Date(Number(requestAgainTimestamp))
 
             if (new Date() < requestAgainDate) {
+                logger.info(`${new Date()} < ${requestAgainDate} [${(new Date() < requestAgainDate)}]`)
                 throw new Error("You have to wait 60 seconds between requests")
             }
         }
