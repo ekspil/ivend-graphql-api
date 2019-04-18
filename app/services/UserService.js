@@ -162,11 +162,11 @@ class UserService {
         }
 
         const requestAgainDate = new Date()
-        requestAgainDate.setMinutes(requestAgainDate.getMinutes() + process.env.SMS_REQUEST_DELAY_MINUTES)
+        requestAgainDate.setMinutes(requestAgainDate.getMinutes() + Number(process.env.SMS_REQUEST_DELAY_MINUTES))
         logger.debug(requestAgainDate)
 
         const expiryDate = new Date()
-        expiryDate.setMinutes(expiryDate.getMinutes() + process.env.SMS_TIMEOUT_MINUTES)
+        expiryDate.setMinutes(expiryDate.getMinutes() + Number(process.env.SMS_TIMEOUT_MINUTES))
         logger.debug(expiryDate)
 
         const randomCode = await hashingUtils.generateRandomAccessKey(3)
