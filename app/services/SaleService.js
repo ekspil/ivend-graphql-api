@@ -202,14 +202,15 @@ class SaleService {
 
         if (!buttons.some((buttonItem) => Number(buttonItem.buttonId) === buttonId)) {
             const name = `Товар ${buttonId}`
-            const item = await this.itemService.createItem({name}, user)
+            const itemUser = itemMatrix.getUser()
+            const item = await this.itemService.createItem({name}, itemUser)
 
             const button = new ButtonItem()
             button.buttonId = buttonId
             button.item_id = item.id
             button.item_matrix_id = itemMatrix.id
 
-            const buttonItem = await this.ButtonItem.create(button, user)
+            const buttonItem = await this.ButtonItem.create(button, itemUser)
 
             buttons.push(buttonItem)
         }
