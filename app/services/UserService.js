@@ -156,16 +156,18 @@ class UserService {
             const requestAgainDate = new Date(Number(requestAgainTimestamp))
 
             if (new Date() < requestAgainDate) {
-                logger.info(`${new Date()} < ${requestAgainDate} [${(new Date() < requestAgainDate)}]`)
+                logger.debug(`${new Date()} < ${requestAgainDate} [${(new Date() < requestAgainDate)}]`)
                 throw new Error("You have to wait 60 seconds between requests")
             }
         }
 
         const requestAgainDate = new Date()
         requestAgainDate.setMinutes(requestAgainDate.getMinutes() + process.env.SMS_REQUEST_DELAY_MINUTES)
+        logger.debug(requestAgainDate)
 
         const expiryDate = new Date()
         expiryDate.setMinutes(expiryDate.getMinutes() + process.env.SMS_TIMEOUT_MINUTES)
+        logger.debug(expiryDate)
 
         const randomCode = await hashingUtils.generateRandomAccessKey(3)
         const smsCode = ((parseInt(randomCode, 16) % 1000000) + "").padStart(6, 0)
@@ -174,8 +176,11 @@ class UserService {
         await microservices.notification.sendRegistrationSms(phone, smsCode)
 
         await this.redis.hset("registration_" + phone, "code", smsCode)
+        logger.debug(`${"registration_" + phone} [code] ${smsCode}`)
         await this.redis.hset("registration_" + phone, "request_again_at", requestAgainDate.getTime())
+        logger.debug(`${"registration_" + phone} [request_again_at] ${requestAgainDate.getTime()}`)
         await this.redis.hset("registration_" + phone, "timeout_at", expiryDate.getTime())
+        logger.debug(`${"registration_" + phone} [timeout_at] ${expiryDate.getTime()}`)
 
         return expiryDate
     }
