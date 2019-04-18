@@ -1,6 +1,7 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const AnotherDepositPending = require("../errors/AnotherDepositPending")
 const DepositRequestFailed = require("../errors/DepositRequestFailed")
+const InvalidPeriod = require("../errors/InvalidPeriod")
 const Permission = require("../enum/Permission")
 const Deposit = require("../models/Deposit")
 const fetch = require("node-fetch")
@@ -35,6 +36,10 @@ class BillingService {
 
         if (period) {
             const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
 
             where.createdAt = {
                 [Op.lt]: to,

@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
 const MachineNotFound = require("../errors/MachineNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
+const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
 const Sale = require("../models/Sale")
@@ -330,6 +331,10 @@ class SaleService {
 
         if (period) {
             const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
 
             where.createdAt = {
                 [Op.lt]: to,
