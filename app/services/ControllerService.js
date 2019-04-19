@@ -254,8 +254,6 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        //todo start transaction
-
         const {
             controllerUid,
             firmwareId,
@@ -270,33 +268,35 @@ class ControllerService {
             signalStrength
         } = controllerStateInput
 
+
         const controller = await this.getControllerByUID(controllerUid, user)
 
         if (!controller) {
             throw new ControllerNotFound()
         }
 
-        let controllerState = new ControllerState()
-        controllerState.firmwareId = firmwareId
-        controllerState.coinAcceptorStatus = coinAcceptorStatus
-        controllerState.billAcceptorStatus = billAcceptorStatus
-        controllerState.coinAmount = coinAmount
-        controllerState.billAmount = billAmount
-        controllerState.dex1Status = dex1Status
-        controllerState.dex2Status = dex2Status
-        controllerState.exeStatus = exeStatus
-        controllerState.mdbStatus = mdbStatus
-        controllerState.signalStrength = signalStrength
-        controllerState.registrationTime = new Date()
-        controllerState.controller_id = controller.id
+        return this.Controller.sequelize.transaction(async (transaction) => {
 
-        controllerState = await this.ControllerState.create(controllerState)
+            let controllerState = new ControllerState()
+            controllerState.firmwareId = firmwareId
+            controllerState.coinAcceptorStatus = coinAcceptorStatus
+            controllerState.billAcceptorStatus = billAcceptorStatus
+            controllerState.coinAmount = coinAmount
+            controllerState.billAmount = billAmount
+            controllerState.dex1Status = dex1Status
+            controllerState.dex2Status = dex2Status
+            controllerState.exeStatus = exeStatus
+            controllerState.mdbStatus = mdbStatus
+            controllerState.signalStrength = signalStrength
+            controllerState.registrationTime = new Date()
+            controllerState.controller_id = controller.id
 
-        controller.last_state_id = controllerState.id
+            controllerState = await this.ControllerState.create(controllerState)
 
-        await controller.save()
+            controller.last_state_id = controllerState.id
 
-        return await this.getControllerById(controller.id, user)
+            return await controller.save()
+        })
     }
 
 
