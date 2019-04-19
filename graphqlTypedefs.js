@@ -155,6 +155,7 @@ const typeDefs = gql`
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
         billing: Billing!
+        salesSummary(period: Period): SalesSummary
         items: [Item!]!
     }
 

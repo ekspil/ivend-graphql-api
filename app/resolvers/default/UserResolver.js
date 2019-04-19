@@ -3,8 +3,9 @@ const NotificationDTO = require("../../models/dto/NotificationDTO")
 const ItemDTO = require("../../models/dto/ItemDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const BillingDTO = require("../../models/dto/BillingDTO")
+const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 
-function UserResolver({notificationSettingsService, itemService}) {
+function UserResolver({notificationSettingsService, itemService, saleService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
@@ -49,11 +50,25 @@ function UserResolver({notificationSettingsService, itemService}) {
         return new BillingDTO({})
     }
 
+    const salesSummary = async (obj, args, context) => {
+        const {user} = context
+        const {period} = args
+
+        const salesSummary = await saleService.getSalesSummary({period}, user)
+
+        if (!salesSummary) {
+            return null
+        }
+
+        return new SalesSummaryDTO(salesSummary)
+    }
+
     return {
         notificationSettings,
         legalInfo,
         billing,
-        items
+        items,
+        salesSummary
     }
 
 }

@@ -8,7 +8,7 @@ const DepositResolver = require("./DepositResolver")
 
 function DefaultResolvers({controllerService, saleService, notificationSettingsService, billingService, serviceService, itemService, machineService, itemMatrixService}) {
     const controllerResolver = new ControllerResolver({controllerService, saleService, serviceService, machineService})
-    const userResolver = new UserResolver({notificationSettingsService, itemService})
+    const userResolver = new UserResolver({notificationSettingsService, itemService, saleService})
     const billingResolver = new BillingResolver({billingService})
     const machineResolver = new MachineResolver({machineService, saleService})
     const itemMatrixResolver = new ItemMatrixResolver({itemMatrixService})
