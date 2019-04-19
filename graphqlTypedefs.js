@@ -368,6 +368,7 @@ const typeDefs = gql`
         itemMatrix: ItemMatrix
         type: MachineType!
         salesSummaryOfItem(itemId:Int, period: Period): SalesSummary!
+        salesSummary(period: Period): SalesSummary!
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
