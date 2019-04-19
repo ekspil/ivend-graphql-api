@@ -240,17 +240,21 @@ class App {
             UserModel,
             RevisionModel,
             revisionService: services.revisionService,
-            serviceService: services.serviceService
+            serviceService: services.serviceService,
+            machineService: services.machineService
         })
 
         services.machineService = new MachineService({
             MachineModel,
             MachineGroupModel,
             MachineTypeModel,
+            MachineLogModel,
             equipmentService: services.equipmentService,
             itemMatrixService: services.itemMatrixService,
             controllerService: services.controllerService
         })
+
+        services.controllerService.machineService = services.machineService
 
         services.userService = new UserService({
             UserModel,
