@@ -69,7 +69,7 @@ class UserService {
             user.phone = phone
             user.email = email
             user.passwordHash = await this.hashPassword(password)
-            user.role = role || "USER"
+            user.role = role || "VENDOR"
 
             user = await this.User.create(user, {transaction})
 
