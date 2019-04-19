@@ -1,5 +1,12 @@
 const Permission = require("./Permission")
 
+// VENDOR_NOT_CONFIRMED
+// VENDOR_NO_LEGAL_INFO
+// VENDOR_NEGATIVE_BALANCE
+// VENDOR
+// EMPLOYEE
+
+
 const RolePermissions = {
     "USER": [
         Permission.FIND_BANK_TERMINAL_BY_ID,

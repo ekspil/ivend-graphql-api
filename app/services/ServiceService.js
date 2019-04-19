@@ -11,8 +11,6 @@ class ServiceService {
 
         this.createService = this.createService.bind(this)
         this.findById = this.findById.bind(this)
-        this.getControllerServices = this.getControllerServices.bind(this)
-        this.getServicesForController = this.getServicesForController.bind(this)
     }
 
     async createService(createServiceInput, user) {
@@ -39,29 +37,6 @@ class ServiceService {
         return await this.Service.findOne({
             where: {
                 id
-            }
-        })
-    }
-
-    async getServicesForController(controllerId, user) {
-        if (!user || !user.checkPermission(Permission.GET_SERVICES_FOR_CONTROLLER)) {
-            throw new NotAuthorized()
-        }
-
-        //todo check access
-        const controller = await this.controllerService.getControllerById(controllerId, user)
-
-        return await controller.getServices()
-    }
-
-    async getControllerServices(user) {
-        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_SERVICES)) {
-            throw new NotAuthorized()
-        }
-
-        return await this.Service.findAll({
-            where: {
-                type: "CONTROLLER"
             }
         })
     }

@@ -17,7 +17,6 @@ const typeDefs = gql`
         lastState: ControllerState
         lastErrorTime: Timestamp
         errors: [ControllerError!]!
-        services: [Service!]!
         machine: Machine
         firmwareId: String
         registrationTime: Timestamp
@@ -90,7 +89,6 @@ const typeDefs = gql`
         bankTerminalMode: BankTerminalMode!
         fiscalizationMode: FiscalizationMode!
         revisionId: Int!
-        serviceIds: [Int!]
     }
 
     input EditControllerInput {
@@ -100,7 +98,6 @@ const typeDefs = gql`
         bankTerminalMode: BankTerminalMode
         fiscalizationMode: FiscalizationMode
         revisionId: Int
-        serviceIds: [Int!]
     }
 
     input CreateItemMatrixInput {
@@ -334,17 +331,6 @@ const typeDefs = gql`
         contactEmail: String!
     }
 
-    type AvailableServices {
-        controller: [Service!]!
-    }
-
-    type Service {
-        id: Int!
-        name: String!
-        price: Float!
-        billingType: BillingType!
-    }
-
     enum BillingType {
         DAILY
         MONTHLY
@@ -433,7 +419,6 @@ const typeDefs = gql`
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
-        getAvailableServices: AvailableServices!
     }
 
     input AuthControllerInput {

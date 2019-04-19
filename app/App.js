@@ -41,7 +41,6 @@ const LegalInfo = require("./models/sequelize/LegalInfo")
 const Deposit = require("./models/sequelize/Deposit")
 const PaymentRequest = require("./models/sequelize/PaymentRequest")
 const Transaction = require("./models/sequelize/Transaction")
-const ControllerServices = require("./models/sequelize/ControllerServices")
 const Machine = require("./models/sequelize/Machine")
 const MachineGroup = require("./models/sequelize/MachineGroup")
 const MachineType = require("./models/sequelize/MachineType")
@@ -103,8 +102,6 @@ class App {
         const MachineModel = sequelize.define("machines", Machine)
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
-
-        sequelize.define("controller_services", ControllerServices)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -361,7 +358,7 @@ class App {
                     uid: `10000003-${i + 1}`,
                     equipmentId: equipment.id,
                     revisionId: revision.id,
-                    status: Object.keys(ControllerStatus).randomElement(),
+                    status: ControllerStatus.ENABLED,
                     mode: Object.keys(ControllerMode).randomElement(),
                     serviceIds: [1],
                 }

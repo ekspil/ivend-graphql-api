@@ -1,7 +1,6 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
-const ServiceNotFound = require("../errors/ServiceNotFound")
 const Controller = require("../models/Controller")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
@@ -11,14 +10,13 @@ const logger = require("../utils/logger")
 
 class ControllerService {
 
-    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, serviceService, revisionService}) {
+    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
         this.Item = ItemModel
         this.User = UserModel
         this.Revision = RevisionModel
-        this.serviceService = serviceService
         this.revisionService = revisionService
 
         this.createController = this.createController.bind(this)
@@ -39,7 +37,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, serviceIds} = input
+        const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
 
         const controller = new Controller()
 
@@ -64,10 +62,6 @@ class ControllerService {
 
         const savedController = await this.Controller.create(controller)
 
-        if (serviceIds) {
-            await this._applyServices(serviceIds, savedController, user)
-        }
-
         return await this.Controller.find({
             where: {
                 id: savedController.id
@@ -75,26 +69,12 @@ class ControllerService {
         })
     }
 
-    async _applyServices(serviceIds, controller, user) {
-        const services = await Promise.all(serviceIds.map(async serviceId => {
-            const service = await this.serviceService.findById(serviceId, user)
-
-            if (!service) {
-                throw new ServiceNotFound()
-            }
-
-            return service
-        }))
-
-        await controller.setServices(services)
-    }
-
     async editController(id, input, user) {
         if (!user || !user.checkPermission(Permission.EDIT_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, serviceIds} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -111,12 +91,6 @@ class ControllerService {
 
             controller.revision_id = revision.id
         }
-
-
-        if (serviceIds) {
-            await this._applyServices(serviceIds, controller, user)
-        }
-
 
         if (name) {
             controller.name = name

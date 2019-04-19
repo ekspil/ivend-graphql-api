@@ -1,3 +1,4 @@
+const ControllerStatus = require("../enum/ControllerStatus")
 const NotAuthorized = require("../errors/NotAuthorized")
 const AnotherDepositPending = require("../errors/AnotherDepositPending")
 const DepositRequestFailed = require("../errors/DepositRequestFailed")
@@ -6,7 +7,7 @@ const Permission = require("../enum/Permission")
 const Deposit = require("../models/Deposit")
 const fetch = require("node-fetch")
 const {Op} = require("sequelize")
-
+const microservices = require("../utils/microservices")
 
 class BillingService {
 
@@ -55,47 +56,17 @@ class BillingService {
             throw new NotAuthorized()
         }
 
-        const controllersWithServices = await this.Controller.findAll({
-            include: [
-                {model: this.Service}
-            ],
+        const controllers = await this.Controller.findAll({
             where: {
-                user_id: user.id
+                user_id: user.id,
+                status: ControllerStatus.ENABLED
             }
         })
 
-        const mapped = await Promise.all(controllersWithServices.map(async (controllerWithServices) => {
-            const {services} = controllerWithServices
+        const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY")
 
-            const mappedServices = await Promise.all(services.map(async (service) => {
-                if (service.billingType === "MONTHLY") {
-                    const {sequelize} = this.Service
-
-                    const [datePart] = await sequelize.query("SELECT DATE_PART('days',  DATE_TRUNC('month', NOW())  + '1 MONTH'::INTERVAL  - '1 DAY'::INTERVAL)",
-                        {type: sequelize.QueryTypes.SELECT}
-                    )
-                    const daysInMonth = datePart.date_part
-
-                    const [dayPriceResult] = await sequelize.query("SELECT ROUND(:price::NUMERIC / :days::NUMERIC, 2) as day_price",
-                        {replacements: {price: service.price, days: daysInMonth}, type: sequelize.QueryTypes.SELECT}
-                    )
-
-                    return {price: dayPriceResult.day_price}
-                }
-
-                return {price: service.price}
-            }))
-
-            return {services: mappedServices}
-        }))
-
-        return mapped.reduce((acc, controllerWithServices) => {
-            const {services} = controllerWithServices
-
-            return acc + services.reduce((acc, service) => {
-                return acc + Number(service.price)
-            }, 0)
-
+        return controllers.reduce((acc) => {
+            return acc + Number(telemetryPrice)
         }, 0).toFixed(2)
     }
 
@@ -152,7 +123,6 @@ class BillingService {
             throw new NotAuthorized()
         }
 
-
         //todo move out to func
         const deposit = await this.Deposit.findOne({
             where: {
@@ -171,45 +141,21 @@ class BillingService {
         //todo transaction here is overkill
         return this.Deposit.sequelize.transaction(async () => {
             // Request payment from the billing
+            const paymentRequestId = await microservices.createPaymentRequest(amount, user)
 
-            const body = JSON.stringify({
-                amount,
-                to: user.phone
+            const deposit = new Deposit()
+            deposit.amount = amount
+            deposit.payment_request_id = paymentRequestId
+            deposit.user_id = user.id
+
+            return await this.Deposit.create(deposit, {
+                include: [{
+                    model: this.PaymentRequest,
+                    as: "paymentRequest"
+                }]
             })
-
-            const response = await fetch(`${process.env.BILLING_URL}/api/v1/billing/createPayment`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body
-            })
-
-            switch (response.status) {
-                case 200:
-                    const json = await response.json()
-                    const {paymentRequestId} = json
-
-                    const deposit = new Deposit()
-                    deposit.amount = amount
-                    deposit.payment_request_id = paymentRequestId
-                    deposit.user_id = user.id
-
-                    return await this.Deposit.create(deposit, {
-                        include: [{
-                            model: this.PaymentRequest,
-                            as: "paymentRequest"
-                        }]
-                    })
-
-                default:
-                    throw new DepositRequestFailed()
-            }
-
-
         })
     }
-
 }
 
 module.exports = BillingService
