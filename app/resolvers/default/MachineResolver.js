@@ -62,11 +62,11 @@ function MachineResolver({machineService, saleService}) {
         return new ItemMatrixDTO(itemMatrix)
     }
 
-    const salesSummary = async (obj, args, context) => {
+    const salesSummaryOfItem = async (obj, args, context) => {
         const {user} = context
-        const {period} = args
+        const {itemId, period} = args
 
-        const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
+        const salesSummary = await saleService.getSalesSummary({machineId: obj.id, itemId: itemId, period}, user)
 
         if (!salesSummary) {
             return null
@@ -93,7 +93,7 @@ function MachineResolver({machineService, saleService}) {
 
         const machine = await machineService.getMachineById(obj.id, user)
 
-        const controller =  await machine.getController()
+        const controller = await machine.getController()
 
         if (!controller) {
             return null
@@ -105,7 +105,7 @@ function MachineResolver({machineService, saleService}) {
     return {
         controller,
         lastSaleTime,
-        salesSummary,
+        salesSummaryOfItem,
         group,
         equipment,
         type,

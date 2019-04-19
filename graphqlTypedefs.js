@@ -381,7 +381,7 @@ const typeDefs = gql`
         equipment: Equipment!
         itemMatrix: ItemMatrix
         type: MachineType!
-        salesSummary(period: Period): SalesSummary
+        salesSummaryOfItem(itemId:Int, period: Period): SalesSummary!
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
@@ -440,7 +440,7 @@ const typeDefs = gql`
         controllerUid: String!
         firmwareId: String!
     }
-    
+
     input Registration1StepInput {
         phone: String!
     }
