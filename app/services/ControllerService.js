@@ -291,11 +291,11 @@ class ControllerService {
             controllerState.registrationTime = new Date()
             controllerState.controller_id = controller.id
 
-            controllerState = await this.ControllerState.create(controllerState)
+            controllerState = await this.ControllerState.create(controllerState, {transaction})
 
             controller.last_state_id = controllerState.id
 
-            return await controller.save()
+            return await controller.save({transaction})
         })
     }
 
