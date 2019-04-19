@@ -1,7 +1,6 @@
 const fetch = require("node-fetch")
 const SmsNotSent = require("../errors/SmsNotSent")
 const DepositRequestFailed = require("../errors/DepositRequestFailed")
-const Deposit = require("../models/Deposit")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const MicroserviceUnknownError = require("../errors/MicroserviceUnknownError")
 

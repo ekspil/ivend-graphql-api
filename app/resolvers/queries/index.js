@@ -4,7 +4,7 @@ const EquipmentQueries = require("./EquipmentQueries")
 const UserQueries = require("./UserQueries")
 const MachineQueries = require("./MachineQueries")
 
-function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, serviceService, machineService}) {
+function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, machineService}) {
 
     const controllerQueries = new ControllerQueries({ controllerService, revisionService})
     const itemQueries = new ItemQueries({ itemMatrixService })

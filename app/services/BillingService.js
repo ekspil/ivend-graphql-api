@@ -1,11 +1,9 @@
 const ControllerStatus = require("../enum/ControllerStatus")
 const NotAuthorized = require("../errors/NotAuthorized")
 const AnotherDepositPending = require("../errors/AnotherDepositPending")
-const DepositRequestFailed = require("../errors/DepositRequestFailed")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const Permission = require("../enum/Permission")
 const Deposit = require("../models/Deposit")
-const fetch = require("node-fetch")
 const {Op} = require("sequelize")
 const microservices = require("../utils/microservices")
 
