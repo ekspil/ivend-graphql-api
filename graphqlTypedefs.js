@@ -376,9 +376,8 @@ const typeDefs = gql`
     }
 
     type MachineLog {
-        type: String!
         message: String!
-        time: Timestamp!
+        timestamp: Timestamp!
     }
 
     input CreateMachineInput {
