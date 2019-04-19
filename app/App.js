@@ -44,6 +44,7 @@ const Transaction = require("./models/sequelize/Transaction")
 const Machine = require("./models/sequelize/Machine")
 const MachineGroup = require("./models/sequelize/MachineGroup")
 const MachineType = require("./models/sequelize/MachineType")
+const MachineLog = require("./models/sequelize/MachineLog")
 
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
 
@@ -102,6 +103,7 @@ class App {
         const MachineModel = sequelize.define("machines", Machine)
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
+        const MachineLogModel = sequelize.define("machine_logs", MachineLog)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -183,6 +185,11 @@ class App {
         MachineGroupModel.belongsTo(UserModel, {
             foreignKey: "user_id",
             as: "user"
+        })
+
+        MachineLogModel.belongsTo(MachineModel, {
+            foreignKey: "machine_id",
+            as: "machine"
         })
 
         await sequelize.authenticate()
