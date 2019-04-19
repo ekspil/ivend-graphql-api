@@ -1,4 +1,5 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const ControllerUIDConflict = require("../errors/ControllerUIDConflict")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const Controller = require("../models/Controller")
@@ -39,7 +40,13 @@ class ControllerService {
 
         const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
 
-        const controller = new Controller()
+        let controller = await this.getControllerByUID(uid, user)
+
+        if (controller) {
+            throw new ControllerUIDConflict()
+        }
+
+        controller = new Controller()
 
         const revision = await this.revisionService.getRevisionById(revisionId, user)
 
