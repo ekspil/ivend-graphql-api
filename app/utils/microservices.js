@@ -26,7 +26,7 @@ const sendRegistrationSms = async (phone, code) => {
 
             return
         default:
-            throw new MicroserviceUnknownError()
+            throw new MicroserviceUnknownError(response.status)
     }
 }
 
@@ -47,7 +47,7 @@ const getServiceDailyPrice = async (service) => {
         case 404:
             throw new ServiceNotFound()
         default:
-            throw new MicroserviceUnknownError()
+            throw new MicroserviceUnknownError(response.status)
     }
 }
 
