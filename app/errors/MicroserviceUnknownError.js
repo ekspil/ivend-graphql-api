@@ -1,9 +1,11 @@
+const logger = require("../utils/logger")
+
 class MicroserviceUnknownError extends Error {
 
     constructor(status) {
         super()
 
-        console.error("Unknown status from microservice: " + status)
+        logger.error("Unknown status from microservice: " + status)
 
         this.message = "Unknown error from microservice"
     }
