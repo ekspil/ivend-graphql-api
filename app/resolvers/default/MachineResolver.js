@@ -38,12 +38,12 @@ function MachineResolver({machineService, saleService}) {
         return new MachineTypeDTO(type)
     }
 
-    const logs = async () => {
-        //const {user} = context
+    const logs = async (obj, args, context) => {
+        const {user} = context
 
-        //const machine = await machineService.getMachineById(obj.id, user)
+        const machine = await machineService.getMachineById(obj.id, user)
 
-        const logs = []
+        const logs = await machine.getLogs()
 
         return logs.map(log => (new MachineLogDTO(log)))
     }

@@ -1,4 +1,5 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const BusStatus = require("../enum/BusStatus")
 const ControllerUIDConflict = require("../errors/ControllerUIDConflict")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
@@ -11,7 +12,7 @@ const logger = require("../utils/logger")
 
 class ControllerService {
 
-    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService}) {
+    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
@@ -19,6 +20,7 @@ class ControllerService {
         this.User = UserModel
         this.Revision = RevisionModel
         this.revisionService = revisionService
+        this.machineService = machineService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -64,6 +66,7 @@ class ControllerService {
         controller.readStatMode = readStatMode
         controller.bankTerminalMode = bankTerminalMode
         controller.fiscalizationMode = fiscalizationMode
+        controller.connected = false
 
         controller.user_id = user.id
 
@@ -275,28 +278,95 @@ class ControllerService {
             throw new ControllerNotFound()
         }
 
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+
+        if (!machine) {
+            throw new Error("Machine not found")
+        }
+
+        const machineUser = await machine.getUser()
+        machineUser.checkPermission = () => true
+
+        const lastState = await controller.getLastState()
+
         return this.Controller.sequelize.transaction(async (transaction) => {
+            if (!lastState) {
+                await this.machineService.addLog(machine.id, `Контроллер подключён`, machineUser, transaction)
+            }
 
             let controllerState = new ControllerState()
             controllerState.firmwareId = firmwareId
+
+            await this._registerMachineLogs("coinAcceptorStatus", coinAcceptorStatus, "Монетоприёмник", machine.id, lastState, machineUser, transaction)
             controllerState.coinAcceptorStatus = coinAcceptorStatus
+
+            await this._registerMachineLogs("billAcceptorStatus", billAcceptorStatus, "Купюроприёмник", machine.id, lastState, machineUser, transaction)
             controllerState.billAcceptorStatus = billAcceptorStatus
+
             controllerState.coinAmount = coinAmount
             controllerState.billAmount = billAmount
+
+            await this._registerMachineLogs("dex1Status", dex1Status, "DEX1", machine.id, lastState, machineUser, transaction)
             controllerState.dex1Status = dex1Status
+
+            await this._registerMachineLogs("dex2Status", dex2Status, "DEX2", machine.id, lastState, machineUser, transaction)
             controllerState.dex2Status = dex2Status
+
+            await this._registerMachineLogs("exeStatus", exeStatus, "EXE", machine.id, lastState, machineUser, transaction)
             controllerState.exeStatus = exeStatus
+
+            await this._registerMachineLogs("mdbStatus", mdbStatus, "MDB", machine.id, lastState, machineUser, transaction)
             controllerState.mdbStatus = mdbStatus
+
             controllerState.signalStrength = signalStrength
             controllerState.registrationTime = new Date()
             controllerState.controller_id = controller.id
 
             controllerState = await this.ControllerState.create(controllerState, {transaction})
 
+            if (lastState && !controller.connected) {
+                //add log connection regain
+                await this.machineService.addLog(machine.id, `Связь восстановлена`, machineUser, transaction)
+            }
+
+            controller.connected = true
+            await controller.save({transaction})
+
             controller.last_state_id = controllerState.id
 
             return await controller.save({transaction})
         })
+    }
+
+    async _registerMachineLogs(busKey, busValue, busName, machineId, lastState, user, transaction) {
+        if (!lastState) {
+            return
+        }
+
+        let message
+
+        if (busValue === BusStatus.OK) {
+            if (lastState[busKey] === BusStatus.ERROR) {
+                if (busKey === "coinAcceptorStatus" || busKey === "billAcceptorStatus") {
+                    message = `${busName} работает`
+                } else {
+                    message = `Ошибка ${busName} разрешена`
+                }
+            }
+        } else if (busValue === BusStatus.ERROR) {
+            if (lastState[busKey] === BusStatus.OK) {
+                if (busKey === "coinAcceptorStatus" || busKey === "billAcceptorStatus") {
+                    message = `Не работает ${busName.toLowerCase()}`
+                } else {
+                    message = `Ошибка ${busName}`
+                }
+            }
+        }
+
+        if (message) {
+            await this.machineService.addLog(machineId, message, user, transaction)
+        }
+
     }
 
 

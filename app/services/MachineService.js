@@ -5,16 +5,18 @@ const MachineTypeNotFound = require("../errors/MachineTypeNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const EquipmentNotFound = require("../errors/EquipmentNotFound")
 const Machine = require("../models/Machine")
+const MachineLog = require("../models/MachineLog")
 const MachineGroup = require("../models/MachineGroup")
 const MachineType = require("../models/MachineType")
 const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, MachineGroupModel, MachineTypeModel, equipmentService, itemMatrixService, controllerService}) {
+    constructor({MachineModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService}) {
         this.Machine = MachineModel
         this.MachineGroup = MachineGroupModel
         this.MachineType = MachineTypeModel
+        this.MachineLog = MachineLogModel
         this.equipmentService = equipmentService
         this.itemMatrixService = itemMatrixService
         this.controllerService = controllerService
@@ -30,6 +32,7 @@ class MachineService {
         this.createMachineType = this.createMachineType.bind(this)
         this.getMachineTypeById = this.getMachineTypeById.bind(this)
         this.getAllMachineTypes = this.getAllMachineTypes.bind(this)
+        this.addLog = this.addLog.bind(this)
     }
 
     async createMachine(input, user) {
@@ -258,6 +261,18 @@ class MachineService {
         }
 
         return await this.MachineType.findAll()
+    }
+
+    async addLog(machineId, message, user, transaction) {
+        if (!user || !user.checkPermission(Permission.CREATE_MACHINE_LOG)) {
+            throw new NotAuthorized()
+        }
+
+        const machineLog = new MachineLog()
+        machineLog.message = message
+        machineLog.machine_id = machineId
+
+        return await this.MachineLog.create(machineLog, {transaction})
     }
 }
 

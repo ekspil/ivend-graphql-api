@@ -53,7 +53,8 @@ const VENDOR = [
     Permission.GET_ALL_MACHINE_TYPES,
     Permission.GET_MACHINE_BY_ID,
     Permission.GET_MACHINE_BY_CONTROLLER_ID,
-    Permission.GET_DEPOSIT_BY_ID
+    Permission.GET_DEPOSIT_BY_ID,
+    Permission.CREATE_MACHINE_LOG,
 
 ]
 
