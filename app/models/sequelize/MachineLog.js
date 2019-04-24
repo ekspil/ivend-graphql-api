@@ -11,6 +11,10 @@ const Machine = {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false
     },
+    type: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,
@@ -22,6 +26,6 @@ const Machine = {
         allowNull: true,
         unique: false,
         field: "updated_at"
-    },
+    }
 }
 module.exports = Machine
