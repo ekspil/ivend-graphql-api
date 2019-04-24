@@ -58,7 +58,8 @@ const VENDOR = [
     Permission.DELETE_CONTROLLER,
     Permission.DELETE_MACHINE,
     Permission.CONFIRM_USER_ACTION,
-    Permission.EDIT_EMAIL
+    Permission.EDIT_EMAIL,
+    Permission.EDIT_PASSWORD
 
 ]
 
