@@ -65,6 +65,12 @@ const Controller = {
         allowNull: true,
         unique: false,
         field: "updated_at"
+    },
+    deletedAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "deleted_at"
     }
 }
 
