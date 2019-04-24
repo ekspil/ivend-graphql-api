@@ -192,6 +192,11 @@ class App {
             as: "machine"
         })
 
+        MachineModel.hasMany(MachineLogModel, {
+            as: "logs",
+            foreignKey: "machine_id"
+        })
+
         await sequelize.authenticate()
 
 
