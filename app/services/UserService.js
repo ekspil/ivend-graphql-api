@@ -15,8 +15,6 @@ const validationUtils = require("../utils/validationUtils")
 const logger = require("../utils/logger")
 const microservices = require("../utils/microservices")
 
-const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
-
 class UserService {
 
     constructor({UserModel, redis, machineService}) {
@@ -26,6 +24,9 @@ class UserService {
 
         this.registerUser = this.registerUser.bind(this)
         this.requestToken = this.requestToken.bind(this)
+        this.editEmail = this.editEmail.bind(this)
+        this.editPassword = this.editPassword.bind(this)
+        this.confirmUserAction = this.confirmUserAction.bind(this)
         this.getProfile = this.getProfile.bind(this)
         this.requestRegistrationSms = this.requestRegistrationSms.bind(this)
     }
@@ -90,9 +91,24 @@ class UserService {
 
         const token = await hashingUtils.generateRandomAccessKey(64)
 
-        await this.redis.set("action_email_" + token, `${user.id}:${newEmail}`, "ex", Number(process.env.CHANGE_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
+        await this.redis.set("action_edit_email_" + token, `${user.id}:${newEmail}`, "ex", Number(process.env.CHANGE_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
 
         logger.info(`Token for userId ${user.id} (${newEmail}) is ${token})`)
+
+        return token
+    }
+
+
+    async editPassword(password, user) {
+        if (!user || !user.checkPermission(Permission.EDIT_PASSWORD)) {
+            throw new NotAuthorized()
+        }
+
+        const token = await hashingUtils.generateRandomAccessKey(64)
+
+        await this.redis.set("action_edit_password_" + token, `${user.id}:${password}`, "ex", Number(process.env.CHANGE_PASSWORD_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
+
+        logger.info(`Token for userId ${user.id} for changing password is ${token})`)
 
         return token
     }
@@ -105,8 +121,8 @@ class UserService {
 
         const {token, type} = input
 
-        if (type === "CHANGE_EMAIL_CONFIRM") {
-            const tokenValue = await this.redis.get("action_email_" + token)
+        if (type === "EDIT_EMAIL_CONFIRM") {
+            const tokenValue = await this.redis.get("action_edit_email_" + token)
 
             if (!tokenValue) {
                 throw new TokenNotFound()
@@ -124,9 +140,35 @@ class UserService {
                 throw new UserNotFound()
             }
 
-            await this.redis.del("action_email_" + token)
+            await this.redis.del("action_edit_email_" + token)
 
             user.email = email
+            return await user.save()
+        }
+
+        if (type === "EDIT_PASSWORD_CONFIRM") {
+            const tokenValue = await this.redis.get("action_edit_password_" + token)
+
+            if (!tokenValue) {
+                throw new TokenNotFound()
+            }
+
+            const [userId, password] = tokenValue.split(":")
+
+            const user = await this.User.findOne({
+                where: {
+                    id: Number(userId)
+                }
+            })
+
+            if (!user) {
+                throw new UserNotFound()
+            }
+
+            await this.redis.del("action_edit_password_" + token)
+
+            user.password = await hashingUtils.hashPassword(password)
+
             return await user.save()
         }
 
@@ -234,7 +276,7 @@ class UserService {
 
 
     async hashPassword(password) {
-        return await bcryptjs.hash(password, bcryptRounds)
+        return await hashingUtils.hashPassword(password)
     }
 
 }
