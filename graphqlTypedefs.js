@@ -441,12 +441,23 @@ const typeDefs = gql`
         phone: String!
     }
 
+    enum UserActionType {
+        CHANGE_EMAIL_CONFIRM
+    }
+    
+    input UserActionConfirmation {
+        token: String!
+        type: UserActionType!
+    }
+
     type Mutation {
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
         registerUser(input: CreateUserInput!): User
+        editEmail(email: String!): Boolean
+        confirmUserAction(input: UserActionConfirmation!): User
         requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
         createController(input: CreateControllerInput!): Controller

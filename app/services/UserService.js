@@ -1,4 +1,6 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const TokenNotFound = require("../errors/TokenNotFound")
+const UserNotFound = require("../errors/UserNotFound")
 const UserExists = require("../errors/UserExists")
 const PhonePasswordMatchFailed = require("../errors/PhonePasswordMatchFailed")
 const SmsCodeMatchFailed = require("../errors/SmsCodeMatchFailed")
@@ -69,7 +71,7 @@ class UserService {
             user.phone = phone
             user.email = email
             user.passwordHash = await this.hashPassword(password)
-            user.role = role || "VENDOR"
+            user.role = role || "VENDOR_NOT_CONFIRMED"
 
             user = await this.User.create(user, {transaction})
 
@@ -79,6 +81,56 @@ class UserService {
 
             return user
         })
+    }
+
+    async editEmail(newEmail, user) {
+        if (!user || !user.checkPermission(Permission.EDIT_EMAIL)) {
+            throw new NotAuthorized()
+        }
+
+        const token = await hashingUtils.generateRandomAccessKey(64)
+
+        await this.redis.set("action_email_" + token, `${user.id}:${newEmail}`, "ex", Number(process.env.CHANGE_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
+
+        logger.info(`Token for userId ${user.id} (${newEmail}) is ${token})`)
+
+        return token
+    }
+
+
+    async confirmUserAction(input, user) {
+        if (!user || !user.checkPermission(Permission.CONFIRM_USER_ACTION)) {
+            throw new NotAuthorized()
+        }
+
+        const {token, type} = input
+
+        if (type === "CHANGE_EMAIL_CONFIRM") {
+            const tokenValue = await this.redis.get("action_email_" + token)
+
+            if (!tokenValue) {
+                throw new TokenNotFound()
+            }
+
+            const [userId, email] = tokenValue.split(":")
+
+            const user = await this.User.findOne({
+                where: {
+                    id: Number(userId)
+                }
+            })
+
+            if (!user) {
+                throw new UserNotFound()
+            }
+
+            await this.redis.del("action_email_" + token)
+
+            user.email = email
+            return await user.save()
+        }
+
+        throw new Error("No such UserActionType")
     }
 
     async requestToken(input) {
