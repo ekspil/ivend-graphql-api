@@ -378,6 +378,7 @@ const typeDefs = gql`
 
     type MachineLog {
         message: String!
+        type: MachineLogType!
         timestamp: Timestamp!
     }
 
@@ -407,6 +408,14 @@ const typeDefs = gql`
 
     input CreateMachineTypeInput {
         name: String!
+    }
+
+    enum MachineLogType {
+        CONNECTION
+        COINACCEPTOR
+        BILLACCEPTOR
+        BUS_ERROR
+        REGISTRATION
     }
 
     type Query {
