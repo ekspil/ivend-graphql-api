@@ -1,9 +1,9 @@
 class MachineLogDTO {
 
-    constructor({id, message, timestamp}) {
+    constructor({id, message, timestamp, createdAt}) {
         this.id = id
         this.message = message
-        this.timestamp = timestamp
+        this.timestamp = timestamp || createdAt
     }
 }
 
