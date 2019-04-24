@@ -93,11 +93,11 @@ class ItemMatrixService {
 
         const {buttons} = itemMatrix
 
-        if (!buttons.some(buttonItem => buttonItem.buttonId === buttonId)) {
+        if (!buttons.some(buttonItem => Number(buttonItem.buttonId) === Number(buttonId))) {
             throw new ButtonIdNotFound()
         }
 
-        const [button] = buttons.filter(buttonItem => buttonItem.buttonId === buttonId)
+        const [button] = buttons.filter(buttonItem => Number(buttonItem.buttonId) === Number(buttonId))
 
         if (!button) {
             logger.error("Unexpected situation, button from itemMatrix not found")
