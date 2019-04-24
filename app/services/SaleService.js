@@ -197,39 +197,44 @@ class SaleService {
             throw new ItemMatrixNotFound()
         }
 
-        const buttons = await itemMatrix.getButtons()
+        const createdSale = await this.Sale.sequelize.transaction(async (transaction) => {
+            const buttons = await itemMatrix.getButtons()
 
-        if (!buttons.some((buttonItem) => Number(buttonItem.buttonId) === buttonId)) {
-            const name = `Товар ${buttonId}`
-            const itemUser = itemMatrix.getUser()
-            const item = await this.itemService.createItem({name}, itemUser)
+            if (!buttons.some((buttonItem) => Number(buttonItem.buttonId) === buttonId)) {
+                const name = `Товар ${buttonId}`
+                const itemUser = itemMatrix.getUser()
+                const item = await this.itemService.createItem({name}, itemUser, transaction)
 
-            const button = new ButtonItem()
-            button.buttonId = buttonId
-            button.item_id = item.id
-            button.item_matrix_id = itemMatrix.id
+                const button = new ButtonItem()
+                button.buttonId = buttonId
+                button.item_id = item.id
+                button.item_matrix_id = itemMatrix.id
 
-            const buttonItem = await this.ButtonItem.create(button, itemUser)
+                const buttonItem = await this.ButtonItem.create(button, {transaction})
 
-            buttons.push(buttonItem)
-        }
+                buttons.push(buttonItem)
+            }
 
-        const [itemId] = buttons
-            .filter((buttonItem) => Number(buttonItem.buttonId) === buttonId)
-            .map(buttonItem => buttonItem.item_id)
+            const [itemId] = buttons
+                .filter((buttonItem) => Number(buttonItem.buttonId) === buttonId)
+                .map(buttonItem => buttonItem.item_id)
 
-        if (!itemId) {
-            logger.error("Unexpected situation, ItemId for sale not found")
-            throw new ItemNotFound()
-        }
+            if (!itemId) {
+                logger.error("Unexpected situation, ItemId for sale not found")
+                throw new ItemNotFound()
+            }
 
-        const sale = new Sale()
-        sale.type = type
-        sale.price = price
-        sale.item_id = itemId
-        sale.machine_id = machine.id
+            const sale = new Sale()
+            sale.type = type
+            sale.price = price
+            sale.item_id = itemId
+            sale.machine_id = machine.id
 
-        const createdSale = await this.Sale.create(sale)
+            controller.connected = true
+            await controller.save({transaction})
+
+            return await this.Sale.create(sale, {transaction})
+        })
 
         if (!process.env.OFD_LOGIN || !process.env.OFD_PASSWORD) {
             return createdSale
