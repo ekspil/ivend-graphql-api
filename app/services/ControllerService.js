@@ -9,6 +9,7 @@ const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
 const hashingUtils = require("../utils/hashingUtils")
 const logger = require("../utils/logger")
+const MachineLogType = require("../enum/MachineLogType")
 
 class ControllerService {
 
@@ -291,31 +292,31 @@ class ControllerService {
 
         return this.Controller.sequelize.transaction(async (transaction) => {
             if (!lastState) {
-                await this.machineService.addLog(machine.id, `Контроллер подключён`, machineUser, transaction)
+                await this.machineService.addLog(machine.id, `Контроллер подключён`, MachineLogType.REGISTRATION, machineUser, transaction)
             }
 
             let controllerState = new ControllerState()
             controllerState.firmwareId = firmwareId
 
-            await this._registerMachineLogs("coinAcceptorStatus", coinAcceptorStatus, "Монетоприёмник", machine.id, lastState, machineUser, transaction)
+            await this._registerMachineLogs("coinAcceptorStatus", coinAcceptorStatus, "Монетоприёмник", MachineLogType.COINACCEPTOR, machine.id, lastState, machineUser, transaction)
             controllerState.coinAcceptorStatus = coinAcceptorStatus
 
-            await this._registerMachineLogs("billAcceptorStatus", billAcceptorStatus, "Купюроприёмник", machine.id, lastState, machineUser, transaction)
+            await this._registerMachineLogs("billAcceptorStatus", billAcceptorStatus, "Купюроприёмник", MachineLogType.BILLACCEPTOR, machine.id, lastState, machineUser, transaction)
             controllerState.billAcceptorStatus = billAcceptorStatus
 
             controllerState.coinAmount = coinAmount
             controllerState.billAmount = billAmount
 
-            await this._registerMachineLogs("dex1Status", dex1Status, "DEX1", machine.id, lastState, machineUser, transaction)
+            await this._registerMachineLogs("dex1Status", dex1Status, "DEX1", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
             controllerState.dex1Status = dex1Status
 
-            await this._registerMachineLogs("dex2Status", dex2Status, "DEX2", machine.id, lastState, machineUser, transaction)
+            await this._registerMachineLogs("dex2Status", dex2Status, "DEX2", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
             controllerState.dex2Status = dex2Status
 
-            await this._registerMachineLogs("exeStatus", exeStatus, "EXE", machine.id, lastState, machineUser, transaction)
+            await this._registerMachineLogs("exeStatus", exeStatus, "EXE", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
             controllerState.exeStatus = exeStatus
 
-            await this._registerMachineLogs("mdbStatus", mdbStatus, "MDB", machine.id, lastState, machineUser, transaction)
+            await this._registerMachineLogs("mdbStatus", mdbStatus, "MDB", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
             controllerState.mdbStatus = mdbStatus
 
             controllerState.signalStrength = signalStrength
@@ -326,7 +327,7 @@ class ControllerService {
 
             if (lastState && !controller.connected) {
                 //add log connection regain
-                await this.machineService.addLog(machine.id, `Связь восстановлена`, machineUser, transaction)
+                await this.machineService.addLog(machine.id, `Связь восстановлена`, MachineLogType.CONNECTION, machineUser, transaction)
             }
 
             controller.connected = true
@@ -338,7 +339,7 @@ class ControllerService {
         })
     }
 
-    async _registerMachineLogs(busKey, busValue, busName, machineId, lastState, user, transaction) {
+    async _registerMachineLogs(busKey, busValue, busName, machineLogType, machineId, lastState, user, transaction) {
         if (!lastState) {
             return
         }
@@ -364,7 +365,7 @@ class ControllerService {
         }
 
         if (message) {
-            await this.machineService.addLog(machineId, message, user, transaction)
+            await this.machineService.addLog(machineId, message, machineLogType, user, transaction)
         }
 
     }
