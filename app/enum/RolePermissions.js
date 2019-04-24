@@ -62,6 +62,15 @@ const VENDOR = [
 
 ]
 
+const VENDOR_NOT_CONFIRMED = [
+    Permission.GET_SELF_DEPOSITS,
+    Permission.GET_DAILY_BILL,
+    Permission.GET_DAYS_LEFT,
+    Permission.GET_BALANCE,
+    Permission.GET_PROFILE,
+]
+
+
 const VENDOR_NEGATIVE_BALANCE = [
     Permission.GET_SELF_DEPOSITS,
     Permission.GET_DAILY_BILL,
