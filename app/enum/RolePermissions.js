@@ -56,7 +56,9 @@ const VENDOR = [
     Permission.GET_DEPOSIT_BY_ID,
     Permission.CREATE_MACHINE_LOG,
     Permission.DELETE_CONTROLLER,
-    Permission.DELETE_MACHINE
+    Permission.DELETE_MACHINE,
+    Permission.CONFIRM_USER_ACTION,
+    Permission.EDIT_EMAIL
 
 ]
 
