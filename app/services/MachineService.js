@@ -263,7 +263,7 @@ class MachineService {
         return await this.MachineType.findAll()
     }
 
-    async addLog(machineId, message, user, transaction) {
+    async addLog(machineId, message, type, user, transaction) {
         if (!user || !user.checkPermission(Permission.CREATE_MACHINE_LOG)) {
             throw new NotAuthorized()
         }
@@ -271,6 +271,7 @@ class MachineService {
         const machineLog = new MachineLog()
         machineLog.message = message
         machineLog.machine_id = machineId
+        machineLog.type = type
 
         return await this.MachineLog.create(machineLog, {transaction})
     }
