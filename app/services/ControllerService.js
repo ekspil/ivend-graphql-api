@@ -66,6 +66,7 @@ class ControllerService {
         controller.readStatMode = readStatMode
         controller.bankTerminalMode = bankTerminalMode
         controller.fiscalizationMode = fiscalizationMode
+        controller.connected = false
 
         controller.user_id = user.id
 
