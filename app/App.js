@@ -90,7 +90,7 @@ class App {
         const SaleModel = sequelize.define("sales", Sale)
         const ButtonItemModel = sequelize.define("button_items", ButtonItem)
         const ItemMatrixModel = sequelize.define("item_matrixes", ItemMatrix)
-        const ControllerModel = sequelize.define("controllers", Controller)
+        const ControllerModel = sequelize.define("controllers", Controller, {paranoid: true})
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
@@ -100,7 +100,7 @@ class App {
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
         const TransactionModel = sequelize.define("transactions", Transaction)
-        const MachineModel = sequelize.define("machines", Machine)
+        const MachineModel = sequelize.define("machines", Machine, {paranoid: true})
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
         const MachineLogModel = sequelize.define("machine_logs", MachineLog)
@@ -215,7 +215,6 @@ class App {
             billingService: undefined,
             machineService: undefined
         }
-
 
 
         services.equipmentService = new EquipmentService({
@@ -372,11 +371,13 @@ class App {
                 const controllerInput = {
                     name: `${i + 1} test controller`,
                     uid: `10000003-${i + 1}`,
-                    equipmentId: equipment.id,
                     revisionId: revision.id,
                     status: ControllerStatus.ENABLED,
                     mode: Object.keys(ControllerMode).randomElement(),
-                    serviceIds: [1],
+                    //todo add not null to migration
+                    readStatMode: "COINBOX",
+                    bankTerminalMode: "NO_BANK_TERMINAL",
+                    fiscalizationMode: "NO_FISCAL"
                 }
 
                 const controller = await services.controllerService.createController(controllerInput, user)
