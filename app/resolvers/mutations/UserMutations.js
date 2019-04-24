@@ -69,6 +69,15 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return true
     }
 
+    const editPassword = async (root, args, context) => {
+        const {email} = args
+        const {user} = context
+
+        await userService.editPassword(email, user)
+
+        return true
+    }
+
     const confirmUserAction = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -82,6 +91,7 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         registerUser,
         editEmail,
         requestToken,
+        editPassword,
         confirmUserAction,
         updateNotificationSetting,
         updateLegalInfo,

@@ -442,7 +442,8 @@ const typeDefs = gql`
     }
 
     enum UserActionType {
-        CHANGE_EMAIL_CONFIRM
+        EDIT_EMAIL_CONFIRM
+        EDIT_PASSWORD_CONFIRM
     }
     
     input UserActionConfirmation {
@@ -457,6 +458,7 @@ const typeDefs = gql`
         registerSale(input: SaleEventInput!): Sale
         registerUser(input: CreateUserInput!): User
         editEmail(email: String!): Boolean
+        editPassword(password: String!): Boolean
         confirmUserAction(input: UserActionConfirmation!): User
         requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
