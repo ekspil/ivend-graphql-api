@@ -68,6 +68,7 @@ const Permission = {
     // UserService
     "GET_PROFILE": "GET_PROFILE",
     "EDIT_EMAIL": "EDIT_EMAIL",
+    "EDIT_PASSWORD": "EDIT_PASSWORD",
     "CONFIRM_USER_ACTION": "CONFIRM_USER_ACTION",
 
     // MachineService
