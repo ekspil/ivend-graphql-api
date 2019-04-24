@@ -450,8 +450,10 @@ const typeDefs = gql`
         requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
         createController(input: CreateControllerInput!): Controller
+        deleteController(id: Int!): Machine
         createMachine(input: CreateMachineInput!): Machine
         editMachine(input: EditMachineInput!): Machine
+        deleteMachine(id: Int!): Machine
         createMachineType(input: CreateMachineTypeInput!): MachineType
         createMachineGroup(input: CreateMachineGroupInput!): MachineGroup
         createItem(input: CreateItemInput!): Item

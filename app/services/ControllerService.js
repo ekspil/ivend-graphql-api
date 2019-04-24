@@ -25,6 +25,7 @@ class ControllerService {
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
+        this.deleteController = this.deleteController.bind(this)
         this.getAll = this.getAll.bind(this)
         this.getAllOfCurrentUser = this.getAllOfCurrentUser.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
@@ -131,6 +132,22 @@ class ControllerService {
 
         return this.getControllerById(id, user)
     }
+
+
+    async deleteController(id, user) {
+        if (!user || !user.checkPermission(Permission.DELETE_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        const controller = await this.getControllerById(id, user)
+
+        if (!controller) {
+            throw new ControllerNotFound()
+        }
+
+        return await controller.destroy()
+    }
+
 
     async getAll(user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {

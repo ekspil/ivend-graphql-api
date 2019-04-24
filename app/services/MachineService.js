@@ -23,6 +23,7 @@ class MachineService {
 
         this.createMachine = this.createMachine.bind(this)
         this.editMachine = this.editMachine.bind(this)
+        this.deleteMachine = this.deleteMachine.bind(this)
         this.getMachineById = this.getMachineById.bind(this)
         this.getMachineByControllerId = this.getMachineByControllerId.bind(this)
         this.getAllMachinesOfUser = this.getAllMachinesOfUser.bind(this)
@@ -261,6 +262,21 @@ class MachineService {
         }
 
         return await this.MachineType.findAll()
+    }
+
+
+    async deleteMachine(id, user) {
+        if (!user || !user.checkPermission(Permission.DELETE_MACHINE)) {
+            throw new NotAuthorized()
+        }
+
+        const machine = await this.getMachineById(id, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        return await machine.destroy()
     }
 
     async addLog(machineId, message, type, user, transaction) {
