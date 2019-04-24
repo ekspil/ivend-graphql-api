@@ -21,6 +21,7 @@ const typeDefs = gql`
         firmwareId: String
         registrationTime: Timestamp
         user: User!
+        connected: Boolean!
     }
 
     enum ReadStatMode {
