@@ -1,11 +1,5 @@
 const Permission = require("./Permission")
 
-// VENDOR_NOT_CONFIRMED
-// VENDOR_NO_LEGAL_INFO
-// VENDOR_NEGATIVE_BALANCE
-// VENDOR
-// EMPLOYEE
-
 const VENDOR = [
     Permission.GET_SELF_DEPOSITS,
     Permission.GET_DAILY_BILL,
@@ -78,10 +72,14 @@ const VENDOR_NEGATIVE_BALANCE = [
     Permission.GET_DAYS_LEFT,
     Permission.GET_BALANCE,
     Permission.REQUEST_DEPOSIT,
+    Permission.GET_PROFILE,
+    Permission.GET_DEPOSIT_BY_ID
+]
+
+const VENDOR_NO_LEGAL_INFO = [
     Permission.CREATE_LEGAL_INFO,
     Permission.UPDATE_LEGAL_INFO,
     Permission.GET_PROFILE,
-    Permission.GET_DEPOSIT_BY_ID
 ]
 
 const AGGREGATE = [
@@ -99,6 +97,7 @@ const RolePermissions = {
     VENDOR,
     VENDOR_NEGATIVE_BALANCE,
     VENDOR_NOT_CONFIRMED,
+    VENDOR_NO_LEGAL_INFO,
     AGGREGATE,
     //ADMIN ROLE does not need permissions at all, he has access to all methods
     ADMIN: []
