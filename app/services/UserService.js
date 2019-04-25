@@ -85,7 +85,7 @@ class UserService {
             await this.redis.set("action_confirm_email_" + token, `${user.id}`, "ex", Number(process.env.CONFIRM_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
 
             try {
-                await microservices.notification.sendRegistrationSms(user.email, token)
+                await microservices.notification.sendRegistrationEmail(user.email, token)
             } catch (e) {
                 logger.error(`Failed to send email. Token ${token}, phone ${phone}`)
                 logger.error(e)
