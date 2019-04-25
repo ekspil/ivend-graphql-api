@@ -1,5 +1,6 @@
 const fetch = require("node-fetch")
 const SmsNotSent = require("../errors/SmsNotSent")
+const EmailNotSent = require("../errors/EmailNotSent")
 const DepositRequestFailed = require("../errors/DepositRequestFailed")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const MicroserviceUnknownError = require("../errors/MicroserviceUnknownError")
@@ -22,6 +23,32 @@ const sendRegistrationSms = async (phone, code) => {
 
             if (!sent) {
                 throw new SmsNotSent()
+            }
+
+            return
+        default:
+            throw new MicroserviceUnknownError(response.status)
+    }
+}
+
+const sendRegistrationEmail = async (email, token) => {
+    const body = JSON.stringify({token, email})
+
+    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_SMS`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200:
+            const json = await response.json()
+            const {sent} = json
+
+            if (!sent) {
+                throw new EmailNotSent()
             }
 
             return
@@ -87,7 +114,8 @@ const createPaymentRequest = async (amount, user) => {
 
 module.exports = {
     notification: {
-        sendRegistrationSms
+        sendRegistrationSms,
+        sendRegistrationEmail
     },
     billing: {
         getServiceDailyPrice,
