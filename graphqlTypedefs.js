@@ -442,6 +442,7 @@ const typeDefs = gql`
     }
 
     enum UserActionType {
+        CONFIRM_EMAIL
         EDIT_EMAIL_CONFIRM
         EDIT_PASSWORD_CONFIRM
     }
