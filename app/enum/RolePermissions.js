@@ -98,6 +98,7 @@ const AGGREGATE = [
 const RolePermissions = {
     VENDOR,
     VENDOR_NEGATIVE_BALANCE,
+    VENDOR_NOT_CONFIRMED,
     AGGREGATE,
     //ADMIN ROLE does not need permissions at all, he has access to all methods
     ADMIN: []
