@@ -34,7 +34,7 @@ const sendRegistrationSms = async (phone, code) => {
 const sendRegistrationEmail = async (email, token) => {
     const body = JSON.stringify({token, email})
 
-    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_SMS`, {
+    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_EMAIL`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
