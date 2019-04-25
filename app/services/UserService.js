@@ -84,7 +84,12 @@ class UserService {
             const token = await hashingUtils.generateRandomAccessKey(32)
             await this.redis.set("action_confirm_email_" + token, `${user.id}`, "ex", Number(process.env.CONFIRM_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
 
-            await microservices.notification.sendRegistrationSms(user.email, token)
+            try {
+                await microservices.notification.sendRegistrationSms(user.email, token)
+            } catch (e) {
+                logger.error(`Failed to send email. Token ${token}, phone ${phone}`)
+                logger.error(e)
+            }
 
             return user
         })
