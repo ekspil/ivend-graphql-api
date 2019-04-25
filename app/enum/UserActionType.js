@@ -1,0 +1,7 @@
+const UserActionType = {
+    CONFIRM_EMAIL: "CONFIRM_EMAIL",
+    EDIT_EMAIL_CONFIRM: "EDIT_EMAIL_CONFIRM",
+    EDIT_PASSWORD_CONFIRM: "EDIT_PASSWORD_CONFIRM"
+}
+
+module.exports = UserActionType
