@@ -7,6 +7,7 @@ const SmsCodeMatchFailed = require("../errors/SmsCodeMatchFailed")
 const SmsCodeTimeout = require("../errors/SmsCodeTimeout")
 const PhoneNotValid = require("../errors/PhoneNotValid")
 const Permission = require("../enum/Permission")
+const UserActionType = require("../enum/UserActionType")
 const {Op} = require("sequelize")
 const User = require("../models/User")
 const bcryptjs = require("bcryptjs")
@@ -80,6 +81,11 @@ class UserService {
 
             await this.machineService.createMachineGroup({name: process.env.DEFAULT_MACHINE_GROUP_NAME}, user, transaction)
 
+            const token = await hashingUtils.generateRandomAccessKey(32)
+            await this.redis.set("action_confirm_email_" + token, `${user.id}`, "ex", Number(process.env.CONFIRM_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
+
+            await microservices.notification.sendRegistrationSms(user.email, token)
+
             return user
         })
     }
@@ -121,7 +127,33 @@ class UserService {
 
         const {token, type} = input
 
-        if (type === "EDIT_EMAIL_CONFIRM") {
+        if (type === UserActionType.CONFIRM_EMAIL) {
+            const tokenValue = await this.redis.get("action_confirm_email_" + token)
+
+            if (!tokenValue) {
+                throw new TokenNotFound()
+            }
+
+            const userId = Number(tokenValue)
+
+            const user = await this.User.findOne({
+                where: {
+                    id: Number(userId)
+                }
+            })
+
+            if (!user) {
+                throw new UserNotFound()
+            }
+
+            await this.redis.del("action_confirm_email_" + token)
+
+            user.role = "VENDOR_NO_LEGAL_INFO"
+
+            return await user.save()
+        }
+
+        if (type === UserActionType.EDIT_EMAIL_CONFIRM) {
             const tokenValue = await this.redis.get("action_edit_email_" + token)
 
             if (!tokenValue) {
@@ -146,7 +178,7 @@ class UserService {
             return await user.save()
         }
 
-        if (type === "EDIT_PASSWORD_CONFIRM") {
+        if (type === UserActionType.EDIT_PASSWORD_CONFIRM) {
             const tokenValue = await this.redis.get("action_edit_password_" + token)
 
             if (!tokenValue) {
