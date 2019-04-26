@@ -104,6 +104,13 @@ class UserService {
 
         await this.redis.set("action_edit_email_" + token, `${user.id}:${newEmail}`, "ex", Number(process.env.CHANGE_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
 
+        try {
+            await microservices.notification.sendChangeEmailEmail(user.email, token)
+        } catch (e) {
+            logger.error(`Failed to send email`)
+            logger.error(e)
+        }
+
         logger.info(`User [${user.phone}] requested edit email from ${user.email} to ${newEmail}. Token is ${token})`)
 
         return token
@@ -118,6 +125,13 @@ class UserService {
         const token = await hashingUtils.generateRandomAccessKey(64)
 
         await this.redis.set("action_edit_password_" + token, `${user.id}:${password}`, "ex", Number(process.env.CHANGE_PASSWORD_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
+
+        try {
+            await microservices.notification.sendChangePasswordEmail(user.email, token)
+        } catch (e) {
+            logger.error(`Failed to send email`)
+            logger.error(e)
+        }
 
         logger.info(`User [${user.phone}] requested edit password. Token is ${token})`)
 
