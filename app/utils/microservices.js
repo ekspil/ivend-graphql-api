@@ -57,6 +57,58 @@ const sendRegistrationEmail = async (email, token) => {
     }
 }
 
+const sendChangeEmailEmail = async (email, token) => {
+    const body = JSON.stringify({token, email})
+
+    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/CHANGE_EMAIL`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200:
+            const json = await response.jon()
+            const {sent} = json
+
+            if (!sent) {
+                throw new EmailNotSent()
+            }
+
+            return
+        default:
+            throw new MicroserviceUnknownError(response.status)
+    }
+}
+
+const sendChangePasswordEmail = async (email, token) => {
+    const body = JSON.stringify({token, email})
+
+    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/CHANGE_PASSWORD`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200:
+            const json = await response.json()
+            const {sent} = json
+
+            if (!sent) {
+                throw new EmailNotSent()
+            }
+
+            return
+        default:
+            throw new MicroserviceUnknownError(response.status)
+    }
+}
+
 const getServiceDailyPrice = async (service) => {
     const response = await fetch(`${process.env.BILLING_URL}/api/v1/service/${service}/price/daily`, {
         method: "GET",
@@ -115,7 +167,9 @@ const createPaymentRequest = async (amount, user) => {
 module.exports = {
     notification: {
         sendRegistrationSms,
-        sendRegistrationEmail
+        sendRegistrationEmail,
+        sendChangeEmailEmail,
+        sendChangePasswordEmail
     },
     billing: {
         getServiceDailyPrice,
