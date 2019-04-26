@@ -104,7 +104,7 @@ class UserService {
 
         await this.redis.set("action_edit_email_" + token, `${user.id}:${newEmail}`, "ex", Number(process.env.CHANGE_EMAIL_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
 
-        logger.info(`Token for userId ${user.id} (${newEmail}) is ${token})`)
+        logger.info(`User [${user.phone}] requested edit email from ${user.email} to ${newEmail}. Token is ${token})`)
 
         return token
     }
@@ -119,7 +119,7 @@ class UserService {
 
         await this.redis.set("action_edit_password_" + token, `${user.id}:${password}`, "ex", Number(process.env.CHANGE_PASSWORD_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
 
-        logger.info(`Token for userId ${user.id} for changing password is ${token})`)
+        logger.info(`User [${user.phone}] requested edit password. Token is ${token})`)
 
         return token
     }
