@@ -2,7 +2,7 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await Sequelize.query("CREATE SEQUENCE payment_id_seq", {
+        await queryInterface.sequelize.query("CREATE SEQUENCE payment_id_seq", {
             type: Sequelize.QueryTypes.SELECT
         })
     },
