@@ -516,6 +516,10 @@ class App {
         if (Number(process.env.FORCE_SYNC) === 1) {
             await sequelize.sync({force: true})
             await populateWithFakeData()
+            await sequelize
+                .query("CREATE SEQUENCE payment_id_seq", {
+                    type: sequelize.QueryTypes.SELECT
+                })
         }
 
         const resolvers = new Resolvers({
