@@ -140,7 +140,8 @@ const getServiceDailyPrice = async (service) => {
 const createPaymentRequest = async (amount, user) => {
     const body = JSON.stringify({
         amount,
-        to: user.phone
+        to: user.phone,
+        email: user.email
     })
 
     const response = await fetch(`${process.env.BILLING_URL}/api/v1/billing/createPayment`, {
