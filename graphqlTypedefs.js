@@ -148,6 +148,17 @@ const typeDefs = gql`
         dailyBill: Float!
         daysLeft: Float!
     }
+    
+    type Kkt {
+        id: Int!
+        kktModel: String
+        kktFactoryNumber: String
+        kktRegNumber: String
+        kktFNNumber: String
+        kktActivationDate: String
+        kktBillsCount: Int
+        kktOFDRegKey: String        
+}
 
     type User {
         email: String!
@@ -158,6 +169,7 @@ const typeDefs = gql`
         billing: Billing!
         salesSummary(period: Period): SalesSummary
         items: [Item!]!
+        kkts: [Kkt!]!
     }
 
     type NotificationSetting {
@@ -183,6 +195,21 @@ const typeDefs = gql`
 
     input CreateItemInput {
         name: String!
+    }
+
+    
+    input CreateKktInput {
+        kktModel: String!
+    }
+    input EditKktInput {
+        id: Int!
+        kktModel:  String!
+        kktFactoryNumber:  String!
+        kktRegNumber:  String!
+        kktFNNumber:  String!
+        kktActivationDate:  String!
+        kktBillsCount: Int
+        kktOFDRegKey:  String
     }
 
     input ControllerStateInput {
@@ -430,6 +457,9 @@ const typeDefs = gql`
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
+        getKktById: Kkt
+        getUserKkts: [Kkt]
+        getAllKkts: [Kkt]
     }
 
     input AuthControllerInput {
@@ -480,6 +510,8 @@ const typeDefs = gql`
         requestDeposit(amount: Float!): Deposit
         generateExcel(input: GenerateExcelInput!): ExcelReport
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
+        createKkt(input: CreateKktInput!): Kkt
+        editKkt(input: EditKktInput!): Kkt
     }
 `
 

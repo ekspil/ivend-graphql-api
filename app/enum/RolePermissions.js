@@ -53,7 +53,11 @@ const VENDOR = [
     Permission.DELETE_MACHINE,
     Permission.CONFIRM_USER_ACTION,
     Permission.EDIT_EMAIL,
-    Permission.EDIT_PASSWORD
+    Permission.EDIT_PASSWORD,
+    Permission.CREATE_KKT,
+    Permission.GET_KKT_BY_ID,
+    Permission.GET_USER_KKTS,
+
 
 ]
 
