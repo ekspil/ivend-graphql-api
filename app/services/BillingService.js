@@ -139,7 +139,7 @@ class BillingService {
         //todo transaction here is overkill
         return this.Deposit.sequelize.transaction(async () => {
             // Request payment from the billing
-            const paymentRequestId = await microservices.createPaymentRequest(amount, user)
+            const paymentRequestId = await microservices.billing.createPaymentRequest(amount, user)
 
             const deposit = new Deposit()
             deposit.amount = amount
