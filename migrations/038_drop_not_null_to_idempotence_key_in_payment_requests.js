@@ -2,7 +2,7 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.changeColumn("idempotence_key", "payment_requests", {
+        await queryInterface.changeColumn("payment_requests", "idempotence_key", {
             type: Sequelize.TEXT,
             allowNull: true,
             unique: true
