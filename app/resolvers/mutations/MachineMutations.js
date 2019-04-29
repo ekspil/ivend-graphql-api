@@ -22,6 +22,15 @@ function MachineMutations({machineService}) {
         return new MachineDTO(machine)
     }
 
+    const deleteMachine = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        const machine = await machineService.deleteMachine(id, user)
+
+        return new MachineDTO(machine)
+    }
+
     const createMachineType = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -43,6 +52,7 @@ function MachineMutations({machineService}) {
     return {
         createMachine,
         editMachine,
+        deleteMachine,
         createMachineType,
         createMachineGroup
     }

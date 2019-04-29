@@ -17,11 +17,11 @@ const typeDefs = gql`
         lastState: ControllerState
         lastErrorTime: Timestamp
         errors: [ControllerError!]!
-        services: [Service!]!
         machine: Machine
         firmwareId: String
         registrationTime: Timestamp
         user: User!
+        connected: Boolean!
     }
 
     enum ReadStatMode {
@@ -52,6 +52,7 @@ const typeDefs = gql`
         id: Int!
         amount: Float!
         status: PaymentStatus!
+        timestamp: Timestamp!
         redirectUrl: String!
     }
 
@@ -89,7 +90,6 @@ const typeDefs = gql`
         bankTerminalMode: BankTerminalMode!
         fiscalizationMode: FiscalizationMode!
         revisionId: Int!
-        serviceIds: [Int!]
     }
 
     input EditControllerInput {
@@ -99,7 +99,6 @@ const typeDefs = gql`
         bankTerminalMode: BankTerminalMode
         fiscalizationMode: FiscalizationMode
         revisionId: Int
-        serviceIds: [Int!]
     }
 
     input CreateItemMatrixInput {
@@ -157,6 +156,7 @@ const typeDefs = gql`
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
         billing: Billing!
+        salesSummary(period: Period): SalesSummary
         items: [Item!]!
     }
 
@@ -230,6 +230,7 @@ const typeDefs = gql`
         phone: String!
         email: String!
         password: String!
+        code: String!
     }
 
     input RequestTokenInput {
@@ -332,17 +333,6 @@ const typeDefs = gql`
         contactEmail: String!
     }
 
-    type AvailableServices {
-        controller: [Service!]!
-    }
-
-    type Service {
-        id: Int!
-        name: String!
-        price: Float!
-        billingType: BillingType!
-    }
-
     enum BillingType {
         DAILY
         MONTHLY
@@ -379,6 +369,7 @@ const typeDefs = gql`
         equipment: Equipment!
         itemMatrix: ItemMatrix
         type: MachineType!
+        salesSummaryOfItem(itemId:Int, period: Period): SalesSummary
         salesSummary(period: Period): SalesSummary
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
@@ -386,9 +377,9 @@ const typeDefs = gql`
     }
 
     type MachineLog {
-        type: String!
         message: String!
-        time: Timestamp!
+        type: MachineLogType!
+        timestamp: Timestamp!
     }
 
     input CreateMachineInput {
@@ -419,6 +410,14 @@ const typeDefs = gql`
         name: String!
     }
 
+    enum MachineLogType {
+        CONNECTION
+        COINACCEPTOR
+        BILLACCEPTOR
+        BUS_ERROR
+        REGISTRATION
+    }
+
     type Query {
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
@@ -431,7 +430,6 @@ const typeDefs = gql`
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
-        getAvailableServices: AvailableServices!
     }
 
     input AuthControllerInput {
@@ -439,6 +437,20 @@ const typeDefs = gql`
         firmwareId: String!
     }
 
+    input Registration1StepInput {
+        phone: String!
+    }
+
+    enum UserActionType {
+        CONFIRM_EMAIL
+        EDIT_EMAIL_CONFIRM
+        EDIT_PASSWORD_CONFIRM
+    }
+    
+    input UserActionConfirmation {
+        token: String!
+        type: UserActionType!
+    }
 
     type Mutation {
         authController(input: AuthControllerInput!): Controller
@@ -446,11 +458,16 @@ const typeDefs = gql`
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
         registerUser(input: CreateUserInput!): User
+        editEmail(email: String!): Boolean
+        editPassword(password: String!): Boolean
+        confirmUserAction(input: UserActionConfirmation!): User
         requestToken(input: RequestTokenInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
         createController(input: CreateControllerInput!): Controller
+        deleteController(id: Int!): Machine
         createMachine(input: CreateMachineInput!): Machine
         editMachine(input: EditMachineInput!): Machine
+        deleteMachine(id: Int!): Machine
         createMachineType(input: CreateMachineTypeInput!): MachineType
         createMachineGroup(input: CreateMachineGroupInput!): MachineGroup
         createItem(input: CreateItemInput!): Item
@@ -462,6 +479,7 @@ const typeDefs = gql`
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
         generateExcel(input: GenerateExcelInput!): ExcelReport
+        requestRegistrationSms(input: Registration1StepInput!): Timestamp
     }
 `
 

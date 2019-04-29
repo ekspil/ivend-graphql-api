@@ -23,6 +23,15 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         return new ControllerDTO(controller)
     }
 
+    const deleteController = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        const controller = await controllerService.deleteController(id, user)
+
+        return new ControllerDTO(controller)
+    }
+
     const registerControllerError = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -71,6 +80,7 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
     return {
         createController,
         editController,
+        deleteController,
         authController,
         registerControllerState,
         registerControllerError,

@@ -5,22 +5,25 @@ const MachineTypeNotFound = require("../errors/MachineTypeNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const EquipmentNotFound = require("../errors/EquipmentNotFound")
 const Machine = require("../models/Machine")
+const MachineLog = require("../models/MachineLog")
 const MachineGroup = require("../models/MachineGroup")
 const MachineType = require("../models/MachineType")
 const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, MachineGroupModel, MachineTypeModel, equipmentService, itemMatrixService, controllerService}) {
+    constructor({MachineModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService}) {
         this.Machine = MachineModel
         this.MachineGroup = MachineGroupModel
         this.MachineType = MachineTypeModel
+        this.MachineLog = MachineLogModel
         this.equipmentService = equipmentService
         this.itemMatrixService = itemMatrixService
         this.controllerService = controllerService
 
         this.createMachine = this.createMachine.bind(this)
         this.editMachine = this.editMachine.bind(this)
+        this.deleteMachine = this.deleteMachine.bind(this)
         this.getMachineById = this.getMachineById.bind(this)
         this.getMachineByControllerId = this.getMachineByControllerId.bind(this)
         this.getAllMachinesOfUser = this.getAllMachinesOfUser.bind(this)
@@ -30,6 +33,7 @@ class MachineService {
         this.createMachineType = this.createMachineType.bind(this)
         this.getMachineTypeById = this.getMachineTypeById.bind(this)
         this.getAllMachineTypes = this.getAllMachineTypes.bind(this)
+        this.addLog = this.addLog.bind(this)
     }
 
     async createMachine(input, user) {
@@ -185,7 +189,7 @@ class MachineService {
         return await this.Machine.findOne({where})
     }
 
-    async createMachineGroup(input, user) {
+    async createMachineGroup(input, user, transaction) {
         if (!user || !user.checkPermission(Permission.CREATE_MACHINE_GROUP)) {
             throw new NotAuthorized()
         }
@@ -197,7 +201,7 @@ class MachineService {
         machineGroup.name = name
         machineGroup.user_id = user.id
 
-        return await this.MachineGroup.create(machineGroup)
+        return await this.MachineGroup.create(machineGroup, {transaction})
     }
 
     async getMachineGroupById(id, user) {
@@ -258,6 +262,34 @@ class MachineService {
         }
 
         return await this.MachineType.findAll()
+    }
+
+
+    async deleteMachine(id, user) {
+        if (!user || !user.checkPermission(Permission.DELETE_MACHINE)) {
+            throw new NotAuthorized()
+        }
+
+        const machine = await this.getMachineById(id, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        return await machine.destroy()
+    }
+
+    async addLog(machineId, message, type, user, transaction) {
+        if (!user || !user.checkPermission(Permission.CREATE_MACHINE_LOG)) {
+            throw new NotAuthorized()
+        }
+
+        const machineLog = new MachineLog()
+        machineLog.message = message
+        machineLog.machine_id = machineId
+        machineLog.type = type
+
+        return await this.MachineLog.create(machineLog, {transaction})
     }
 }
 

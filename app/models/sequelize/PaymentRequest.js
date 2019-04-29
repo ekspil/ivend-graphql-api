@@ -8,26 +8,26 @@ const PaymentRequest = {
         autoIncrement: true
     },
     idempotenceKey: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true,
         field: "idempotence_key"
     },
     to: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false
     },
     paymentId: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "payment_id"
     },
     redirectUrl: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false,
         field: "redirect_url"
     },
     status: {
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.DataTypes.TEXT,
         allowNull: false
     },
     createdAt: {

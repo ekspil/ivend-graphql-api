@@ -1,11 +1,19 @@
 const Sequelize = require("sequelize")
 
-const ControllerServices = {
+const Machine = {
     id: {
-        type: Sequelize.DataTypes.INTEGER,
+        type: Sequelize.DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
+    },
+    message: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
+    },
+    type: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -20,4 +28,4 @@ const ControllerServices = {
         field: "updated_at"
     }
 }
-module.exports = ControllerServices
+module.exports = Machine

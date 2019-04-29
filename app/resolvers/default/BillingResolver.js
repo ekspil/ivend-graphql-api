@@ -19,7 +19,8 @@ function BillingResolver({billingService}) {
             id: deposit.id,
             amount: deposit.amount,
             status: deposit.paymentRequest.status,
-            redirectUrl: deposit.paymentRequest.redirectUrl
+            redirectUrl: deposit.paymentRequest.redirectUrl,
+            timestamp: deposit.paymentRequest.createdAt
         })))
     }
 

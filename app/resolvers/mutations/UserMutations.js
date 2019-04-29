@@ -1,6 +1,7 @@
 const NotificationDTO = require("../../models/dto/NotificationDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const ExcelReportDTO = require("../../models/dto/ExcelReportDTO")
+const UserDTO = require("../../models/dto/UserDTO")
 
 function UserMutations({userService, notificationSettingsService, legalInfoService, reportService}) {
 
@@ -52,7 +53,51 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
     }
 
 
-    return {registerUser, requestToken, updateNotificationSetting, updateLegalInfo, generateExcel}
+    const requestRegistrationSms = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        return await userService.requestRegistrationSms(input, user)
+    }
+
+    const editEmail = async (root, args, context) => {
+        const {email} = args
+        const {user} = context
+
+        await userService.editEmail(email, user)
+
+        return true
+    }
+
+    const editPassword = async (root, args, context) => {
+        const {email} = args
+        const {user} = context
+
+        await userService.editPassword(email, user)
+
+        return true
+    }
+
+    const confirmUserAction = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const newUser = await userService.confirmUserAction(input, user)
+
+        return new UserDTO(newUser)
+    }
+
+    return {
+        registerUser,
+        editEmail,
+        requestToken,
+        editPassword,
+        confirmUserAction,
+        updateNotificationSetting,
+        updateLegalInfo,
+        generateExcel,
+        requestRegistrationSms
+    }
 
 }
 

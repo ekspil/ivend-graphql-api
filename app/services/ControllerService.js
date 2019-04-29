@@ -1,28 +1,31 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const BusStatus = require("../enum/BusStatus")
+const ControllerUIDConflict = require("../errors/ControllerUIDConflict")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
-const ServiceNotFound = require("../errors/ServiceNotFound")
 const Controller = require("../models/Controller")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
 const hashingUtils = require("../utils/hashingUtils")
 const logger = require("../utils/logger")
+const MachineLogType = require("../enum/MachineLogType")
 
 class ControllerService {
 
-    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, serviceService, revisionService}) {
+    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
         this.Item = ItemModel
         this.User = UserModel
         this.Revision = RevisionModel
-        this.serviceService = serviceService
         this.revisionService = revisionService
+        this.machineService = machineService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
+        this.deleteController = this.deleteController.bind(this)
         this.getAll = this.getAll.bind(this)
         this.getAllOfCurrentUser = this.getAllOfCurrentUser.bind(this)
         this.getControllerByUID = this.getControllerByUID.bind(this)
@@ -32,21 +35,6 @@ class ControllerService {
         this.registerError = this.registerError.bind(this)
         this.registerState = this.registerState.bind(this)
         this.authController = this.authController.bind(this)
-
-        this.controllerIncludes = [
-            {
-                model: this.ControllerState,
-                as: "lastState"
-            },
-            {
-                model: this.Revision,
-                as: "revision"
-            },
-            {
-                model: this.User,
-                as: "user",
-            }
-        ]
     }
 
     async createController(input, user) {
@@ -54,9 +42,15 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, serviceIds} = input
+        const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
 
-        const controller = new Controller()
+        let controller = await this.getControllerByUID(uid, user)
+
+        if (controller) {
+            throw new ControllerUIDConflict()
+        }
+
+        controller = new Controller()
 
         const revision = await this.revisionService.getRevisionById(revisionId, user)
 
@@ -74,35 +68,17 @@ class ControllerService {
         controller.readStatMode = readStatMode
         controller.bankTerminalMode = bankTerminalMode
         controller.fiscalizationMode = fiscalizationMode
+        controller.connected = false
 
         controller.user_id = user.id
 
         const savedController = await this.Controller.create(controller)
 
-        if (serviceIds) {
-            await this._applyServices(serviceIds, savedController, user)
-        }
-
         return await this.Controller.find({
-            include: this.controllerIncludes,
             where: {
                 id: savedController.id
             }
         })
-    }
-
-    async _applyServices(serviceIds, controller, user) {
-        const services = await Promise.all(serviceIds.map(async serviceId => {
-            const service = await this.serviceService.findById(serviceId, user)
-
-            if (!service) {
-                throw new ServiceNotFound()
-            }
-
-            return service
-        }))
-
-        await controller.setServices(services)
     }
 
     async editController(id, input, user) {
@@ -110,7 +86,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, serviceIds} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -127,12 +103,6 @@ class ControllerService {
 
             controller.revision_id = revision.id
         }
-
-
-        if (serviceIds) {
-            await this._applyServices(serviceIds, controller, user)
-        }
-
 
         if (name) {
             controller.name = name
@@ -163,12 +133,28 @@ class ControllerService {
         return this.getControllerById(id, user)
     }
 
+
+    async deleteController(id, user) {
+        if (!user || !user.checkPermission(Permission.DELETE_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        const controller = await this.getControllerById(id, user)
+
+        if (!controller) {
+            throw new ControllerNotFound()
+        }
+
+        return await controller.destroy()
+    }
+
+
     async getAll(user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
 
-        return await this.Controller.findAll({include: this.controllerIncludes})
+        return await this.Controller.findAll()
     }
 
     async getAllOfCurrentUser(user) {
@@ -176,7 +162,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        return await this.Controller.findAll({include: this.controllerIncludes, where: {user_id: user.id}})
+        return await this.Controller.findAll({where: {user_id: user.id}})
     }
 
     async getControllerById(id, user) {
@@ -185,7 +171,6 @@ class ControllerService {
         }
 
         const options = {
-            include: this.controllerIncludes,
             where: {}
         }
 
@@ -210,7 +195,6 @@ class ControllerService {
         }
 
         const options = {
-            include: this.controllerIncludes,
             where: {
                 uid
             }
@@ -291,8 +275,6 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        //todo start transaction
-
         const {
             controllerUid,
             firmwareId,
@@ -307,33 +289,102 @@ class ControllerService {
             signalStrength
         } = controllerStateInput
 
+
         const controller = await this.getControllerByUID(controllerUid, user)
 
         if (!controller) {
             throw new ControllerNotFound()
         }
 
-        let controllerState = new ControllerState()
-        controllerState.firmwareId = firmwareId
-        controllerState.coinAcceptorStatus = coinAcceptorStatus
-        controllerState.billAcceptorStatus = billAcceptorStatus
-        controllerState.coinAmount = coinAmount
-        controllerState.billAmount = billAmount
-        controllerState.dex1Status = dex1Status
-        controllerState.dex2Status = dex2Status
-        controllerState.exeStatus = exeStatus
-        controllerState.mdbStatus = mdbStatus
-        controllerState.signalStrength = signalStrength
-        controllerState.registrationTime = new Date()
-        controllerState.controller_id = controller.id
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
 
-        controllerState = await this.ControllerState.create(controllerState)
+        if (!machine) {
+            throw new Error("Machine not found")
+        }
 
-        controller.last_state_id = controllerState.id
+        const machineUser = await machine.getUser()
+        machineUser.checkPermission = () => true
 
-        await controller.save()
+        const lastState = await controller.getLastState()
 
-        return await this.getControllerById(controller.id, user)
+        return this.Controller.sequelize.transaction(async (transaction) => {
+            if (!lastState) {
+                await this.machineService.addLog(machine.id, `Контроллер подключён`, MachineLogType.REGISTRATION, machineUser, transaction)
+            }
+
+            let controllerState = new ControllerState()
+            controllerState.firmwareId = firmwareId
+
+            await this._registerMachineLogs("coinAcceptorStatus", coinAcceptorStatus, "Монетоприёмник", MachineLogType.COINACCEPTOR, machine.id, lastState, machineUser, transaction)
+            controllerState.coinAcceptorStatus = coinAcceptorStatus
+
+            await this._registerMachineLogs("billAcceptorStatus", billAcceptorStatus, "Купюроприёмник", MachineLogType.BILLACCEPTOR, machine.id, lastState, machineUser, transaction)
+            controllerState.billAcceptorStatus = billAcceptorStatus
+
+            controllerState.coinAmount = coinAmount
+            controllerState.billAmount = billAmount
+
+            await this._registerMachineLogs("dex1Status", dex1Status, "DEX1", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
+            controllerState.dex1Status = dex1Status
+
+            await this._registerMachineLogs("dex2Status", dex2Status, "DEX2", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
+            controllerState.dex2Status = dex2Status
+
+            await this._registerMachineLogs("exeStatus", exeStatus, "EXE", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
+            controllerState.exeStatus = exeStatus
+
+            await this._registerMachineLogs("mdbStatus", mdbStatus, "MDB", MachineLogType.BUS_ERROR, machine.id, lastState, machineUser, transaction)
+            controllerState.mdbStatus = mdbStatus
+
+            controllerState.signalStrength = signalStrength
+            controllerState.registrationTime = new Date()
+            controllerState.controller_id = controller.id
+
+            controllerState = await this.ControllerState.create(controllerState, {transaction})
+
+            if (lastState && !controller.connected) {
+                //add log connection regain
+                await this.machineService.addLog(machine.id, `Связь восстановлена`, MachineLogType.CONNECTION, machineUser, transaction)
+            }
+
+            controller.connected = true
+            await controller.save({transaction})
+
+            controller.last_state_id = controllerState.id
+
+            return await controller.save({transaction})
+        })
+    }
+
+    async _registerMachineLogs(busKey, busValue, busName, machineLogType, machineId, lastState, user, transaction) {
+        if (!lastState) {
+            return
+        }
+
+        let message
+
+        if (busValue === BusStatus.OK) {
+            if (lastState[busKey] === BusStatus.ERROR) {
+                if (busKey === "coinAcceptorStatus" || busKey === "billAcceptorStatus") {
+                    message = `${busName} работает`
+                } else {
+                    message = `Ошибка ${busName} разрешена`
+                }
+            }
+        } else if (busValue === BusStatus.ERROR) {
+            if (lastState[busKey] === BusStatus.OK) {
+                if (busKey === "coinAcceptorStatus" || busKey === "billAcceptorStatus") {
+                    message = `Не работает ${busName.toLowerCase()}`
+                } else {
+                    message = `Ошибка ${busName}`
+                }
+            }
+        }
+
+        if (message) {
+            await this.machineService.addLog(machineId, message, machineLogType, user, transaction)
+        }
+
     }
 
 

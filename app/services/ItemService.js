@@ -11,7 +11,7 @@ class ItemService {
         this.getItemById = this.getItemById.bind(this)
     }
 
-    async createItem(input, user) {
+    async createItem(input, user, transaction) {
         if (!user || !user.checkPermission(Permission.CREATE_ITEM)) {
             throw new NotAuthorized()
         }
@@ -22,7 +22,7 @@ class ItemService {
         item.name = name
         item.user_id = user.id
 
-        return await this.Item.create(item)
+        return await this.Item.create(item, {transaction})
     }
 
     async getItemById(id, user) {

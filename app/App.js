@@ -41,10 +41,10 @@ const LegalInfo = require("./models/sequelize/LegalInfo")
 const Deposit = require("./models/sequelize/Deposit")
 const PaymentRequest = require("./models/sequelize/PaymentRequest")
 const Transaction = require("./models/sequelize/Transaction")
-const ControllerServices = require("./models/sequelize/ControllerServices")
 const Machine = require("./models/sequelize/Machine")
 const MachineGroup = require("./models/sequelize/MachineGroup")
 const MachineType = require("./models/sequelize/MachineType")
+const MachineLog = require("./models/sequelize/MachineLog")
 
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
 
@@ -90,7 +90,7 @@ class App {
         const SaleModel = sequelize.define("sales", Sale)
         const ButtonItemModel = sequelize.define("button_items", ButtonItem)
         const ItemMatrixModel = sequelize.define("item_matrixes", ItemMatrix)
-        const ControllerModel = sequelize.define("controllers", Controller)
+        const ControllerModel = sequelize.define("controllers", Controller, {paranoid: true})
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
         const ControllerErrorModel = sequelize.define("controller_errors", ControllerError)
         const ServiceModel = sequelize.define("services", Service)
@@ -100,11 +100,10 @@ class App {
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
         const TransactionModel = sequelize.define("transactions", Transaction)
-        const MachineModel = sequelize.define("machines", Machine)
+        const MachineModel = sequelize.define("machines", Machine, {paranoid: true})
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
-
-        sequelize.define("controller_services", ControllerServices)
+        const MachineLogModel = sequelize.define("machine_logs", MachineLog)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -188,6 +187,16 @@ class App {
             as: "user"
         })
 
+        MachineLogModel.belongsTo(MachineModel, {
+            foreignKey: "machine_id",
+            as: "machine"
+        })
+
+        MachineModel.hasMany(MachineLogModel, {
+            as: "logs",
+            foreignKey: "machine_id"
+        })
+
         await sequelize.authenticate()
 
 
@@ -207,10 +216,6 @@ class App {
             machineService: undefined
         }
 
-        services.userService = new UserService({
-            UserModel,
-            redis
-        })
 
         services.equipmentService = new EquipmentService({
             EquipmentModel
@@ -239,16 +244,26 @@ class App {
             UserModel,
             RevisionModel,
             revisionService: services.revisionService,
-            serviceService: services.serviceService
+            serviceService: services.serviceService,
+            machineService: services.machineService
         })
 
         services.machineService = new MachineService({
             MachineModel,
             MachineGroupModel,
             MachineTypeModel,
+            MachineLogModel,
             equipmentService: services.equipmentService,
             itemMatrixService: services.itemMatrixService,
             controllerService: services.controllerService
+        })
+
+        services.controllerService.machineService = services.machineService
+
+        services.userService = new UserService({
+            UserModel,
+            redis,
+            machineService: services.machineService
         })
 
         services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
@@ -279,6 +294,10 @@ class App {
 
 
         const populateWithFakeData = async () => {
+            const registrationEnabled = process.env.SMS_REGISTRATION_ENABLED
+
+            process.env.SMS_REGISTRATION_ENABLED = "0"
+
             Array.prototype.randomElement = function () {
                 return this[Math.floor(Math.random() * this.length)]
             }
@@ -327,8 +346,8 @@ class App {
             invalidTokenUser.checkPermission = () => true
 
 
-            await services.machineService.createMachineType({name: "Общий"}, adminUser)
-            await services.machineService.createMachineGroup({name: "Общий"}, user)
+            const machineType = await services.machineService.createMachineType({name: "Общий"}, adminUser)
+            const machineGroup = await services.machineService.createMachineGroup({name: "Общий"}, user)
 
             // Create some items for test user
             const items = []
@@ -352,11 +371,13 @@ class App {
                 const controllerInput = {
                     name: `${i + 1} test controller`,
                     uid: `10000003-${i + 1}`,
-                    equipmentId: equipment.id,
                     revisionId: revision.id,
-                    status: Object.keys(ControllerStatus).randomElement(),
+                    status: ControllerStatus.ENABLED,
                     mode: Object.keys(ControllerMode).randomElement(),
-                    serviceIds: [1],
+                    //todo add not null to migration
+                    readStatMode: "COINBOX",
+                    bankTerminalMode: "NO_BANK_TERMINAL",
+                    fiscalizationMode: "NO_FISCAL"
                 }
 
                 const controller = await services.controllerService.createController(controllerInput, user)
@@ -365,9 +386,9 @@ class App {
                     number: "1-" + i,
                     name: i + " machine",
                     place: "Place",
-                    groupId: 1,
-                    typeId: 1,
-                    equipmentId: 1,
+                    groupId: machineGroup.id,
+                    typeId: machineType.id,
+                    equipmentId: equipment.id,
                     controllerId: controller.id
                 }, user)
 
@@ -488,12 +509,17 @@ class App {
                 startDate.setMinutes(now.getMinutes())
             }
 
+            process.env.SMS_REGISTRATION_ENABLED = registrationEnabled
 
         }
 
         if (Number(process.env.FORCE_SYNC) === 1) {
             await sequelize.sync({force: true})
             await populateWithFakeData()
+            await sequelize
+                .query("CREATE SEQUENCE payment_id_seq", {
+                    type: sequelize.QueryTypes.SELECT
+                })
         }
 
         const resolvers = new Resolvers({

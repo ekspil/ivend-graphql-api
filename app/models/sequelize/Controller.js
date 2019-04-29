@@ -50,6 +50,10 @@ const Controller = {
         allowNull: true,
         field: "registration_time"
     },
+    connected: {
+        type: Sequelize.DataTypes.BOOLEAN,
+        allowNull: false
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,
@@ -61,6 +65,12 @@ const Controller = {
         allowNull: true,
         unique: false,
         field: "updated_at"
+    },
+    deletedAt: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: true,
+        unique: false,
+        field: "deleted_at"
     }
 }
 

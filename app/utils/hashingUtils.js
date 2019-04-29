@@ -1,4 +1,7 @@
 const crypto = require("crypto")
+const bcryptjs = require("bcryptjs")
+
+const bcryptRounds = Number(process.env.BCRYPT_ROUNDS)
 
 async function generateRandomAccessKey(length) {
     return new Promise((res, rej) => {
@@ -14,7 +17,12 @@ async function generateRandomAccessKey(length) {
 
 }
 
+async function hashPassword(password) {
+    return await bcryptjs.hash(password, bcryptRounds)
+}
+
 
 module.exports = {
-    generateRandomAccessKey
+    generateRandomAccessKey,
+    hashPassword
 }

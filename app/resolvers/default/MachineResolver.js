@@ -38,12 +38,12 @@ function MachineResolver({machineService, saleService}) {
         return new MachineTypeDTO(type)
     }
 
-    const logs = async () => {
-        //const {user} = context
+    const logs = async (obj, args, context) => {
+        const {user} = context
 
-        //const machine = await machineService.getMachineById(obj.id, user)
+        const machine = await machineService.getMachineById(obj.id, user)
 
-        const logs = []
+        const logs = await machine.getLogs()
 
         return logs.map(log => (new MachineLogDTO(log)))
     }
@@ -75,6 +75,19 @@ function MachineResolver({machineService, saleService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
+    const salesSummaryOfItem = async (obj, args, context) => {
+        const {user} = context
+        const {itemId, period} = args
+
+        const salesSummary = await saleService.getSalesSummary({machineId: obj.id, itemId: itemId, period}, user)
+
+        if (!salesSummary) {
+            return null
+        }
+
+        return new SalesSummaryDTO(salesSummary)
+    }
+
     const lastSaleTime = async (obj, args, context) => {
         const {user} = context
 
@@ -93,7 +106,7 @@ function MachineResolver({machineService, saleService}) {
 
         const machine = await machineService.getMachineById(obj.id, user)
 
-        const controller =  await machine.getController()
+        const controller = await machine.getController()
 
         if (!controller) {
             return null
@@ -106,6 +119,7 @@ function MachineResolver({machineService, saleService}) {
         controller,
         lastSaleTime,
         salesSummary,
+        salesSummaryOfItem,
         group,
         equipment,
         type,

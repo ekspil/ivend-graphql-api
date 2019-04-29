@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
 const MachineNotFound = require("../errors/MachineNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
+const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
 const Sale = require("../models/Sale")
@@ -77,7 +78,10 @@ class SaleService {
             }
         }
 
-        const legalInfo = await controller.user.getLegalInfo()
+        const controllerUser = await controller.getUser()
+        controllerUser.checkPermission = () => true
+
+        const legalInfo = await controllerUser.getLegalInfo()
 
         if (!legalInfo) {
             throw new Error("LegalInfo is not set")
@@ -181,10 +185,7 @@ class SaleService {
             throw new ControllerNotFound
         }
 
-        //todo fix that
-        controller.user.checkPermission = () => true
-
-        const machine = await this.machineService.getMachineByControllerId(controller.id, controller.user)
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
 
         if (!machine) {
             throw new MachineNotFound()
@@ -196,38 +197,44 @@ class SaleService {
             throw new ItemMatrixNotFound()
         }
 
-        const buttons = await itemMatrix.getButtons()
+        const createdSale = await this.Sale.sequelize.transaction(async (transaction) => {
+            const buttons = await itemMatrix.getButtons()
 
-        if (!buttons.some((buttonItem) => buttonItem.buttonId === buttonId)) {
-            const name = `Товар ${buttonId}`
-            const item = await this.itemService.createItem({name}, user)
+            if (!buttons.some((buttonItem) => Number(buttonItem.buttonId) === buttonId)) {
+                const name = `Товар ${buttonId}`
+                const itemUser = itemMatrix.getUser()
+                const item = await this.itemService.createItem({name}, itemUser, transaction)
 
-            const button = new ButtonItem()
-            button.buttonId = buttonId
-            button.item_id = item.id
-            button.item_matrix_id = itemMatrix.id
+                const button = new ButtonItem()
+                button.buttonId = buttonId
+                button.item_id = item.id
+                button.item_matrix_id = itemMatrix.id
 
-            const buttonItem = await this.ButtonItem.create(button, user)
+                const buttonItem = await this.ButtonItem.create(button, {transaction})
 
-            buttons.push(buttonItem)
-        }
+                buttons.push(buttonItem)
+            }
 
-        const [itemId] = buttons
-            .filter((buttonItem) => buttonItem.buttonId === buttonId)
-            .map(buttonItem => buttonItem.item_id)
+            const [itemId] = buttons
+                .filter((buttonItem) => Number(buttonItem.buttonId) === buttonId)
+                .map(buttonItem => buttonItem.item_id)
 
-        if (!itemId) {
-            logger.error("Unexpected situation, ItemId for sale not found")
-            throw new ItemNotFound()
-        }
+            if (!itemId) {
+                logger.error("Unexpected situation, ItemId for sale not found")
+                throw new ItemNotFound()
+            }
 
-        const sale = new Sale()
-        sale.type = type
-        sale.price = price
-        sale.item_id = itemId
-        sale.machine_id = machine.id
+            const sale = new Sale()
+            sale.type = type
+            sale.price = price
+            sale.item_id = itemId
+            sale.machine_id = machine.id
 
-        const createdSale = await this.Sale.create(sale)
+            controller.connected = true
+            await controller.save({transaction})
+
+            return await this.Sale.create(sale, {transaction})
+        })
 
         if (!process.env.OFD_LOGIN || !process.env.OFD_PASSWORD) {
             return createdSale
@@ -328,6 +335,12 @@ class SaleService {
 
         if (period) {
             const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            logger.debug(`Loading salesSummary for period from ${from} to ${to}, itemId ${itemId}, machineId ${machineId}`)
 
             where.createdAt = {
                 [Op.lt]: to,
