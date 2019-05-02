@@ -14,3 +14,6 @@
 * Removed Services
 * Added removal of Controllers and Machines
 * Added logging error/ok of buses
+
+# 1.0.5 - Hotfix
+* Permission is not set to itemUser caused to fail to registerSale when no item exist
