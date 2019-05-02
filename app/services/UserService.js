@@ -69,7 +69,7 @@ class UserService {
             }
 
             let user = new User()
-
+            user.fiscal = false
             user.phone = phone
             user.email = email
             user.passwordHash = await this.hashPassword(password)
@@ -114,6 +114,22 @@ class UserService {
         logger.info(`User [${user.phone}] requested edit email from ${user.email} to ${newEmail}. Token is ${token})`)
 
         return token
+    }
+
+    async addUserFiscal(input, user) {
+        if (!user || !user.checkPermission(Permission.EDIT_FISCAL)) {
+            throw new NotAuthorized()
+        }
+
+        let userR = {};
+        userR.fiscal = input.fiscal;
+        await this.User.update(userR, {
+            where: {
+                fields: ['fiscal'],
+                id: input.id
+            }
+        })
+        return true
     }
 
 

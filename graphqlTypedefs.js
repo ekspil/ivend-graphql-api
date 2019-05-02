@@ -170,6 +170,7 @@ const typeDefs = gql`
         salesSummary(period: Period): SalesSummary
         items: [Item!]!
         kkts: [Kkt!]!
+        fiscal: Boolean
     }
 
     type NotificationSetting {
@@ -481,6 +482,11 @@ const typeDefs = gql`
         token: String!
         type: UserActionType!
     }
+    
+    input addFiscalInput {
+        id: Int!
+        fiscal: Boolean!
+    }
 
     type Mutation {
         authController(input: AuthControllerInput!): Controller
@@ -512,6 +518,7 @@ const typeDefs = gql`
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
         createKkt(input: CreateKktInput!): Kkt
         editKkt(input: EditKktInput!): Kkt
+        addUserFiscal(input: addFiscalInput!): User
     }
 `
 

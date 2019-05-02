@@ -87,6 +87,15 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return new UserDTO(newUser)
     }
 
+    const addUserFiscal = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        await userService.addUserFiscal(input, user)
+
+        return true
+    }
+
     return {
         registerUser,
         editEmail,
@@ -96,7 +105,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         updateNotificationSetting,
         updateLegalInfo,
         generateExcel,
-        requestRegistrationSms
+        requestRegistrationSms,
+        addUserFiscal
     }
 
 }
