@@ -140,7 +140,8 @@ const getServiceDailyPrice = async (service) => {
 const createPaymentRequest = async (amount, user) => {
     const body = JSON.stringify({
         amount,
-        to: user.phone,
+        phone: user.phone,
+        userId: user.id,
         email: user.email
     })
 

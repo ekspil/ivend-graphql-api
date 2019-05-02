@@ -17,3 +17,7 @@
 
 # 1.0.5 - Hotfix
 * Permission is not set to itemUser caused to fail to registerSale when no item exist
+
+
+# 1.0.6 - Release
+* Pass phone and userId on requestDeposit
