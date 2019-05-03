@@ -24,6 +24,16 @@ const Kkt = {
         allowNull: true,
         unique: false
     },
+    inn: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false
+    },
+    companyName: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false
+    },
     kktFactoryNumber: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,

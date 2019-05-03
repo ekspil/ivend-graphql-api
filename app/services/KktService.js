@@ -19,10 +19,12 @@ class KktService {
             throw new NotAuthorized()
         }
 
-        const {kktModel} = input
+        const {kktModel, inn, companyName} = input
 
         const kkt = new Kkt()
         kkt.kktModel = kktModel
+        kkt.inn = inn
+        kkt.companyName = companyName
         kkt.user_id = user.id
 
         return await this.Kkt.create(kkt)
@@ -33,11 +35,13 @@ class KktService {
             throw new NotAuthorized()
         }
 
-        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey} = input
+        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName} = input
 
         const kkt = new Kkt()
 
         kkt.kktModel = kktModel
+        kkt.inn = inn
+        kkt.companyName = companyName
         kkt.kktFactoryNumber = kktFactoryNumber
         kkt.kktRegNumber = kktRegNumber
         kkt.kktFNNumber = kktFNNumber

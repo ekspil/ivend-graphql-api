@@ -151,6 +151,8 @@ const typeDefs = gql`
     
     type Kkt {
         id: Int!
+        inn: String!
+        companyName: String!
         kktModel: String
         kktFactoryNumber: String
         kktRegNumber: String
@@ -201,9 +203,14 @@ const typeDefs = gql`
     
     input CreateKktInput {
         kktModel: String!
+        inn: String!
+        companyName: String!
+        
     }
     input EditKktInput {
         id: Int!
+        inn: String!
+        companyName: String!
         kktModel:  String!
         kktFactoryNumber:  String!
         kktRegNumber:  String!
