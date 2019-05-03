@@ -465,7 +465,7 @@ const typeDefs = gql`
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
-        getKktById: Kkt
+        getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts: [Kkt]
     }

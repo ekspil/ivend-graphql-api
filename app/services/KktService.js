@@ -66,7 +66,7 @@ class KktService {
 
         return await this.Kkt.findOne({
             where: {
-                id
+                id: id
             }
         })
     }
