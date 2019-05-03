@@ -3,7 +3,7 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
 
-        await queryInterface.createTable("machine_types", {
+        await queryInterface.createTable("kkts", {
             id: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
