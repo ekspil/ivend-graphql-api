@@ -120,7 +120,7 @@ module.exports = {
                 "total":1.23
             },
             "service":{
-                "callback_url":"http://109.126.9.210:3033/"
+                "callback_url":""
             },
             "timestamp":"24.04.19 23:48:00"
         };
