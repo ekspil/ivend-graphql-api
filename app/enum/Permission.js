@@ -39,6 +39,7 @@ const Permission = {
     // LegalInfoService
     "CREATE_LEGAL_INFO": "CREATE_LEGAL_INFO",
     "UPDATE_LEGAL_INFO": "UPDATE_LEGAL_INFO",
+    "GET_LEGAL_INFO" : "GET_LEGAL_INFO",
 
     // NotificationSettingsService
     "CREATE_NOTIFICATION_SETTING": "CREATE_NOTIFICATION_SETTING",

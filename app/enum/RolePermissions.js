@@ -57,6 +57,7 @@ const VENDOR = [
     Permission.CREATE_KKT,
     Permission.GET_KKT_BY_ID,
     Permission.GET_USER_KKTS,
+    Permission.GET_LEGAL_INFO,
 
 
 ]
