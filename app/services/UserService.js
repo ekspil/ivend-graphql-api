@@ -121,11 +121,11 @@ class UserService {
             throw new NotAuthorized()
         }
 
-        let userR = {};
-        userR.fiscal = input.fiscal;
+        let userR = {}
+        userR.fiscal = input.fiscal
         await this.User.update(userR, {
             where: {
-                fields: ['fiscal'],
+                fields: ["fiscal"],
                 id: input.id
             }
         })
