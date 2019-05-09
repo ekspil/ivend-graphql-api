@@ -6,7 +6,7 @@ const BillingDTO = require("../../models/dto/BillingDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const KktDTO = require("../../models/dto/KktDTO")
 
-function UserResolver({notificationSettingsService, itemService, saleService}) {
+function UserResolver({notificationSettingsService, itemService, saleService, kktService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
