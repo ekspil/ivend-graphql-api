@@ -59,10 +59,6 @@ function UserResolver({notificationSettingsService, itemService, saleService}) {
         return new BillingDTO({})
     }
 
-    const billing = async () => {
-        return new BillingDTO({})
-    }
-
     const salesSummary = async (obj, args, context) => {
         const {user} = context
         const {period} = args
