@@ -291,20 +291,10 @@ class SaleService {
         if (controller.fiscalizationMode == "APPROVED"){
         /////////////////////////////////////////////////////
         let inn = legalInfo.inn;
-        let productName = name;
+        let productName = 'Товар '+buttonId;
 
-        let payType;
+        let payType = type;
 
-        switch (sale.type) {
-            case "CASH":
-                payType = 0
-                break
-            case "CASHLESS":
-                payType = 1
-                break
-            default:
-                throw new Error("Unknown payment type (Pt): " +sale.type)
-        }
 
         let email = legalInfo.contactEmail;
         let productPrice = price.toFixed(2);
