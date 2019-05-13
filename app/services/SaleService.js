@@ -15,14 +15,14 @@ const {getToken, getStatus, sendCheck, getFiscalString, getTimeStamp, prepareDat
 
 class SaleService {
 
-    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService}) {
+    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService, kktService}) {
         this.Sale = SaleModel
         this.Item = ItemModel
         this.ButtonItem = ButtonItemModel
         this.controllerService = controllerService
         this.itemService = itemService
         this.machineService = machineService
-
+        this.kktService = kktService
 
         this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
@@ -320,6 +320,8 @@ class SaleService {
             if (!payload) {
                 throw new Error("payload is not recieved")
             }
+
+            await this.kktService.kktPlusBill(payload.fn_number, user)
 
             createdSale.sqr = getFiscalString(payload)
         }

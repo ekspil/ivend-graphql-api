@@ -286,7 +286,8 @@ class App {
             ButtonItemModel,
             controllerService: services.controllerService,
             itemService: services.itemService,
-            machineService: services.machineService
+            machineService: services.machineService,
+            kktService: services.kktService
         })
 
         services.legalInfoService = new LegalInfoService({
