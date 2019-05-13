@@ -23,9 +23,19 @@ function KktMutations({kktService}) {
         return new KktDTO(kkt)
     }
 
+    const kktPlusBill = async (root, args, context) => {
+        const {fn} = args
+        const {user} = context
+
+        await kktService.kktPlusBill(fn, user)
+
+        return true
+    }
+
     return {
         createKkt,
-        editKkt
+        editKkt,
+        kktPlusBill
     }
 
 }

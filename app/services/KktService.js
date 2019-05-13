@@ -12,6 +12,7 @@ class KktService {
         this.getKktById = this.getKktById.bind(this)
         this.getUserKkts = this.getUserKkts.bind(this)
         this.getAllKkts = this.getAllKkts.bind(this)
+        this.kktPlusBill = this.kktPlusBill.bind(this)
     }
 
     async createKkt(input, user) {
@@ -57,12 +58,33 @@ class KktService {
         })
     }
 
+    async kktPlusBill(fn, user) {
+        if (!user || !user.checkPermission(Permission.GET_USER_KKTS)) {
+            throw new NotAuthorized()
+        }
+
+        const kkt = await this.Kkt.findOne({
+            where: {
+                kktFNNumber: fn
+            }
+        })
+        if (!kkt) {
+            throw new Error("kkt is not set")
+        }
+
+
+        return await kkt.update({kktBillsCount: Number(kkt.kktBillsCount) + 1}, {
+            where: {
+                kktFNNumber: fn
+            }
+        })
+    }
+
     async getKktById(id, user) {
         if (!user || !user.checkPermission(Permission.GET_KKT_BY_ID)) {
             throw new NotAuthorized()
         }
 
-        //todo reject if not authorized (user_id)
 
         return await this.Kkt.findOne({
             where: {

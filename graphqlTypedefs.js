@@ -521,6 +521,7 @@ const typeDefs = gql`
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
         createKkt(input: CreateKktInput!): Kkt
         editKkt(input: EditKktInput!): Kkt
+        kktPlusBill(fn: String!): Boolean
     }
 `
 
