@@ -17,10 +17,6 @@ module.exports = {
             .then((response) => {
                 return response.data.token
             })
-            .catch((err) => {
-                console.log(err)
-                return null
-            })
 
     },
     sendCheck: async function (check, token) {
@@ -39,10 +35,6 @@ module.exports = {
             .then((response) => {
                 return response.data.uuid
             })
-            .catch((err) => {
-                console.log(err)
-                return null
-            })
 
     },
     getStatus: async function (token, id) {
@@ -58,10 +50,6 @@ module.exports = {
         return await axios(axConf)
             .then((response) => {
                 return response.data
-            })
-            .catch((err) => {
-                console.log(err)
-                return null
             })
 
 
