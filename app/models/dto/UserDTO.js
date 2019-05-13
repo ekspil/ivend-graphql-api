@@ -1,10 +1,9 @@
 class UserDTO {
 
-    constructor({email, phone, role, fiscal}) {
+    constructor({email, phone, role}) {
         this.email = email
         this.phone = phone
         this.role = role
-        this.fiscal = fiscal
     }
 }
 

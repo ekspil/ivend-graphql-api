@@ -116,21 +116,7 @@ class UserService {
         return token
     }
 
-    async addUserFiscal(input, user) {
-        if (!user || !user.checkPermission(Permission.EDIT_FISCAL)) {
-            throw new NotAuthorized()
-        }
 
-        let userR = {}
-        userR.fiscal = input.fiscal
-        await this.User.update(userR, {
-            where: {
-                fields: ["fiscal"],
-                id: input.id
-            }
-        })
-        return true
-    }
 
 
     async editPassword(password, user) {

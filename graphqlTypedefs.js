@@ -490,10 +490,6 @@ const typeDefs = gql`
         type: UserActionType!
     }
     
-    input addFiscalInput {
-        id: Int!
-        fiscal: Boolean!
-    }
 
     type Mutation {
         authController(input: AuthControllerInput!): Controller
@@ -525,7 +521,6 @@ const typeDefs = gql`
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
         createKkt(input: CreateKktInput!): Kkt
         editKkt(input: EditKktInput!): Kkt
-        addUserFiscal(input: addFiscalInput!): Boolean
     }
 `
 

@@ -5,7 +5,6 @@ class User {
         this.passwordHash = passwordHash
         this.phone = phone
         this.role = role
-        this.fiscal = false
     }
 
 }

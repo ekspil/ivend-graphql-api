@@ -59,11 +59,6 @@ module.exports = {
             }
         })
 
-        await queryInterface.addColumn("users", "fiscal",
-            {
-                type: Sequelize.BOOLEAN
-            })
-
     },
     down: async () => {
         throw new Error("All failed migrations have to be resolved manually")
