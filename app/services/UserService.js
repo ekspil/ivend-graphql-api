@@ -69,7 +69,6 @@ class UserService {
             }
 
             let user = new User()
-            user.fiscal = false
             user.phone = phone
             user.email = email
             user.passwordHash = await this.hashPassword(password)
