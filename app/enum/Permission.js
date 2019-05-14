@@ -39,6 +39,7 @@ const Permission = {
     // LegalInfoService
     "CREATE_LEGAL_INFO": "CREATE_LEGAL_INFO",
     "UPDATE_LEGAL_INFO": "UPDATE_LEGAL_INFO",
+    "GET_LEGAL_INFO" : "GET_LEGAL_INFO",
 
     // NotificationSettingsService
     "CREATE_NOTIFICATION_SETTING": "CREATE_NOTIFICATION_SETTING",
@@ -70,6 +71,13 @@ const Permission = {
     "EDIT_EMAIL": "EDIT_EMAIL",
     "EDIT_PASSWORD": "EDIT_PASSWORD",
     "CONFIRM_USER_ACTION": "CONFIRM_USER_ACTION",
+
+    // KKTService
+    "CREATE_KKT": "CREATE_KKT",
+    "GET_KKT_BY_ID": "GET_KKT_BY_ID",
+    "GET_USER_KKTS": "GET_USER_KKTS",
+    "GET_ALL_KKTS": "GET_ALL_KKTS",
+    "UPDATE_KKT": "UPDATE_KKT",
 
     // MachineService
     "CREATE_MACHINE": "CREATE_MACHINE",

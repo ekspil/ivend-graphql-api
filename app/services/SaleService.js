@@ -11,16 +11,18 @@ const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
 const logger = require("../utils/logger")
 const fetch = require("node-fetch")
+const {getToken, getStatus, sendCheck, getFiscalString, getTimeStamp, prepareData} = require("./FiscalService")
 
 class SaleService {
 
-    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService}) {
+    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService, kktService}) {
         this.Sale = SaleModel
         this.Item = ItemModel
         this.ButtonItem = ButtonItemModel
         this.controllerService = controllerService
         this.itemService = itemService
         this.machineService = machineService
+        this.kktService = kktService
 
         this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
@@ -197,6 +199,11 @@ class SaleService {
             throw new ItemMatrixNotFound()
         }
 
+        const legalInfo = await user.getLegalInfo()
+        if (!legalInfo) {
+            throw new Error("LegalInfo is not set")
+        }
+
         const createdSale = await this.Sale.sequelize.transaction(async (transaction) => {
             const buttons = await itemMatrix.getButtons()
 
@@ -282,8 +289,45 @@ class SaleService {
         mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
 
         const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
-
         createdSale.sqr = sqr
+
+        if (controller.fiscalizationMode === "APPROVED"){
+
+            let inn = legalInfo.inn
+            let productName = "Товар "+buttonId
+            let payType = type
+            let email = legalInfo.contactEmail
+            let productPrice = price.toFixed(2)
+            let timeStamp = getTimeStamp()
+            let extTime = timeStamp.replace(/[.: ]/g, "")
+            let extId = "IVEND-"+controllerUid+"-"+extTime  //Тут необходимо добавить ID чека, но это после внесения изменений по первому этапу, пока время чека
+            let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email)
+
+            //Запросы
+
+            let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")  //Потом выбрать нужного кассира
+
+            if (!token) {
+                throw new Error("token is not recieved")
+            }
+
+            let uuid = await sendCheck(fiscalData, token)
+
+            if (!uuid) {
+                throw new Error("uuid is not recieved")
+            }
+
+            let {payload} = await getStatus(token, uuid)
+
+            if (!payload) {
+                throw new Error("payload is not recieved")
+            }
+
+            await this.kktService.kktPlusBill(payload.fn_number, user)
+
+            createdSale.sqr = getFiscalString(payload)
+        }
+
 
         return createdSale
     }

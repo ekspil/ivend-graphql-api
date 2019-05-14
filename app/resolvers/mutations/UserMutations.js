@@ -87,6 +87,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return new UserDTO(newUser)
     }
 
+
+
     return {
         registerUser,
         editEmail,

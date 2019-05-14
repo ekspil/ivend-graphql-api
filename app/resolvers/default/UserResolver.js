@@ -4,8 +4,9 @@ const ItemDTO = require("../../models/dto/ItemDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const BillingDTO = require("../../models/dto/BillingDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
+const KktDTO = require("../../models/dto/KktDTO")
 
-function UserResolver({notificationSettingsService, itemService, saleService}) {
+function UserResolver({notificationSettingsService, itemService, saleService, kktService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
@@ -46,6 +47,14 @@ function UserResolver({notificationSettingsService, itemService, saleService}) {
         return items.map(item => (new ItemDTO(item)))
     }
 
+    const kkts = async (obj, args, context) => {
+        const {user} = context
+
+        const kkts = await kktService.getUserKkts(user)
+
+        return kkts.map(kkt => (new KktDTO(kkt)))
+    }
+
     const billing = async () => {
         return new BillingDTO({})
     }
@@ -68,7 +77,8 @@ function UserResolver({notificationSettingsService, itemService, saleService}) {
         legalInfo,
         billing,
         items,
-        salesSummary
+        salesSummary,
+        kkts
     }
 
 }

@@ -148,6 +148,19 @@ const typeDefs = gql`
         dailyBill: Float!
         daysLeft: Float!
     }
+    
+    type Kkt {
+        id: Int!
+        inn: String!
+        companyName: String!
+        kktModel: String
+        kktFactoryNumber: String
+        kktRegNumber: String
+        kktFNNumber: String
+        kktActivationDate: String
+        kktBillsCount: Int
+        kktOFDRegKey: String        
+}
 
     type User {
         email: String!
@@ -158,6 +171,7 @@ const typeDefs = gql`
         billing: Billing!
         salesSummary(period: Period): SalesSummary
         items: [Item!]!
+        kkts: [Kkt!]!
     }
 
     type NotificationSetting {
@@ -183,6 +197,26 @@ const typeDefs = gql`
 
     input CreateItemInput {
         name: String!
+    }
+
+    
+    input CreateKktInput {
+        kktModel: String!
+        inn: String!
+        companyName: String!
+        
+    }
+    input EditKktInput {
+        id: Int!
+        inn: String!
+        companyName: String!
+        kktModel:  String!
+        kktFactoryNumber:  String!
+        kktRegNumber:  String!
+        kktFNNumber:  String!
+        kktActivationDate:  String!
+        kktBillsCount: Int
+        kktOFDRegKey:  String
     }
 
     input ControllerStateInput {
@@ -430,6 +464,9 @@ const typeDefs = gql`
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
         getProfile: User
+        getKktById(id: Int!): Kkt
+        getUserKkts: [Kkt]
+        getAllKkts: [Kkt]
     }
 
     input AuthControllerInput {
@@ -451,6 +488,7 @@ const typeDefs = gql`
         token: String!
         type: UserActionType!
     }
+    
 
     type Mutation {
         authController(input: AuthControllerInput!): Controller
@@ -480,6 +518,9 @@ const typeDefs = gql`
         requestDeposit(amount: Float!): Deposit
         generateExcel(input: GenerateExcelInput!): ExcelReport
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
+        createKkt(input: CreateKktInput!): Kkt
+        editKkt(input: EditKktInput!): Kkt
+        kktPlusBill(fn: String!): Boolean
     }
 `
 
