@@ -25,10 +25,6 @@ const User = {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
     },
-    fiscal: {
-        type: Sequelize.DataTypes.BOOLEAN,
-        allowNull: true,
-    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

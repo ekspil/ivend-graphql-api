@@ -172,7 +172,6 @@ const typeDefs = gql`
         salesSummary(period: Period): SalesSummary
         items: [Item!]!
         kkts: [Kkt!]!
-        fiscal: Boolean
     }
 
     type NotificationSetting {
