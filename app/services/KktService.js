@@ -1,4 +1,5 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const KktNotFound = require("../errors/KktNotFound")
 const Kkt = require("../models/Kkt")
 const Permission = require("../enum/Permission")
 
@@ -38,7 +39,14 @@ class KktService {
 
         const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName} = input
 
-        const kkt = new Kkt()
+        const kkt = await this.Kkt.findOne({
+            where: {
+                id: id
+            }
+        })
+        if (!kkt) {
+            throw new KktNotFound()
+        }
 
         kkt.kktModel = kktModel
         kkt.inn = inn
@@ -51,11 +59,7 @@ class KktService {
         kkt.kktOFDRegKey = kktOFDRegKey
 
 
-        return await this.Kkt.update(kkt, {
-            where: {
-                id: id
-            }
-        })
+        return await kkt.save()
     }
 
     async kktPlusBill(fn, user) {
@@ -69,15 +73,11 @@ class KktService {
             }
         })
         if (!kkt) {
-            throw new Error("kkt is not set")
+            throw new KktNotFound()
         }
 
 
-        return await kkt.update({kktBillsCount: Number(kkt.kktBillsCount) + 1}, {
-            where: {
-                kktFNNumber: fn
-            }
-        })
+        return await kkt.increment("kktBillsCount")
     }
 
     async getKktById(id, user) {
