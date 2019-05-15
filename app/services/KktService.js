@@ -38,7 +38,17 @@ class KktService {
 
         const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName} = input
 
-        const kkt = new Kkt()
+        if (!id) {
+            throw new Error("no id")
+        }
+        const kkt = await this.Kkt.findOne({
+            where: {
+                id: id
+            }
+        })
+        if (!kkt) {
+            throw new Error("kkt is not set")
+        }
 
         kkt.kktModel = kktModel
         kkt.inn = inn
@@ -51,11 +61,7 @@ class KktService {
         kkt.kktOFDRegKey = kktOFDRegKey
 
 
-        return await this.Kkt.update(kkt, {
-            where: {
-                id: id
-            }
-        })
+        return await kkt.save()
     }
 
     async kktPlusBill(fn, user) {
@@ -72,12 +78,8 @@ class KktService {
             throw new Error("kkt is not set")
         }
 
-
-        return await kkt.update({kktBillsCount: Number(kkt.kktBillsCount) + 1}, {
-            where: {
-                kktFNNumber: fn
-            }
-        })
+        kkt.kktBillsCount = Number(kkt.kktBillsCount)+1
+        return await kkt.save()
     }
 
     async getKktById(id, user) {
