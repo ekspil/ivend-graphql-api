@@ -28,6 +28,7 @@ class KktService {
         kkt.inn = inn
         kkt.companyName = companyName
         kkt.user_id = user.id
+        kkt.kktBillsCount = 0
 
         return await this.Kkt.create(kkt)
     }
@@ -55,9 +56,12 @@ class KktService {
         kkt.kktRegNumber = kktRegNumber
         kkt.kktFNNumber = kktFNNumber
         kkt.kktActivationDate = kktActivationDate
-        kkt.kktBillsCount = kktBillsCount
-        kkt.kktOFDRegKey = kktOFDRegKey
-
+        if(kktBillsCount){
+            kkt.kktBillsCount = kktBillsCount
+        }
+        if(kktOFDRegKey) {
+            kkt.kktOFDRegKey = kktOFDRegKey
+        }
 
         return await kkt.save()
     }
