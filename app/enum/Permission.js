@@ -78,6 +78,7 @@ const Permission = {
     "GET_USER_KKTS": "GET_USER_KKTS",
     "GET_ALL_KKTS": "GET_ALL_KKTS",
     "UPDATE_KKT": "UPDATE_KKT",
+    "DELETE_KKT": "DELETE_KKT",
 
     // MachineService
     "CREATE_MACHINE": "CREATE_MACHINE",

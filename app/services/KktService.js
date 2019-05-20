@@ -14,6 +14,22 @@ class KktService {
         this.getUserKkts = this.getUserKkts.bind(this)
         this.getAllKkts = this.getAllKkts.bind(this)
         this.kktPlusBill = this.kktPlusBill.bind(this)
+        this.deleteKkt = this.deleteKkt.bind(this)
+
+    }
+
+    async deleteKkt(id, user) {
+        if (!user || !user.checkPermission(Permission.DELETE_KKT)) {
+            throw new NotAuthorized()
+        }
+
+        const kkt = await this.getKktById(id, user)
+
+        if (!kkt) {
+            throw new KktNotFound()
+        }
+
+        return await kkt.destroy()
     }
 
     async createKkt(input, user) {

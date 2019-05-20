@@ -521,6 +521,7 @@ const typeDefs = gql`
         createKkt(input: CreateKktInput!): Kkt
         editKkt(input: EditKktInput!): Kkt
         kktPlusBill(fn: String!): Boolean
+        deleteKkt(id: Int!): Boolean
     }
 `
 
