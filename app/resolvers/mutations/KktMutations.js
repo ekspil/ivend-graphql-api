@@ -34,9 +34,7 @@ function KktMutations({kktService}) {
         const {fn} = args
         const {user} = context
 
-        await kktService.kktPlusBill(fn, user)
-
-        return true
+        return await kktService.kktPlusBill(fn, user)
     }
 
     return {

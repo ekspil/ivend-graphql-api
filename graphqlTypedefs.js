@@ -160,6 +160,7 @@ const typeDefs = gql`
         kktActivationDate: String
         kktBillsCount: Int
         kktOFDRegKey: String        
+        kktLastBill: String        
 }
 
     type User {
@@ -211,10 +212,10 @@ const typeDefs = gql`
         inn: String!
         companyName: String!
         kktModel:  String!
-        kktFactoryNumber:  String!
-        kktRegNumber:  String!
-        kktFNNumber:  String!
-        kktActivationDate:  String!
+        kktFactoryNumber:  String
+        kktRegNumber:  String
+        kktFNNumber:  String
+        kktActivationDate:  String
         kktBillsCount: Int
         kktOFDRegKey:  String
     }
@@ -520,7 +521,7 @@ const typeDefs = gql`
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
         createKkt(input: CreateKktInput!): Kkt
         editKkt(input: EditKktInput!): Kkt
-        kktPlusBill(fn: String!): Boolean
+        kktPlusBill(fn: String!): Kkt
         deleteKkt(id: Int!): Boolean
     }
 `
