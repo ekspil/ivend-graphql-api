@@ -64,6 +64,11 @@ const Kkt = {
         allowNull: true,
         unique: false
     },
+    kktLastBill: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

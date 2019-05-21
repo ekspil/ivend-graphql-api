@@ -290,8 +290,8 @@ class SaleService {
 
         const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
         createdSale.sqr = sqr
-
-        if (controller.fiscalizationMode === "APPROVED"){
+        await this.kktService.getUserKkts
+        if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
 
             let inn = legalInfo.inn
             let productName = "Товар "+buttonId
@@ -323,8 +323,10 @@ class SaleService {
                 throw new Error("payload is not recieved")
             }
 
-            await this.kktService.kktPlusBill(payload.fn_number, user)
+            let kkt = await this.kktService.kktPlusBill(payload.fn_number, user)
 
+            kkt.kktLastBill = payload.receipt_datetime
+            await kkt.save()
             createdSale.sqr = getFiscalString(payload)
         }
 
