@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
 const MachineNotFound = require("../errors/MachineNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
+const UserNotFound = require("../errors/UserNotFound")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
@@ -199,10 +200,7 @@ class SaleService {
             throw new ItemMatrixNotFound()
         }
 
-        const legalInfo = await user.getLegalInfo()
-        if (!legalInfo) {
-            throw new Error("LegalInfo is not set")
-        }
+
 
         const createdSale = await this.Sale.sequelize.transaction(async (transaction) => {
             const buttons = await itemMatrix.getButtons()
@@ -290,44 +288,65 @@ class SaleService {
 
         const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
         createdSale.sqr = sqr
-        await this.kktService.getUserKkts
+
+
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
 
-            let inn = legalInfo.inn
-            let productName = "Товар "+buttonId
-            let payType = type
-            let email = legalInfo.contactEmail
-            let productPrice = price.toFixed(2)
-            let timeStamp = getTimeStamp()
-            let extTime = timeStamp.replace(/[.: ]/g, "")
-            let extId = "IVEND-"+controllerUid+"-"+extTime  //Тут необходимо добавить ID чека, но это после внесения изменений по первому этапу, пока время чека
-            let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email)
-
-            //Запросы
-
-            let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")  //Потом выбрать нужного кассира
-
-            if (!token) {
-                throw new Error("token is not recieved")
+            const controllerUser = await controller.getUser()
+            if (!controllerUser) {
+                throw new UserNotFound()
             }
-
-            let uuid = await sendCheck(fiscalData, token)
-
-            if (!uuid) {
-                throw new Error("uuid is not recieved")
+            const legalInfo = await controllerUser.getLegalInfo()
+            if (!legalInfo) {
+                throw new Error("LegalInfo is not set")
             }
+            let kktOk = false
+            let kkts = await this.kktService.getUserKkts(controllerUser)
+            for (let key in kkts){
 
-            let {payload} = await getStatus(token, uuid)
+                if(kkts[key].kktActivationDate){
+                    kktOk = true
+                    break
+                }
 
-            if (!payload) {
-                throw new Error("payload is not recieved")
             }
+            if(kktOk) {
+                let inn = legalInfo.inn
+                let productName = "Товар " + buttonId
+                let payType = type
+                let email = legalInfo.contactEmail
+                let productPrice = price.toFixed(2)
+                let timeStamp = getTimeStamp()
+                let extTime = timeStamp.replace(/[.: ]/g, "")
+                let extId = "IVEND-" + controllerUid + "-" + extTime  //Тут необходимо добавить ID чека, но это после внесения изменений по первому этапу, пока время чека
+                let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email)
 
-            let kkt = await this.kktService.kktPlusBill(payload.fn_number, user)
+                //Запросы
 
-            kkt.kktLastBill = payload.receipt_datetime
-            await kkt.save()
-            createdSale.sqr = getFiscalString(payload)
+                let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")  //Потом выбрать нужного кассира
+
+                if (!token) {
+                    throw new Error("token is not recieved")
+                }
+
+                let uuid = await sendCheck(fiscalData, token)
+
+                if (!uuid) {
+                    throw new Error("uuid is not recieved")
+                }
+
+                let {payload} = await getStatus(token, uuid)
+
+                if (!payload) {
+                    throw new Error("payload is not recieved")
+                }
+
+                let kkt = await this.kktService.kktPlusBill(payload.fn_number, user)
+
+                kkt.kktLastBill = payload.receipt_datetime
+                await kkt.save()
+                createdSale.sqr = getFiscalString(payload)
+            }
         }
 
 
