@@ -249,6 +249,10 @@ class SaleService {
 
         createdSale.sqr = "Нефискальный режим"
 
+        if (price === 0){
+            return createdSale
+        }
+
 
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
 
