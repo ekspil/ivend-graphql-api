@@ -291,27 +291,24 @@ class SaleService {
 
 
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
-
             const controllerUser = await controller.getUser()
             controllerUser.checkPermission = () => true
+
             if (!controllerUser) {
                 throw new UserNotFound()
             }
+
             const legalInfo = await controllerUser.getLegalInfo()
+
             if (!legalInfo) {
                 throw new Error("LegalInfo is not set")
             }
-            let kktOk = false
+
             let kkts = await this.kktService.getUserKkts(controllerUser)
-            for (let key in kkts){
 
-                if(kkts[key].kktActivationDate){
-                    kktOk = true
-                    break
-                }
+            const [activatedKkt] = kkts.filter(kkt => kkt.kktActivationDate)
 
-            }
-            if(kktOk) {
+            if(activatedKkt) {
                 let inn = legalInfo.inn
                 let productName = "Товар " + buttonId
                 let payType = type
