@@ -247,9 +247,26 @@ class SaleService {
         const item = await createdSale.getItem()
         createdSale.item = item
 
-        createdSale.sqr = "Нефискальный режим"
 
+
+        const getTwoDigitDateFormat = (monthOrDate) => {
+            return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
+        }
+        //Фэйковые данные
+        const receiptDateUtcDate = new Date()
+        let mappedReceiptDate = ""
+        mappedReceiptDate += receiptDateUtcDate.getFullYear() + ""
+        mappedReceiptDate += getTwoDigitDateFormat((receiptDateUtcDate.getMonth() + 1)) + ""
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getDate()) + ""
+        mappedReceiptDate += "T"
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getHours())
+        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
+        //Фэйковые данные
+        const sqr = `t=${mappedReceiptDate}&s=0.00&fn=0000000000001&i=00001&fp=0000000001&n=1`
+        //В нефискальном режиме вернем фэйковую строку
+        createdSale.sqr = sqr
         if (price === 0){
+            //Если цена 0 - не делаем фискальный чек
             return createdSale
         }
 
