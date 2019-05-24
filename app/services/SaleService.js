@@ -243,74 +243,28 @@ class SaleService {
             return await this.Sale.create(sale, {transaction})
         })
 
-        if (!process.env.OFD_LOGIN || !process.env.OFD_PASSWORD) {
-            return createdSale
-        }
 
         const item = await createdSale.getItem()
         createdSale.item = item
 
-        //register sale on OFD
-        const resp = await this._registerReceiptOFD(createdSale, controller, user)
-
-        if (resp.Error) {
-            logger.error(`Error response from OFD: [${resp.Error.Code}]` + resp.Error.Message)
-            throw new Error("Internal server error")
-        }
-
-        logger.info(JSON.stringify(resp))
-        const {ReceiptId} = resp.Data
-
-        let receiptInfo = await this._checkReceiptOFD(ReceiptId)
-        logger.info(JSON.stringify(receiptInfo))
-
-        while (receiptInfo.Data.StatusCode === 0) {
-            receiptInfo = await this._checkReceiptOFD(ReceiptId)
-            logger.info(JSON.stringify(receiptInfo))
-        }
-
-        const {Data} = receiptInfo
-        const {Device, ReceiptDateUtc} = Data
-
-
-        const getTwoDigitDateFormat = (monthOrDate) => {
-            return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
-        }
-
-        const receiptDateUtcDate = new Date(ReceiptDateUtc)
-        let mappedReceiptDate = ""
-        mappedReceiptDate += receiptDateUtcDate.getFullYear() + ""
-        mappedReceiptDate += getTwoDigitDateFormat((receiptDateUtcDate.getMonth() + 1)) + ""
-        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getDate()) + ""
-        mappedReceiptDate += "T"
-        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getHours())
-        mappedReceiptDate += getTwoDigitDateFormat(receiptDateUtcDate.getMinutes())
-
-        const sqr = `t=${mappedReceiptDate}&s=${price.toFixed(2)}&fn=${Device.FN}&i=${Device.FDN}&fp=${Device.FPD}&n=1`
-        createdSale.sqr = sqr
+        createdSale.sqr = "Нефискальный режим"
 
 
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
 
             const controllerUser = await controller.getUser()
-            controllerUser.checkPermission = () => true
             if (!controllerUser) {
                 throw new UserNotFound()
             }
+            controllerUser.checkPermission = () => true
             const legalInfo = await controllerUser.getLegalInfo()
             if (!legalInfo) {
                 throw new Error("LegalInfo is not set")
             }
-            let kktOk = false
+
             let kkts = await this.kktService.getUserKkts(controllerUser)
-            for (let key in kkts){
+            let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
 
-                if(kkts[key].kktActivationDate){
-                    kktOk = true
-                    break
-                }
-
-            }
             if(kktOk) {
                 let inn = legalInfo.inn
                 let productName = "Товар " + buttonId
