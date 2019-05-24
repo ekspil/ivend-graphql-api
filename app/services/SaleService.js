@@ -293,6 +293,7 @@ class SaleService {
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
 
             const controllerUser = await controller.getUser()
+            controllerUser.checkPermission = () => true
             if (!controllerUser) {
                 throw new UserNotFound()
             }
