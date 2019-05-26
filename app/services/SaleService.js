@@ -209,7 +209,7 @@ class SaleService {
                     throw new Error("payload is not recieved")
                 }
 
-                let kkt = await this.kktService.kktPlusBill(payload.fn_number, user)
+                let kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
 
                 kkt.kktLastBill = payload.receipt_datetime
                 await kkt.save()
