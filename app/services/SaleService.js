@@ -5,13 +5,11 @@ const ControllerNotFound = require("../errors/ControllerNotFound")
 const UserNotFound = require("../errors/UserNotFound")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
-const OFDUnknownStatus = require("../errors/OFDUnknownStatus")
 const Sale = require("../models/Sale")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
 const logger = require("../utils/logger")
-const fetch = require("node-fetch")
 const {getToken, getStatus, sendCheck, getFiscalString, getTimeStamp, prepareData} = require("./FiscalService")
 
 class SaleService {
@@ -30,125 +28,9 @@ class SaleService {
         this.getLastSale = this.getLastSale.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
 
-        if (process.env.OFD_LOGIN && process.env.OFD_PASSWORD) {
-            // Create OFD auth
-            this
-                ._authOFD()
-                .then(({AuthToken, ExpirationDateUtc}) => {
-                    this.OFD = {AuthToken, ExpirationDateUtc}
-                })
-                .catch(e => {
-                    logger.error(e)
-                    process.exit(1)
-                })
-        }
 
     }
 
-    async _authOFD() {
-        const response = await fetch(`https://ferma.ofd.ru/api/Authorization/CreateAuthToken`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json;charset=utf-8"
-            },
-            body: JSON.stringify({
-                Login: process.env.OFD_LOGIN,
-                Password: process.env.OFD_PASSWORD
-            })
-        })
-
-        if (!(response.status === 200)) {
-            throw new OFDUnknownStatus()
-        }
-
-        const resp = await response.json()
-        return resp.Data
-    }
-
-    async _registerReceiptOFD(sale, controller, user) {
-        if (!this.OFD) {
-            logger.error("OFD is not authenticated yet")
-            throw new Error("Internal server error")
-        }
-        const {ExpirationDateUtc} = this.OFD
-
-        if (ExpirationDateUtc) {
-            const date = new Date(ExpirationDateUtc)
-            if (new Date() > date) {
-                logger.info(`OFD token expired, requesting again [${new Date()}]`)
-                const {AuthToken, ExpirationDateUtc} = await this._authOFD()
-                this.OFD = {AuthToken, ExpirationDateUtc}
-            }
-        }
-
-        const controllerUser = await controller.getUser()
-        controllerUser.checkPermission = () => true
-
-        const legalInfo = await controllerUser.getLegalInfo()
-
-        if (!legalInfo) {
-            throw new Error("LegalInfo is not set")
-        }
-
-        const body = {
-            Request: {
-                Inn: legalInfo.inn,
-                Type: "Income",
-                InvoiceId: `${controller.uid}.${new Date()}`,
-                LocalDate: new Date(),
-                CustomerReceipt: {
-                    TaxationSystem: "Common",
-                    Email: "support@ivend.pro",
-                    Phone: user.phone,
-                    Items: [
-                        {
-                            Label: sale.item.name,
-                            Price: sale.price,
-                            Quantity: 1,
-                            Amount: sale.price,
-                            Vat: "Vat0"
-                        }
-                    ]
-                }
-            }
-        }
-
-        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/receipt?AuthToken=${this.OFD.AuthToken}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json;charset=utf-8"
-            },
-            body: JSON.stringify(body)
-        })
-
-
-        return await response.json()
-    }
-
-    async _checkReceiptOFD(receiptID) {
-        const body = {
-            Request: {
-                ReceiptId: receiptID
-            }
-        }
-
-        const response = await fetch(`https://ferma.ofd.ru/api/kkt/cloud/status?AuthToken=${this.OFD.AuthToken}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json;charset=utf-8"
-            },
-            body: JSON.stringify(body)
-        })
-
-        const receiptInfo = await response.json()
-
-        if (receiptInfo.Error) {
-            logger.error(`Error response from OFD: [${receiptInfo.Error.Code}]` + receiptInfo.Error.Message)
-            throw new Error("Internal server error")
-        }
-
-        return receiptInfo
-    }
 
     async createSale(input, user) {
         if (!user || !user.checkPermission(Permission.CREATE_SALE)) {
@@ -180,7 +62,7 @@ class SaleService {
 
         //todo transaction
 
-        const {controllerUid, type, price, buttonId} = input
+        let {controllerUid, type, price, buttonId} = input
 
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
@@ -287,6 +169,16 @@ class SaleService {
             let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
 
             if(kktOk) {
+
+                switch (type) {
+                    case "CASH":
+                        type = 0
+                        break
+                    case "CASHLESS":
+                        type = 1
+                        break
+                }
+
                 let inn = legalInfo.inn
                 let productName = "Товар " + buttonId
                 let payType = type
@@ -294,12 +186,12 @@ class SaleService {
                 let productPrice = price.toFixed(2)
                 let timeStamp = getTimeStamp()
                 let extTime = timeStamp.replace(/[.: ]/g, "")
-                let extId = "IVEND-" + controllerUid + "-" + extTime  //Тут необходимо добавить ID чека, но это после внесения изменений по первому этапу, пока время чека
+                let extId = "IVEND-" + controllerUid + "-" + extTime
                 let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email)
 
                 //Запросы
 
-                let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")  //Потом выбрать нужного кассира
+                let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")
 
                 if (!token) {
                     throw new Error("token is not recieved")
