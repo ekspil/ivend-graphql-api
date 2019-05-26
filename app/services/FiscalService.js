@@ -130,8 +130,8 @@ module.exports = {
         data.receipt.items[0].price = sum
         data.receipt.items[0].sum = sum
         data.receipt.items[0].quantity = 1
-        data.receipt.payments.type = payType
-        data.receipt.payments.sum = sum
+        data.receipt.payments[0].type = payType
+        data.receipt.payments[0].sum = sum
         data.receipt.total = sum
 
         // Обработка налогов, но пока неоткуда взять данные
