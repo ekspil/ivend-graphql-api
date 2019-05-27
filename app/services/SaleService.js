@@ -342,8 +342,6 @@ class SaleService {
                 throw new InvalidPeriod()
             }
 
-            logger.debug(`Loading salesSummary for period from ${from} to ${to}, itemId ${itemId}, machineId ${machineId}`)
-
             where.createdAt = {
                 [Op.lt]: to,
                 [Op.gt]: from
