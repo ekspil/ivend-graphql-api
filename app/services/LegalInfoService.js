@@ -23,25 +23,28 @@ class LegalInfoService {
             directorPhone, directorEmail, contactPerson, contactPhone, contactEmail
         } = input
 
-        const legalInfo = new LegalInfo()
-        legalInfo.companyName = companyName
-        legalInfo.city = city
-        legalInfo.actualAddress = actualAddress
-        legalInfo.inn = inn
-        legalInfo.ogrn = ogrn
-        legalInfo.legalAddress = legalAddress
-        legalInfo.director = director
-        legalInfo.directorPhone = directorPhone
-        legalInfo.directorEmail = directorEmail
-        legalInfo.contactPerson = contactPerson
-        legalInfo.contactPhone = contactPhone
-        legalInfo.contactEmail = contactEmail
+        return await this.LegalInfo.sequelize.transaction(async (transaction) => {
+            const legalInfo = new LegalInfo()
+            legalInfo.companyName = companyName
+            legalInfo.city = city
+            legalInfo.actualAddress = actualAddress
+            legalInfo.inn = inn
+            legalInfo.ogrn = ogrn
+            legalInfo.legalAddress = legalAddress
+            legalInfo.director = director
+            legalInfo.directorPhone = directorPhone
+            legalInfo.directorEmail = directorEmail
+            legalInfo.contactPerson = contactPerson
+            legalInfo.contactPhone = contactPhone
+            legalInfo.contactEmail = contactEmail
 
-        //todo ensure not legal info already created for this user
+            //todo ensure not legal info already created for this user
+            user.role = "VENDOR"
+            await user.save({transaction})
 
-        return await this.LegalInfo.create(legalInfo)
+            return await this.LegalInfo.create(legalInfo, {transaction})
+        })
     }
-
 
     async updateLegalInfo(input, user) {
         if (!user || !user.checkPermission(Permission.UPDATE_LEGAL_INFO)) {
