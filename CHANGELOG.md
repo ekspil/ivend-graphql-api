@@ -24,3 +24,6 @@
 
 # 1.0.7 - Hotfix
 * Change role to VENDOR when LegalInfo is set
+
+# 1.0.8 - Hotfix
+* Replace unsetting itemMatrixId by removing button items mapping in ItemMatrixService
