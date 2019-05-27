@@ -21,3 +21,6 @@
 
 # 1.0.6 - Release
 * Pass phone and userId on requestDeposit
+
+# 1.0.7 - Hotfix
+* Change role to VENDOR when LegalInfo is set
