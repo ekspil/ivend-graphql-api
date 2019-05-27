@@ -181,6 +181,9 @@ class SaleService {
 
                 let inn = legalInfo.inn
                 let productName = "Товар " + buttonId
+                if(item.name){
+                    productName = item.name
+                }
                 let payType = type
                 let email = legalInfo.contactEmail
                 let productPrice = price.toFixed(2)
