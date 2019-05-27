@@ -27,3 +27,6 @@
 
 # 1.0.8 - Hotfix
 * Replace unsetting itemMatrixId by removing button items mapping in ItemMatrixService
+
+# 1.0.9 - Hotfix
+* Filter out by all of user machines in salesSummary of the whole profile.
