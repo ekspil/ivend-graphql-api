@@ -104,7 +104,7 @@ class ItemMatrixService {
             throw new ButtonIdNotFound()
         }
 
-        await itemMatrix.removeButton(button)
+        await button.destroy()
 
         return this.getItemMatrixById(itemMatrixId, user)
     }
