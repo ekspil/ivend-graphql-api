@@ -130,8 +130,8 @@ module.exports = {
         data.receipt.items[0].price = sum
         data.receipt.items[0].sum = sum
         data.receipt.items[0].quantity = 1
-        data.receipt.payments.type = payType
-        data.receipt.payments.sum = sum
+        data.receipt.payments[0].type = payType
+        data.receipt.payments[0].sum = sum
         data.receipt.total = sum
 
         // Обработка налогов, но пока неоткуда взять данные
@@ -147,9 +147,9 @@ module.exports = {
         t_date = t_date.reverse()
         t_date = "" + t_date[0] + t_date[1] + t_date[2]
         let t_time = t_arr[1].split(":")
-        t_time = "" + t_time[0] + t_time[1]
+        t_time = "" + t_time[0] + t_time[1] + t_time[2]
         let t = t_date + "T" + t_time
-        let s = String(payload.total) + ".00"
+        let s = payload.total.toFixed(2)
         let fn = payload.fn_number
         let i = payload.fiscal_document_number
         let fp = payload.fiscal_document_attribute
