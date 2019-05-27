@@ -329,6 +329,12 @@ class SaleService {
 
         if (machineId) {
             where.machine_id = machineId
+        } else {
+            const machines = await this.machineService.getAllMachinesOfUser(user)
+
+            where.machine_id = {
+                [Op.in]: machines.map(machine => machine.id)
+            }
         }
 
         if (itemId) {
