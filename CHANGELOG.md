@@ -30,3 +30,18 @@
 
 # 1.0.9 - Hotfix
 * Filter out by all of user machines in salesSummary of the whole profile.
+
+# 1.1.0 - Hotfix
+
+* Added new GraphQL types (Kkt, EditKktInput, CreateKktInput)
+* Added new GraphQL queries (getKktById, getUsersKkts, getAllKkts)
+* Added new GraphQL mutations (createKkt, editKkt, kktPlusBill, deleteKkt)
+* Added resolvers for queries (getKktById, getUsersKkts, getAllKkts)
+* Added resolvers for mutations (createKkt, editKkt, kktPlusBill, deleteKkt)
+* Added sequelize model (Kkt). It belongs to User
+* Added integration with Umka fiscal service (SaleService.js)
+* Added special functions for Umka service (FiscalService.js)
+* Added migrations (040-043) which create 'kkts' table
+* Added new package(axios)
+* Changed default resolver (User), added Kkts.
+* Removed OFD Services from SaleService.js
