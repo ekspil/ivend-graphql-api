@@ -69,7 +69,6 @@ class UserService {
             }
 
             let user = new User()
-
             user.phone = phone
             user.email = email
             user.passwordHash = await this.hashPassword(password)
@@ -115,6 +114,8 @@ class UserService {
 
         return token
     }
+
+
 
 
     async editPassword(password, user) {

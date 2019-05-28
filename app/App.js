@@ -24,6 +24,7 @@ const LegalInfoService = require("./services/LegalInfoService")
 const BillingService = require("./services/BillingService")
 const ReportService = require("./services/ReportService")
 const MachineService = require("./services/MachineService")
+const KktService = require("./services/KktService")
 
 const User = require("./models/sequelize/User")
 const Equipment = require("./models/sequelize/Equipment")
@@ -45,6 +46,7 @@ const Machine = require("./models/sequelize/Machine")
 const MachineGroup = require("./models/sequelize/MachineGroup")
 const MachineType = require("./models/sequelize/MachineType")
 const MachineLog = require("./models/sequelize/MachineLog")
+const Kkt = require("./models/sequelize/Kkt")
 
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
 
@@ -85,6 +87,7 @@ class App {
         const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, sequelizeOptions)
 
         const UserModel = sequelize.define("users", User)
+        const KktModel = sequelize.define("kkts", Kkt)
         const EquipmentModel = sequelize.define("equipments", Equipment)
         const ItemModel = sequelize.define("items", Item)
         const SaleModel = sequelize.define("sales", Sale)
@@ -197,6 +200,11 @@ class App {
             foreignKey: "machine_id"
         })
 
+        KktModel.belongsTo(UserModel, {
+            foreignKey: "user_id",
+            as: "user"
+        })
+
         await sequelize.authenticate()
 
 
@@ -213,7 +221,8 @@ class App {
             legalInfoService: undefined,
             reportService: undefined,
             billingService: undefined,
-            machineService: undefined
+            machineService: undefined,
+            kktService: undefined
         }
 
 
@@ -222,6 +231,8 @@ class App {
         })
 
         services.itemService = new ItemService({ItemModel})
+
+        services.kktService = new KktService({KktModel})
 
         services.itemMatrixService = new ItemMatrixService({
             ItemMatrixModel,
@@ -275,7 +286,8 @@ class App {
             ButtonItemModel,
             controllerService: services.controllerService,
             itemService: services.itemService,
-            machineService: services.machineService
+            machineService: services.machineService,
+            kktService: services.kktService
         })
 
         services.legalInfoService = new LegalInfoService({
@@ -516,10 +528,6 @@ class App {
         if (Number(process.env.FORCE_SYNC) === 1) {
             await sequelize.sync({force: true})
             await populateWithFakeData()
-            await sequelize
-                .query("CREATE SEQUENCE payment_id_seq", {
-                    type: sequelize.QueryTypes.SELECT
-                })
         }
 
         const resolvers = new Resolvers({
