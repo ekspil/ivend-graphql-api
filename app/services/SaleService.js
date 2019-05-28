@@ -265,6 +265,12 @@ class SaleService {
 
         if (machineId) {
             where.machine_id = machineId
+        } else {
+            const machines = await this.machineService.getAllMachinesOfUser(user)
+
+            where.machine_id = {
+                [Op.in]: machines.map(machine => machine.id)
+            }
         }
 
         if (itemId) {
@@ -277,8 +283,6 @@ class SaleService {
             if (from > to) {
                 throw new InvalidPeriod()
             }
-
-            logger.debug(`Loading salesSummary for period from ${from} to ${to}, itemId ${itemId}, machineId ${machineId}`)
 
             where.createdAt = {
                 [Op.lt]: to,
