@@ -31,7 +31,7 @@
 # 1.0.9 - Hotfix
 * Filter out by all of user machines in salesSummary of the whole profile.
 
-# 1.1.0 - Hotfix
+# 1.1.0 - Release
 
 * Added new GraphQL types (Kkt, EditKktInput, CreateKktInput)
 * Added new GraphQL queries (getKktById, getUsersKkts, getAllKkts)
