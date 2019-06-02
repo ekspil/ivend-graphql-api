@@ -45,3 +45,6 @@
 * Added new package(axios)
 * Changed default resolver (User), added Kkts.
 * Removed OFD Services from SaleService.js
+
+# 1.1.1 - Hotfix
+* Add machineId arg for salesSummary in type Item

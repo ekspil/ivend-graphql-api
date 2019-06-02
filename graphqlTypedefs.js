@@ -188,7 +188,7 @@ const typeDefs = gql`
     type Item {
         id: Int,
         name: String!
-        salesSummary(period: Period): SalesSummary
+        salesSummary(machineId: Int, period: Period): SalesSummary
         lastSaleTime: Timestamp
     }
 
