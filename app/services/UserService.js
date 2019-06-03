@@ -162,10 +162,6 @@ class UserService {
                 }
             })
 
-            if(user.id !== userId) {
-                throw new NotAuthorized()
-            }
-
             if (!user) {
                 throw new UserNotFound()
             }
