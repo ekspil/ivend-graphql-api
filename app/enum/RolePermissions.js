@@ -68,6 +68,7 @@ const VENDOR_NOT_CONFIRMED = [
     Permission.GET_DAYS_LEFT,
     Permission.GET_BALANCE,
     Permission.GET_PROFILE,
+    Permission.CONFIRM_USER_ACTION,
 ]
 
 

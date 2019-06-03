@@ -48,3 +48,8 @@
 
 # 1.1.1 - Hotfix
 * Add machineId arg for salesSummary in type Item
+
+# 1.1.2 - Release
+
+* Add CONFIRM_USER_ACTION toAdd role VENDOR_NOT_CONFIRMED
+* Throw NotAuthorized if trying to confirm other user
