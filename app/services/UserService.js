@@ -156,6 +156,10 @@ class UserService {
 
             const userId = Number(tokenValue)
 
+            if(user.id !== userId) {
+                throw new NotAuthorized()
+            }
+
             const user = await this.User.findOne({
                 where: {
                     id: Number(userId)
