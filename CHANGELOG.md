@@ -56,5 +56,8 @@
 
 # 1.1.3 - Release
 
-* Add CONFIRM_USER_ACTION to role VENDOR_NOT_CONFIRMED
 * Fix user is not defined
+
+# 1.1.4 - Release
+
+* Remove that NotAuthorized throw
