@@ -51,5 +51,10 @@
 
 # 1.1.2 - Release
 
-* Add CONFIRM_USER_ACTION toAdd role VENDOR_NOT_CONFIRMED
+* Add CONFIRM_USER_ACTION to role VENDOR_NOT_CONFIRMED
 * Throw NotAuthorized if trying to confirm other user
+
+# 1.1.3 - Release
+
+* Add CONFIRM_USER_ACTION to role VENDOR_NOT_CONFIRMED
+* Fix user is not defined
