@@ -69,6 +69,16 @@ module.exports = {
         if (mounth < 10) {
             mounth = "0" + mounth
         }
+        if (hour < 10) {
+            hour = "0" + hour
+        }
+        if (min < 10) {
+            min = "0" + min
+        }
+        if (sec < 10) {
+            sec = "0" + sec
+        }
+
         timeStamp = day + "." + mounth + "." + year + " " + hour + ":" + min + ":" + sec //"24.04.19 23:48:00"
         return timeStamp
 
@@ -76,45 +86,45 @@ module.exports = {
     prepareData: function (inn, name, sum, extId, timeStamp, payType, email, snType) {
         let data = {
 
-            "external_id": "",
-            "receipt": {
-                "client": {
-                    "email": "kkt@kkt.ru"
+            external_id: "",
+            receipt: {
+                client: {
+                    email: "kkt@kkt.ru"
                 },
-                "company": {
-                    "email": "chek@ivend.ru",
-                    "sno": "usn_income",
-                    "inn": "7805714120",
-                    "payment_address": ""
+                company: {
+                    email: "chek@ivend.ru",
+                    sno: "usn_income",
+                    inn: "7805714120",
+                    payment_address: ""
                 },
-                "items": [
+                items: [
                     {
-                        "name": "Кофе 0.2",
-                        "price": 5.23,
-                        "quantity": 1.0,
-                        "sum": 1.23,
-                        "measurement_unit": "шт",
-                        "payment_method": "full_payment",
-                        "payment_object": "commodity",
-                        "vat": {
-                            "type": "none",
-                            "sum": 0
+                        name: "Кофе 0.2",
+                        price: 5.23,
+                        quantity: 1.0,
+                        sum: 1.23,
+                        measurement_unit: "шт",
+                        payment_method: "full_payment",
+                        payment_object: "commodity",
+                        vat: {
+                            type: "none",
+                            sum: 0
                         }
                     }
                 ],
-                "payments": [
+                payments: [
                     {
-                        "type": 1,
-                        "sum": 1.23
+                        type: 1,
+                        sum: 1.23
                     }
                 ],
 
-                "total": 1.23
+                total: 1.23
             },
-            "service": {
-                "callback_url": ""
+            service: {
+                callback_url: ""
             },
-            "timestamp": "24.04.19 23:48:00"
+            timestamp: "24.04.19 23:48:00"
         }
 
         data.external_id = extId
@@ -129,7 +139,7 @@ module.exports = {
         data.receipt.items[0].name = name
         data.receipt.items[0].price = sum
         data.receipt.items[0].sum = sum
-        data.receipt.items[0].quantity = 1
+        data.receipt.items[0].quantity = 1.0
         data.receipt.payments[0].type = payType
         data.receipt.payments[0].sum = sum
         data.receipt.total = sum
