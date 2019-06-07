@@ -27,13 +27,14 @@ module.exports = {
             baseURL: "https://umka365.ru/kkm-trade/atolpossystem/v4/any/sell/",
             data: check,
             headers: {
-                token: token,
+                "token": token,
                 "Content-Type": "application/json"
             }
 
         }
         return await axios(axConf)
             .then((response) => {
+                response = JSON.parse(response)
                 return response.data.uuid
             })
 
@@ -84,27 +85,26 @@ module.exports = {
         return timeStamp
 
     },
-    prepareData: function (inn, name, sum, extId, timeStamp, payType, email, snType) {
-        console.log("prepareDate", inn, name, sum, extId, timeStamp, payType, email, snType)
-        let data = {
-
-            external_id: "",
+    prepareData: function (inn, itemName, checkSum, extId, timeStamp, payType, eMail) {
+        console.log("prepareData", inn, itemName, checkSum, extId, timeStamp, payType, eMail)
+        let checkData = {
+            external_id: extId,
             receipt: {
                 client: {
                     email: "kkt@kkt.ru"
                 },
                 company: {
-                    email: "chek@ivend.ru",
+                    email: eMail,
                     sno: "usn_income",
-                    inn: "7805714120",
+                    inn: inn,
                     payment_address: ""
                 },
                 items: [
                     {
-                        name: "Кофе 0.2",
-                        price: 5.23,
+                        name: itemName,
+                        price: checkSum,
                         quantity: 1.0,
-                        sum: 1.23,
+                        sum: checkSum,
                         measurement_unit: "шт",
                         payment_method: "full_payment",
                         payment_object: "commodity",
@@ -116,40 +116,23 @@ module.exports = {
                 ],
                 payments: [
                     {
-                        type: 1,
-                        sum: 1.23
+                        type: payType,
+                        sum: checkSum
                     }
                 ],
 
-                total: 1.23
+                total: checkSum
             },
             service: {
                 callback_url: ""
             },
-            timestamp: "24.04.19 23:48:00"
+            timestamp: timeStamp
         }
-
-        data.external_id = extId
-        data.receipt.company.inn = inn
-        data.receipt.company.email = email
-        if (snType) {
-            data.receipt.company.sno = snType
-        }
-        else {
-            data.receipt.company.sno = "usn_income"
-        }
-        data.receipt.items[0].name = name
-        data.receipt.items[0].price = sum
-        data.receipt.items[0].sum = sum
-        data.receipt.items[0].quantity = 1.0
-        data.receipt.payments[0].type = payType
-        data.receipt.payments[0].sum = sum
-        data.receipt.total = sum
 
         // Обработка налогов, но пока неоткуда взять данные
 
 
-        return JSON.stringify(data)
+        return JSON.stringify(checkData)
 
 
     },
