@@ -86,7 +86,7 @@ module.exports = {
 
     },
     prepareData: function (inn, itemName, checkSum, extId, timeStamp, payType, eMail) {
-        console.log("prepareData "+inn+" "+ itemName+ " "+checkSum+" "+ extId+ " " +timeStamp+" "+payType+" "+eMail)
+        console.log("prepareData", inn, itemName, checkSum, extId, timeStamp, payType, eMail)
         let checkData = {
             external_id: extId,
             receipt: {
