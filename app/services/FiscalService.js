@@ -34,6 +34,7 @@ module.exports = {
         }
         return await axios(axConf)
             .then((response) => {
+                response = JSON.parse(response)
                 return response.data.uuid
             })
 
