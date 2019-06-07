@@ -118,9 +118,11 @@ class SaleService {
             sale.price = price
             sale.item_id = itemId
             sale.machine_id = machine.id
+            logger.info("1")
 
             controller.connected = true
             await controller.save({transaction})
+            logger.info("2")
 
             return await this.Sale.create(sale, {transaction})
         })
@@ -128,12 +130,14 @@ class SaleService {
 
         const item = await createdSale.getItem()
         createdSale.item = item
+        logger.info("3")
 
 
 
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
         }
+
         //Фэйковые данные
         const receiptDateUtcDate = new Date()
         let mappedReceiptDate = ""
@@ -151,9 +155,11 @@ class SaleService {
             //Если цена 0 - не делаем фискальный чек
             return createdSale
         }
+        logger.info("4")
 
 
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
+            logger.info("5")
 
             const controllerUser = await controller.getUser()
             if (!controllerUser) {
@@ -164,9 +170,11 @@ class SaleService {
             if (!legalInfo) {
                 throw new Error("LegalInfo is not set")
             }
+            logger.info("6")
 
             let kkts = await this.kktService.getUserKkts(controllerUser)
             let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
+            logger.info("7")
 
             if(kktOk) {
 
@@ -178,6 +186,7 @@ class SaleService {
                         type = 1
                         break
                 }
+                logger.info("8")
 
                 let inn = legalInfo.inn
                 let productName = "Товар " + buttonId
@@ -193,34 +202,40 @@ class SaleService {
                 let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email)
 
                 //Запросы
+                logger.info("9")
 
                 let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")
-
+                logger.info("10")
                 if (!token) {
                     throw new Error("token is not recieved")
                 }
 
+                logger.info("11")
                 let uuid = await sendCheck(fiscalData, token)
+
+                logger.info("12")
 
                 if (!uuid) {
                     throw new Error("uuid is not recieved")
                 }
 
                 let {payload} = await getStatus(token, uuid)
-
+                logger.info("13")
                 if (!payload) {
                     throw new Error("payload is not recieved")
                 }
-
+                logger.info("14")
                 let kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
-
+                logger.info("15")
                 kkt.kktLastBill = payload.receipt_datetime
                 await kkt.save()
+                logger.info("16")
                 createdSale.sqr = getFiscalString(payload)
+                logger.info("17")
             }
         }
 
-
+        logger.info("18")
         return createdSale
     }
 
