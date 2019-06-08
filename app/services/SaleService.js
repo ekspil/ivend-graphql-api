@@ -187,7 +187,7 @@ class SaleService {
                         break
                 }
                 logger.info("8")
-
+                const server = kktOk.server
                 let inn = legalInfo.inn
                 let productName = "Товар " + buttonId
                 if(item.name){
@@ -204,14 +204,14 @@ class SaleService {
                 //Запросы
                 logger.info("9")
 
-                let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")
+                let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir", server)
                 logger.info("10")
                 if (!token) {
                     throw new Error("token is not recieved")
                 }
 
                 logger.info("11")
-                let uuid = await sendCheck(fiscalData, token)
+                let uuid = await sendCheck(fiscalData, token, server)
 
                 logger.info("12")
 
@@ -219,7 +219,7 @@ class SaleService {
                     throw new Error("uuid is not recieved")
                 }
 
-                let {payload} = await getStatus(token, uuid)
+                let {payload} = await getStatus(token, uuid, server)
                 logger.info("13")
                 if (!payload) {
                     throw new Error("payload is not recieved")
