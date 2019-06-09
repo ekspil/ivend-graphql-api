@@ -4,13 +4,10 @@ const axios = require("axios")
 module.exports = {
 
     getToken: async function (login, pass, server) {
-        let serverUrl = "umka365.ru"
-        if(server){
-            serverUrl = server
-        }
+        const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
         let axConf = {
             method: "get",
-            baseURL: "https://"+serverUrl+"/kkm-trade/atolpossystem/v4/getToken",
+            baseURL: `https://`+serverUrl+`/kkm-trade/atolpossystem/v4/getToken`,
             params: {
                 "login": login,
                 "pass": pass
@@ -24,16 +21,14 @@ module.exports = {
 
     },
     sendCheck: async function (check, token, server) {
-        let serverUrl = "umka365.ru"
-        if(server){
-            serverUrl = server
-        }
+        const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
+
         let axConf = {
             method: "post",
-            baseURL: "https://"+serverUrl+"/kkm-trade/atolpossystem/v4/any/sell/",
+            baseURL: `https://`+serverUrl+`/kkm-trade/atolpossystem/v4/any/sell/`,
             data: check,
             headers: {
-                token: token,
+                "token": token,
                 "Content-Type": "application/json"
             }
 
@@ -45,13 +40,10 @@ module.exports = {
 
     },
     getStatus: async function (token, id, server) {
-        let serverUrl = "umka365.ru"
-        if(server){
-            serverUrl = server
-        }
+        const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
         let axConf = {
             method: "get",
-            baseURL: "https://"+serverUrl+"/kkm-trade/atolpossystem/v4/any/report/" + id,
+            baseURL: `https://`+serverUrl+`/kkm-trade/atolpossystem/v4/any/report/` + id,
             params: {
                 "token": token
             }

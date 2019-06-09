@@ -204,7 +204,7 @@ class SaleService {
                 //Запросы
                 logger.info("9")
 
-                let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir", server)
+                let token = await getToken(process.env.UMKA_LOGIN, process.env.UMKA_PASS, server)
                 logger.info("10")
                 if (!token) {
                     throw new Error("token is not recieved")
