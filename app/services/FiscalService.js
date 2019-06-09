@@ -7,7 +7,7 @@ module.exports = {
         const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
         let axConf = {
             method: "get",
-            baseURL: `https://`+serverUrl+`/kkm-trade/atolpossystem/v4/getToken`,
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/getToken`,
             params: {
                 "login": login,
                 "pass": pass
@@ -25,7 +25,7 @@ module.exports = {
 
         let axConf = {
             method: "post",
-            baseURL: `https://`+serverUrl+`/kkm-trade/atolpossystem/v4/any/sell/`,
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/any/sell/`,
             data: check,
             headers: {
                 "token": token,
@@ -43,7 +43,7 @@ module.exports = {
         const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
         let axConf = {
             method: "get",
-            baseURL: `https://`+serverUrl+`/kkm-trade/atolpossystem/v4/any/report/` + id,
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/any/report/` + id,
             params: {
                 "token": token
             }
