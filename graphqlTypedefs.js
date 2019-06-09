@@ -161,6 +161,7 @@ const typeDefs = gql`
         kktBillsCount: Int
         kktOFDRegKey: String        
         kktLastBill: String        
+        server: String        
 }
 
     type User {
@@ -218,6 +219,7 @@ const typeDefs = gql`
         kktActivationDate:  String
         kktBillsCount: Int
         kktOFDRegKey:  String
+        server:  String
     }
 
     input ControllerStateInput {

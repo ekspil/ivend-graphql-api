@@ -54,7 +54,7 @@ class KktService {
             throw new NotAuthorized()
         }
 
-        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName} = input
+        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, server} = input
 
         const kkt = await this.Kkt.findOne({
             where: {
@@ -78,6 +78,10 @@ class KktService {
         if(kktOFDRegKey) {
             kkt.kktOFDRegKey = kktOFDRegKey
         }
+        if(server) {
+            kkt.server = server
+        }
+
 
         return await kkt.save()
     }
