@@ -43,7 +43,7 @@ module.exports = {
         const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
         let axConf = {
             method: "get",
-            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/any/report/` + id,
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/any/report/${id}`,
             params: {
                 "token": token
             }
