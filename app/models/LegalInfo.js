@@ -1,5 +1,5 @@
 class Item {
-    constructor(id, companyName, city, actualAddress, inn, ogrn, legalAddress, director, directorPhone, directorEmail, contactPerson, contactPhone, contactEmail) {
+    constructor(id, companyName, city, actualAddress, inn, ogrn, legalAddress, director, directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno) {
         this.id = id
         this.companyName = companyName
         this.city = city
@@ -13,6 +13,7 @@ class Item {
         this.contactPerson = contactPerson
         this.contactPhone = contactPhone
         this.contactEmail = contactEmail
+        this.sno = sno
     }
 }
 
