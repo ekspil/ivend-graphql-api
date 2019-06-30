@@ -85,7 +85,7 @@ module.exports = {
         return timeStamp
 
     },
-    prepareData: function (inn, itemName, checkSum, extId, timeStamp, payType, eMail) {
+    prepareData: function (inn, itemName, checkSum, extId, timeStamp, payType, eMail, sno, place) {
         console.log("prepareData", inn, itemName, checkSum, extId, timeStamp, payType, eMail)
         let checkData = {
             external_id: extId,
@@ -95,9 +95,9 @@ module.exports = {
                 },
                 company: {
                     email: eMail,
-                    sno: "usn_income",
+                    sno: sno,
                     inn: inn,
-                    payment_address: ""
+                    payment_address: place
                 },
                 items: [
                     {

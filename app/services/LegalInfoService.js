@@ -20,7 +20,7 @@ class LegalInfoService {
 
         const {
             companyName, city, actualAddress, inn, ogrn, legalAddress, director,
-            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail
+            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno
         } = input
 
         return await this.LegalInfo.sequelize.transaction(async (transaction) => {
@@ -37,6 +37,7 @@ class LegalInfoService {
             legalInfo.contactPerson = contactPerson
             legalInfo.contactPhone = contactPhone
             legalInfo.contactEmail = contactEmail
+            legalInfo.sno = sno
 
             //todo ensure not legal info already created for this user
             user.role = "VENDOR"
@@ -64,7 +65,7 @@ class LegalInfoService {
 
         const {
             companyName, city, actualAddress, inn, ogrn, legalAddress, director,
-            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail
+            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno
         } = input
 
         legalInfo.companyName = companyName
@@ -79,7 +80,7 @@ class LegalInfoService {
         legalInfo.contactPerson = contactPerson
         legalInfo.contactPhone = contactPhone
         legalInfo.contactEmail = contactEmail
-
+        legalInfo.sno = sno
         return await legalInfo.save()
     }
 
