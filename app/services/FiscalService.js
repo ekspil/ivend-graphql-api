@@ -136,7 +136,7 @@ module.exports = {
 
 
     },
-    getFiscalString: function (payload) {
+    getFiscalString: function (payload, sno) {
         let t_arr = payload.receipt_datetime.split(" ")
         let t_date = t_arr[0].split(".")
         t_date = t_date.reverse()
@@ -148,7 +148,29 @@ module.exports = {
         let fn = payload.fn_number
         let i = payload.fiscal_document_number
         let fp = payload.fiscal_document_attribute
-        let n = 1 //Тип системы налогооблажения пока неоткуда взять
+        let n = 1
+        switch (sno) {
+            case "usn_income":
+                n = 1
+                break
+            case "usn_income_outcome":
+                n = 2
+                break
+            case "envd":
+                n = 3
+                break
+            case "esn":
+                n = 4
+                break
+            case "patent":
+                n = 5
+                break
+            case "osn":
+                n = 0
+                break
+        }
+
+
 
         return "t=" + t + "&s=" + s + "&fn=" + fn + "&i=" + i + "&fp=" + fp + "&n=" + n
 

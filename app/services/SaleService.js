@@ -208,7 +208,7 @@ class SaleService {
                     let kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
                     kkt.kktLastBill = payload.receipt_datetime
                     await kkt.save()
-                    createdSale.sqr = getFiscalString(payload)
+                    createdSale.sqr = getFiscalString(payload, sno)
                 }catch(err){
                     logger.info(err.response.data)
                 }
