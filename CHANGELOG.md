@@ -61,3 +61,12 @@
 # 1.1.4 - Release
 
 * Remove that NotAuthorized throw
+
+# 1.1.5 - Release
+
+* Added kkt server field
+* Added sno in legalInfo
+* Added KKT_EDIT permission for VENDOR
+* Fixed umka send service
+* Fixed fiscal string (added sno)
+* Fixed billing query string (userId added)
