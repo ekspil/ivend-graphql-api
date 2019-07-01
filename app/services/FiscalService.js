@@ -168,6 +168,9 @@ module.exports = {
             case "osn":
                 n = 0
                 break
+            default:
+                n = 1
+                break
         }
 
 
