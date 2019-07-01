@@ -1,12 +1,13 @@
+/* eslint-disable no-console */
 const axios = require("axios")
 
 module.exports = {
 
-    getToken: async function (login, pass) {
-
+    getToken: async function (login, pass, server) {
+        const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
         let axConf = {
             method: "get",
-            baseURL: "https://umka365.ru/kkm-trade/atolpossystem/v4/getToken",
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/getToken`,
             params: {
                 "login": login,
                 "pass": pass
@@ -19,14 +20,15 @@ module.exports = {
             })
 
     },
-    sendCheck: async function (check, token) {
+    sendCheck: async function (check, token, server) {
+        const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
 
         let axConf = {
             method: "post",
-            baseURL: "https://umka365.ru/kkm-trade/atolpossystem/v4/any/sell/",
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/any/sell/`,
             data: check,
             headers: {
-                token: token,
+                "token": token,
                 "Content-Type": "application/json"
             }
 
@@ -37,11 +39,11 @@ module.exports = {
             })
 
     },
-    getStatus: async function (token, id) {
-
+    getStatus: async function (token, id, server) {
+        const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
         let axConf = {
             method: "get",
-            baseURL: "https://umka365.ru/kkm-trade/atolpossystem/v4/any/report/" + id,
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/any/report/${id}`,
             params: {
                 "token": token
             }
@@ -69,79 +71,72 @@ module.exports = {
         if (mounth < 10) {
             mounth = "0" + mounth
         }
+        if (hour < 10) {
+            hour = "0" + hour
+        }
+        if (min < 10) {
+            min = "0" + min
+        }
+        if (sec < 10) {
+            sec = "0" + sec
+        }
+
         timeStamp = day + "." + mounth + "." + year + " " + hour + ":" + min + ":" + sec //"24.04.19 23:48:00"
         return timeStamp
 
     },
-    prepareData: function (inn, name, sum, extId, timeStamp, payType, email, snType) {
-        let data = {
-
-            "external_id": "",
-            "receipt": {
-                "client": {
-                    "email": "kkt@kkt.ru"
+    prepareData: function (inn, itemName, checkSum, extId, timeStamp, payType, eMail, sno, place) {
+        console.log("prepareData", inn, itemName, checkSum, extId, timeStamp, payType, eMail)
+        let checkData = {
+            external_id: extId,
+            receipt: {
+                client: {
+                    email: "kkt@kkt.ru"
                 },
-                "company": {
-                    "email": "chek@ivend.ru",
-                    "sno": "usn_income",
-                    "inn": "7805714120",
-                    "payment_address": ""
+                company: {
+                    email: eMail,
+                    sno: sno,
+                    inn: inn,
+                    payment_address: place
                 },
-                "items": [
+                items: [
                     {
-                        "name": "Кофе 0.2",
-                        "price": 5.23,
-                        "quantity": 1.0,
-                        "sum": 1.23,
-                        "measurement_unit": "шт",
-                        "payment_method": "full_payment",
-                        "payment_object": "commodity",
-                        "vat": {
-                            "type": "none",
-                            "sum": 0
+                        name: itemName,
+                        price: checkSum,
+                        quantity: 1.0,
+                        sum: checkSum,
+                        measurement_unit: "шт",
+                        payment_method: "full_payment",
+                        payment_object: "commodity",
+                        vat: {
+                            type: "none",
+                            sum: 0
                         }
                     }
                 ],
-                "payments": [
+                payments: [
                     {
-                        "type": 1,
-                        "sum": 1.23
+                        type: payType,
+                        sum: checkSum
                     }
                 ],
 
-                "total": 1.23
+                total: checkSum
             },
-            "service": {
-                "callback_url": ""
+            service: {
+                callback_url: ""
             },
-            "timestamp": "24.04.19 23:48:00"
+            timestamp: timeStamp
         }
-
-        data.external_id = extId
-        data.receipt.company.inn = inn
-        data.receipt.company.email = email
-        if (snType) {
-            data.receipt.company.sno = snType
-        }
-        else {
-            data.receipt.company.sno = "usn_income"
-        }
-        data.receipt.items[0].name = name
-        data.receipt.items[0].price = sum
-        data.receipt.items[0].sum = sum
-        data.receipt.items[0].quantity = 1
-        data.receipt.payments[0].type = payType
-        data.receipt.payments[0].sum = sum
-        data.receipt.total = sum
 
         // Обработка налогов, но пока неоткуда взять данные
 
 
-        return JSON.stringify(data)
+        return JSON.stringify(checkData)
 
 
     },
-    getFiscalString: function (payload) {
+    getFiscalString: function (payload, sno) {
         let t_arr = payload.receipt_datetime.split(" ")
         let t_date = t_arr[0].split(".")
         t_date = t_date.reverse()
@@ -153,7 +148,32 @@ module.exports = {
         let fn = payload.fn_number
         let i = payload.fiscal_document_number
         let fp = payload.fiscal_document_attribute
-        let n = 1 //Тип системы налогооблажения пока неоткуда взять
+        let n = 1
+        switch (sno) {
+            case "usn_income":
+                n = 1
+                break
+            case "usn_income_outcome":
+                n = 2
+                break
+            case "envd":
+                n = 3
+                break
+            case "esn":
+                n = 4
+                break
+            case "patent":
+                n = 5
+                break
+            case "osn":
+                n = 0
+                break
+            default:
+                n = 1
+                break
+        }
+
+
 
         return "t=" + t + "&s=" + s + "&fn=" + fn + "&i=" + i + "&fp=" + fp + "&n=" + n
 

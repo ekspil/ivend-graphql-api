@@ -134,6 +134,7 @@ class SaleService {
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
         }
+
         //Фэйковые данные
         const receiptDateUtcDate = new Date()
         let mappedReceiptDate = ""
@@ -178,8 +179,10 @@ class SaleService {
                         type = 1
                         break
                 }
-
-                let inn = legalInfo.inn
+                const server = kktOk.server
+                const inn = legalInfo.inn
+                const sno = legalInfo.sno
+                const place = machine.place || "Торговый автомат"
                 let productName = "Товар " + buttonId
                 if(item.name){
                     productName = item.name
@@ -190,37 +193,27 @@ class SaleService {
                 let timeStamp = getTimeStamp()
                 let extTime = timeStamp.replace(/[.: ]/g, "")
                 let extId = "IVEND-" + controllerUid + "-" + extTime
-                let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email)
+                let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email, sno, place)
 
-                //Запросы
+                try{
+                    let token = await getToken(process.env.UMKA_LOGIN, process.env.UMKA_PASS, server)
+                    if (!token) {
+                        throw new Error("token is not recieved")
+                    }
 
-                let token = await getToken(process.env.UMKA_LOGIN || "9147073304", process.env.UMKA_PASS || "Kassir")
+                    let uuid = await sendCheck(fiscalData, token, server)
 
-                if (!token) {
-                    throw new Error("token is not recieved")
+                    let {payload} = await getStatus(token, uuid, server)
+
+                    let kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
+                    kkt.kktLastBill = payload.receipt_datetime
+                    await kkt.save()
+                    createdSale.sqr = getFiscalString(payload, sno)
+                }catch(err){
+                    logger.info(err.response.data)
                 }
-
-                let uuid = await sendCheck(fiscalData, token)
-
-                if (!uuid) {
-                    throw new Error("uuid is not recieved")
-                }
-
-                let {payload} = await getStatus(token, uuid)
-
-                if (!payload) {
-                    throw new Error("payload is not recieved")
-                }
-
-                let kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
-
-                kkt.kktLastBill = payload.receipt_datetime
-                await kkt.save()
-                createdSale.sqr = getFiscalString(payload)
             }
         }
-
-
         return createdSale
     }
 

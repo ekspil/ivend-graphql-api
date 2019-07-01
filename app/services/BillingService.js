@@ -61,7 +61,7 @@ class BillingService {
             }
         })
 
-        const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY")
+        const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY", user.id)
 
         return controllers.reduce((acc) => {
             return acc + Number(telemetryPrice)

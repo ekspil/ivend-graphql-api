@@ -27,6 +27,11 @@ const LegalInfo = {
         allowNull: false,
         field: "inn"
     },
+    sno: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false,
+        field: "sno"
+    },
     ogrn: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false,

@@ -41,6 +41,15 @@ const typeDefs = gql`
         UNAPPROVED
         APPROVED
     }
+    
+    enum SNO {
+        osn
+        usn_income
+        usn_income_outcome
+        envd
+        esn
+        patent
+    }
 
     input Period {
         from: Timestamp!
@@ -161,6 +170,7 @@ const typeDefs = gql`
         kktBillsCount: Int
         kktOFDRegKey: String        
         kktLastBill: String        
+        server: String        
 }
 
     type User {
@@ -218,6 +228,7 @@ const typeDefs = gql`
         kktActivationDate:  String
         kktBillsCount: Int
         kktOFDRegKey:  String
+        server:  String
     }
 
     input ControllerStateInput {
@@ -351,6 +362,7 @@ const typeDefs = gql`
         contactPerson: String!
         contactPhone: String!
         contactEmail: String!
+        sno: SNO!
     }
 
     input LegalInfoInput {
@@ -366,6 +378,7 @@ const typeDefs = gql`
         contactPerson: String!
         contactPhone: String!
         contactEmail: String!
+        sno: SNO!
     }
 
     enum BillingType {

@@ -1,6 +1,6 @@
 class LegalInfoDTO {
 
-    constructor({companyName, city, actualAddress, inn, ogrn, legalAddress, director, directorPhone, directorEmail, contactPerson, contactPhone, contactEmail}) {
+    constructor({companyName, city, actualAddress, inn, ogrn, legalAddress, director, directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno}) {
         this.companyName = companyName
         this.city = city
         this.actualAddress = actualAddress
@@ -13,6 +13,7 @@ class LegalInfoDTO {
         this.contactPerson = contactPerson
         this.contactPhone = contactPhone
         this.contactEmail = contactEmail
+        this.sno = sno
     }
 }
 

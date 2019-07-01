@@ -109,8 +109,8 @@ const sendChangePasswordEmail = async (email, token) => {
     }
 }
 
-const getServiceDailyPrice = async (service) => {
-    const response = await fetch(`${process.env.BILLING_URL}/api/v1/service/${service}/price/daily`, {
+const getServiceDailyPrice = async (service, userId) => {
+    const response = await fetch(`${process.env.BILLING_URL}/api/v1/service/${service}/price/daily/${userId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
