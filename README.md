@@ -9,3 +9,4 @@ git tag 1.0.0
 git push origin 1.0.0
 ```
 * Изменяется версия продакшена через модификацию Kubernetes Deployment (production-kube-config.yml) соответственно
+* Создаётся pull-request из `develop` в `master`
