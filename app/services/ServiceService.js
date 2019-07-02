@@ -1,4 +1,4 @@
- const NotAuthorized = require("../errors/NotAuthorized")
+const NotAuthorized = require("../errors/NotAuthorized")
 const Permission = require("../enum/Permission")
 
 const Service = require("../models/Service")

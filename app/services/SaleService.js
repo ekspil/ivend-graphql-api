@@ -84,7 +84,6 @@ class SaleService {
         }
 
 
-
         const createdSale = await this.Sale.sequelize.transaction(async (transaction) => {
             const buttons = await itemMatrix.getButtons()
 
@@ -131,8 +130,7 @@ class SaleService {
         createdSale.item = item
 
 
-
-        const getTwoDigitDateFormat = (monthOrDate) => {
+1        const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
         }
 
