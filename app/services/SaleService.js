@@ -255,6 +255,7 @@ class SaleService {
                     if (controller.remotePrinting) {
                         try {
                             await microservices.remotePrinting.sendPrintJob(replacements)
+                            logger.info("PrintJob sent")
                         } catch (e) {
                             logger.error("Failed to send remote print job")
                         }
