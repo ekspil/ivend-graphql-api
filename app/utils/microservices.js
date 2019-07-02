@@ -2,6 +2,7 @@ const fetch = require("node-fetch")
 const SmsNotSent = require("../errors/SmsNotSent")
 const EmailNotSent = require("../errors/EmailNotSent")
 const DepositRequestFailed = require("../errors/DepositRequestFailed")
+const PrintJobRequestFailed = require("../errors/PrintJobRequestFailed")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const MicroserviceUnknownError = require("../errors/MicroserviceUnknownError")
 
@@ -165,8 +166,33 @@ const createPaymentRequest = async (amount, user) => {
 
 }
 
+const sendPrintJob = async (replacements) => {
+    const body = JSON.stringify({
+        replacements
+    })
+
+    const response = await fetch(`${process.env.REMOTE_PRINTING_URL}/api/v1/queue`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200:
+            return
+        default:
+            throw new PrintJobRequestFailed()
+    }
+
+}
+
 
 module.exports = {
+    remotePrinting: {
+        sendPrintJob
+    },
     notification: {
         sendRegistrationSms,
         sendRegistrationEmail,
