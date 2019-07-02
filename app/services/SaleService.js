@@ -130,7 +130,7 @@ class SaleService {
         createdSale.item = item
 
 
-1        const getTwoDigitDateFormat = (monthOrDate) => {
+        const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
         }
 
