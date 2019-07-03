@@ -219,7 +219,8 @@ class SaleService {
                         shift_number,
                         ecr_registration_number,
                         fiscal_document_attribute,
-                        fiscal_document_number
+                        fiscal_document_number,
+                        fiscal_receipt_number
                     } = payload
 
                     const kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
@@ -233,6 +234,7 @@ class SaleService {
                     const replacements = {
                         companyName,
                         inn,
+                        fiscalReceiptNumber: fiscal_receipt_number,
                         receiptNumberInShift: shift_number,
                         receiptDate: receipt_datetime,
                         address: place,

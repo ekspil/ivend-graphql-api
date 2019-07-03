@@ -12,7 +12,7 @@ spec:
     rollingUpdate:
       maxUnavailable: 50%
       maxSurge: 50%
-  selector:
+  selector:qwe
     matchLabels:
       app: graphql
   template:
