@@ -70,3 +70,7 @@
 * Fixed umka send service
 * Fixed fiscal string (added sno)
 * Fixed billing query string (userId added)
+
+# 1.1.6 - Release
+
+* Added RemotePrinting implementation

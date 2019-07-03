@@ -9,6 +9,7 @@ const Sale = require("../models/Sale")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
+const microservices = require("../utils/microservices")
 const logger = require("../utils/logger")
 const {getToken, getStatus, sendCheck, getFiscalString, getTimeStamp, prepareData} = require("./FiscalService")
 
@@ -83,7 +84,6 @@ class SaleService {
         }
 
 
-
         const createdSale = await this.Sale.sequelize.transaction(async (transaction) => {
             const buttons = await itemMatrix.getButtons()
 
@@ -130,7 +130,6 @@ class SaleService {
         createdSale.item = item
 
 
-
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
         }
@@ -148,29 +147,33 @@ class SaleService {
         const sqr = `t=${mappedReceiptDate}&s=0.00&fn=0000000000001&i=00001&fp=0000000001&n=1`
         //В нефискальном режиме вернем фэйковую строку
         createdSale.sqr = sqr
-        if (price === 0){
+        if (price === 0) {
             //Если цена 0 - не делаем фискальный чек
             return createdSale
         }
 
 
-        if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"){
+        if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED") {
 
             const controllerUser = await controller.getUser()
+
             if (!controllerUser) {
                 throw new UserNotFound()
             }
+
             controllerUser.checkPermission = () => true
+
             const legalInfo = await controllerUser.getLegalInfo()
+
             if (!legalInfo) {
                 throw new Error("LegalInfo is not set")
             }
 
+
             let kkts = await this.kktService.getUserKkts(controllerUser)
             let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
 
-            if(kktOk) {
-
+            if (kktOk) {
                 switch (type) {
                     case "CASH":
                         type = 0
@@ -179,14 +182,19 @@ class SaleService {
                         type = 1
                         break
                 }
-                const server = kktOk.server
-                const inn = legalInfo.inn
-                const sno = legalInfo.sno
+
+                const {inn, sno, companyName} = legalInfo
+
+                const {server} = kktOk
+
                 const place = machine.place || "Торговый автомат"
+
                 let productName = "Товар " + buttonId
-                if(item.name){
+
+                if (item.name) {
                     productName = item.name
                 }
+
                 let payType = type
                 let email = legalInfo.contactEmail
                 let productPrice = price.toFixed(2)
@@ -195,21 +203,64 @@ class SaleService {
                 let extId = "IVEND-" + controllerUid + "-" + extTime
                 let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email, sno, place)
 
-                try{
-                    let token = await getToken(process.env.UMKA_LOGIN, process.env.UMKA_PASS, server)
+                try {
+                    const token = await getToken(process.env.UMKA_LOGIN, process.env.UMKA_PASS, server)
+
                     if (!token) {
                         throw new Error("token is not recieved")
                     }
 
-                    let uuid = await sendCheck(fiscalData, token, server)
+                    const uuid = await sendCheck(fiscalData, token, server)
+                    const {payload} = await getStatus(token, uuid, server)
 
-                    let {payload} = await getStatus(token, uuid, server)
+                    const {
+                        fns_site,
+                        receipt_datetime,
+                        shift_number,
+                        ecr_registration_number,
+                        fiscal_document_attribute,
+                        fiscal_document_number,
+                        fiscal_receipt_number
+                    } = payload
 
-                    let kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
-                    kkt.kktLastBill = payload.receipt_datetime
+                    const kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
+
+                    kkt.kktLastBill = receipt_datetime
+
                     await kkt.save()
+
                     createdSale.sqr = getFiscalString(payload, sno)
-                }catch(err){
+
+                    const replacements = {
+                        companyName,
+                        inn,
+                        fiscalReceiptNumber: fiscal_receipt_number,
+                        receiptNumberInShift: shift_number,
+                        receiptDate: receipt_datetime,
+                        address: place,
+                        productName,
+                        productPrice,
+                        incomeAmountCash: type === 0 ? productPrice : 0,
+                        incomeAmountCashless: type === 1 ? productPrice : 0,
+                        email,
+                        fnsSite: fns_site,
+                        sno,
+                        regKKT: ecr_registration_number,
+                        hwIdKKT: kktOk.kktFNNumber,
+                        FD: fiscal_document_number,
+                        FPD: fiscal_document_attribute,
+                        sqr
+                    }
+
+                    if (controller.remotePrinting) {
+                        try {
+                            await microservices.remotePrinting.sendPrintJob(replacements)
+                            logger.info("PrintJob sent")
+                        } catch (e) {
+                            logger.error("Failed to send remote print job")
+                        }
+                    }
+                } catch (err) {
                     logger.info(err.response.data)
                 }
             }
