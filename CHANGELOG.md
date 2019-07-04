@@ -74,3 +74,7 @@
 # 1.1.6 - Release
 
 * Added RemotePrinting implementation
+
+# 1.1.7 - Release
+
+* Fix passing sqr
