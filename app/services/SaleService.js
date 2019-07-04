@@ -249,7 +249,7 @@ class SaleService {
                         hwIdKKT: kktOk.kktFNNumber,
                         FD: fiscal_document_number,
                         FPD: fiscal_document_attribute,
-                        sqr
+                        sqr: createdSale.sqr
                     }
 
                     if (controller.remotePrinting) {
