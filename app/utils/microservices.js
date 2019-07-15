@@ -166,9 +166,10 @@ const createPaymentRequest = async (amount, user) => {
 
 }
 
-const sendPrintJob = async (replacements) => {
+const sendPrintJob = async (remotePrinterId, replacements) => {
     const body = JSON.stringify({
-        replacements
+        replacements,
+        remotePrinterId
     })
 
     const response = await fetch(`${process.env.REMOTE_PRINTING_URL}/api/v1/queue`, {
