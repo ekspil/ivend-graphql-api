@@ -86,7 +86,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -126,6 +126,10 @@ class ControllerService {
 
         if (fiscalizationMode) {
             controller.fiscalizationMode = fiscalizationMode
+        }
+
+        if (remotePrinterId) {
+            controller.remotePrinterId = remotePrinterId
         }
 
         await controller.save()

@@ -78,3 +78,7 @@
 # 1.1.7 - Release
 
 * Fix passing sqr
+
+# 1.1.8 - Release
+
+* Change remotePrinting to remotePrinterId
