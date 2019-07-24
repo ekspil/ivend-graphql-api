@@ -424,7 +424,7 @@ const typeDefs = gql`
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
-        kkt: Kkt
+        kkt: String
     }
 
     type MachineLog {
@@ -441,7 +441,7 @@ const typeDefs = gql`
         typeId: Int!
         equipmentId: Int!
         controllerId: Int
-        kktId: String!
+        kktId: String
     }
 
     input EditMachineInput {
@@ -452,7 +452,7 @@ const typeDefs = gql`
         groupId: Int
         typeId: Int
         controllerId: Int
-        kktId: String!
+        kktId: String
     }
 
     input CreateMachineGroupInput {

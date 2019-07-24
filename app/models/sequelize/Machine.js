@@ -15,6 +15,10 @@ const Machine = {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false
     },
+    kktId: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true
+    },
     place: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false

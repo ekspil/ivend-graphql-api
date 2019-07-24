@@ -42,13 +42,14 @@ class MachineService {
         }
 
         return this.Machine.sequelize.transaction(async (transaction) => {
-            const {number, name, place, groupId, typeId, equipmentId, controllerId} = input
+            const {number, name, place, groupId, typeId, equipmentId, controllerId, kktId} = input
 
             let machine = new Machine()
 
             machine.number = number
             machine.name = name
             machine.place = place
+            machine.kktId = kktId
             machine.controller_id = controllerId
             machine.user_id = user.id
 
@@ -89,7 +90,7 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        const {machineId, controllerId, number, name, place, groupId, typeId} = input
+        const {machineId, controllerId, number, name, place, groupId, typeId, kktId} = input
 
         const machine = await this.getMachineById(machineId, user)
 
@@ -138,6 +139,10 @@ class MachineService {
         if (place) {
             machine.place = place
         }
+        if (kktId) {
+            machine.kktId = kktId
+        }
+
 
         return await machine.save()
     }
