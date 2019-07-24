@@ -5,8 +5,9 @@ const EquipmentDTO = require("../../models/dto/EquipmentDTO")
 const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const ControllerDTO = require("../../models/dto/ControllerDTO")
+const KktDTO = require("../../models/dto/KktDTO")
 
-function MachineResolver({machineService, saleService}) {
+function MachineResolver({machineService, saleService, kktService}) {
 
     const group = async (obj, args, context) => {
         const {user} = context
@@ -114,6 +115,20 @@ function MachineResolver({machineService, saleService}) {
 
         return new ControllerDTO(controller)
     }
+    const kkt = async (obj, args, context) => {
+        const {user} = context
+
+        const machine = await machineService.getMachineById(obj.id, user)
+
+        const kkts = await kktService.getUsersKkt()
+        const [kkt] = kkts.filter(kk => kk.id === machine.kktId)
+
+        if (!kkt) {
+            return null
+        }
+
+        return new KktDTO(kkt)
+    }
 
     return {
         controller,
@@ -124,7 +139,8 @@ function MachineResolver({machineService, saleService}) {
         equipment,
         type,
         logs,
-        itemMatrix
+        itemMatrix,
+        kkt
     }
 
 }

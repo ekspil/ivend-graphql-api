@@ -10,7 +10,7 @@ function DefaultResolvers({controllerService, saleService, notificationSettingsS
     const controllerResolver = new ControllerResolver({controllerService, saleService, serviceService, machineService})
     const userResolver = new UserResolver({notificationSettingsService, itemService, saleService, kktService})
     const billingResolver = new BillingResolver({billingService})
-    const machineResolver = new MachineResolver({machineService, saleService})
+    const machineResolver = new MachineResolver({machineService, saleService, kktService})
     const itemMatrixResolver = new ItemMatrixResolver({itemMatrixService})
     const itemResolver = new ItemResolver({saleService})
     const depositResolver = new DepositResolver({billingService})

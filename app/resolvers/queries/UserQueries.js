@@ -13,8 +13,19 @@ function UserQueries({userService}) {
         return new UserDTO(user)
     }
 
+    const getAllUsers = async (root, args, context) => {
+        const users = await userService.getAllUsers(context.user)
+
+        if (!users) {
+            throw new UserNotFound()
+        }
+
+        return users.map(user => (new UserDTO(user)))
+    }
+
     return {
-        getProfile
+        getProfile,
+        getAllUsers
     }
 
 }
