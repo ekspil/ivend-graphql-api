@@ -22,6 +22,7 @@ const typeDefs = gql`
         registrationTime: Timestamp
         user: User!
         connected: Boolean!
+        remotePrinterId: String
     }
 
     enum ReadStatMode {
@@ -108,6 +109,7 @@ const typeDefs = gql`
         bankTerminalMode: BankTerminalMode
         fiscalizationMode: FiscalizationMode
         revisionId: Int
+        remotePrinterId: String
     }
 
     input CreateItemMatrixInput {

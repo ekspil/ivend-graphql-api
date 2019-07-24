@@ -54,10 +54,10 @@ const Controller = {
         type: Sequelize.DataTypes.BOOLEAN,
         allowNull: false
     },
-    remotePrinting: {
-        type: Sequelize.DataTypes.BOOLEAN,
+    remotePrinterId: {
+        type: Sequelize.DataTypes.TEXT,
         allowNull: true,
-        field: "remote_printing"
+        field: "remote_printer_id"
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
