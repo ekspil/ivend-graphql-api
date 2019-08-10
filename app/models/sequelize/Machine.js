@@ -16,7 +16,7 @@ const Machine = {
         allowNull: false
     },
     kktId: {
-        type: Sequelize.DataTypes.TEXT,
+        type: Sequelize.DataTypes.INTEGER,
         allowNull: true
     },
     place: {
