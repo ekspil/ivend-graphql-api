@@ -172,7 +172,11 @@ class SaleService {
 
             let kkts = await this.kktService.getUserKkts(controllerUser)
             let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
-
+            let machineKkt = "any"
+            if (machine.kktId){
+                [kktOk] = kkts.filter(kkt => kkt.id === machine.kktId)
+                machineKkt = kktOk.kktRegNumber
+            }
             if (kktOk) {
                 switch (type) {
                     case "CASH":
@@ -210,7 +214,7 @@ class SaleService {
                         throw new Error("token is not recieved")
                     }
 
-                    const uuid = await sendCheck(fiscalData, token, server)
+                    const uuid = await sendCheck(fiscalData, token, server, machineKkt)
                     const {payload} = await getStatus(token, uuid, server)
 
                     const {
