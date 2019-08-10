@@ -7,7 +7,7 @@ const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const ControllerDTO = require("../../models/dto/ControllerDTO")
 const KktDTO = require("../../models/dto/KktDTO")
 
-function MachineResolver({machineService, saleService}) {
+function MachineResolver({machineService, saleService, kktService}) {
 
     const group = async (obj, args, context) => {
         const {user} = context
@@ -125,7 +125,7 @@ function MachineResolver({machineService, saleService}) {
             return null
         }
 
-        const kkt = await machine.getKktById(machine.kktId, user)
+        const kkt = await kktService.getKktById(machine.kktId, user)
 
         if (!kkt) {
             return null

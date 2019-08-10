@@ -139,9 +139,8 @@ class MachineService {
         if (place) {
             machine.place = place
         }
-        if (kktId) {
-            machine.kktId = kktId
-        }
+        machine.kktId = kktId
+
 
 
         return await machine.save()

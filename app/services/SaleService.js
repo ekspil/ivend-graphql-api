@@ -174,7 +174,7 @@ class SaleService {
             let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
             let machineKkt = "any"
             if (machine.kktId){
-                [kktOk] = kkts.filter(kkt => kkt.id === Number(machine.kktId))
+                [kktOk] = kkts.filter(kkt => kkt.id === machine.kktId)
                 machineKkt = kktOk.kktRegNumber
             }
             if (kktOk) {
