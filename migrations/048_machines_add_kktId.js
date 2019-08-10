@@ -3,7 +3,7 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.addColumn("machines", "kktId", {
-            type: Sequelize.TEXT,
+            type: Sequelize.BIGINT,
             allowNull: true,
             unique: false
         })
