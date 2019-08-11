@@ -121,7 +121,7 @@ class BillingService {
             throw new NotAuthorized()
         }
 
-        await microservices.changeUserBalance(id, sum)
+        await microservices.billing.changeUserBalance(id, sum)
 
         const where = {
             user_id: id

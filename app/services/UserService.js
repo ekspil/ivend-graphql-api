@@ -272,6 +272,21 @@ class UserService {
             }
         })
     }
+
+    async getLegalInfoByUserId(id, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
+            throw new NotAuthorized()
+        }
+
+        const selectedUser = await this.User.findOne({
+            where: {
+                id
+            }
+        })
+
+        return selectedUser.getLegalInfo()
+    }
+
     async getAllUsers(user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()

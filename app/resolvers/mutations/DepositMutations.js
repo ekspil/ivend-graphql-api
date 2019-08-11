@@ -17,7 +17,7 @@ function DepositMutations({billingService}) {
     }
 
     const changeUserBalance = async (root, args, context) => {
-        const {id, sum} = args
+        const {id, sum} = args.input
         const {user} = context
 
         const balance = await billingService.changeUserBalance(id, sum, user)

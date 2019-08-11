@@ -1,4 +1,5 @@
 const UserDTO = require("../../models/dto/UserDTO")
+const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const UserNotFound = require("../../errors/UserNotFound")
 
 function UserQueries({userService}) {
@@ -23,9 +24,22 @@ function UserQueries({userService}) {
         return users.map(user => (new UserDTO(user)))
     }
 
+    const getLegalInfoByUserId = async (root, args, context) => {
+        const {user} = context
+        const {id} = args
+        const legalInfo = await userService.getLegalInfoByUserId(id, user)
+
+        if (!legalInfo) {
+            return null
+        }
+
+        return new LegalInfoDTO(legalInfo)
+    }
+
     return {
         getProfile,
-        getAllUsers
+        getAllUsers,
+        getLegalInfoByUserId
     }
 
 }
