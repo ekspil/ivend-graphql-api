@@ -115,6 +115,20 @@ function MachineResolver({machineService, saleService, kktService}) {
 
         return new ControllerDTO(controller)
     }
+    const kkt = async (obj, args, context) => {
+        const {user} = context
+
+        const machine = await machineService.getMachineById(obj.id, user)
+
+        const kkts = await kktService.getUsersKkt()
+        const [kkt] = kkts.filter(kk => kk.id === machine.kktId)
+
+        if (!kkt) {
+            return null
+        }
+
+        return new KktDTO(kkt)
+    }
 
     const kkt = async (obj, args, context) => {
         const {user} = context
