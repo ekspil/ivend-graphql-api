@@ -177,6 +177,7 @@ const typeDefs = gql`
 
     type User {
         email: String!
+        id: Int!
         phone: String!
         role: String!
         notificationSettings: [NotificationSetting!]!

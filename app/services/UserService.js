@@ -31,6 +31,7 @@ class UserService {
         this.getProfile = this.getProfile.bind(this)
         this.getAllUsers = this.getAllUsers.bind(this)
         this.requestRegistrationSms = this.requestRegistrationSms.bind(this)
+        this.getLegalInfoByUserId = this.getLegalInfoByUserId.bind(this)
     }
 
 
@@ -284,6 +285,27 @@ class UserService {
             }
         })
 
+        if(!selectedUser){
+            return null
+        }
+        return selectedUser.getLegalInfo()
+    }
+
+
+    async getLegalInfoByUserPhone(phone, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
+            throw new NotAuthorized()
+        }
+
+        const selectedUser = await this.User.findOne({
+            where: {
+                phone
+            }
+        })
+
+        if(!selectedUser){
+            return null
+        }
         return selectedUser.getLegalInfo()
     }
 
