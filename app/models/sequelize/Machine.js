@@ -7,11 +7,6 @@ const Machine = {
         primaryKey: true,
         autoIncrement: true
     },
-    kkt: {
-        type: Sequelize.DataTypes.INTEGER,
-        allowNull: true,
-        unique: false
-    },
     number: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false
