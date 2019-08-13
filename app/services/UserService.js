@@ -275,20 +275,25 @@ class UserService {
     }
 
     async getLegalInfoByUserId(id, user) {
-        if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
+        if (user.checkPermission(Permission.GET_ALL_USERS) || user.id === id ) {
+
+
+            const selectedUser = await this.User.findOne({
+                where: {
+                    id
+                }
+            })
+
+            if(!selectedUser){
+                return null
+            }
+            return selectedUser.getLegalInfo()
+
+        }
+        else {
             throw new NotAuthorized()
         }
 
-        const selectedUser = await this.User.findOne({
-            where: {
-                id
-            }
-        })
-
-        if(!selectedUser){
-            return null
-        }
-        return selectedUser.getLegalInfo()
     }
 
 
