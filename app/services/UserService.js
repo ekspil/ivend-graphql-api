@@ -275,7 +275,7 @@ class UserService {
     }
 
     async getLegalInfoByUserId(id, user) {
-        if (!user || user.checkPermission(Permission.GET_LEGAL_INFO)) {
+        if (!user || !user.checkPermission(Permission.GET_LEGAL_INFO)) {
             throw new NotAuthorized()
         }
 
