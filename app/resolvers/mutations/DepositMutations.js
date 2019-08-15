@@ -16,9 +16,19 @@ function DepositMutations({billingService}) {
         return new DepositDTO({id, amount: deposit.amount, status, redirectUrl})
     }
 
+    const changeUserBalance = async (root, args, context) => {
+        const {id, sum} = args.input
+        const {user} = context
+
+        const balance = await billingService.changeUserBalance(id, sum, user)
+
+        return balance
+    }
+
 
     return {
-        requestDeposit
+        requestDeposit,
+        changeUserBalance
     }
 
 }

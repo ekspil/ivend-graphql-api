@@ -49,9 +49,12 @@ class MachineService {
             machine.number = number
             machine.name = name
             machine.place = place
-            machine.kktId = kktId
             machine.controller_id = controllerId
             machine.user_id = user.id
+            if(kktId){
+                machine.kktId = kktId
+            }
+
 
             const machineGroup = await this.getMachineGroupById(groupId, user)
 

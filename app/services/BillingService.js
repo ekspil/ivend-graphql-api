@@ -22,6 +22,7 @@ class BillingService {
         this.getDepositById = this.getDepositById.bind(this)
         this.getBalance = this.getBalance.bind(this)
         this.requestDeposit = this.requestDeposit.bind(this)
+        this.changeUserBalance = this.changeUserBalance.bind(this)
     }
 
     async getDeposits(period, user) {
@@ -114,6 +115,26 @@ class BillingService {
         }
 
         return await this.Deposit.findOne({where})
+    }
+    async changeUserBalance(id, sum, user) {
+        if (!user || !user.checkPermission(Permission.CHANGE_USER_BALANCE)) {
+            throw new NotAuthorized()
+        }
+
+        await microservices.billing.changeUserBalance(id, sum)
+
+        const where = {
+            user_id: id
+        }
+
+        const balance = await this.Transaction.sum("amount", {where})
+
+        if (!isFinite(balance)) {
+            return 0
+        }
+
+        return balance
+
     }
 
     async requestDeposit(amount, user) {

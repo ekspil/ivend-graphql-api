@@ -115,7 +115,6 @@ function MachineResolver({machineService, saleService, kktService}) {
 
         return new ControllerDTO(controller)
     }
-
     const kkt = async (obj, args, context) => {
         const {user} = context
 

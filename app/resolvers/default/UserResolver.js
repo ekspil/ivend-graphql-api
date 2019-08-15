@@ -6,7 +6,7 @@ const BillingDTO = require("../../models/dto/BillingDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const KktDTO = require("../../models/dto/KktDTO")
 
-function UserResolver({notificationSettingsService, itemService, saleService, kktService}) {
+function UserResolver({notificationSettingsService, itemService, saleService, kktService, userService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
@@ -30,13 +30,13 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
     const legalInfo = async (obj, args, context) => {
         const {user} = context
 
-        const legalInfo = await user.getLegalInfo()
-
+        const legalInfo = await userService.getLegalInfoByUserId(obj.id, user)
         if (!legalInfo) {
             return null
         }
-
         return new LegalInfoDTO(legalInfo)
+
+
     }
 
     const items = async (obj, args, context) => {
