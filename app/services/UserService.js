@@ -275,44 +275,28 @@ class UserService {
     }
 
     async getLegalInfoByUserId(id, user) {
-        if (user.checkPermission(Permission.GET_ALL_USERS) || user.id === id ) {
-
-
-            const selectedUser = await this.User.findOne({
-                where: {
-                    id
-                }
-            })
-
-            if(!selectedUser){
-                return null
-            }
-            return selectedUser.getLegalInfo()
-
-        }
-        else {
+        if (!user || user.checkPermission(Permission.GET_LEGAL_INFO)) {
             throw new NotAuthorized()
         }
 
-    }
-
-
-    async getLegalInfoByUserPhone(phone, user) {
-        if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
+        if(id !== user.id && !user.checkPermission(Permission.GET_ALL_USERS)){
             throw new NotAuthorized()
         }
 
         const selectedUser = await this.User.findOne({
             where: {
-                phone
-            }
-        })
+                id
+            }})
 
         if(!selectedUser){
             return null
         }
         return selectedUser.getLegalInfo()
+
+
+
     }
+
 
     async getAllUsers(user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {

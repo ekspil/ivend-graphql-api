@@ -30,11 +30,11 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
     const legalInfo = async (obj, args, context) => {
         const {user} = context
 
-        const legalInfoObj = await userService.getLegalInfoByUserId(obj.id, user)
-        if (!legalInfoObj) {
+        const legalInfo = await userService.getLegalInfoByUserId(obj.id, user)
+        if (!legalInfo) {
             return null
         }
-        return new LegalInfoDTO(legalInfoObj)
+        return new LegalInfoDTO(legalInfo)
 
 
     }
