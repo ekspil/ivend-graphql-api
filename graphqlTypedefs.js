@@ -177,6 +177,7 @@ const typeDefs = gql`
 
     type User {
         email: String!
+        id: Int!
         phone: String!
         role: String!
         notificationSettings: [NotificationSetting!]!
@@ -424,6 +425,7 @@ const typeDefs = gql`
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
+        kkt: Kkt
     }
 
     type MachineLog {
@@ -440,6 +442,7 @@ const typeDefs = gql`
         typeId: Int!
         equipmentId: Int!
         controllerId: Int
+        kktId: Int
     }
 
     input EditMachineInput {
@@ -450,6 +453,7 @@ const typeDefs = gql`
         groupId: Int
         typeId: Int
         controllerId: Int
+        kktId: Int
     }
 
     input CreateMachineGroupInput {
@@ -483,6 +487,8 @@ const typeDefs = gql`
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts: [Kkt]
+        getAllUsers: [User]
+        getLegalInfoByUserId(id: Int!): LegalInfo
     }
 
     input AuthControllerInput {
@@ -492,6 +498,10 @@ const typeDefs = gql`
 
     input Registration1StepInput {
         phone: String!
+    }
+    input ChangeUserBalanceInput {
+        id: Int!
+        sum: Float!
     }
 
     enum UserActionType {
@@ -538,6 +548,7 @@ const typeDefs = gql`
         editKkt(input: EditKktInput!): Kkt
         kktPlusBill(fn: String!): Kkt
         deleteKkt(id: Int!): Boolean
+        changeUserBalance(input: ChangeUserBalanceInput!): Float
     }
 `
 

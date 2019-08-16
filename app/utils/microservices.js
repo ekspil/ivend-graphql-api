@@ -131,6 +131,27 @@ const getServiceDailyPrice = async (service, userId) => {
     }
 }
 
+const changeUserBalance = async (userId, sum) => {
+    const response = await fetch(`${process.env.BILLING_URL}/api/v1/service/balance/change/${userId}/${sum}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+
+    switch (response.status) {
+        case 200:
+            const json = await response.json()
+            const {balance} = json
+
+            return balance
+        case 404:
+            throw new ServiceNotFound()
+        default:
+            throw new MicroserviceUnknownError(response.status)
+    }
+}
+
 /**
  * Create payment request
  *
@@ -201,6 +222,7 @@ module.exports = {
     },
     billing: {
         getServiceDailyPrice,
-        createPaymentRequest
+        createPaymentRequest,
+        changeUserBalance
     }
 }

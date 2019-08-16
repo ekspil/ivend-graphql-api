@@ -5,7 +5,6 @@ function BillingResolver({billingService}) {
 
     const balance = async (obj, args, context) => {
         const {user} = context
-
         return await billingService.getBalance(user)
     }
 

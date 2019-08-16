@@ -37,7 +37,8 @@ const Resolvers = function (injects) {
         itemService,
         machineService,
         itemMatrixService,
-        kktService
+        kktService,
+        userService
     })
 
     const queries = new Queries({

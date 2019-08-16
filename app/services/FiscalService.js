@@ -20,12 +20,12 @@ module.exports = {
             })
 
     },
-    sendCheck: async function (check, token, server) {
+    sendCheck: async function (check, token, server, machineKkt) {
         const serverUrl = server || process.env.FISCAL_DEFAULT_SERVER
 
         let axConf = {
             method: "post",
-            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/any/sell/`,
+            baseURL: `https://${serverUrl}/kkm-trade/atolpossystem/v4/${machineKkt}/sell/`,
             data: check,
             headers: {
                 "token": token,

@@ -29,7 +29,9 @@ class UserService {
         this.editPassword = this.editPassword.bind(this)
         this.confirmUserAction = this.confirmUserAction.bind(this)
         this.getProfile = this.getProfile.bind(this)
+        this.getAllUsers = this.getAllUsers.bind(this)
         this.requestRegistrationSms = this.requestRegistrationSms.bind(this)
+        this.getLegalInfoByUserId = this.getLegalInfoByUserId.bind(this)
     }
 
 
@@ -268,6 +270,42 @@ class UserService {
         return await this.User.findOne({
             where: {
                 id: user.id
+            }
+        })
+    }
+
+    async getLegalInfoByUserId(id, user) {
+        if (!user || !user.checkPermission(Permission.GET_LEGAL_INFO)) {
+            throw new NotAuthorized()
+        }
+
+        if(id !== user.id && !user.checkPermission(Permission.GET_ALL_USERS)){
+            throw new NotAuthorized()
+        }
+
+        const selectedUser = await this.User.findOne({
+            where: {
+                id
+            }})
+
+        if(!selectedUser){
+            return null
+        }
+        return selectedUser.getLegalInfo()
+
+
+
+    }
+
+
+    async getAllUsers(user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.User.findAll({
+            where: {
+                role: "VENDOR"
             }
         })
     }
