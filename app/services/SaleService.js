@@ -173,6 +173,7 @@ class SaleService {
             let kkts = await this.kktService.getUserKkts(controllerUser)
             let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
             let machineKkt = "any"
+            logger.info(machine.kktId)
             if (machine.kktId){
                 [kktOk] = kkts.filter(kkt => kkt.id === machine.kktId)
                 machineKkt = kktOk.kktRegNumber
