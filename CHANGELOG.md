@@ -82,3 +82,12 @@
 # 1.1.8 - Release
 
 * Change remotePrinting to remotePrinterId
+
+# 1.1.9 - Release
+
+* Added changeUserBalance mutation
+* Added getLegalInfoByUserId query
+* Added getAllUsers query
+* Changed createMachine mutation (kktId added)
+* Changed editMachine mutation (kktId added)
+* Changed default user resolver (legalInfo)
