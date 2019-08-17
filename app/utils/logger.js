@@ -34,6 +34,7 @@ class Logger {
                     //ca: [fs.readFileSync("server-cert.pem")] // tcp-tls only; optional; only for the self-signed certificate
                 }
             })
+            this.info(`Graylog set up at host ${process.env.GRAYLOG_HOST}`)
         }
 
     }
