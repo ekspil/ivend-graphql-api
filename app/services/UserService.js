@@ -13,7 +13,7 @@ const User = require("../models/User")
 const bcryptjs = require("bcryptjs")
 const hashingUtils = require("../utils/hashingUtils")
 const validationUtils = require("../utils/validationUtils")
-const logger = require("../utils/logger")
+const logger = require("my-custom-logger")
 const microservices = require("../utils/microservices")
 
 class UserService {

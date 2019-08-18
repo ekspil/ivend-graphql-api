@@ -2,7 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ExcelGenerationFailed = require("../errors/ExcelGenerationFailed")
 const Permission = require("../enum/Permission")
 const fetch = require("node-fetch")
-const logger = require("../utils/logger")
+const logger = require("my-custom-logger")
 
 class ReportService {
 

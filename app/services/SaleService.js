@@ -10,7 +10,7 @@ const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
 const microservices = require("../utils/microservices")
-const logger = require("../utils/logger")
+const logger = require("my-custom-logger")
 const {getToken, getStatus, sendCheck, getFiscalString, getTimeStamp, prepareData} = require("./FiscalService")
 
 class SaleService {
