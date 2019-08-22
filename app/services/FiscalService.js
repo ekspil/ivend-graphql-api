@@ -86,7 +86,18 @@ module.exports = {
 
     },
     prepareData: function (inn, itemName, checkSum, extId, timeStamp, payType, eMail, sno, place) {
-        logger.debug("prepareData", inn, itemName, checkSum, extId, timeStamp, payType, eMail)
+        logger.debug(`prepareData ${JSON.stringify({
+            inn, 
+            itemName, 
+            checkSum, 
+            extId, 
+            timeStamp, 
+            payType, 
+            eMail, 
+            sno, 
+            place
+        })}`)
+
         let checkData = {
             external_id: extId,
             receipt: {
@@ -172,7 +183,6 @@ module.exports = {
                 n = 1
                 break
         }
-
 
 
         return "t=" + t + "&s=" + s + "&fn=" + fn + "&i=" + i + "&fp=" + fp + "&n=" + n
