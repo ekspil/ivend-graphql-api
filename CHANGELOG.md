@@ -91,3 +91,7 @@
 * Changed createMachine mutation (kktId added)
 * Changed editMachine mutation (kktId added)
 * Changed default user resolver (legalInfo)
+
+# 1.1.10 - Release
+
+* Added GET_LEGAL_INFO to role VENDOR_NO_LEGAL_INFO
