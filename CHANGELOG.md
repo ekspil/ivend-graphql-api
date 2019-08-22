@@ -94,4 +94,10 @@
 
 # 1.1.10 - Release
 
+* Added centralized logging (graylog)
 * Added GET_LEGAL_INFO to role VENDOR_NO_LEGAL_INFO
+
+
+# 1.1.11 - Release
+
+* fix prepareData logging
