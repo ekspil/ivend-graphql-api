@@ -2,7 +2,7 @@ const bcryptjs = require("bcryptjs")
 
 const RolePermissions = require("../enum/RolePermissions")
 const UnknownAuthenticationType = require("../errors/UnknownAuthenticationType")
-const logger = require("../utils/logger")
+const logger = require("my-custom-logger")
 
 const parseAuthorizationHeader = async (header) => {
     const splitted = header.split(" ")

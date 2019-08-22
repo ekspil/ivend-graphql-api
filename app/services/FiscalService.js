@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
 const axios = require("axios")
+const logger = require("my-custom-logger")
 
 module.exports = {
 
@@ -86,7 +86,7 @@ module.exports = {
 
     },
     prepareData: function (inn, itemName, checkSum, extId, timeStamp, payType, eMail, sno, place) {
-        console.log("prepareData", inn, itemName, checkSum, extId, timeStamp, payType, eMail)
+        logger.debug("prepareData", inn, itemName, checkSum, extId, timeStamp, payType, eMail)
         let checkData = {
             external_id: extId,
             receipt: {

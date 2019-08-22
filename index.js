@@ -1,7 +1,7 @@
 require("dotenv").config()
 const App = require("./app/App")
 const app = new App()
-const logger = require("./app/utils/logger")
+const logger = require("my-custom-logger")
 
 app
     .start()

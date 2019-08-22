@@ -8,7 +8,7 @@ const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
 const hashingUtils = require("../utils/hashingUtils")
-const logger = require("../utils/logger")
+const logger = require("my-custom-logger")
 const MachineLogType = require("../enum/MachineLogType")
 
 class ControllerService {

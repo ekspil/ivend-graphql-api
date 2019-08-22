@@ -57,7 +57,7 @@ const redis = new Redis({
 })
 
 
-const logger = require("./utils/logger")
+const logger = require("my-custom-logger")
 
 class App {
 
