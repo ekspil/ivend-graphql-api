@@ -101,3 +101,8 @@
 # 1.1.11 - Release
 
 * fix prepareData logging
+
+
+# 1.1.12 - Release
+
+* Bumped sequelize connection pool to (min 5, max 20)
