@@ -6,7 +6,7 @@ const ItemNotFound = require("../errors/ItemNotFound")
 const ItemMatrix = require("../models/ItemMatrix")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
-const logger = require("../utils/logger")
+const logger = require("my-custom-logger")
 
 class ItemMatrixService {
 

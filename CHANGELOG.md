@@ -82,3 +82,27 @@
 # 1.1.8 - Release
 
 * Change remotePrinting to remotePrinterId
+
+# 1.1.9 - Release
+
+* Added changeUserBalance mutation
+* Added getLegalInfoByUserId query
+* Added getAllUsers query
+* Changed createMachine mutation (kktId added)
+* Changed editMachine mutation (kktId added)
+* Changed default user resolver (legalInfo)
+
+# 1.1.10 - Release
+
+* Added centralized logging (graylog)
+* Added GET_LEGAL_INFO to role VENDOR_NO_LEGAL_INFO
+
+
+# 1.1.11 - Release
+
+* fix prepareData logging
+
+
+# 1.1.12 - Release
+
+* Bumped sequelize connection pool to (min 5, max 20)
