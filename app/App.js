@@ -73,8 +73,8 @@ class App {
                 ssl: true
             },
             pool: {
-                max: 5,
-                min: 0,
+                max: Number(process.env.POSTGRES_POOL_MAX_CONNECTIONS),
+                min: Number(process.env.POSTGRES_POOL_MIN_CONNECTIONS),
                 acquire: 30000,
                 idle: 10000
             },
