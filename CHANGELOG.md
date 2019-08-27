@@ -109,4 +109,4 @@
 
 # 1.1.13 - Release
 
-* Moved out connection limits to the environment
+* Moved out connection limits to the environment (min 5, max 15 default)
