@@ -108,7 +108,7 @@ class App {
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
         const MachineLogModel = sequelize.define("machine_logs", MachineLog)
-        const EncashmentModel = sequelize.define("encashments", Encashment)
+        const EncashmentModel = sequelize.define("encashments", Encashment, {timestamps: false})
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
