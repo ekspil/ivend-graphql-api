@@ -5,6 +5,7 @@ const MachineTypeNotFound = require("../errors/MachineTypeNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const EquipmentNotFound = require("../errors/EquipmentNotFound")
 const Machine = require("../models/Machine")
+const Encashment = require("../models/Encashment")
 const MachineLog = require("../models/MachineLog")
 const MachineGroup = require("../models/MachineGroup")
 const MachineType = require("../models/MachineType")
@@ -12,8 +13,9 @@ const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService}) {
+    constructor({MachineModel, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService}) {
         this.Machine = MachineModel
+        this.Encashment = EncashmentModel
         this.MachineGroup = MachineGroupModel
         this.MachineType = MachineTypeModel
         this.MachineLog = MachineLogModel
@@ -34,6 +36,7 @@ class MachineService {
         this.getMachineTypeById = this.getMachineTypeById.bind(this)
         this.getAllMachineTypes = this.getAllMachineTypes.bind(this)
         this.addLog = this.addLog.bind(this)
+        this.createEncashment = this.createEncashment.bind(this)
     }
 
     async createMachine(input, user) {
@@ -297,6 +300,20 @@ class MachineService {
         machineLog.type = type
 
         return await this.MachineLog.create(machineLog, {transaction})
+    }
+
+
+    async createEncashment(machineId, timestamp, user) {
+        if (!user || !user.checkPermission(Permission.CREATE_ENCASHMENT)) {
+            throw new NotAuthorized()
+        }
+
+        const encashment = new Encashment()
+        encashment.timestamp = timestamp
+        encashment.createdAt = new Date()
+        encashment.machine_id = machineId
+
+        return await this.Encashment.create(encashment)
     }
 }
 

@@ -3,7 +3,9 @@ const BusStatus = require("../enum/BusStatus")
 const ControllerUIDConflict = require("../errors/ControllerUIDConflict")
 const RevisionNotFound = require("../errors/RevisionNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
+const MachineNotFound = require("../errors/MachineNotFound")
 const Controller = require("../models/Controller")
+const Encashment = require("../models/Encashment")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
@@ -13,13 +15,14 @@ const MachineLogType = require("../enum/MachineLogType")
 
 class ControllerService {
 
-    constructor({ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
         this.Item = ItemModel
         this.User = UserModel
         this.Revision = RevisionModel
+        this.Encashment = EncashmentModel
         this.revisionService = revisionService
         this.machineService = machineService
 
@@ -35,6 +38,7 @@ class ControllerService {
         this.registerError = this.registerError.bind(this)
         this.registerState = this.registerState.bind(this)
         this.authController = this.authController.bind(this)
+        this.registerEncashment = this.registerEncashment.bind(this)
     }
 
     async createController(input, user) {
@@ -410,6 +414,37 @@ class ControllerService {
         controller.accessKey = await hashingUtils.generateRandomAccessKey(4)
 
         await controller.save()
+
+        return await this.getControllerById(controller.id, user)
+    }
+
+    async registerEvent(input, user) {
+        if (!user || !user.checkPermission(Permission.CREATE_CONTROLLER_EVENT)) {
+            throw new NotAuthorized()
+        }
+
+        const {controllerUid, timestamp, eventType} = input
+
+        if(eventType !== "ENCASHMENT") {
+            throw new Error("Unknown event type")
+        }
+
+        const controller = await this.getControllerByUID(controllerUid, user)
+
+        if (!controller) {
+            throw new ControllerNotFound()
+        }
+
+        const controllerUser = await controller.getUser()
+        controller.checkPermission = () => true
+
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        await this.machineService.createEncashment(machine.id, timestamp, controllerUser)
 
         return await this.getControllerById(controller.id, user)
     }

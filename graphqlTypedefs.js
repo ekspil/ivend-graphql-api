@@ -508,6 +508,10 @@ const typeDefs = gql`
         CONFIRM_EMAIL
         EDIT_EMAIL_CONFIRM
         EDIT_PASSWORD_CONFIRM
+    }    
+    
+    enum EventType {
+        ENCASHMENT
     }
     
     input UserActionConfirmation {
@@ -515,12 +519,24 @@ const typeDefs = gql`
         type: UserActionType!
     }
     
-
+    input RegisterEventInput {
+        timestamp: Timestamp!
+        controllerUid: String!
+        eventType: EventType!
+    }
+    
+    type Encashment {
+        controller: Controller!
+        timestamp: Timestamp!
+        createdAt: Timestamp!
+    }
+    
     type Mutation {
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
+        registerEvent(input: RegisterEventInput!): Controller
         registerUser(input: CreateUserInput!): User
         editEmail(email: String!): Boolean
         editPassword(password: String!): Boolean
