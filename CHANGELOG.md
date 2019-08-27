@@ -106,3 +106,7 @@
 # 1.1.12 - Release
 
 * Bumped sequelize connection pool to (min 5, max 20)
+
+# 1.1.13 - Release
+
+* Moved out connection limits to the environment
