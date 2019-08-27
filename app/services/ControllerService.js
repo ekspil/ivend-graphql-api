@@ -436,7 +436,7 @@ class ControllerService {
         }
 
         const controllerUser = await controller.getUser()
-        controller.checkPermission = () => true
+        controllerUser.checkPermission = () => true
 
         const machine = await this.machineService.getMachineByControllerId(controller.id, user)
 
