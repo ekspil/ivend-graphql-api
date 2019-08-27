@@ -526,7 +526,6 @@ const typeDefs = gql`
     }
     
     type Encashment {
-        controller: Controller!
         timestamp: Timestamp!
         createdAt: Timestamp!
     }
