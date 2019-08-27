@@ -38,7 +38,7 @@ class ControllerService {
         this.registerError = this.registerError.bind(this)
         this.registerState = this.registerState.bind(this)
         this.authController = this.authController.bind(this)
-        this.registerEncashment = this.registerEncashment.bind(this)
+        this.registerEvent = this.registerEvent.bind(this)
     }
 
     async createController(input, user) {
