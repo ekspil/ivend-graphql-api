@@ -5,6 +5,7 @@ const DepositRequestFailed = require("../errors/DepositRequestFailed")
 const PrintJobRequestFailed = require("../errors/PrintJobRequestFailed")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const MicroserviceUnknownError = require("../errors/MicroserviceUnknownError")
+const FiscalReceiptDTO = require("../models/FiscalReceiptDTO")
 
 const sendRegistrationSms = async (phone, code) => {
     const body = JSON.stringify({phone, code})
@@ -210,6 +211,59 @@ const sendPrintJob = async (remotePrinterId, replacements) => {
 }
 
 
+/**
+ * Send sale to the fiscal service
+ *
+ * @param fiscalReceiptDto {FiscalReceiptDTO}
+ * @returns {Promise<FiscalReceiptDTO>}
+ */
+const createReceipt = async (fiscalReceiptDto) => {
+    const response = await fetch(`${process.env.REMOTE_PRINTING_URL}/api/v1/fiscal/receipt`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(fiscalReceiptDto)
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return new FiscalReceiptDTO(json)
+        }
+        default:
+            throw new MicroserviceUnknownError(response.status)
+    }
+
+}
+
+
+/**
+ * Get receipt by id
+ *
+ * @param id {number}
+ * @returns {Promise<FiscalReceiptDTO>}
+ */
+const getReceiptById = async (id) => {
+    const response = await fetch(`${process.env.FISCAL_URL}/api/v1/fiscal/receipt/${id}`, {
+        method: "GET"
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return new FiscalReceiptDTO(json)
+        }
+        case 404: {
+            return null
+        }
+        default:
+            throw new MicroserviceUnknownError(response.status)
+    }
+
+}
+
+
 module.exports = {
     remotePrinting: {
         sendPrintJob
@@ -224,5 +278,9 @@ module.exports = {
         getServiceDailyPrice,
         createPaymentRequest,
         changeUserBalance
+    },
+    fiscal: {
+        createReceipt,
+        getReceiptById
     }
 }

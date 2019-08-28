@@ -6,12 +6,13 @@ const UserNotFound = require("../errors/UserNotFound")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const Sale = require("../models/Sale")
+const FiscalReceiptDTO = require("../models/FiscalReceiptDTO")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
 const microservices = require("../utils/microservices")
 const logger = require("my-custom-logger")
-const {getToken, getStatus, sendCheck, getFiscalString, getTimeStamp, prepareData} = require("./FiscalService")
+const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
 
@@ -170,89 +171,94 @@ class SaleService {
             }
 
 
-            let kkts = await this.kktService.getUserKkts(controllerUser)
-            let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
-            let machineKkt = "any"
-            if (Number(machine.kktId)){
-                [kktOk] = kkts.filter(kkt => kkt.id === machine.kktId)
-                machineKkt = kktOk.kktRegNumber
-            }
-            if (kktOk) {
-                switch (type) {
-                    case "CASH":
-                        type = 0
-                        break
-                    case "CASHLESS":
-                        type = 1
-                        break
-                }
+            const userKkts = await this.kktService.getUserKkts(controllerUser)
+            const activatedKkts = userKkts.filter(kkt => kkt.kktActivationDate)
+            const [kkt] = activatedKkts.filter(kkt.id === machine.kktId)
 
+            if (activatedKkts.length) {
                 const {inn, sno, companyName} = legalInfo
-
-                const {server} = kktOk
 
                 const place = machine.place || "Торговый автомат"
 
-                let productName = "Товар " + buttonId
+                const productName = item.name || "Товар " + buttonId
 
-                if (item.name) {
-                    productName = item.name
+                const email = legalInfo.contactEmail
+                const productPrice = price.toFixed(2)
+
+                let kktRegNumber,kktFNNumber = null
+
+                if (kkt) {
+                    kktRegNumber = kkt.kktRegNumber
+                    kktFNNumber = kkt.kktFNNumber
                 }
 
-                let payType = type
-                let email = legalInfo.contactEmail
-                let productPrice = price.toFixed(2)
-                let timeStamp = getTimeStamp()
-                let extTime = timeStamp.replace(/[.: ]/g, "")
-                let extId = "IVEND-" + controllerUid + "-" + extTime
-                let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email, sno, place)
-
                 try {
-                    const token = await getToken(process.env.UMKA_LOGIN, process.env.UMKA_PASS, server)
 
-                    if (!token) {
-                        throw new Error("token is not recieved")
+                    const fiscalReceiptDTO = new FiscalReceiptDTO({
+                        email,
+                        sno,
+                        inn,
+                        place,
+                        itemName: productName,
+                        itemPrice: productPrice,
+                        paymentType: type,
+                        kktRegNumber
+                    })
+
+
+                    //const uuid = await sendCheck(fiscalData, token, server, machineKkt)
+                    const receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
+
+                    let receipt
+                    let timeoutDate = (new Date()).getTime() + (1000 * Number(process.env.FISCAL_STATUS_POLL_TIMEOUT_SECONDS))
+
+                    while (receipt && receipt.status === "PENDING") {
+                        receipt = await await microservices.fiscal.getReceiptById(receiptId)
+
+                        if (new Date() > timeoutDate) {
+                            break
+                        }
                     }
 
-                    const uuid = await sendCheck(fiscalData, token, server, machineKkt)
-                    const {payload} = await getStatus(token, uuid, server)
 
                     const {
-                        fns_site,
-                        receipt_datetime,
-                        shift_number,
-                        ecr_registration_number,
-                        fiscal_document_attribute,
-                        fiscal_document_number,
-                        fiscal_receipt_number
-                    } = payload
+                        fnsSite,
+                        receiptDatetime,
+                        shiftNumber,
+                        fiscalReceiptNumber,
+                        fiscalDocumentNumber,
+                        ecrRegistrationNumber,
+                        fiscalDocumentAttribute,
+                        fnNumber
+                    } = receipt.fiscalData
 
-                    const kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
 
-                    kkt.kktLastBill = receipt_datetime
+                    const kkt = await this.kktService.kktPlusBill(fnNumber, controllerUser)
+
+                    kkt.kktLastBill = receiptDatetime
 
                     await kkt.save()
 
-                    createdSale.sqr = getFiscalString(payload, sno)
+                    createdSale.sqr = getFiscalString(receipt)
 
                     const replacements = {
                         companyName,
                         inn,
-                        fiscalReceiptNumber: fiscal_receipt_number,
-                        receiptNumberInShift: shift_number,
-                        receiptDate: receipt_datetime,
+                        fiscalReceiptNumber,
+                        receiptNumberInShift: shiftNumber,
+                        receiptDate: receiptDatetime,
                         address: place,
                         productName,
                         productPrice,
-                        incomeAmountCash: type === 0 ? productPrice : 0,
-                        incomeAmountCashless: type === 1 ? productPrice : 0,
+                        incomeAmountCash: type === "CASH" ? productPrice : 0,
+                        incomeAmountCashless: type === "CASHLESS" ? productPrice : 0,
                         email,
-                        fnsSite: fns_site,
+                        fnsSite,
                         sno,
-                        regKKT: ecr_registration_number,
-                        hwIdKKT: kktOk.kktFNNumber,
-                        FD: fiscal_document_number,
-                        FPD: fiscal_document_attribute,
+                        regKKT: ecrRegistrationNumber,
+                        hwIdKKT: kktFNNumber,
+                        FD: fiscalDocumentNumber,
+                        FPD: fiscalDocumentAttribute,
                         sqr: createdSale.sqr
                     }
 
