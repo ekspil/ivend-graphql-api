@@ -210,9 +210,12 @@ class SaleService {
                     //const uuid = await sendCheck(fiscalData, token, server, machineKkt)
                     const receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
 
-                    if(!receiptId) {
+                    if (!receiptId) {
                         throw new Error("ReceiptId is null")
                     }
+
+                    createdSale.receipt_id = receiptId
+                    await createdSale.save()
 
                     let receipt = {status: "PENDING"}
                     let timeoutDate = (new Date()).getTime() + (1000 * Number(process.env.FISCAL_STATUS_POLL_TIMEOUT_SECONDS))
@@ -225,7 +228,7 @@ class SaleService {
                             throw new Error("Receipt status timeout")
                         }
 
-                        if(receipt.status === "ERROR") {
+                        if (receipt.status === "ERROR") {
                             throw new Error("Receipt failed to process")
                         }
                     }
