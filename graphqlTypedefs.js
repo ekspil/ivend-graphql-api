@@ -411,6 +411,12 @@ const typeDefs = gql`
         name: String!
     }
 
+    type Encashment {
+        id: Int!
+        timestamp: Timestamp!
+        createdAt: Timestamp!
+    }
+
     type Machine {
         id: Int!
         number: String!
@@ -425,6 +431,7 @@ const typeDefs = gql`
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
+        encashments: [Encashment!]!
         kkt: Kkt
     }
 
@@ -523,11 +530,6 @@ const typeDefs = gql`
         timestamp: Timestamp!
         controllerUid: String!
         eventType: EventType!
-    }
-    
-    type Encashment {
-        timestamp: Timestamp!
-        createdAt: Timestamp!
     }
     
     type Mutation {

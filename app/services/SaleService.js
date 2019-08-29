@@ -132,7 +132,6 @@ class SaleService {
 
         logger.debug(`sale_created ${createdSale.id} ${item.name} ${createdSale.price} ${createdSale.createdAt}`)
 
-
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
         }

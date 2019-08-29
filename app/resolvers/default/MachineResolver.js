@@ -1,5 +1,6 @@
 const MachineGroupDTO = require("../../models/dto/MachineGroupDTO")
 const MachineTypeDTO = require("../../models/dto/MachineTypeDTO")
+const EncashmentDTO = require("../../models/dto/EncashmentDTO")
 const MachineLogDTO = require("../../models/dto/MachineLogDTO")
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
 const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
@@ -133,6 +134,18 @@ function MachineResolver({machineService, saleService, kktService}) {
         return new KktDTO(kkt)
     }
 
+    const encashments = async (obj, args, context) => {
+        const {user} = context
+
+        const encashments = await machineService.getMachineEncashments(obj.id, user)
+
+        if (!encashments) {
+            return null
+        }
+
+        return encashments.map(encashment => (new EncashmentDTO(encashment)))
+    }
+
     return {
         controller,
         lastSaleTime,
@@ -143,7 +156,8 @@ function MachineResolver({machineService, saleService, kktService}) {
         type,
         logs,
         itemMatrix,
-        kkt
+        kkt,
+        encashments
     }
 
 }

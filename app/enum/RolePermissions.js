@@ -55,6 +55,7 @@ const VENDOR = [
     Permission.EDIT_EMAIL,
     Permission.EDIT_PASSWORD,
     Permission.CREATE_KKT,
+    Permission.GET_MACHINE_ENCASHMENTS,
     Permission.GET_KKT_BY_ID,
     Permission.GET_USER_KKTS,
     Permission.GET_LEGAL_INFO,

@@ -315,6 +315,19 @@ class MachineService {
 
         return await this.Encashment.create(encashment)
     }
+
+
+    async getMachineEncashments(machineId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Encashment.findAll({
+            where: {
+                machine_id: machineId
+            }
+        })
+    }
 }
 
 module.exports = MachineService
