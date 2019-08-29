@@ -90,6 +90,23 @@ function MachineResolver({machineService, saleService, kktService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
+
+    const salesByEncashment = async (obj, args, context) => {
+        const {user} = context
+
+        const lastEncashment = await machineService.getLastMachineEncashment(obj.id, user)
+
+        const period = {from: lastEncashment ? lastEncashment.timestamp : new Date(0), to: new Date()}
+
+        const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
+
+        if (!salesSummary) {
+            return null
+        }
+
+        return new SalesSummaryDTO(salesSummary)
+    }
+
     const lastSaleTime = async (obj, args, context) => {
         const {user} = context
 
@@ -157,7 +174,8 @@ function MachineResolver({machineService, saleService, kktService}) {
         logs,
         itemMatrix,
         kkt,
-        encashments
+        encashments,
+        salesByEncashment
     }
 
 }

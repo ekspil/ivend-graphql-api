@@ -429,6 +429,7 @@ const typeDefs = gql`
         type: MachineType!
         salesSummaryOfItem(itemId:Int, period: Period): SalesSummary
         salesSummary(period: Period): SalesSummary
+        salesByEncashment: SalesSummary
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller

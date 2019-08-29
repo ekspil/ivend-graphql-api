@@ -39,6 +39,7 @@ class MachineService {
         this.createEncashment = this.createEncashment.bind(this)
         this.getEncashmentById = this.getEncashmentById.bind(this)
         this.getMachineEncashments = this.getMachineEncashments.bind(this)
+        this.getLastMachineEncashment = this.getLastMachineEncashment.bind(this)
     }
 
     async createMachine(input, user) {
