@@ -115,3 +115,8 @@
 # 1.1.14 - Hotfix
 
 * Add logging prefix on sale service error
+
+
+# 1.1.15 - Hotfix
+
+* Fix logging prefix [object Object]
