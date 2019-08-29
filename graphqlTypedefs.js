@@ -42,7 +42,7 @@ const typeDefs = gql`
         UNAPPROVED
         APPROVED
     }
-    
+
     enum SNO {
         osn
         usn_income
@@ -159,7 +159,7 @@ const typeDefs = gql`
         dailyBill: Float!
         daysLeft: Float!
     }
-    
+
     type Kkt {
         id: Int!
         inn: String!
@@ -170,10 +170,10 @@ const typeDefs = gql`
         kktFNNumber: String
         kktActivationDate: String
         kktBillsCount: Int
-        kktOFDRegKey: String        
-        kktLastBill: String        
-        server: String        
-}
+        kktOFDRegKey: String
+        kktLastBill: String
+        server: String
+    }
 
     type User {
         email: String!
@@ -213,12 +213,12 @@ const typeDefs = gql`
         name: String!
     }
 
-    
+
     input CreateKktInput {
         kktModel: String!
         inn: String!
         companyName: String!
-        
+
     }
     input EditKktInput {
         id: Int!
@@ -417,7 +417,7 @@ const typeDefs = gql`
         timestamp: Timestamp!
         createdAt: Timestamp!
     }
-    
+
     type EncashmentSalesSummary {
         encashment: Encashment!
         salesSummary: SalesSummary!
@@ -505,7 +505,7 @@ const typeDefs = gql`
         getAllKkts: [Kkt]
         getAllUsers: [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
-        getSales(machineId: Int, itemId: Int): [Sales!]!
+        getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int): [Sales!]!
     }
 
     input AuthControllerInput {
@@ -525,23 +525,23 @@ const typeDefs = gql`
         CONFIRM_EMAIL
         EDIT_EMAIL_CONFIRM
         EDIT_PASSWORD_CONFIRM
-    }    
-    
+    }
+
     enum EventType {
         ENCASHMENT
     }
-    
+
     input UserActionConfirmation {
         token: String!
         type: UserActionType!
     }
-    
+
     input RegisterEventInput {
         timestamp: Timestamp!
         controllerUid: String!
         eventType: EventType!
     }
-    
+
     type Mutation {
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError

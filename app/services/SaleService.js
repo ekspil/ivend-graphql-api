@@ -305,12 +305,22 @@ class SaleService {
         })
     }
 
-    async getSales(machineId, itemId, user) {
+    async getSales({offset, limit, machineId, itemId, user}) {
         if (!user || !user.checkPermission(Permission.GET_SALES)) {
             throw new NotAuthorized()
         }
 
+        if (!limit) {
+            limit = Number(process.env.PAGINATION_DEFAULT_LIMIT)
+        }
+
+        if (limit > Number(process.env.PAGINATION_MAX_LIMIT)) {
+            throw new Error("Cannot request more than " + process.env.PAGINATION_MAX_LIMIT)
+        }
+
         return await this.Sale.findAll({
+            offset,
+            limit,
             where: {machine_id: machineId, item_id: itemId},
             order: [
                 ["id", "DESC"],
