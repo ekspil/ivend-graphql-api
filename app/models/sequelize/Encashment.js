@@ -12,6 +12,12 @@ const Encashment = {
         type: Sequelize.DataTypes.DATE,
         allowNull: false
     },
+    //timestamp of encashment on controller side
+    prevEncashmentId: {
+        type: Sequelize.DataTypes.INTEGER,
+        field: "prev_encashment_id",
+        allowNull: true
+    },
     //timestamp where entry created
     createdAt: {
         type: Sequelize.DataTypes.DATE,

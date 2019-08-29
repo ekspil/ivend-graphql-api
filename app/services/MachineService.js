@@ -37,6 +37,8 @@ class MachineService {
         this.getAllMachineTypes = this.getAllMachineTypes.bind(this)
         this.addLog = this.addLog.bind(this)
         this.createEncashment = this.createEncashment.bind(this)
+        this.getEncashmentById = this.getEncashmentById.bind(this)
+        this.getMachineEncashments = this.getMachineEncashments.bind(this)
     }
 
     async createMachine(input, user) {
@@ -54,7 +56,7 @@ class MachineService {
             machine.place = place
             machine.controller_id = controllerId
             machine.user_id = user.id
-            if(kktId){
+            if (kktId) {
                 machine.kktId = kktId
             }
 
@@ -146,7 +148,6 @@ class MachineService {
             machine.place = place
         }
         machine.kktId = kktId
-
 
 
         return await machine.save()
@@ -308,14 +309,47 @@ class MachineService {
             throw new NotAuthorized()
         }
 
+        const prevEncashment = await this.getLastMachineEncashment(machineId, user)
+
         const encashment = new Encashment()
         encashment.timestamp = timestamp
         encashment.createdAt = new Date()
         encashment.machine_id = machineId
 
+        if (prevEncashment) {
+            encashment.prevEncashmentId = prevEncashment.id
+        }
+
         return await this.Encashment.create(encashment)
     }
 
+
+    async getEncashmentById(encashmentId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Encashment.findOne({
+            where: {
+                id: encashmentId
+            }
+        })
+    }
+
+    async getLastMachineEncashment(machineId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Encashment.findOne({
+            where: {
+                machine_id: machineId
+            },
+            order: [
+                ["id", "DESC"],
+            ]
+        })
+    }
 
     async getMachineEncashments(machineId, user) {
         if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {

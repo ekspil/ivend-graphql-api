@@ -413,6 +413,7 @@ const typeDefs = gql`
 
     type Encashment {
         id: Int!
+        prevEncashment: Encashment
         timestamp: Timestamp!
         createdAt: Timestamp!
     }
