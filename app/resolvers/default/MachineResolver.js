@@ -5,6 +5,7 @@ const MachineLogDTO = require("../../models/dto/MachineLogDTO")
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
 const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
+const EncashmentSalesSummaryDTO = require("../../models/dto/EncashmentSalesSummaryDTO")
 const ControllerDTO = require("../../models/dto/ControllerDTO")
 const KktDTO = require("../../models/dto/KktDTO")
 
@@ -108,7 +109,7 @@ function MachineResolver({machineService, saleService, kktService}) {
     }
 
 
-    const salesByEncashmentForMachine = async (obj, args, context) => {
+    const encashmentsSummaries = async (obj, args, context) => {
         const {user} = context
 
         const encashments = await machineService.getMachineEncashments(obj.id, user)
@@ -125,7 +126,7 @@ function MachineResolver({machineService, saleService, kktService}) {
 
             const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
 
-            return new SalesSummaryDTO(salesSummary)
+            return new EncashmentSalesSummaryDTO({encashment, salesSummary})
         }))
 
     }
@@ -212,7 +213,7 @@ function MachineResolver({machineService, saleService, kktService}) {
         encashments,
         lastEncashment,
         salesByEncashment,
-        salesByEncashmentForMachine
+        encashmentsSummaries
     }
 
 }

@@ -417,6 +417,11 @@ const typeDefs = gql`
         timestamp: Timestamp!
         createdAt: Timestamp!
     }
+    
+    type EncashmentSalesSummary {
+        encashment: Encashment!
+        salesSummary: SalesSummary!
+    }
 
     type Machine {
         id: Int!
@@ -430,7 +435,7 @@ const typeDefs = gql`
         salesSummaryOfItem(itemId:Int, period: Period): SalesSummary
         salesSummary(period: Period): SalesSummary
         salesByEncashment: SalesSummary
-        salesByEncashmentForMachine: SalesSummary
+        encashmentsSummaries: [EncashmentSalesSummary!]!
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
