@@ -225,6 +225,10 @@ class SaleService {
                         if (new Date() > timeoutDate) {
                             throw new Error("Receipt status timeout")
                         }
+
+                        if(receipt.status === "ERROR") {
+                            throw new Error("Receipt failed to process")
+                        }
                     }
 
                     const {
