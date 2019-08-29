@@ -434,6 +434,7 @@ const typeDefs = gql`
         lastSaleTime: Timestamp
         controller: Controller
         encashments: [Encashment!]!
+        lastEncashment: Encashment
         kkt: Kkt
     }
 

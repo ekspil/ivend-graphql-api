@@ -163,6 +163,18 @@ function MachineResolver({machineService, saleService, kktService}) {
         return encashments.map(encashment => (new EncashmentDTO(encashment)))
     }
 
+    const lastEncashment = async (obj, args, context) => {
+        const {user} = context
+
+        const encashment = await machineService.getLastMachineEncashment(obj.id, user)
+
+        if (!encashment) {
+            return null
+        }
+
+        return new EncashmentDTO(encashment)
+    }
+
     return {
         controller,
         lastSaleTime,
@@ -175,6 +187,7 @@ function MachineResolver({machineService, saleService, kktService}) {
         itemMatrix,
         kkt,
         encashments,
+        lastEncashment,
         salesByEncashment
     }
 
