@@ -173,7 +173,7 @@ class SaleService {
 
             const userKkts = await this.kktService.getUserKkts(controllerUser)
             const activatedKkts = userKkts.filter(kkt => kkt.kktActivationDate)
-            const [kkt] = activatedKkts.filter(kkt.id === machine.kktId)
+            const [kkt] = activatedKkts.filter(kkt => kkt.id === machine.kktId)
 
             if (activatedKkts.length) {
                 const {inn, sno, companyName} = legalInfo
