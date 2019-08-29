@@ -130,6 +130,8 @@ class SaleService {
         const item = await createdSale.getItem()
         createdSale.item = item
 
+        logger.debug(`sale_created ${createdSale.id} ${item.name} ${createdSale.price} ${createdSale.createdAt}`)
+
 
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
@@ -185,7 +187,7 @@ class SaleService {
                 const email = legalInfo.contactEmail
                 const productPrice = price.toFixed(2)
 
-                let kktRegNumber,kktFNNumber = null
+                let kktRegNumber, kktFNNumber = null
 
                 if (kkt) {
                     kktRegNumber = kkt.kktRegNumber
@@ -209,10 +211,10 @@ class SaleService {
                     //const uuid = await sendCheck(fiscalData, token, server, machineKkt)
                     const receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
 
-                    let receipt
+                    let receipt = {status: "PENDING"}
                     let timeoutDate = (new Date()).getTime() + (1000 * Number(process.env.FISCAL_STATUS_POLL_TIMEOUT_SECONDS))
 
-                    while (receipt && receipt.status === "PENDING") {
+                    while (receipt.status === "PENDING") {
                         receipt = await await microservices.fiscal.getReceiptById(receiptId)
                         logger.debug(`fetched_receipt id ${receipt.id} status ${receipt.status}`)
 
