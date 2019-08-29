@@ -319,8 +319,6 @@ class SaleService {
         }
 
         return await this.Sale.findAll({
-            offset,
-            limit,
             where: {machine_id: machineId, item_id: itemId},
             order: [
                 ["id", "DESC"],
