@@ -223,7 +223,6 @@ class SaleService {
 
                     while (receipt.status === "PENDING") {
                         receipt = await await microservices.fiscal.getReceiptById(receiptId)
-                        logger.debug(`fetched_receipt id ${receipt.id} status ${receipt.status}`)
 
                         if (new Date() > timeoutDate) {
                             throw new Error("Receipt status timeout")
