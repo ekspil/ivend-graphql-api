@@ -505,6 +505,7 @@ const typeDefs = gql`
         getAllKkts: [Kkt]
         getAllUsers: [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
+        getSales(machineId: Int, itemId: Int): [Sales!]!
     }
 
     input AuthControllerInput {

@@ -28,6 +28,7 @@ class SaleService {
         this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
+        this.getSales = this.getSales.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
 
 
@@ -298,6 +299,19 @@ class SaleService {
 
         return await this.Sale.findOne({
             where: {machine_id: machineId},
+            order: [
+                ["id", "DESC"],
+            ]
+        })
+    }
+
+    async getSales(machineId, itemId, user) {
+        if (!user || !user.checkPermission(Permission.GET_SALES)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Sale.findAll({
+            where: {machine_id: machineId, item_id: itemId},
             order: [
                 ["id", "DESC"],
             ]

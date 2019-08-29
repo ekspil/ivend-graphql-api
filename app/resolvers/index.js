@@ -49,7 +49,8 @@ const Resolvers = function (injects) {
         userService,
         serviceService,
         machineService,
-        kktService
+        kktService,
+        saleService
     })
 
     return {

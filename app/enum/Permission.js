@@ -60,6 +60,7 @@ const Permission = {
     "GET_LAST_SALE": "GET_LAST_SALE",
     "GET_LAST_SALE_OF_ITEM": "GET_LAST_SALE_OF_ITEM",
     "GET_ITEM_SALE_STATS": "GET_ITEM_SALE_STATS",
+    "GET_SALES": "GET_SALES",
     "GET_SALES_SUMMARY": "GET_SALES_SUMMARY",
 
     // ServiceService
