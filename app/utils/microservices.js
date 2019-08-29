@@ -232,11 +232,11 @@ const sendPrintJob = async (remotePrinterId, replacements) => {
  * @returns {Promise<FiscalReceiptDTO>}
  */
 const createReceipt = async (fiscalReceiptDto) => {
-    const url = `${process.env.REMOTE_PRINTING_URL}/api/v1/fiscal/receipt`
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receipt`
     const method = "POST"
     const body = JSON.stringify(fiscalReceiptDto)
 
-    const response = await fetch(`${process.env.REMOTE_PRINTING_URL}/api/v1/fiscal/receipt`, {
+    const response = await fetch(`${process.env.FISCAL_URL}/api/v1/fiscal/receipt`, {
         method,
         headers: {
             "Content-Type": "application/json"
