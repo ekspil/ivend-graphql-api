@@ -110,3 +110,8 @@
 # 1.1.13 - Release
 
 * Moved out connection limits to the environment
+
+
+# 1.1.14 - Hotfix
+
+* Add logging prefix on sale service error
