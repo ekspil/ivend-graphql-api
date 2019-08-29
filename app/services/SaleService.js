@@ -215,7 +215,7 @@ class SaleService {
                         throw new Error("ReceiptId is null")
                     }
 
-                    createdSale.receipt_id = receiptId
+                    createdSale.receiptId = receiptId
                     await createdSale.save()
 
                     let receipt = {status: "PENDING"}
