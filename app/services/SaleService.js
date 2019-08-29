@@ -318,8 +318,20 @@ class SaleService {
             throw new Error("Cannot request more than " + process.env.PAGINATION_MAX_LIMIT)
         }
 
+        const where = {}
+
+        if (machineId) {
+            where.machine_id = machineId
+        }
+
+        if (itemId) {
+            where.item_id = itemId
+        }
+
         return await this.Sale.findAll({
-            where: {machine_id: machineId, item_id: itemId},
+            offset,
+            limit,
+            where,
             order: [
                 ["id", "DESC"],
             ]
