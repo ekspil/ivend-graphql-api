@@ -152,6 +152,7 @@ const typeDefs = gql`
     type Sale {
         id: Int!
         type: SaleType!
+        price: Float!
         item: Item!
         machine: Machine!
         receipt: Receipt
