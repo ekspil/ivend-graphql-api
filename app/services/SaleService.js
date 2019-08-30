@@ -376,7 +376,7 @@ class SaleService {
             return null
         }
 
-        const receipt = await microservices.fiscal.getReceiptById(sale.receiptId, user)
+        const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
 
         return new Receipt(sale.createdAt, receipt.status)
     }
