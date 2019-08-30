@@ -61,6 +61,7 @@ const VENDOR = [
     Permission.GET_LEGAL_INFO,
     Permission.GET_SALES,
     Permission.UPDATE_KKT,
+    Permission.GET_RECEIPT,
 
 
 ]

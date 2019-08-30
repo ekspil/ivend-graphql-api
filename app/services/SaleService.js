@@ -7,6 +7,8 @@ const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const Sale = require("../models/Sale")
 const FiscalReceiptDTO = require("../models/FiscalReceiptDTO")
+const ReceiptDTO = require("../models/dto/ReceiptDTO")
+const Receipt = require("../models/Receipt")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
@@ -28,6 +30,8 @@ class SaleService {
         this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
+        this.getSaleById = this.getSaleById.bind(this)
+        this.getReceiptOfSale = this.getReceiptOfSale.bind(this)
         this.getSales = this.getSales.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
 
@@ -222,7 +226,7 @@ class SaleService {
                     let timeoutDate = (new Date()).getTime() + (1000 * Number(process.env.FISCAL_STATUS_POLL_TIMEOUT_SECONDS))
 
                     while (receipt.status === "PENDING") {
-                        receipt = await await microservices.fiscal.getReceiptById(receiptId)
+                        receipt = await microservices.fiscal.getReceiptById(receiptId)
 
                         if (new Date() > timeoutDate) {
                             throw new Error("Receipt status timeout")
@@ -348,6 +352,32 @@ class SaleService {
                 ["id", "DESC"],
             ]
         })
+    }
+
+    async getSaleById(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_SALES)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Sale.findOne({
+            where: {id: saleId}
+        })
+    }
+
+    async getReceiptOfSale(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_RECEIPT)) {
+            throw new NotAuthorized()
+        }
+
+        const sale = await this.getSaleById(saleId)
+
+        if (!sale || !sale.receiptId) {
+            return null
+        }
+
+        const receipt = await microservices.fiscal.getReceiptById(saleId)
+
+        return new Receipt(receipt.status)
     }
 
     async getSalesSummary(input, user) {

@@ -137,6 +137,16 @@ const typeDefs = gql`
         buttonId: Int
         item: Item
     }
+    
+    type Receipt {
+        status: ReceiptStatus
+    }
+    
+    enum ReceiptStatus {
+        PENDING
+        ERROR
+        SUCCESS
+    }
 
     type Sale {
         id: Int!
@@ -144,6 +154,7 @@ const typeDefs = gql`
         item: Item!
         itemMatrix: ItemMatrix!
         controller: Controller!
+        receipt: Receipt
         sqr: String
     }
 

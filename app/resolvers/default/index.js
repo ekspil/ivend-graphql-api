@@ -6,6 +6,7 @@ const ItemMatrixResolver = require("./ItemMatrixResolver")
 const ItemResolver = require("./ItemResolver")
 const DepositResolver = require("./DepositResolver")
 const EncashmentResolver = require("./EncashmentResolver")
+const SaleResolver = require("./SaleResolver")
 
 function DefaultResolvers({controllerService, saleService, notificationSettingsService, billingService, serviceService, itemService, machineService, itemMatrixService, kktService, userService}) {
     const controllerResolver = new ControllerResolver({controllerService, saleService, serviceService, machineService})
@@ -16,6 +17,7 @@ function DefaultResolvers({controllerService, saleService, notificationSettingsS
     const itemResolver = new ItemResolver({saleService})
     const depositResolver = new DepositResolver({billingService})
     const encashmentResolver = new EncashmentResolver({machineService})
+    const saleResolver = new SaleResolver({saleService})
 
     return {
         Controller: controllerResolver,
@@ -25,7 +27,8 @@ function DefaultResolvers({controllerService, saleService, notificationSettingsS
         ItemMatrix: itemMatrixResolver,
         Item: itemResolver,
         Deposit: depositResolver,
-        Encashment: encashmentResolver
+        Encashment: encashmentResolver,
+        Sale: saleResolver
     }
 }
 
