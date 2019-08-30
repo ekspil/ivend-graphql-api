@@ -119,7 +119,7 @@ function MachineResolver({machineService, saleService, kktService}) {
             let prevEncashment = null
 
             if (prevEncashmentId) {
-                prevEncashment = await machineService.getEncashmentById(prevEncashmentId)
+                prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
             }
 
             const period = {from: prevEncashment ? prevEncashment.timestamp : new Date(0), to: new Date()}
