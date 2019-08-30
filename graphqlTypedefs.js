@@ -139,7 +139,8 @@ const typeDefs = gql`
     }
     
     type Receipt {
-        status: ReceiptStatus
+        timestamp: Timestamp!
+        status: ReceiptStatus!
     }
     
     enum ReceiptStatus {

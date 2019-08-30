@@ -1,6 +1,7 @@
 class ReceiptDTO {
 
-    constructor({status}) {
+    constructor({status, timestamp}) {
+        this.timestamp = timestamp
         this.status = status
     }
 }

@@ -1,6 +1,7 @@
 class Receipt {
 
-    constructor(status) {
+    constructor(timestamp, status) {
+        this.timestamp = timestamp
         this.status = status
     }
 
