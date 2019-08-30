@@ -410,7 +410,7 @@ class SaleService {
             throw new Error("Sale not found")
         }
 
-        const controller = await this.controllerService.getControllerById(sale.controllerId, user)
+        const controller = await this.controllerService.getControllerById(sale.controller_id, user)
 
         if (!controller) {
             throw new Error("Controller not found")
