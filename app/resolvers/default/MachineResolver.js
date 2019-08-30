@@ -122,7 +122,10 @@ function MachineResolver({machineService, saleService, kktService}) {
                 prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
             }
 
-            const period = {from: prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0), to: new Date(encashment.timestamp)}
+            const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+            const to = new Date(encashment.timestamp)
+
+            const period = {from, to}
 
             const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
 
