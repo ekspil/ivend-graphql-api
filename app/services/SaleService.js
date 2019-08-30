@@ -6,7 +6,7 @@ const UserNotFound = require("../errors/UserNotFound")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const Sale = require("../models/Sale")
-const FiscalReceiptDTO = require("../models/FiscalReceiptDTO")
+const Item = require("../models/Item")
 const Receipt = require("../models/Receipt")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
@@ -377,6 +377,46 @@ class SaleService {
         const receipt = await microservices.fiscal.getReceiptById(saleId)
 
         return new Receipt(sale.createdAt, receipt.status)
+    }
+
+    async getItemOfSale(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_ITEM_BY_ID)) {
+            throw new NotAuthorized()
+        }
+
+        const sale = await this.getSaleById(saleId, user)
+
+        if (!sale) {
+            throw new Error("Sale not found")
+        }
+
+        const item = await this.itemService.getItemById(sale.itemId, user)
+
+        if (!item) {
+            throw new Error("Item not found")
+        }
+
+        return item
+    }
+
+    async getControllerOfSale(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
+            throw new NotAuthorized()
+        }
+
+        const sale = await this.getSaleById(saleId, user)
+
+        if (!sale) {
+            throw new Error("Sale not found")
+        }
+
+        const controller = await this.controllerService.getControllerById(sale.controllerId, user)
+
+        if (!controller) {
+            throw new Error("Controller not found")
+        }
+
+        return controller
     }
 
     async getSalesSummary(input, user) {

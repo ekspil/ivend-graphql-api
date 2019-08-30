@@ -153,7 +153,6 @@ const typeDefs = gql`
         id: Int!
         type: SaleType!
         item: Item!
-        itemMatrix: ItemMatrix!
         controller: Controller!
         receipt: Receipt
         sqr: String
