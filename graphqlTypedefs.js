@@ -156,6 +156,7 @@ const typeDefs = gql`
         machine: Machine!
         receipt: Receipt
         sqr: String
+        createdAt: Timestamp!
     }
 
     type ControllerError {
