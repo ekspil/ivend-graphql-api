@@ -390,7 +390,7 @@ class SaleService {
             throw new Error("Sale not found")
         }
 
-        const item = await this.itemService.getItemById(sale.itemId, user)
+        const item = await this.itemService.getItemById(sale.item_id, user)
 
         if (!item) {
             throw new Error("Item not found")
