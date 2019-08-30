@@ -370,13 +370,13 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const sale = await this.getSaleById(saleId)
+        const sale = await this.getSaleById(saleId, user)
 
         if (!sale || !sale.receiptId) {
             return null
         }
 
-        const receipt = await microservices.fiscal.getReceiptById(saleId)
+        const receipt = await microservices.fiscal.getReceiptById(saleId, user)
 
         return new Receipt(sale.createdAt, receipt.status)
     }
