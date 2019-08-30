@@ -31,6 +31,8 @@ class SaleService {
         this.getLastSale = this.getLastSale.bind(this)
         this.getSaleById = this.getSaleById.bind(this)
         this.getReceiptOfSale = this.getReceiptOfSale.bind(this)
+        this.getMachineOfSale = this.getMachineOfSale.bind(this)
+        this.getItemOfSale = this.getItemOfSale.bind(this)
         this.getSales = this.getSales.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
 
@@ -399,8 +401,8 @@ class SaleService {
         return item
     }
 
-    async getControllerOfSale(saleId, user) {
-        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
+    async getMachineOfSale(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_BY_ID)) {
             throw new NotAuthorized()
         }
 
@@ -410,13 +412,13 @@ class SaleService {
             throw new Error("Sale not found")
         }
 
-        const controller = await this.controllerService.getControllerById(sale.controller_id, user)
+        const machine = await this.machineService.getMachineById(sale.machine_id, user)
 
-        if (!controller) {
-            throw new Error("Controller not found")
+        if (!machine) {
+            throw new Error("Machine not found")
         }
 
-        return controller
+        return machine
     }
 
     async getSalesSummary(input, user) {

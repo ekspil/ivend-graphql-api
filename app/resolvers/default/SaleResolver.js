@@ -1,6 +1,6 @@
 const ReceiptDTO = require("../../models/dto/ReceiptDTO")
 const ItemDTO = require("../../models/dto/ItemDTO")
-const ControllerDTO = require("../../models/dto/ControllerDTO")
+const MachineDTO = require("../../models/dto/MachineDTO")
 
 function SaleResolver({saleService}) {
 
@@ -24,18 +24,18 @@ function SaleResolver({saleService}) {
         return new ItemDTO(item)
     }
 
-    const controller = async (obj, args, context) => {
+    const machine = async (obj, args, context) => {
         const {user} = context
 
-        const controller = await saleService.getControllerOfSale(obj.id, user)
+        const machine = await saleService.getMachineOfSale(obj.id, user)
 
-        return new ControllerDTO(controller)
+        return new MachineDTO(machine)
     }
 
     return {
         receipt,
         item,
-        controller
+        machine
     }
 
 }
