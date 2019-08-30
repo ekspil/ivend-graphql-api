@@ -29,7 +29,7 @@ function SaleResolver({saleService}) {
 
         const controller = await saleService.getControllerOfSale(obj.id, user)
 
-        return new ControllerDTO(receipt)
+        return new ControllerDTO(controller)
     }
 
     return {
