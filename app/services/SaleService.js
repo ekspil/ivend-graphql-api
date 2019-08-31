@@ -288,7 +288,7 @@ class SaleService {
                         }
                     }
                 } catch (err) {
-                    logger.info(err)
+                    logger.info("sale_service_err " + JSON.stringify(err.response.data))
                 }
             }
         }

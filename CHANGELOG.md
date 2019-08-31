@@ -110,3 +110,13 @@
 # 1.1.13 - Release
 
 * Moved out connection limits to the environment (min 5, max 15 default)
+
+
+# 1.1.14 - Hotfix
+
+* Add logging prefix on sale service error
+
+
+# 1.1.15 - Hotfix
+
+* Fix logging prefix [object Object]
