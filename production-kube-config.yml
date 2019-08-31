@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: graphql
-        image: registry.gitlab.com/pshenmic/ivend/graphql:1.1.15
+        image: registry.gitlab.com/pshenmic/ivend/graphql:1.2.0
         ports:
           - containerPort: 4000
         readinessProbe:
