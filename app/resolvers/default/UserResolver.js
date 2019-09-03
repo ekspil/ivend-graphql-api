@@ -55,14 +55,8 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
         return kkts.map(kkt => (new KktDTO(kkt)))
     }
 
-    const balance = async (obj, args, context) => {
-        const {user} = context
-        obj.checkPermission = user.checkPermission
-        return await billingService.getBalance(obj)
-    }
-
-    const billing = async () => {
-        return new BillingDTO({})
+    const billing = async (obj) => {
+        return new BillingDTO({userId: obj.id})
     }
 
     const salesSummary = async (obj, args, context) => {
@@ -84,8 +78,7 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
         billing,
         items,
         salesSummary,
-        kkts,
-        balance
+        kkts
     }
 
 }

@@ -167,6 +167,7 @@ const typeDefs = gql`
     }
 
     type Billing {
+        userId: Int!
         balance: Float!
         deposits(period: Period): [Deposit!]!
         dailyBill: Float!
