@@ -200,7 +200,6 @@ const typeDefs = gql`
         salesSummary(period: Period): SalesSummary
         items: [Item!]!
         kkts: [Kkt!]!
-        balance: Float!
     }
 
     type NotificationSetting {
