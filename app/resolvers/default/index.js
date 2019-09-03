@@ -10,7 +10,7 @@ const SaleResolver = require("./SaleResolver")
 
 function DefaultResolvers({controllerService, saleService, notificationSettingsService, billingService, serviceService, itemService, machineService, itemMatrixService, kktService, userService}) {
     const controllerResolver = new ControllerResolver({controllerService, saleService, serviceService, machineService})
-    const userResolver = new UserResolver({notificationSettingsService, itemService, saleService, kktService, userService, billingService})
+    const userResolver = new UserResolver({notificationSettingsService, itemService, saleService, kktService, userService})
     const billingResolver = new BillingResolver({billingService})
     const machineResolver = new MachineResolver({machineService, saleService, kktService})
     const itemMatrixResolver = new ItemMatrixResolver({itemMatrixService})
