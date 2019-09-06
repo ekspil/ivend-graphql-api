@@ -167,6 +167,7 @@ const typeDefs = gql`
     }
 
     type Billing {
+        userId: Int!
         balance: Float!
         deposits(period: Period): [Deposit!]!
         dailyBill: Float!
@@ -214,7 +215,7 @@ const typeDefs = gql`
     type Item {
         id: Int,
         name: String!
-        salesSummary(machineId: Int, period: Period): SalesSummary
+        salesSummary(machineId: Int, machineGroupId: Int, period: Period): SalesSummary
         lastSaleTime: Timestamp
     }
 
@@ -446,8 +447,8 @@ const typeDefs = gql`
         itemMatrix: ItemMatrix
         type: MachineType!
         salesSummaryOfItem(itemId:Int, period: Period): SalesSummary
-        salesSummary(period: Period): SalesSummary
-        salesByEncashment: SalesSummary
+        salesSummary(machineGroupId: Int, period: Period): SalesSummary
+        salesByEncashment(machineGroupId: Int): SalesSummary
         encashmentsSummaries: [EncashmentSalesSummary!]!
         logs: [MachineLog!]!
         lastSaleTime: Timestamp

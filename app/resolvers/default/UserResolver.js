@@ -55,8 +55,8 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
         return kkts.map(kkt => (new KktDTO(kkt)))
     }
 
-    const billing = async () => {
-        return new BillingDTO({})
+    const billing = async (obj) => {
+        return new BillingDTO({userId: obj.id})
     }
 
     const salesSummary = async (obj, args, context) => {

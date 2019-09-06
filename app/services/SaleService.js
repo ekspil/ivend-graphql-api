@@ -17,8 +17,10 @@ const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
 
-    constructor({SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService, kktService}) {
+    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService, kktService}) {
         this.Sale = SaleModel
+        this.MachineGroup = MachineGroupModel
+        this.Machine = MachineModel
         this.Item = ItemModel
         this.ButtonItem = ButtonItemModel
         this.controllerService = controllerService
@@ -162,7 +164,6 @@ class SaleService {
 
 
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED") {
-            logger.debug(`controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"`)
 
             const controllerUser = await controller.getUser()
 
@@ -184,7 +185,6 @@ class SaleService {
             const [kkt] = activatedKkts.filter(kkt => kkt.id === machine.kktId)
 
             if (activatedKkts.length) {
-                logger.debug(`activatedKkts.length ${activatedKkts.length}`)
                 const {inn, sno, companyName} = legalInfo
 
                 const place = machine.place || "Торговый автомат"
@@ -290,7 +290,7 @@ class SaleService {
                         }
                     }
                 } catch (err) {
-                    logger.info("sale_service_err " + JSON.stringify(err))
+                    logger.info(`sale_service_err ${err} ${JSON.stringify(err)}`)
                 }
             }
         }
@@ -428,12 +428,13 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const {machineId, period, itemId} = input
+        const {machineId, period, itemId, machineGroupId} = input
 
         const {sequelize} = this.Sale
         const {Op} = sequelize
 
         const where = {}
+        const machineGroupWhere = {}
 
         if (machineId) {
             where.machine_id = machineId
@@ -447,6 +448,10 @@ class SaleService {
 
         if (itemId) {
             where.item_id = itemId
+        }
+
+        if (machineGroupId) {
+            machineGroupWhere.id = machineGroupId
         }
 
         if (period) {
@@ -470,8 +475,20 @@ class SaleService {
                 [sequelize.fn("COUNT", "sales.id"), "overallCount"],
                 [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
             ],
-            group: ["type", "sales.item_id", "item.id"],
-            include: [{model: this.Item}],
+            group: ["type", "sales.item_id", "item.id", "machine.id", "machine->group.id"],
+            include: [
+                {
+                    model: this.Item
+                },
+                {
+                    required: true,
+                    model: this.Machine,
+                    include: [{
+                        model: this.MachineGroup, as: "group",
+                        where: machineGroupWhere
+                    }]
+                }
+            ]
         })
 
         const salesSummary = new SalesSummary()

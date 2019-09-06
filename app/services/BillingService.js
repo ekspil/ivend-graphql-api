@@ -86,13 +86,13 @@ class BillingService {
         return daysLeft
     }
 
-    async getBalance(user) {
+    async getBalance(user, userId) {
         if (!user || !user.checkPermission(Permission.GET_BALANCE)) {
             throw new NotAuthorized()
         }
 
         const where = {
-            user_id: user.id
+            user_id: userId
         }
 
         const balance = await this.Transaction.sum("amount", {where})
