@@ -162,6 +162,7 @@ class SaleService {
 
 
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED") {
+            logger.debug(`controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED"`)
 
             const controllerUser = await controller.getUser()
 
@@ -183,6 +184,7 @@ class SaleService {
             const [kkt] = activatedKkts.filter(kkt => kkt.id === machine.kktId)
 
             if (activatedKkts.length) {
+                logger.debug(`activatedKkts.length ${activatedKkts.length}`)
                 const {inn, sno, companyName} = legalInfo
 
                 const place = machine.place || "Торговый автомат"
@@ -288,7 +290,7 @@ class SaleService {
                         }
                     }
                 } catch (err) {
-                    logger.info("sale_service_err " + JSON.stringify(err.response.data))
+                    logger.info("sale_service_err " + JSON.stringify(err))
                 }
             }
         }
