@@ -109,7 +109,7 @@
 
 # 1.1.13 - Release
 
-* Moved out connection limits to the environment
+* Moved out connection limits to the environment (min 5, max 15 default)
 
 
 # 1.1.14 - Hotfix
@@ -120,3 +120,10 @@
 # 1.1.15 - Hotfix
 
 * Fix logging prefix [object Object]
+
+
+# 1.2.0 - Release
+
+* Receipt handling refactored: moved out to external microservice
+* Added Encashment type
+* Added return types and mutations with queries for the Receipt and Encashment

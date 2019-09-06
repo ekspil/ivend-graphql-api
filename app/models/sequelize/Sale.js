@@ -15,6 +15,12 @@ const Sale = {
         type: Sequelize.DataTypes.DECIMAL,
         allowNull: false
     },
+    // external id from fiscal microservice (string)
+    receiptId: {
+        type: Sequelize.DataTypes.TEXT,
+        field: "receipt_id",
+        allowNull: true
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

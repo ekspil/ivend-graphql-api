@@ -28,6 +28,7 @@ const KktService = require("./services/KktService")
 
 const User = require("./models/sequelize/User")
 const Equipment = require("./models/sequelize/Equipment")
+const Encashment = require("./models/sequelize/Encashment")
 const Item = require("./models/sequelize/Item")
 const Sale = require("./models/sequelize/Sale")
 const ButtonItem = require("./models/sequelize/ButtonItem")
@@ -107,6 +108,7 @@ class App {
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
         const MachineLogModel = sequelize.define("machine_logs", MachineLog)
+        const EncashmentModel = sequelize.define("encashments", Encashment, {timestamps: false})
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -120,6 +122,8 @@ class App {
 
         SaleModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
+
+        EncashmentModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
 
         ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
@@ -264,6 +268,7 @@ class App {
             MachineGroupModel,
             MachineTypeModel,
             MachineLogModel,
+            EncashmentModel,
             equipmentService: services.equipmentService,
             itemMatrixService: services.itemMatrixService,
             controllerService: services.controllerService

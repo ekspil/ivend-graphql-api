@@ -1,9 +1,11 @@
 const MachineGroupDTO = require("../../models/dto/MachineGroupDTO")
 const MachineTypeDTO = require("../../models/dto/MachineTypeDTO")
+const EncashmentDTO = require("../../models/dto/EncashmentDTO")
 const MachineLogDTO = require("../../models/dto/MachineLogDTO")
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
 const ItemMatrixDTO = require("../../models/dto/ItemMatrixDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
+const EncashmentSalesSummaryDTO = require("../../models/dto/EncashmentSalesSummaryDTO")
 const ControllerDTO = require("../../models/dto/ControllerDTO")
 const KktDTO = require("../../models/dto/KktDTO")
 
@@ -89,6 +91,49 @@ function MachineResolver({machineService, saleService, kktService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
+
+    const salesByEncashment = async (obj, args, context) => {
+        const {user} = context
+
+        const lastEncashment = await machineService.getLastMachineEncashment(obj.id, user)
+
+        const period = {from: lastEncashment ? lastEncashment.timestamp : new Date(0), to: new Date()}
+
+        const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
+
+        if (!salesSummary) {
+            return null
+        }
+
+        return new SalesSummaryDTO(salesSummary)
+    }
+
+
+    const encashmentsSummaries = async (obj, args, context) => {
+        const {user} = context
+
+        const encashments = await machineService.getMachineEncashments(obj.id, user)
+
+        return await Promise.all(encashments.map(async (encashment) => {
+            const {prevEncashmentId} = encashment
+            let prevEncashment = null
+
+            if (prevEncashmentId) {
+                prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
+            }
+
+            const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+            const to = new Date(encashment.timestamp)
+
+            const period = {from, to}
+
+            const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
+
+            return new EncashmentSalesSummaryDTO({encashment, salesSummary})
+        }))
+
+    }
+
     const lastSaleTime = async (obj, args, context) => {
         const {user} = context
 
@@ -133,6 +178,30 @@ function MachineResolver({machineService, saleService, kktService}) {
         return new KktDTO(kkt)
     }
 
+    const encashments = async (obj, args, context) => {
+        const {user} = context
+
+        const encashments = await machineService.getMachineEncashments(obj.id, user)
+
+        if (!encashments) {
+            return null
+        }
+
+        return encashments.map(encashment => (new EncashmentDTO(encashment)))
+    }
+
+    const lastEncashment = async (obj, args, context) => {
+        const {user} = context
+
+        const encashment = await machineService.getLastMachineEncashment(obj.id, user)
+
+        if (!encashment) {
+            return null
+        }
+
+        return new EncashmentDTO(encashment)
+    }
+
     return {
         controller,
         lastSaleTime,
@@ -143,7 +212,11 @@ function MachineResolver({machineService, saleService, kktService}) {
         type,
         logs,
         itemMatrix,
-        kkt
+        kkt,
+        encashments,
+        lastEncashment,
+        salesByEncashment,
+        encashmentsSummaries
     }
 
 }

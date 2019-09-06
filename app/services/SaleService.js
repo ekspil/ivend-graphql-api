@@ -6,12 +6,14 @@ const UserNotFound = require("../errors/UserNotFound")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
 const Sale = require("../models/Sale")
+const FiscalReceiptDTO = require("../models/FiscalReceiptDTO")
+const Receipt = require("../models/Receipt")
 const ButtonItem = require("../models/ButtonItem")
 const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
 const microservices = require("../utils/microservices")
 const logger = require("my-custom-logger")
-const {getToken, getStatus, sendCheck, getFiscalString, getTimeStamp, prepareData} = require("./FiscalService")
+const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
 
@@ -27,6 +29,11 @@ class SaleService {
         this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
+        this.getSaleById = this.getSaleById.bind(this)
+        this.getReceiptOfSale = this.getReceiptOfSale.bind(this)
+        this.getMachineOfSale = this.getMachineOfSale.bind(this)
+        this.getItemOfSale = this.getItemOfSale.bind(this)
+        this.getSales = this.getSales.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
 
 
@@ -129,6 +136,7 @@ class SaleService {
         const item = await createdSale.getItem()
         createdSale.item = item
 
+        logger.debug(`sale_created ${createdSale.id} ${item.name} ${createdSale.price} ${createdSale.createdAt}`)
 
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
@@ -170,96 +178,111 @@ class SaleService {
             }
 
 
-            let kkts = await this.kktService.getUserKkts(controllerUser)
-            let [kktOk] = kkts.filter(kkt => kkt.kktActivationDate)
-            let machineKkt = "any"
-            if (Number(machine.kktId)){
-                [kktOk] = kkts.filter(kkt => kkt.id === machine.kktId)
-                machineKkt = kktOk.kktRegNumber
-            }
-            if (kktOk) {
-                switch (type) {
-                    case "CASH":
-                        type = 0
-                        break
-                    case "CASHLESS":
-                        type = 1
-                        break
-                }
+            const userKkts = await this.kktService.getUserKkts(controllerUser)
+            const activatedKkts = userKkts.filter(kkt => kkt.kktActivationDate)
+            const [kkt] = activatedKkts.filter(kkt => kkt.id === machine.kktId)
 
+            if (activatedKkts.length) {
                 const {inn, sno, companyName} = legalInfo
-
-                const {server} = kktOk
 
                 const place = machine.place || "Торговый автомат"
 
-                let productName = "Товар " + buttonId
+                const productName = item.name || "Товар " + buttonId
 
-                if (item.name) {
-                    productName = item.name
+                const email = legalInfo.contactEmail
+                const productPrice = price.toFixed(2)
+
+                let kktRegNumber, kktFNNumber = null
+
+                if (kkt) {
+                    kktRegNumber = kkt.kktRegNumber
+                    kktFNNumber = kkt.kktFNNumber
                 }
 
-                let payType = type
-                let email = legalInfo.contactEmail
-                let productPrice = price.toFixed(2)
-                let timeStamp = getTimeStamp()
-                let extTime = timeStamp.replace(/[.: ]/g, "")
-                let extId = "IVEND-" + controllerUid + "-" + extTime
-                let fiscalData = prepareData(inn, productName, productPrice, extId, timeStamp, payType, email, sno, place)
-
                 try {
-                    const token = await getToken(process.env.UMKA_LOGIN, process.env.UMKA_PASS, server)
 
-                    if (!token) {
-                        throw new Error("token is not recieved")
+                    const fiscalReceiptDTO = new FiscalReceiptDTO({
+                        email,
+                        sno,
+                        inn,
+                        place,
+                        itemName: productName,
+                        itemPrice: productPrice,
+                        paymentType: type,
+                        kktRegNumber
+                    })
+
+
+                    //const uuid = await sendCheck(fiscalData, token, server, machineKkt)
+                    const receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
+
+                    if (!receiptId) {
+                        throw new Error("ReceiptId is null")
                     }
 
-                    const uuid = await sendCheck(fiscalData, token, server, machineKkt)
-                    const {payload} = await getStatus(token, uuid, server)
+                    createdSale.receiptId = receiptId
+                    await createdSale.save()
+
+                    let receipt = {status: "PENDING"}
+                    let timeoutDate = (new Date()).getTime() + (1000 * Number(process.env.FISCAL_STATUS_POLL_TIMEOUT_SECONDS))
+
+                    while (receipt.status === "PENDING") {
+                        receipt = await microservices.fiscal.getReceiptById(receiptId)
+
+                        if (new Date() > timeoutDate) {
+                            throw new Error("Receipt status timeout")
+                        }
+
+                        if (receipt.status === "ERROR") {
+                            throw new Error("Receipt failed to process")
+                        }
+                    }
 
                     const {
-                        fns_site,
-                        receipt_datetime,
-                        shift_number,
-                        ecr_registration_number,
-                        fiscal_document_attribute,
-                        fiscal_document_number,
-                        fiscal_receipt_number
-                    } = payload
+                        fnsSite,
+                        receiptDatetime,
+                        shiftNumber,
+                        fiscalReceiptNumber,
+                        fiscalDocumentNumber,
+                        ecrRegistrationNumber,
+                        fiscalDocumentAttribute,
+                        fnNumber
+                    } = receipt.fiscalData
 
-                    const kkt = await this.kktService.kktPlusBill(payload.fn_number, controllerUser)
 
-                    kkt.kktLastBill = receipt_datetime
+                    const kkt = await this.kktService.kktPlusBill(fnNumber, controllerUser)
+
+                    kkt.kktLastBill = receiptDatetime
 
                     await kkt.save()
 
-                    createdSale.sqr = getFiscalString(payload, sno)
+                    createdSale.sqr = getFiscalString(receipt)
 
                     const replacements = {
                         companyName,
                         inn,
-                        fiscalReceiptNumber: fiscal_receipt_number,
-                        receiptNumberInShift: shift_number,
-                        receiptDate: receipt_datetime,
+                        fiscalReceiptNumber,
+                        receiptNumberInShift: shiftNumber,
+                        receiptDate: receiptDatetime,
                         address: place,
                         productName,
                         productPrice,
-                        incomeAmountCash: type === 0 ? productPrice : 0,
-                        incomeAmountCashless: type === 1 ? productPrice : 0,
+                        incomeAmountCash: type === "CASH" ? productPrice : 0,
+                        incomeAmountCashless: type === "CASHLESS" ? productPrice : 0,
                         email,
-                        fnsSite: fns_site,
+                        fnsSite,
                         sno,
-                        regKKT: ecr_registration_number,
-                        hwIdKKT: kktOk.kktFNNumber,
-                        FD: fiscal_document_number,
-                        FPD: fiscal_document_attribute,
+                        regKKT: ecrRegistrationNumber,
+                        hwIdKKT: kktFNNumber,
+                        FD: fiscalDocumentNumber,
+                        FPD: fiscalDocumentAttribute,
                         sqr: createdSale.sqr
                     }
 
                     if (controller.remotePrinterId) {
                         try {
                             await microservices.remotePrinting.sendPrintJob(controller.remotePrinterId, replacements)
-                            logger.info("PrintJob sent")
+                            logger.debug("PrintJob sent")
                         } catch (e) {
                             logger.error("Failed to send remote print job")
                         }
@@ -286,6 +309,39 @@ class SaleService {
         })
     }
 
+    async getSales({offset, limit, machineId, itemId, user}) {
+        if (!user || !user.checkPermission(Permission.GET_SALES)) {
+            throw new NotAuthorized()
+        }
+
+        if (!limit) {
+            limit = Number(process.env.PAGINATION_DEFAULT_LIMIT)
+        }
+
+        if (limit > Number(process.env.PAGINATION_MAX_LIMIT)) {
+            throw new Error("Cannot request more than " + process.env.PAGINATION_MAX_LIMIT)
+        }
+
+        const where = {}
+
+        if (machineId) {
+            where.machine_id = machineId
+        }
+
+        if (itemId) {
+            where.item_id = itemId
+        }
+
+        return await this.Sale.findAll({
+            offset,
+            limit,
+            where,
+            order: [
+                ["id", "DESC"],
+            ]
+        })
+    }
+
     async getLastSaleOfItem(itemId, user) {
         if (!user || !user.checkPermission(Permission.GET_LAST_SALE_OF_ITEM)) {
             throw new NotAuthorized()
@@ -297,6 +353,72 @@ class SaleService {
                 ["id", "DESC"],
             ]
         })
+    }
+
+    async getSaleById(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_SALES)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Sale.findOne({
+            where: {id: saleId}
+        })
+    }
+
+    async getReceiptOfSale(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_RECEIPT)) {
+            throw new NotAuthorized()
+        }
+
+        const sale = await this.getSaleById(saleId, user)
+
+        if (!sale || !sale.receiptId) {
+            return null
+        }
+
+        const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
+
+        return new Receipt(sale.createdAt, receipt.status)
+    }
+
+    async getItemOfSale(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_ITEM_BY_ID)) {
+            throw new NotAuthorized()
+        }
+
+        const sale = await this.getSaleById(saleId, user)
+
+        if (!sale) {
+            throw new Error("Sale not found")
+        }
+
+        const item = await this.itemService.getItemById(sale.item_id, user)
+
+        if (!item) {
+            throw new Error("Item not found")
+        }
+
+        return item
+    }
+
+    async getMachineOfSale(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_BY_ID)) {
+            throw new NotAuthorized()
+        }
+
+        const sale = await this.getSaleById(saleId, user)
+
+        if (!sale) {
+            throw new Error("Sale not found")
+        }
+
+        const machine = await this.machineService.getMachineById(sale.machine_id, user)
+
+        if (!machine) {
+            throw new Error("Machine not found")
+        }
+
+        return machine
     }
 
     async getSalesSummary(input, user) {

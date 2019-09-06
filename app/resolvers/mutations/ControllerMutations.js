@@ -77,6 +77,15 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         return new RevisionDTO(revision)
     }
 
+    const registerEvent = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const controller = await controllerService.registerEvent(input, user)
+
+        return new ControllerDTO(controller)
+    }
+
     return {
         createController,
         editController,
@@ -85,7 +94,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         registerControllerState,
         registerControllerError,
         registerSale,
-        createRevision
+        createRevision,
+        registerEvent
     }
 
 }

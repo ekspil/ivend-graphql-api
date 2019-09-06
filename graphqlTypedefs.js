@@ -42,7 +42,7 @@ const typeDefs = gql`
         UNAPPROVED
         APPROVED
     }
-    
+
     enum SNO {
         osn
         usn_income
@@ -137,14 +137,27 @@ const typeDefs = gql`
         buttonId: Int
         item: Item
     }
+    
+    type Receipt {
+        timestamp: Timestamp!
+        status: ReceiptStatus!
+    }
+    
+    enum ReceiptStatus {
+        PENDING
+        ERROR
+        SUCCESS
+    }
 
     type Sale {
         id: Int!
         type: SaleType!
+        price: Float!
         item: Item!
-        itemMatrix: ItemMatrix!
-        controller: Controller!
+        machine: Machine!
+        receipt: Receipt
         sqr: String
+        createdAt: Timestamp!
     }
 
     type ControllerError {
@@ -159,7 +172,7 @@ const typeDefs = gql`
         dailyBill: Float!
         daysLeft: Float!
     }
-    
+
     type Kkt {
         id: Int!
         inn: String!
@@ -170,10 +183,10 @@ const typeDefs = gql`
         kktFNNumber: String
         kktActivationDate: String
         kktBillsCount: Int
-        kktOFDRegKey: String        
-        kktLastBill: String        
-        server: String        
-}
+        kktOFDRegKey: String
+        kktLastBill: String
+        server: String
+    }
 
     type User {
         email: String!
@@ -213,12 +226,12 @@ const typeDefs = gql`
         name: String!
     }
 
-    
+
     input CreateKktInput {
         kktModel: String!
         inn: String!
         companyName: String!
-        
+
     }
     input EditKktInput {
         id: Int!
@@ -411,6 +424,18 @@ const typeDefs = gql`
         name: String!
     }
 
+    type Encashment {
+        id: Int!
+        prevEncashment: Encashment
+        timestamp: Timestamp!
+        createdAt: Timestamp!
+    }
+
+    type EncashmentSalesSummary {
+        encashment: Encashment!
+        salesSummary: SalesSummary!
+    }
+
     type Machine {
         id: Int!
         number: String!
@@ -422,9 +447,13 @@ const typeDefs = gql`
         type: MachineType!
         salesSummaryOfItem(itemId:Int, period: Period): SalesSummary
         salesSummary(period: Period): SalesSummary
+        salesByEncashment: SalesSummary
+        encashmentsSummaries: [EncashmentSalesSummary!]!
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
+        encashments: [Encashment!]!
+        lastEncashment: Encashment
         kkt: Kkt
     }
 
@@ -489,6 +518,7 @@ const typeDefs = gql`
         getAllKkts: [Kkt]
         getAllUsers: [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
+        getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int): [Sale!]!
     }
 
     input AuthControllerInput {
@@ -509,18 +539,28 @@ const typeDefs = gql`
         EDIT_EMAIL_CONFIRM
         EDIT_PASSWORD_CONFIRM
     }
-    
+
+    enum EventType {
+        ENCASHMENT
+    }
+
     input UserActionConfirmation {
         token: String!
         type: UserActionType!
     }
-    
+
+    input RegisterEventInput {
+        timestamp: Timestamp!
+        controllerUid: String!
+        eventType: EventType!
+    }
 
     type Mutation {
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller
         registerSale(input: SaleEventInput!): Sale
+        registerEvent(input: RegisterEventInput!): Controller
         registerUser(input: CreateUserInput!): User
         editEmail(email: String!): Boolean
         editPassword(password: String!): Boolean

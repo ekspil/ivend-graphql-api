@@ -5,12 +5,15 @@ const DepositRequestFailed = require("../errors/DepositRequestFailed")
 const PrintJobRequestFailed = require("../errors/PrintJobRequestFailed")
 const ServiceNotFound = require("../errors/ServiceNotFound")
 const MicroserviceUnknownError = require("../errors/MicroserviceUnknownError")
+const FiscalReceiptDTO = require("../models/FiscalReceiptDTO")
 
 const sendRegistrationSms = async (phone, code) => {
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_SMS`
+    const method = "POST"
     const body = JSON.stringify({phone, code})
 
-    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_SMS`, {
-        method: "POST",
+    const response = await fetch(url, {
+        method,
         headers: {
             "Content-Type": "application/json"
         },
@@ -28,15 +31,17 @@ const sendRegistrationSms = async (phone, code) => {
 
             return
         default:
-            throw new MicroserviceUnknownError(response.status)
+            throw new MicroserviceUnknownError(method, url, response.status)
     }
 }
 
 const sendRegistrationEmail = async (email, token) => {
     const body = JSON.stringify({token, email})
+    const method = "POST"
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_EMAIL`
 
-    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_EMAIL`, {
-        method: "POST",
+    const response = await fetch(url, {
+        method,
         headers: {
             "Content-Type": "application/json"
         },
@@ -54,15 +59,17 @@ const sendRegistrationEmail = async (email, token) => {
 
             return
         default:
-            throw new MicroserviceUnknownError(response.status)
+            throw new MicroserviceUnknownError(method, url, response.status)
     }
 }
 
 const sendChangeEmailEmail = async (email, token) => {
     const body = JSON.stringify({token, email})
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/CHANGE_EMAIL`
+    const method = "POST"
 
-    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/CHANGE_EMAIL`, {
-        method: "POST",
+    const response = await fetch(url, {
+        method,
         headers: {
             "Content-Type": "application/json"
         },
@@ -80,15 +87,17 @@ const sendChangeEmailEmail = async (email, token) => {
 
             return
         default:
-            throw new MicroserviceUnknownError(response.status)
+            throw new MicroserviceUnknownError(method, url, response.status)
     }
 }
 
 const sendChangePasswordEmail = async (email, token) => {
     const body = JSON.stringify({token, email})
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/CHANGE_PASSWORD`
+    const method = "POST"
 
-    const response = await fetch(`${process.env.NOTIFICATION_URL}/api/v1/template/CHANGE_PASSWORD`, {
-        method: "POST",
+    const response = await fetch(url, {
+        method,
         headers: {
             "Content-Type": "application/json"
         },
@@ -106,12 +115,15 @@ const sendChangePasswordEmail = async (email, token) => {
 
             return
         default:
-            throw new MicroserviceUnknownError(response.status)
+            throw new MicroserviceUnknownError(method, url, response.status)
     }
 }
 
 const getServiceDailyPrice = async (service, userId) => {
-    const response = await fetch(`${process.env.BILLING_URL}/api/v1/service/${service}/price/daily/${userId}`, {
+    const url = `${process.env.BILLING_URL}/api/v1/service/${service}/price/daily/${userId}`
+    const method = "GET"
+
+    const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -127,13 +139,16 @@ const getServiceDailyPrice = async (service, userId) => {
         case 404:
             throw new ServiceNotFound()
         default:
-            throw new MicroserviceUnknownError(response.status)
+            throw new MicroserviceUnknownError(method, url, response.status)
     }
 }
 
 const changeUserBalance = async (userId, sum) => {
-    const response = await fetch(`${process.env.BILLING_URL}/api/v1/service/balance/change/${userId}/${sum}`, {
-        method: "GET",
+    const url = `${process.env.BILLING_URL}/api/v1/service/balance/change/${userId}/${sum}`
+    const method = "GET"
+
+    const response = await fetch(url, {
+        method,
         headers: {
             "Content-Type": "application/json"
         }
@@ -148,7 +163,7 @@ const changeUserBalance = async (userId, sum) => {
         case 404:
             throw new ServiceNotFound()
         default:
-            throw new MicroserviceUnknownError(response.status)
+            throw new MicroserviceUnknownError(method, url, response.status)
     }
 }
 
@@ -210,6 +225,66 @@ const sendPrintJob = async (remotePrinterId, replacements) => {
 }
 
 
+/**
+ * Send sale to the fiscal service
+ *
+ * @param fiscalReceiptDto {FiscalReceiptDTO}
+ * @returns {Promise<FiscalReceiptDTO>}
+ */
+const createReceipt = async (fiscalReceiptDto) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receipt`
+    const method = "POST"
+    const body = JSON.stringify(fiscalReceiptDto)
+
+    const response = await fetch(`${process.env.FISCAL_URL}/api/v1/fiscal/receipt`, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return new FiscalReceiptDTO(json)
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+
+
+/**
+ * Get receipt by id
+ *
+ * @param id {number}
+ * @returns {Promise<FiscalReceiptDTO>}
+ */
+const getReceiptById = async (id) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receipt/${id}`
+    const method = "GET"
+
+    const response = await fetch(`${process.env.FISCAL_URL}/api/v1/fiscal/receipt/${id}`, {
+        method
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return new FiscalReceiptDTO(json)
+        }
+        case 404: {
+            return null
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+
+
 module.exports = {
     remotePrinting: {
         sendPrintJob
@@ -224,5 +299,9 @@ module.exports = {
         getServiceDailyPrice,
         createPaymentRequest,
         changeUserBalance
+    },
+    fiscal: {
+        createReceipt,
+        getReceiptById
     }
 }

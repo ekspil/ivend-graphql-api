@@ -49,7 +49,8 @@ const Resolvers = function (injects) {
         userService,
         serviceService,
         machineService,
-        kktService
+        kktService,
+        saleService
     })
 
     return {
@@ -58,7 +59,7 @@ const Resolvers = function (injects) {
         ...defaultResolvers,
         Timestamp: new GraphQLScalarType({
             name: "Timestamp",
-            description: "Timestamp in seconds since 1970, in UTC timezone",
+            description: "Timestamp in milliseconds since 1970, in UTC timezone",
             parseValue(value) {
                 return new Date(value)
             },

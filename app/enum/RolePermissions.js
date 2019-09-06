@@ -55,10 +55,13 @@ const VENDOR = [
     Permission.EDIT_EMAIL,
     Permission.EDIT_PASSWORD,
     Permission.CREATE_KKT,
+    Permission.GET_MACHINE_ENCASHMENTS,
     Permission.GET_KKT_BY_ID,
     Permission.GET_USER_KKTS,
     Permission.GET_LEGAL_INFO,
+    Permission.GET_SALES,
     Permission.UPDATE_KKT,
+    Permission.GET_RECEIPT,
 
 
 ]
@@ -98,6 +101,9 @@ const AGGREGATE = [
     Permission.REGISTER_CONTROLLER_STATE,
     Permission.REGISTER_SALE,
     Permission.REGISTER_CONTROLLER_ERROR,
+    Permission.REGISTER_CONTROLLER_ENCASHMENT,
+    Permission.CREATE_ENCASHMENT,
+    Permission.CREATE_CONTROLLER_EVENT,
     Permission.GET_MACHINE_BY_CONTROLLER_ID
 ]
 
