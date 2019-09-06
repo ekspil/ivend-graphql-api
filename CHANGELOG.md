@@ -133,7 +133,7 @@
 * Fixed logging saleService registerSale error
 * Added more vebose logging for debugging prod
 
-# 1.2.3 - Release
+# 1.2.2 - Release
 
 * Added filtering by machine group in salesSummary
 * addeduserId in graphql type Billing
