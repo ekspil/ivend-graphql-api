@@ -176,10 +176,10 @@ const changeUserBalance = async (userId, sum) => {
  */
 const createPaymentRequest = async (amount, user) => {
     const body = JSON.stringify({
-        amount,
-        phone: user.phone,
-        userId: user.id,
-        email: user.email
+        "amount" : 100,
+        "phone": "9313288159",
+        "userId": 4,
+        "email": "info@ivend.pro"
     })
 
     const response = await fetch(`${process.env.BILLING_URL}/api/v1/billing/createPayment`, {

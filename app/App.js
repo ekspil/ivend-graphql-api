@@ -286,6 +286,8 @@ class App {
         services.controllerService.serviceService = services.serviceService
 
         services.saleService = new SaleService({
+            MachineGroupModel,
+            MachineModel,
             SaleModel,
             ItemModel,
             ButtonItemModel,
@@ -351,7 +353,7 @@ class App {
                 email: "test",
                 phone: "9999999999",
                 password: "test"
-            })
+            }, "VENDOR")
             user.checkPermission = () => true
 
             // Create test user with invalid token
