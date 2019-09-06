@@ -127,3 +127,8 @@
 * Receipt handling refactored: moved out to external microservice
 * Added Encashment type
 * Added return types and mutations with queries for the Receipt and Encashment
+
+# 1.2.1 - Release
+
+* Fixed logging saleService registerSale error
+* Added more vebose logging for debugging prod
