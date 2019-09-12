@@ -544,6 +544,7 @@ class App {
         const server = new ApolloServer({
             typeDefs,
             resolvers,
+            tracing: Boolean(Number(process.env.APOLLO_TRACING_ENABLED)),
             context: new ContextResolver({
                 UserModel,
                 redis
