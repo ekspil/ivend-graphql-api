@@ -6,7 +6,7 @@ metadata:
   labels:
     app: graphql
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: graphql
-        image: registry.gitlab.com/pshenmic/ivend/graphql:1.2.2
+        image: registry.gitlab.com/pshenmic/ivend/graphql:1.2.3
         ports:
           - containerPort: 4000
         readinessProbe:
