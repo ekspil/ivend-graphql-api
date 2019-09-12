@@ -137,3 +137,8 @@
 
 * Added filtering by machine group in salesSummary
 * addeduserId in graphql type Billing
+
+# 1.2.3 - Release
+
+* Added new environment APOLLO_ENABLE_TRACING for enabling Apollo Tracing
+* Bumpled production number of replicas to 2
