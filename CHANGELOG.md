@@ -142,3 +142,8 @@
 
 * Added new environment APOLLO_ENABLE_TRACING for enabling Apollo Tracing
 * Bumpled production number of replicas to 2
+
+
+# 1.2.4 - Release
+
+* Added migration for index on field machine_id in Sales
