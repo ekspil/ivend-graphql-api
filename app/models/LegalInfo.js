@@ -1,4 +1,4 @@
-class Item {
+class LegalInfo {
     constructor(id, companyName, city, actualAddress, inn, ogrn, legalAddress, director, directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno) {
         this.id = id
         this.companyName = companyName
@@ -17,4 +17,4 @@ class Item {
     }
 }
 
-module.exports = Item
+module.exports = LegalInfo
