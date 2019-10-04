@@ -147,3 +147,7 @@
 # 1.2.4 - Release
 
 * Added migration for index on field machine_id in Sales
+
+# 1.3.0 - Release
+
+* Added ENABLED value to MachineLogType in GraphQL enum
