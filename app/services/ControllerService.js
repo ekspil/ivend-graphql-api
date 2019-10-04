@@ -64,7 +64,7 @@ class ControllerService {
         controller.revision_id = revision.id
 
         controller.name = name
-        controller.uid = uid
+        controller.uid = uid.replace(" ", "")
         controller.revision = revision
         controller.status = status
         controller.mode = mode
