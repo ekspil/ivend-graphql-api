@@ -147,3 +147,9 @@
 # 1.2.4 - Release
 
 * Added migration for index on field machine_id in Sales
+
+# 1.3.0 - Release
+
+* Unset controller from machine before controller delete
+* When creating controller, trim whitespaces from uid
+* When return ItemMatrix with buttons, sort by buttonId
