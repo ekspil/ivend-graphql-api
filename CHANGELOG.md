@@ -154,3 +154,4 @@
 * When creating controller, trim whitespaces from uid
 * When return ItemMatrix with buttons, sort by buttonId
 * Unset controller from machine before machine delete
+* Added payment type to the type Receipt
