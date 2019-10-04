@@ -288,6 +288,14 @@ class MachineService {
             throw new MachineNotFound()
         }
 
+        const controller = await machine.getController()
+
+        if (controller) {
+            machine.controller_id = null
+
+            await machine.save()
+        }
+
         return await machine.destroy()
     }
 
