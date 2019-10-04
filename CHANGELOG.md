@@ -156,3 +156,4 @@
 * Unset controller from machine before machine delete
 * Added payment type to the type Receipt
 * Added ENABLED value to MachineLogType in GraphQL enum
+* Unset controllerId if passed to editController
