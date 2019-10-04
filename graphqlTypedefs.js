@@ -500,6 +500,7 @@ const typeDefs = gql`
         BILLACCEPTOR
         BUS_ERROR
         REGISTRATION
+        ENABLED
     }
 
     type Query {
