@@ -153,3 +153,4 @@
 * Unset controller from machine before controller delete
 * When creating controller, trim whitespaces from uid
 * When return ItemMatrix with buttons, sort by buttonId
+* Unset controller from machine before machine delete
