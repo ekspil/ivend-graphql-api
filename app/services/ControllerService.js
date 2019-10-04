@@ -64,7 +64,7 @@ class ControllerService {
         controller.revision_id = revision.id
 
         controller.name = name
-        controller.uid = uid.replace(" ", "")
+        controller.uid = uid
         controller.revision = revision
         controller.status = status
         controller.mode = mode
@@ -152,7 +152,7 @@ class ControllerService {
             throw new ControllerNotFound()
         }
 
-        const machine = await controller.getMachine()
+        const machine = await this.machineService.getMachineByControllerId(controller.id)
 
         if (machine) {
             machine.controller_id = null
