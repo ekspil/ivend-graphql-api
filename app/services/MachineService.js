@@ -298,7 +298,7 @@ class MachineService {
             await machine.save()
         }
 
-        return await machine.destroy()
+        await machine.destroy()
     }
 
     async addLog(machineId, message, type, user, transaction) {

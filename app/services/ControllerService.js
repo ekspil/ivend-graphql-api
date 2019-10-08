@@ -160,7 +160,7 @@ class ControllerService {
             await machine.save()
         }
 
-        return await controller.destroy()
+        await controller.destroy()
     }
 
 
