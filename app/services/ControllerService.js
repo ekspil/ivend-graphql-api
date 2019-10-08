@@ -152,7 +152,7 @@ class ControllerService {
             throw new ControllerNotFound()
         }
 
-        const machine = await this.machineService.getMachineByControllerId(controller.id)
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
 
         if (machine) {
             machine.controller_id = null
