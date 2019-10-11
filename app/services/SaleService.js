@@ -204,6 +204,7 @@ class SaleService {
                 try {
 
                     const fiscalReceiptDTO = new FiscalReceiptDTO({
+                        controllerUid,
                         email,
                         sno,
                         inn,
