@@ -152,7 +152,15 @@ class ControllerService {
             throw new ControllerNotFound()
         }
 
-        return await controller.destroy()
+        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+
+        if (machine) {
+            machine.controller_id = null
+
+            await machine.save()
+        }
+
+        await controller.destroy()
     }
 
 

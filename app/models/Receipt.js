@@ -1,8 +1,9 @@
 class Receipt {
 
-    constructor(timestamp, status) {
+    constructor(timestamp, status, paymentType) {
         this.timestamp = timestamp
         this.status = status
+        this.paymentType = paymentType
     }
 
 }

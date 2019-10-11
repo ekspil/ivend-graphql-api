@@ -115,6 +115,8 @@ class MachineService {
             }
 
             machine.controller_id = controller.id
+        } else {
+            machine.controller_id = null
         }
 
         if (groupId) {
@@ -148,8 +150,8 @@ class MachineService {
         if (place) {
             machine.place = place
         }
-        machine.kktId = kktId
 
+        machine.kktId = kktId
 
         return await machine.save()
     }
@@ -288,7 +290,15 @@ class MachineService {
             throw new MachineNotFound()
         }
 
-        return await machine.destroy()
+        const controller = await machine.getController()
+
+        if (controller) {
+            machine.controller_id = null
+
+            await machine.save()
+        }
+
+        await machine.destroy()
     }
 
     async addLog(machineId, message, type, user, transaction) {
