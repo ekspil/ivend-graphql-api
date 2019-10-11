@@ -157,3 +157,8 @@
 * Added payment type to the type Receipt
 * Added ENABLED value to MachineLogType in GraphQL enum
 * Unset controllerId if passed to editController
+
+# 1.3.1 - Release
+
+* Add sorting of ButtonItems
+* Add paymentType to ReceiptDTO

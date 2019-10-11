@@ -124,6 +124,13 @@ class ItemMatrixService {
                         model: this.Item
                     }]
                 }
+            ],
+            order: [
+                [
+                    {model: this.ButtonItem, as: "buttons"},
+                    "buttonId",
+                    "ASC"
+                ]
             ]
         })
 
