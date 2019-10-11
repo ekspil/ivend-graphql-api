@@ -380,7 +380,7 @@ class SaleService {
 
         const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
 
-        return new Receipt(sale.createdAt, receipt.status)
+        return new Receipt(sale.createdAt, receipt.status, receipt.paymentType)
     }
 
     async getItemOfSale(saleId, user) {
