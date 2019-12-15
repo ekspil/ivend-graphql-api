@@ -50,32 +50,32 @@ class BillingService {
         return await this.Deposit.findAll({where, include: [{model: this.PaymentRequest, as: "paymentRequest"}]})
     }
 
-    async getDailyBill(user) {
+    async getDailyBill(user, userId) {
         if (!user || !user.checkPermission(Permission.GET_DAILY_BILL)) {
             throw new NotAuthorized()
         }
 
         const controllers = await this.Controller.findAll({
             where: {
-                user_id: user.id,
+                user_id: userId,
                 status: ControllerStatus.ENABLED
             }
         })
 
-        const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY", user.id)
+        const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY", userId)
 
         return controllers.reduce((acc) => {
             return acc + Number(telemetryPrice)
         }, 0).toFixed(2)
     }
 
-    async getDaysLeft(user) {
+    async getDaysLeft(user, userId) {
         if (!user || !user.checkPermission(Permission.GET_DAYS_LEFT)) {
             throw new NotAuthorized()
         }
 
-        const dailyBill = await this.getDailyBill(user)
-        const balance = await this.getBalance(user)
+        const dailyBill = await this.getDailyBill(user, userId)
+        const balance = await this.getBalance(user, userId)
 
         const daysLeft = Math.floor(balance / dailyBill)
 
@@ -98,7 +98,7 @@ class BillingService {
         const balance = await this.Transaction.sum("amount", {where})
 
         if (!isFinite(balance)) {
-            return 1
+            return 0
         }
 
         return balance

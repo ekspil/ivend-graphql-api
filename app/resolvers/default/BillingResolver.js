@@ -26,13 +26,13 @@ function BillingResolver({billingService}) {
     const dailyBill = async (obj, args, context) => {
         const {user} = context
 
-        return await billingService.getDailyBill(user)
+        return await billingService.getDailyBill(user, obj.userId)
     }
 
     const daysLeft = async (obj, args, context) => {
         const {user} = context
 
-        return await billingService.getDaysLeft(user)
+        return await billingService.getDaysLeft(user, obj.userId)
     }
 
     return {
