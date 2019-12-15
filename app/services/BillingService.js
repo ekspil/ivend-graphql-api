@@ -98,7 +98,7 @@ class BillingService {
         const balance = await this.Transaction.sum("amount", {where})
 
         if (!isFinite(balance)) {
-            return 0
+            return 1
         }
 
         return balance
