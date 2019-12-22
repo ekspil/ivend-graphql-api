@@ -1,32 +1,19 @@
 const Sequelize = require("sequelize")
 
-const Item = {
+const TelegramList = {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
-    type: {
+    username: {
         type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-        unique: false
+        allowNull: false
     },
-    telegram: {
+    chat: {
         type: Sequelize.DataTypes.STRING,
-        unique: false
-    },
-    telegramChat: {
-        type: Sequelize.DataTypes.STRING,
-        unique: false
-    },
-    email: {
-        type: Sequelize.DataTypes.BOOLEAN,
-        allowNull: true
-    },
-    sms: {
-        type: Sequelize.DataTypes.BOOLEAN,
-        allowNull: true
+        allowNull: false
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -41,4 +28,4 @@ const Item = {
         field: "updated_at"
     }
 }
-module.exports = Item
+module.exports = TelegramList

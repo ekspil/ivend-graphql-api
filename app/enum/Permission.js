@@ -38,6 +38,10 @@ const Permission = {
     "GET_ITEM_BY_ID": "GET_ITEM_BY_ID",
     "GET_USER_ITEMS": "GET_USER_ITEMS",
 
+    // NewsService
+    "CREATE_NEWS": "CREATE_NEWS",
+    "GET_NEWS": "GET_NEWS",
+
     // LegalInfoService
     "CREATE_LEGAL_INFO": "CREATE_LEGAL_INFO",
     "UPDATE_LEGAL_INFO": "UPDATE_LEGAL_INFO",

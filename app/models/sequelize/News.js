@@ -1,32 +1,31 @@
 const Sequelize = require("sequelize")
 
-const Item = {
+const News = {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
-    type: {
+    active: {
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: false
+    },
+    date: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
-        unique: false
     },
-    telegram: {
+    text: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: false,
+    },
+    link: {
         type: Sequelize.DataTypes.STRING,
-        unique: false
+        allowNull: true,
     },
-    telegramChat: {
+    header: {
         type: Sequelize.DataTypes.STRING,
-        unique: false
-    },
-    email: {
-        type: Sequelize.DataTypes.BOOLEAN,
-        allowNull: true
-    },
-    sms: {
-        type: Sequelize.DataTypes.BOOLEAN,
-        allowNull: true
+        allowNull: false,
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
@@ -41,4 +40,4 @@ const Item = {
         field: "updated_at"
     }
 }
-module.exports = Item
+module.exports = News

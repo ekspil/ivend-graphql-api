@@ -24,6 +24,15 @@ function ControllerQueries({controllerService, revisionService}) {
         return controllers.map(controller => (new ControllerDTO(controller)))
     }
 
+
+    const getAllControllers = async (root, args, context) => {
+        const {user} = context
+
+        const controllers = await controllerService.getAll(user)
+
+        return controllers.map(controller => (new ControllerDTO(controller)))
+    }
+
     const getControllerByUID = async (root, args, context) => {
         const {uid} = args
         const {user} = context
@@ -49,7 +58,8 @@ function ControllerQueries({controllerService, revisionService}) {
         getController,
         getControllers,
         getControllerByUID,
-        getRevisions
+        getRevisions,
+        getAllControllers
     }
 
 }

@@ -66,10 +66,15 @@ const typeDefs = gql`
         redirectUrl: String!
     }
 
+    type Pdf {
+        url: String!
+    }
+
     enum PaymentStatus {
         SUCCEEDED
         CANCELLED
         PENDING
+        ADMIN_EDIT
     }
 
     type SalesSummary {
@@ -135,6 +140,7 @@ const typeDefs = gql`
 
     type ButtonItem {
         buttonId: Int
+        multiplier: Int
         item: Item
     }
     
@@ -207,10 +213,17 @@ const typeDefs = gql`
         type: NotificationType!
         email: Boolean!
         sms: Boolean!
+        telegram: String
+        telegramChat: String
     }
 
     enum NotificationType {
         CONTROLLER_NO_CONNECTION
+        CONTROLLER_NO_SALES
+        CONTROLLER_ENCASHMENT
+        USER_LOW_BALANCE
+        USER_WILL_BLOCK
+        
     }
 
     type Item {
@@ -349,6 +362,15 @@ const typeDefs = gql`
     input AddButtonToItemMatrixInput {
         itemMatrixId: Int!
         buttonId: Int!
+        multiplier: Int!
+        itemId: Int!
+    }
+
+
+    input EditButtonToItemMatrixInput {
+        itemMatrixId: Int!
+        buttonId: Int!
+        multiplier: Int!
         itemId: Int!
     }
 
@@ -364,7 +386,16 @@ const typeDefs = gql`
     input UpdateNotificationSettingInput {
         type: NotificationType!
         email: Boolean!
-        sms: Boolean!
+        sms: Boolean!     
+        telegram: String
+        telegramChat: String
+    }
+    input CreateNotificationSettingInput {
+        type: NotificationType!
+        email: Boolean!
+        sms: Boolean!     
+        telegram: String
+        telegramChat: String
     }
 
     type LegalInfo {
@@ -397,6 +428,24 @@ const typeDefs = gql`
         contactPhone: String!
         contactEmail: String!
         sno: SNO!
+    }
+    
+    type News {
+        id: Int!
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
+    }
+    
+    input NewsInput {
+        id: Int
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
     }
 
     enum BillingType {
@@ -508,6 +557,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
+        getAllControllers: [Controller]
         getMachineById(id: Int!): Machine
         getMachines: [Machine]
         getMachineGroups: [MachineGroup]
@@ -522,6 +572,9 @@ const typeDefs = gql`
         getAllUsers: [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int): [Sale!]!
+        getNews: [News]
+        getNewsById(id: Int!): News
+        getAllNews: [News]
     }
 
     input AuthControllerInput {
@@ -546,7 +599,13 @@ const typeDefs = gql`
     enum EventType {
         ENCASHMENT
     }
-
+    
+    input pdfInput {
+    amount: Float!
+    inn: String!
+    companyName: String!
+    }
+    
     input UserActionConfirmation {
         token: String!
         type: UserActionType!
@@ -579,19 +638,25 @@ const typeDefs = gql`
         createMachineGroup(input: CreateMachineGroupInput!): MachineGroup
         createItem(input: CreateItemInput!): Item
         addButtonToItemMatrix(input: AddButtonToItemMatrixInput!): ItemMatrix
+        editButtonToItemMatrix(input: EditButtonToItemMatrixInput!): ItemMatrix
         removeButtonFromItemMatrix(input: RemoveButtonFromItemMatrixInput!): ItemMatrix
         createRevision(input: CreateRevisionInput!): Revision
         editController(id:Int, input: EditControllerInput!): Controller
         updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
+        createNotificationSetting(input: CreateNotificationSettingInput!): NotificationSetting
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
+        generatePdf(input: pdfInput!): Pdf
         generateExcel(input: GenerateExcelInput!): ExcelReport
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
         createKkt(input: CreateKktInput!): Kkt
         editKkt(input: EditKktInput!): Kkt
         kktPlusBill(fn: String!): Kkt
         deleteKkt(id: Int!): Boolean
+        deleteNews(id: Int!): Boolean
         changeUserBalance(input: ChangeUserBalanceInput!): Float
+        changeNews(input: NewsInput!): News
+        createNews(input: NewsInput!): News
     }
 `
 

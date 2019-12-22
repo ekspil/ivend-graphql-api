@@ -21,6 +21,14 @@ function ItemMutations({itemService, itemMatrixService}) {
 
         return new ItemMatrixDTO(itemMatrix)
     }
+    const editButtonToItemMatrix = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const itemMatrix = await itemMatrixService.editButtonToItemMatrix(input, user)
+
+        return new ItemMatrixDTO(itemMatrix)
+    }
 
 
     const removeButtonFromItemMatrix = async (root, args, context) => {
@@ -35,6 +43,7 @@ function ItemMutations({itemService, itemMatrixService}) {
     return {
         createItem,
         addButtonToItemMatrix,
+        editButtonToItemMatrix,
         removeButtonFromItemMatrix
     }
 
