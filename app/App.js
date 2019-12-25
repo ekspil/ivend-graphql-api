@@ -26,7 +26,6 @@ const ReportService = require("./services/ReportService")
 const MachineService = require("./services/MachineService")
 const KktService = require("./services/KktService")
 const NewsService = require("./services/NewsService")
-const TelegramListService = require("./services/TelegramListService")
 
 const User = require("./models/sequelize/User")
 const Equipment = require("./models/sequelize/Equipment")
@@ -51,7 +50,6 @@ const MachineType = require("./models/sequelize/MachineType")
 const MachineLog = require("./models/sequelize/MachineLog")
 const Kkt = require("./models/sequelize/Kkt")
 const News = require("./models/sequelize/News")
-const TelegramList = require("./models/sequelize/TelegramList")
 
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
 
@@ -98,7 +96,6 @@ class App {
         const ItemModel = sequelize.define("items", Item)
         const SaleModel = sequelize.define("sales", Sale)
         const ButtonItemModel = sequelize.define("button_items", ButtonItem)
-        const TelegramListModel = sequelize.define("telegram_list", TelegramList)
         const ItemMatrixModel = sequelize.define("item_matrixes", ItemMatrix)
         const ControllerModel = sequelize.define("controllers", Controller, {paranoid: true})
         const ControllerStateModel = sequelize.define("controller_states", ControllerState)
@@ -137,10 +134,6 @@ class App {
         ItemMatrixModel.hasMany(ButtonItemModel, {
             as: "buttons",
             foreignKey: "item_matrix_id"
-        })
-        UserModel.hasMany(TelegramListModel, {
-            as: "telegramList",
-            foreignKey: "user_id"
         })
 
         ButtonItemModel.belongsTo(ItemModel, {foreignKey: "item_id"})
@@ -238,7 +231,6 @@ class App {
             machineService: undefined,
             kktService: undefined,
             newsService: undefined,
-            telegramListService: undefined,
         }
 
 
@@ -250,7 +242,6 @@ class App {
 
         services.kktService = new KktService({KktModel})
         services.newsService = new NewsService({NewsModel})
-        services.telegramListService = new TelegramListService({TelegramListModel})
 
         services.itemMatrixService = new ItemMatrixService({
             ItemMatrixModel,
