@@ -390,6 +390,11 @@ const typeDefs = gql`
         telegram: String
         telegramChat: String
     }
+    input NotificationSettingTelegramChat {
+        telegram: String
+        telegramChat: String
+    }
+    
     input CreateNotificationSettingInput {
         type: NotificationType!
         email: Boolean!
@@ -644,6 +649,7 @@ const typeDefs = gql`
         editController(id:Int, input: EditControllerInput!): Controller
         updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
         createNotificationSetting(input: CreateNotificationSettingInput!): NotificationSetting
+        insertTelegramToNotificationSetting(input: NotificationSettingTelegramChat!): Boolean
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
         generatePdf(input: pdfInput!): Pdf

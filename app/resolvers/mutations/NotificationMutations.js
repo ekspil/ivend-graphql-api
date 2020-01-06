@@ -11,8 +11,18 @@ function NotificationMutations({notificationSettingsService}) {
         return new NotificationDTO(notification)
     }
 
+    const insertTelegramToNotificationSetting = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const notification = await notificationSettingsService.insertTelegramToNotificationSetting(input, user)
+
+        return notification
+    }
+
     return {
-        createNotificationSetting
+        createNotificationSetting,
+        insertTelegramToNotificationSetting
     }
 
 }

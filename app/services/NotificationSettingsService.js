@@ -10,6 +10,7 @@ class NotificationSettingsService {
         this.findAll = this.findAll.bind(this)
         this.findByType = this.findByType.bind(this)
         this.updateNotificationSetting = this.updateNotificationSetting.bind(this)
+        this.insertTelegramToNotificationSetting = this.insertTelegramToNotificationSetting.bind(this)
     }
 
 
@@ -76,6 +77,29 @@ class NotificationSettingsService {
         notificationSetting.telegramChat = telegramChat
 
         return await notificationSetting.save()
+    }
+
+    async insertTelegramToNotificationSetting(input, user) {
+        if (!user || !user.checkPermission(Permission.ADD_TELEGRAMCHAT_NOTIFICATION_SETTING)) {
+            throw new NotAuthorized()
+        }
+
+        const {telegram, telegramChat} = input
+
+        const where = {
+            telegram
+        }
+        const data = {
+            telegramChat
+        }
+
+        const result = await this.NotificationSetting.update(data, {where})
+        if (result[0] > 0) {
+            return true
+        }
+
+        return false
+
     }
 }
 
