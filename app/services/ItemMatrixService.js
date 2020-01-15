@@ -20,6 +20,7 @@ class ItemMatrixService {
 
         this.createItemMatrix = this.createItemMatrix.bind(this)
         this.addButtonToItemMatrix = this.addButtonToItemMatrix.bind(this)
+        this.editButtonToItemMatrix = this.editButtonToItemMatrix.bind(this)
     }
 
     async createItemMatrix(machineId, user, transaction) {
@@ -48,7 +49,7 @@ class ItemMatrixService {
             throw new NotAuthorized()
         }
 
-        const {itemMatrixId, buttonId, itemId} = input
+        const {itemMatrixId, buttonId, itemId, multiplier} = input
 
         const item = await this.itemService.getItemById(itemId, user)
 
@@ -72,8 +73,42 @@ class ItemMatrixService {
         buttonItem.buttonId = buttonId
         buttonItem.item_matrix_id = itemMatrix.id
         buttonItem.item_id = item.id
-
+        buttonItem.multiplier = multiplier
         await this.ButtonItem.create(buttonItem)
+
+        return this.getItemMatrixById(itemMatrixId, user)
+    }
+
+    async editButtonToItemMatrix(input, user) {
+        if (!user || !user.checkPermission(Permission.ADD_BUTTON_ITEM_TO_ITEM_MATRIX)) {
+            throw new NotAuthorized()
+        }
+
+        const {itemMatrixId, buttonId, itemId, multiplier} = input
+
+        const item = await this.itemService.getItemById(itemId, user)
+
+        if (!item) {
+            throw new ItemNotFound()
+        }
+
+        const itemMatrix = await this.getItemMatrixById(itemMatrixId, user)
+
+        if (!itemMatrix) {
+            throw new ItemMatrixNotFound
+        }
+
+        const buttonItem = await this.ButtonItem.findOne({
+            where: {
+                buttonId: buttonId,
+                item_matrix_id: itemMatrixId
+
+            }
+        })
+        buttonItem.multiplier = multiplier
+        buttonItem.item_id = item.id
+
+        await buttonItem.save()
 
         return this.getItemMatrixById(itemMatrixId, user)
     }

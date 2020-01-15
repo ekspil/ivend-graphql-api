@@ -1,6 +1,7 @@
 const NotificationDTO = require("../../models/dto/NotificationDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const ExcelReportDTO = require("../../models/dto/ExcelReportDTO")
+const PdfReportDTO = require("../../models/dto/PdfReportDTO")
 const UserDTO = require("../../models/dto/UserDTO")
 
 function UserMutations({userService, notificationSettingsService, legalInfoService, reportService}) {
@@ -52,6 +53,15 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return new ExcelReportDTO(excelReport)
     }
 
+    const generatePdf = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const pdf = await reportService.generatePdf(input, user)
+
+        return new PdfReportDTO(pdf)
+    }
+
 
     const requestRegistrationSms = async (root, args, context) => {
         const {input} = args
@@ -98,6 +108,7 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         updateNotificationSetting,
         updateLegalInfo,
         generateExcel,
+        generatePdf,
         requestRegistrationSms
     }
 

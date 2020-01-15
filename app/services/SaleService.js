@@ -121,10 +121,13 @@ class SaleService {
                 logger.error("Unexpected situation, ItemId for sale not found")
                 throw new ItemNotFound()
             }
-
+            const [button] = buttons.filter((buttonItem) => Number(buttonItem.buttonId) === buttonId)
+            if(!button.multipler){
+                button.multipler = 1
+            }
             const sale = new Sale()
             sale.type = type
-            sale.price = price
+            sale.price = price * button.multipler
             sale.item_id = itemId
             sale.machine_id = machine.id
 

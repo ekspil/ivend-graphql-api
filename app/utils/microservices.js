@@ -157,9 +157,9 @@ const changeUserBalance = async (userId, sum) => {
     switch (response.status) {
         case 200:
             const json = await response.json()
-            const {balance} = json
+            const {paymentRequestId} = json
 
-            return balance
+            return paymentRequestId
         case 404:
             throw new ServiceNotFound()
         default:

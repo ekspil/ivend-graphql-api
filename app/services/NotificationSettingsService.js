@@ -10,6 +10,7 @@ class NotificationSettingsService {
         this.findAll = this.findAll.bind(this)
         this.findByType = this.findByType.bind(this)
         this.updateNotificationSetting = this.updateNotificationSetting.bind(this)
+        this.insertTelegramToNotificationSetting = this.insertTelegramToNotificationSetting.bind(this)
     }
 
 
@@ -18,13 +19,15 @@ class NotificationSettingsService {
             throw new NotAuthorized()
         }
 
-        const {type, email, sms} = input
+        const {type} = input
 
         const notificationSetting = new NotificationSetting()
 
         notificationSetting.type = type
-        notificationSetting.email = email
-        notificationSetting.sms = sms
+        notificationSetting.email = false
+        notificationSetting.sms = false
+        notificationSetting.telegram = ""
+        notificationSetting.telegramChat = ""
         notificationSetting.user_id = user.id
 
         return this.NotificationSetting.create(notificationSetting)
@@ -60,7 +63,7 @@ class NotificationSettingsService {
             throw new NotAuthorized()
         }
 
-        const {type, email, sms} = input
+        const {type, email, sms, telegram, telegramChat} = input
 
         const notificationSetting = await this.findByType(type, user)
 
@@ -70,8 +73,33 @@ class NotificationSettingsService {
 
         notificationSetting.email = email
         notificationSetting.sms = sms
+        notificationSetting.telegram = telegram
+        notificationSetting.telegramChat = telegramChat
 
         return await notificationSetting.save()
+    }
+
+    async insertTelegramToNotificationSetting(input, user) {
+        if (!user || !user.checkPermission(Permission.ADD_TELEGRAMCHAT_NOTIFICATION_SETTING)) {
+            throw new NotAuthorized()
+        }
+
+        const {telegram, telegramChat} = input
+
+        const where = {
+            telegram
+        }
+        const data = {
+            telegramChat
+        }
+
+        const result = await this.NotificationSetting.update(data, {where})
+        if (result[0] > 0) {
+            return true
+        }
+
+        return false
+
     }
 }
 

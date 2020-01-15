@@ -25,6 +25,7 @@ const BillingService = require("./services/BillingService")
 const ReportService = require("./services/ReportService")
 const MachineService = require("./services/MachineService")
 const KktService = require("./services/KktService")
+const NewsService = require("./services/NewsService")
 
 const User = require("./models/sequelize/User")
 const Equipment = require("./models/sequelize/Equipment")
@@ -48,6 +49,7 @@ const MachineGroup = require("./models/sequelize/MachineGroup")
 const MachineType = require("./models/sequelize/MachineType")
 const MachineLog = require("./models/sequelize/MachineLog")
 const Kkt = require("./models/sequelize/Kkt")
+const News = require("./models/sequelize/News")
 
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
 
@@ -89,6 +91,7 @@ class App {
 
         const UserModel = sequelize.define("users", User)
         const KktModel = sequelize.define("kkts", Kkt)
+        const NewsModel = sequelize.define("news", News)
         const EquipmentModel = sequelize.define("equipments", Equipment)
         const ItemModel = sequelize.define("items", Item)
         const SaleModel = sequelize.define("sales", Sale)
@@ -226,7 +229,8 @@ class App {
             reportService: undefined,
             billingService: undefined,
             machineService: undefined,
-            kktService: undefined
+            kktService: undefined,
+            newsService: undefined,
         }
 
 
@@ -237,6 +241,7 @@ class App {
         services.itemService = new ItemService({ItemModel})
 
         services.kktService = new KktService({KktModel})
+        services.newsService = new NewsService({NewsModel})
 
         services.itemMatrixService = new ItemMatrixService({
             ItemMatrixModel,

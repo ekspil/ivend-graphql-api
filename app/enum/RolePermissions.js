@@ -2,6 +2,7 @@ const Permission = require("./Permission")
 
 const VENDOR = [
     Permission.GET_SELF_DEPOSITS,
+    Permission.GET_NEWS,
     Permission.GET_DAILY_BILL,
     Permission.GET_DAYS_LEFT,
     Permission.GET_BALANCE,
@@ -104,6 +105,7 @@ const AGGREGATE = [
     Permission.REGISTER_CONTROLLER_ENCASHMENT,
     Permission.CREATE_ENCASHMENT,
     Permission.CREATE_CONTROLLER_EVENT,
+    Permission.ADD_TELEGRAMCHAT_NOTIFICATION_SETTING,
     Permission.GET_MACHINE_BY_CONTROLLER_ID
 ]
 

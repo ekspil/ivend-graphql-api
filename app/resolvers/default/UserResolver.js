@@ -19,8 +19,8 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
                 const [notificationSetting] = notificationSettings.filter(notificationSetting => notificationSetting.type === notificationType)
 
                 if (notificationSetting) {
-                    const {type, email, sms} = notificationSetting
-                    return new NotificationDTO({type, email, sms})
+                    const {type, email, sms, telegram, telegramChat} = notificationSetting
+                    return new NotificationDTO({type, email, sms, telegram, telegramChat})
                 }
 
                 return new NotificationDTO({type: notificationType, email: false, sms: false})
