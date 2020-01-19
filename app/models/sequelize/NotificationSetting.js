@@ -20,11 +20,19 @@ const Item = {
         type: Sequelize.DataTypes.STRING,
         unique: false
     },
+    extraEmail: {
+        type: Sequelize.DataTypes.STRING,
+        unique: false
+    },
     email: {
         type: Sequelize.DataTypes.BOOLEAN,
         allowNull: true
     },
     sms: {
+        type: Sequelize.DataTypes.BOOLEAN,
+        allowNull: true
+    },
+    tlgrm: {
         type: Sequelize.DataTypes.BOOLEAN,
         allowNull: true
     },

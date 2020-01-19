@@ -26,6 +26,8 @@ class NotificationSettingsService {
         notificationSetting.type = type
         notificationSetting.email = false
         notificationSetting.sms = false
+        notificationSetting.tlgrm = false
+        notificationSetting.extraEmail = ""
         notificationSetting.telegram = ""
         notificationSetting.telegramChat = ""
         notificationSetting.user_id = user.id
@@ -63,7 +65,7 @@ class NotificationSettingsService {
             throw new NotAuthorized()
         }
 
-        const {type, email, sms, telegram, telegramChat} = input
+        const {type, email, sms, tlgrm, extraEmail, telegram, telegramChat} = input
 
         const notificationSetting = await this.findByType(type, user)
 
@@ -73,6 +75,8 @@ class NotificationSettingsService {
 
         notificationSetting.email = email
         notificationSetting.sms = sms
+        notificationSetting.tlgrm = tlgrm
+        notificationSetting.extraEmail = extraEmail
         notificationSetting.telegram = telegram
         notificationSetting.telegramChat = telegramChat
 

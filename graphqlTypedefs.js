@@ -213,7 +213,9 @@ const typeDefs = gql`
         type: NotificationType!
         email: Boolean!
         sms: Boolean!
+        tlgrm: Boolean!
         telegram: String
+        extraEmail: String
         telegramChat: String
     }
 
@@ -387,6 +389,8 @@ const typeDefs = gql`
         type: NotificationType!
         email: Boolean!
         sms: Boolean!     
+        tlgrm: Boolean!     
+        extraEmail: String
         telegram: String
         telegramChat: String
     }
@@ -399,7 +403,9 @@ const typeDefs = gql`
         type: NotificationType!
         email: Boolean!
         sms: Boolean!     
+        tlgrm: Boolean!     
         telegram: String
+        extraEmail: String
         telegramChat: String
     }
 
