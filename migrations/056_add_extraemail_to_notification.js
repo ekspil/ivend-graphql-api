@@ -9,6 +9,7 @@ module.exports = {
         })
         await queryInterface.addColumn("notification_settings", "tlgrm", {
             type: Sequelize.BOOLEAN,
+            defaultValue: false,
             allowNull: false,
             unique: false
         })
