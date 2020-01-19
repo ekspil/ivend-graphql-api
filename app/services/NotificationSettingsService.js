@@ -67,11 +67,12 @@ class NotificationSettingsService {
 
         const {type, email, sms, tlgrm, extraEmail, telegram, telegramChat} = input
 
-        const notificationSetting = await this.findByType(type, user)
+        const checkNotificationSetting = await this.findByType(type, user)
 
-        if (!notificationSetting) {
-            return await this.createNotificationSetting(input, user)
+        if (!checkNotificationSetting) {
+            await this.createNotificationSetting(input, user)
         }
+        const notificationSetting = await this.findByType(type, user)
 
         notificationSetting.email = email
         notificationSetting.sms = sms
