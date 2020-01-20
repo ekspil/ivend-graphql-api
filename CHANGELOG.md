@@ -162,3 +162,7 @@
 
 * Add sorting of ButtonItems
 * Add paymentType to ReceiptDTO
+
+# 1.3.2 - Release
+
+* Fix missing leading zeros in qr code
