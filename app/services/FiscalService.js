@@ -12,7 +12,14 @@ module.exports = {
 
         const receiptDatetime = new Date(fiscalData.receiptDatetime)
 
-        const t = `${receiptDatetime.getFullYear()}${receiptDatetime.getMonth() + 1}${receiptDatetime.getDate()}T${receiptDatetime.getHours()}${receiptDatetime.getMinutes()}${receiptDatetime.getSeconds()}`
+        const year = ("0" + receiptDatetime.getFullYear).slice(-2)
+        const month = ("0" + (receiptDatetime.getMonth() + 1)).slice(-2)
+        const day = ("0" + receiptDatetime.getDate()).slice(-2)
+        const hours = ("0" + receiptDatetime.getHours()).slice(-2)
+        const minutes = ("0" + receiptDatetime.getMinutes()).slice(-2)
+        const seconds = ("0" + receiptDatetime.getSeconds()).slice(-2)
+
+        const t = `${year}${month}${day}T${hours}${minutes}${seconds}`
         const s = totalAmount
         const fn = fnNumber
         const i = fiscalDocumentNumber
