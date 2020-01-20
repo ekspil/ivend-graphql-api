@@ -122,12 +122,12 @@ class SaleService {
                 throw new ItemNotFound()
             }
             const [button] = buttons.filter((buttonItem) => Number(buttonItem.buttonId) === buttonId)
-            if(!button.multipler){
-                button.multipler = 1
+            if(!button.multiplier){
+                button.multiplier = 1
             }
             const sale = new Sale()
             sale.type = type
-            sale.price = price * button.multipler
+            sale.price = price * button.multiplier
             sale.item_id = itemId
             sale.machine_id = machine.id
 

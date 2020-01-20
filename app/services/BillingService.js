@@ -137,12 +137,13 @@ class BillingService {
         deposit.payment_request_id = paymentRequestId
         deposit.user_id = id
 
-        return await this.Deposit.create(deposit, {
+        await this.Deposit.create(deposit, {
             include: [{
                 model: this.PaymentRequest,
                 as: "paymentRequest"
             }]
         })
+        return balance
 
 
 
