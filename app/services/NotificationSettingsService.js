@@ -78,7 +78,7 @@ class NotificationSettingsService {
         notificationSetting.sms = sms
         notificationSetting.tlgrm = tlgrm
         notificationSetting.extraEmail = extraEmail
-        notificationSetting.telegram = telegram
+        notificationSetting.telegram = telegram.replace("@", "")
         notificationSetting.telegramChat = telegramChat
 
         return await notificationSetting.save()
