@@ -170,3 +170,7 @@
 # 1.3.3 - Release
 
 * Fix missing leading zeros in qr code typo
+
+# 1.3.4 - Release
+
+* Fix missing leading zeros in qr code typo bug
