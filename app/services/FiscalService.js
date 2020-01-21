@@ -12,7 +12,7 @@ module.exports = {
 
         const receiptDatetime = new Date(fiscalData.receiptDatetime)
 
-        const year = ("0" + receiptDatetime.getFullYear).slice(-2)
+        const year = ("0" + receiptDatetime.getFullYear()).slice(-2)
         const month = ("0" + (receiptDatetime.getMonth() + 1)).slice(-2)
         const day = ("0" + receiptDatetime.getDate()).slice(-2)
         const hours = ("0" + receiptDatetime.getHours()).slice(-2)
