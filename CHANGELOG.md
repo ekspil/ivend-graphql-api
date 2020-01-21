@@ -166,3 +166,7 @@
 # 1.3.2 - Release
 
 * Fix missing leading zeros in qr code
+
+# 1.3.2 - Release
+
+* Fix missing leading zeros in qr code typo
