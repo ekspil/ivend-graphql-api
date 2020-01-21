@@ -195,7 +195,7 @@ class SaleService {
                 const productName = item.name || "Товар " + buttonId
 
                 const email = legalInfo.contactEmail
-                const productPrice = price.toFixed(2)
+                const productPrice = createdSale.price.toFixed(2)
 
                 let kktRegNumber, kktFNNumber = null
 
