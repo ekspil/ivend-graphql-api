@@ -174,3 +174,10 @@
 # 1.3.4 - Release
 
 * Fix missing leading zeros in qr code typo bug
+
+# 1.3.5 - Release
+
+* Added telegram and email to notification settings
+* Added new resolvers for news on home page
+* Added new resolvers for pdf service
+* Added multipliers in buttons
