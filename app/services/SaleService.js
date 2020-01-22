@@ -140,8 +140,8 @@ class SaleService {
 
         const item = await createdSale.getItem()
         createdSale.item = item
-
-        logger.debug(`sale_created ${createdSale.id} ${item.name} ${createdSale.price} ${createdSale.createdAt}`)
+        const stringPrice = createdSale.price.toFixed(2)
+        logger.debug(`sale_created ${createdSale.id} ${item.name} ${createdSale.price} ( ${stringPrice} ) ${createdSale.createdAt}`)
 
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
@@ -195,7 +195,7 @@ class SaleService {
                 const productName = item.name || "Товар " + buttonId
 
                 const email = legalInfo.contactEmail
-                const productPrice = createdSale.price.toFixed(2)
+                const productPrice = stringPrice
 
                 let kktRegNumber, kktFNNumber = null
 
