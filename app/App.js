@@ -78,7 +78,7 @@ class App {
             pool: {
                 max: Number(process.env.POSTGRES_POOL_MAX_CONNECTIONS),
                 min: Number(process.env.POSTGRES_POOL_MIN_CONNECTIONS),
-                acquire: 30000,
+                acquire: 90000,
                 idle: 10000
             },
         }
