@@ -181,3 +181,7 @@
 * Added new resolvers for news on home page
 * Added new resolvers for pdf service
 * Added multipliers in buttons
+
+# 1.3.6 - Release
+
+* PG timeout to 90000
