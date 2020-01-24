@@ -185,3 +185,8 @@
 # 1.3.6 - Release
 
 * PG timeout to 90000
+
+# 1.3.7 - Release
+
+* Fix checking before replace
+* PG timeout to 50000
