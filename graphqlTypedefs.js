@@ -628,6 +628,11 @@ const typeDefs = gql`
         eventType: EventType!
     }
 
+    input RememberInput {
+        phone: String!
+        email: String!
+    }
+
     type Mutation {
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
@@ -669,6 +674,7 @@ const typeDefs = gql`
         changeUserBalance(input: ChangeUserBalanceInput!): Float
         changeNews(input: NewsInput!): News
         createNews(input: NewsInput!): News
+        rememberPasswordRequest(input: RememberInput!) Boolean
     }
 `
 

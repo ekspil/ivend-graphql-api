@@ -97,6 +97,14 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return new UserDTO(newUser)
     }
 
+    const rememberPasswordRequest = async (root, args) => {
+        const {input} = args
+
+        await userService.rememberPasswordRequest(input)
+
+        return true
+    }
+
 
 
     return {
@@ -109,7 +117,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         updateLegalInfo,
         generateExcel,
         generatePdf,
-        requestRegistrationSms
+        requestRegistrationSms,
+        rememberPasswordRequest
     }
 
 }
