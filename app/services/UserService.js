@@ -290,7 +290,7 @@ class UserService {
         const token = await hashingUtils.generateRandomAccessKey(64)
 
         await this.redis.set("action_remember_password_" + token, `${user.id}`, "ex", Number(process.env.CHANGE_PASSWORD_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
-        //await microservices.notification.sendRememberPasswordEmail(user.email, token)
+        await microservices.notification.sendRememberPasswordEmail(user.email, token)
 
 
         return true
