@@ -10,9 +10,18 @@ function SaleQueries({saleService}) {
 
         return sales.map(sale => (new SaleDTO(sale)))
     }
+    const getItemSales = async (root, args, context) => {
+        const {user} = context
+        const {period, machineGroupId} = args
+
+        const sales = await saleService.getItemSales({period, machineGroupId}, user)
+
+        return sales
+    }
 
     return {
-        getSales
+        getSales,
+        getItemSales
     }
 
 }

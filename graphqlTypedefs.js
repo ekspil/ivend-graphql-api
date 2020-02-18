@@ -84,6 +84,13 @@ const typeDefs = gql`
         cashlessAmount: Int!
     }
 
+    type salesSum {
+        salesCount: Int!
+        overallAmount: Int!
+        cashAmount: Int!
+        cashlessAmount: Int!
+    }
+
     type ControllerState {
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
@@ -232,6 +239,12 @@ const typeDefs = gql`
         id: Int,
         name: String!
         salesSummary(machineId: Int, machineGroupId: Int, period: Period): SalesSummary
+        lastSaleTime: Timestamp
+    }
+    type ItemsSales {
+        id: Int,
+        name: String!
+        salesSummary: salesSum
         lastSaleTime: Timestamp
     }
 
@@ -583,6 +596,7 @@ const typeDefs = gql`
         getAllUsers: [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int): [Sale!]!
+        getItemSales(machineGroupId: Int, period: Period): [ItemsSales]
         getNews: [News]
         getNewsById(id: Int!): News
         getAllNews: [News]
