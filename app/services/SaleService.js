@@ -453,7 +453,7 @@ class SaleService {
         }
         let machines = await this.machineService.getAllMachinesOfUser(user)
         if(machineGroupId){
-            machines = machines.filter(mach => mach.machine_group_id === machineGroupId)
+            machines = machines.filter(mach => mach.machine_group_id == machineGroupId)
         }
 
         where.machine_id = {
