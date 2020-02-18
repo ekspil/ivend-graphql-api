@@ -32,6 +32,8 @@ class UserService {
         this.getAllUsers = this.getAllUsers.bind(this)
         this.requestRegistrationSms = this.requestRegistrationSms.bind(this)
         this.getLegalInfoByUserId = this.getLegalInfoByUserId.bind(this)
+        this.changePasswordRequest = this.changePasswordRequest.bind(this)
+        this.rememberPasswordRequest = this.rememberPasswordRequest.bind(this)
     }
 
 
@@ -272,6 +274,54 @@ class UserService {
                 id: user.id
             }
         })
+    }
+
+    async rememberPasswordRequest(input) {
+        const {phone, email} = input
+        const user = await this.User.findOne({
+            where: {
+                phone,
+                email
+            }
+        })
+        if (!user) {
+            return false
+        }
+        const token = await hashingUtils.generateRandomAccessKey(64)
+
+        await this.redis.set("action_remember_password_" + token, `${user.id}`, "ex", Number(process.env.CHANGE_PASSWORD_TOKEN_TIMEOUT_MINUTES) * 60 * 1000)
+        //await microservices.notification.sendRememberPasswordEmail(user.email, token)
+
+
+        return true
+    }
+
+    async changePasswordRequest(input) {
+        const {token, password} = input
+        const tokenValue = await this.redis.get("action_remember_password_" + token)
+
+        if (!tokenValue) {
+            throw new TokenNotFound()
+        }
+
+        const userId = Number(tokenValue)
+
+        const user = await this.User.findOne({
+            where: {
+                id: userId
+            }
+        })
+
+        if (!user) {
+            throw new UserNotFound()
+        }
+
+        user.passwordHash = await this.hashPassword(password)
+        await user.save()
+
+        await this.redis.del("action_remember_password_" + token)
+
+        return true
     }
 
     async getLegalInfoByUserId(id, user) {

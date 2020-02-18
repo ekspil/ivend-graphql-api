@@ -118,6 +118,33 @@ const sendChangePasswordEmail = async (email, token) => {
             throw new MicroserviceUnknownError(method, url, response.status)
     }
 }
+const sendRememberPasswordEmail = async (email, token) => {
+    const body = JSON.stringify({token, email})
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/REMEMBER_PASSWORD`
+    const method = "POST"
+
+    const response = await fetch(url, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200:
+            const json = await response.json()
+            const {sent} = json
+
+            if (!sent) {
+                throw new EmailNotSent()
+            }
+
+            return true
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+}
 
 const getServiceDailyPrice = async (service, userId) => {
     const url = `${process.env.BILLING_URL}/api/v1/service/${service}/price/daily/${userId}`
@@ -293,7 +320,8 @@ module.exports = {
         sendRegistrationSms,
         sendRegistrationEmail,
         sendChangeEmailEmail,
-        sendChangePasswordEmail
+        sendChangePasswordEmail,
+        sendRememberPasswordEmail
     },
     billing: {
         getServiceDailyPrice,
