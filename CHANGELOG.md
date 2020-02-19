@@ -190,3 +190,8 @@
 
 * Fix checking before replace
 * PG timeout to 50000
+
+# 1.3.8 - Release
+
+* Added password change system
+* Fix sql query in items sale report
