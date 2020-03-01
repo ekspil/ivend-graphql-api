@@ -247,6 +247,12 @@ const typeDefs = gql`
         salesSummary: salesSum
         lastSaleTime: Timestamp
     }
+    type MachineSales {
+        id: Int,
+        name: String!
+        salesSummary: salesSum
+        lastSaleTime: Timestamp
+    }
 
     type Revision {id: Int!
         name: String!
@@ -597,6 +603,7 @@ const typeDefs = gql`
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int): [Sale!]!
         getItemSales(machineGroupId: Int, period: Period): [ItemsSales]
+        getMachineSales(machineGroupId: Int, period: Period): [MachineSales]
         getNews: [News]
         getNewsById(id: Int!): News
         getAllNews: [News]

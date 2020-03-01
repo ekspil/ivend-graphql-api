@@ -18,10 +18,19 @@ function SaleQueries({saleService}) {
 
         return sales
     }
+    const getMachineSales = async (root, args, context) => {
+        const {user} = context
+        const {period, machineGroupId} = args
+
+        const sales = await saleService.getMachineSales({period, machineGroupId}, user)
+
+        return sales
+    }
 
     return {
         getSales,
-        getItemSales
+        getItemSales,
+        getMachineSales
     }
 
 }

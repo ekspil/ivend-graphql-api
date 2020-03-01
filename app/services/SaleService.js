@@ -513,6 +513,83 @@ class SaleService {
         return summary
     }
 
+
+    async getMachineSales(input, user) {
+
+        if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
+            throw new NotAuthorized()
+        }
+
+        const {period,  machineGroupId} = input
+        const {sequelize} = this.Sale
+        const {Op} = sequelize
+        const where = {}
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+        let machines = await this.machineService.getAllMachinesOfUser(user)
+        if(machineGroupId){
+            machines = machines.filter(mach => mach.machine_group_id == machineGroupId)
+        }
+
+        where.machine_id = {
+            [Op.in]: machines.map(machine => machine.id)
+        }
+
+        const sales = await this.Sale.findAll({
+            where
+        })
+        const summary = []
+        for( let mach of machines ){
+            const machSales = sales.filter(sale => sale.machine_id === mach.id)
+            const machSale = {
+                id: mach.id,
+                lastSaleTime: new Date(2011, 0, 1),
+                name: mach.name,
+                salesSummary:{
+                    cashAmount: 0,
+                    cashlessAmount: 0,
+                    overallAmount: 0,
+                    salesCount: 0
+                }
+            }
+            for (let sal of machSales){
+
+                const time = sal.createdAt.getTime()
+                const thisTime = machSale.lastSaleTime.getTime()
+                if(time > thisTime){
+                    machSale.lastSaleTime = sal.createdAt
+                }
+
+
+                if(sal.type === "CASH"){
+                    machSale.salesSummary.cashAmount = machSale.salesSummary.cashAmount + Number(sal.price)
+                }
+                if(sal.type === "CASHLESS"){
+                    machSale.salesSummary.cashlessAmount =  machSale.salesSummary.cashlessAmount  + Number(sal.price)
+                }
+                machSale.salesSummary.overallAmount = machSale.salesSummary.overallAmount + Number(sal.price)
+                machSale.salesSummary.salesCount++
+            }
+            summary.push(machSale)
+
+        }
+
+
+
+
+        return summary
+    }
+
     async getSalesSummary(input, user) {
         if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()
