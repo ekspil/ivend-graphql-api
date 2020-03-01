@@ -195,3 +195,7 @@
 
 * Added password change system
 * Fix sql query in items sale report
+
+# 1.3.9 - Release
+
+* Change sales query(machines)
