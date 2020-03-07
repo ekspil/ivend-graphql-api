@@ -276,7 +276,8 @@ class App {
             EncashmentModel,
             equipmentService: services.equipmentService,
             itemMatrixService: services.itemMatrixService,
-            controllerService: services.controllerService
+            controllerService: services.controllerService,
+            redis
         })
 
         services.controllerService.machineService = services.machineService
@@ -299,7 +300,8 @@ class App {
             controllerService: services.controllerService,
             itemService: services.itemService,
             machineService: services.machineService,
-            kktService: services.kktService
+            kktService: services.kktService,
+            redis
         })
 
         services.legalInfoService = new LegalInfoService({

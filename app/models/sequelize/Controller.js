@@ -25,6 +25,11 @@ const Controller = {
         allowNull: true,
         field: "access_key"
     },
+    simCardNumber: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        field: "sim_card_number"
+    },
     readStatMode: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: true,

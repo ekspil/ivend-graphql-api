@@ -23,6 +23,7 @@ const typeDefs = gql`
         user: User!
         connected: Boolean!
         remotePrinterId: String
+        simCardNumber: String
     }
 
     enum ReadStatMode {
@@ -35,6 +36,14 @@ const typeDefs = gql`
         NO_BANK_TERMINAL
         INPAS
         SBERBANK
+        d200i_v
+        d200i_t
+        d200s_v
+        d200s_t
+        otiu_v
+        otiu_t
+        otit_v 
+        otit_t
     }
 
     enum FiscalizationMode {
@@ -122,6 +131,7 @@ const typeDefs = gql`
         fiscalizationMode: FiscalizationMode
         revisionId: Int
         remotePrinterId: String
+        simCardNumber: String
     }
 
     input CreateItemMatrixInput {
@@ -360,8 +370,10 @@ const typeDefs = gql`
 
     enum ControllerMode {
         mdb
+        mdb1
         exe
         cashless
+        cashless2
         cashless_free
         exe_ph
         mdb_D
@@ -378,6 +390,10 @@ const typeDefs = gql`
         ps_m_C
         ps_M_C
         mdb2
+        ps_m_2
+        ps_m_3
+        rs232
+
     }
 
     input AddButtonToItemMatrixInput {
@@ -522,6 +538,8 @@ const typeDefs = gql`
         number: String!
         name: String!
         place: String!
+        kktStatus: String
+        terminalStatus: String
         group: MachineGroup!
         equipment: Equipment!
         itemMatrix: ItemMatrix

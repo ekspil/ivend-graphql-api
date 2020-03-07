@@ -89,7 +89,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -133,6 +133,13 @@ class ControllerService {
 
         if (remotePrinterId) {
             controller.remotePrinterId = remotePrinterId
+        }
+
+        if (simCardNumber) {
+            controller.simCardNumber = simCardNumber
+        }
+        else if(simCardNumber === "false" || simCardNumber === "0" ){
+            controller.simCardNumber = null
         }
 
         await controller.save()

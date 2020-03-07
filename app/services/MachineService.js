@@ -13,7 +13,7 @@ const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService}) {
+    constructor({MachineModel, redis, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService}) {
         this.Machine = MachineModel
         this.Encashment = EncashmentModel
         this.MachineGroup = MachineGroupModel
@@ -22,6 +22,7 @@ class MachineService {
         this.equipmentService = equipmentService
         this.itemMatrixService = itemMatrixService
         this.controllerService = controllerService
+        this.redis = redis
 
         this.createMachine = this.createMachine.bind(this)
         this.editMachine = this.editMachine.bind(this)
@@ -161,11 +162,33 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        return await this.Machine.findAll({
+        const machines = await this.Machine.findAll({
             where: {
                 user_id: user.id
             }
         })
+        const controllers = await this.controllerService.getAllOfCurrentUser(user)
+
+        return  await Promise.all(machines.map(async (machine) => {
+            machine.kktStatus = "ОТКЛ"
+            machine.terminalStatus = "ОТКЛ"
+
+            const [controller] = controllers.filter(control => control.id === machine.controller_id)
+            if(!controller) return machine
+
+            machine.kktStatus = await this.redis.get("kkt_status_" + machine.id)
+            machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
+
+            if(!machine.kktStatus) machine.kktStatus = "24H"
+            if(!machine.terminalStatus)  machine.terminalStatus = "24H"
+
+            if(controller.fiscalizationMode === "NO_FISCAL") machine.kktStatus = "ОТКЛ"
+            if(controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false") machine.terminalStatus += " (100руб/мес)"
+            if(controller.bankTerminalMode ==="NO_BANK_TERMINAL") machine.terminalStatus = "ОТКЛ"
+            return machine
+        }))
+
+
     }
 
     async getMachineById(id, user) {

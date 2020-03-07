@@ -5,10 +5,12 @@ const KktDTO = require("./KktDTO")
 
 class MachineDTO {
 
-    constructor({id, number, name, place, group, equipment, type, kkt}) {
+    constructor({id, number, name, place, group, equipment, type, kkt, kktStatus, terminalStatus}) {
         this.id = id
         this.number = number
         this.name = name
+        this.terminalStatus = terminalStatus
+        this.kktStatus = kktStatus
         this.place = place
         this.group = group ? new MachineGroupDTO(group) : null
         this.type = type ? new MachineTypeDTO(type) : null

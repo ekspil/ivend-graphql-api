@@ -17,8 +17,9 @@ const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
 
-    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService, kktService}) {
+    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService, kktService, redis}) {
         this.Sale = SaleModel
+        this.redis = redis
         this.MachineGroup = MachineGroupModel
         this.Machine = MachineModel
         this.Item = ItemModel
@@ -75,6 +76,7 @@ class SaleService {
 
         let {controllerUid, type, price, buttonId} = input
 
+
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
         if (!controller) {
@@ -85,6 +87,10 @@ class SaleService {
 
         if (!machine) {
             throw new MachineNotFound()
+        }
+
+        if(type === "CASHLESS"){
+            await this.redis.set("terminal_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
         }
 
         const itemMatrix = await machine.getItemMatrix()
@@ -236,10 +242,12 @@ class SaleService {
                         receipt = await microservices.fiscal.getReceiptById(receiptId)
 
                         if (new Date() > timeoutDate) {
+                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "px", 24 * 60 * 60 * 1000)
                             throw new Error("Receipt status timeout")
                         }
 
                         if (receipt.status === "ERROR") {
+                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "px", 24 * 60 * 60 * 1000)
                             throw new Error("Receipt failed to process")
                         }
                     }
@@ -261,6 +269,8 @@ class SaleService {
                     kkt.kktLastBill = receiptDatetime
 
                     await kkt.save()
+                    await this.redis.set("kkt_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+
 
                     createdSale.sqr = getFiscalString(receipt)
 
