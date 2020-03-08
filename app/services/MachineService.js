@@ -180,16 +180,13 @@ class MachineService {
 
             machine.kktStatus = await this.redis.get("kkt_status_" + machine.id)
             machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
-            const encashmentTS = await this.redis.get("machine_encashment_" + machine.id)
+            machine.encashment = await this.redis.get("machine_encashment_" + machine.id)
             machine.error = await this.redis.get("machine_error_" + machine.id)
 
             if(!machine.kktStatus) machine.kktStatus = "24H"
             if(!machine.terminalStatus)  machine.terminalStatus = "24H"
-            if(!encashmentTS){
+            if(!machine.encashment){
                 machine.encashment = "31D"
-            }else{
-                const dt = String(new Date(Number(encashmentTS))).split(" ")
-                machine.encashment = `${dt[1]} ${dt[2]} ${dt[3]} ${dt[4]} `
             }
 
 
