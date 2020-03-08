@@ -135,6 +135,10 @@ class App {
             as: "buttons",
             foreignKey: "item_matrix_id"
         })
+        MachineTypeModel.hasMany(EquipmentModel, {
+            as: "equipments",
+            foreignKey: "machine_type_id"
+        })
 
         ButtonItemModel.belongsTo(ItemModel, {foreignKey: "item_id"})
 
