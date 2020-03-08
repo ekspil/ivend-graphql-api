@@ -14,11 +14,12 @@ const MachineLogType = require("../enum/MachineLogType")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, redis}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
         this.Item = ItemModel
+        this.redis = redis
         this.User = UserModel
         this.Revision = RevisionModel
         this.Encashment = EncashmentModel
@@ -362,6 +363,12 @@ class ControllerService {
             controllerState.registrationTime = new Date()
             controllerState.controller_id = controller.id
 
+            const machineError = await this.redis.get("machine_error_" + machine.id)
+            if(machineError !== "NO SALES 24H"){
+                await this.redis.set("machine_error_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+            }
+
+
             controllerState = await this.ControllerState.create(controllerState, {transaction})
 
             if (lastState && !controller.connected) {
@@ -459,6 +466,7 @@ class ControllerService {
         }
 
         await this.machineService.createEncashment(machine.id, timestamp, controllerUser)
+        await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "px", 31 * 24 * 60 * 60 * 1000)
 
         return await this.getControllerById(controller.id, user)
     }

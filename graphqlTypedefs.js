@@ -540,6 +540,8 @@ const typeDefs = gql`
         place: String!
         kktStatus: String
         terminalStatus: String
+        error: String
+        encashment: String
         group: MachineGroup!
         equipment: Equipment!
         itemMatrix: ItemMatrix

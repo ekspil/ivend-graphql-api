@@ -265,7 +265,8 @@ class App {
             RevisionModel,
             revisionService: services.revisionService,
             serviceService: services.serviceService,
-            machineService: services.machineService
+            machineService: services.machineService,
+            redis
         })
 
         services.machineService = new MachineService({

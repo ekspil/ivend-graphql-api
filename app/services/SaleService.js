@@ -150,6 +150,9 @@ class SaleService {
 
         logger.debug(`sale_created ${createdSale.id} ${item.name} ${createdSale.price} ${createdSale.createdAt}`)
 
+        //set machine error to OK
+        await this.redis.set("machine_error_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
         }
