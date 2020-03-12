@@ -19,6 +19,7 @@ class EquipmentService {
 
         const equipment = new Equipment()
         equipment.name = createControllerInput.name
+        equipment.machineTypeId = createControllerInput.machineTypeId
 
         return await this.Equipment.create(equipment)
     }

@@ -148,6 +148,7 @@ const typeDefs = gql`
     type Equipment {
         id: Int!
         name: String!
+        machineTypeId: Int
     }
 
     type ItemMatrix {
@@ -314,6 +315,7 @@ const typeDefs = gql`
 
     input CreateEquipmentInput {
         name: String!
+        machineTypeId: Int
     }
 
 
