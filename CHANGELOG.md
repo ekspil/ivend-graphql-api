@@ -199,3 +199,7 @@
 # 1.3.9 - Release
 
 * Change sales query(machines)
+
+# 1.3.10 - Release
+
+* Fix billing query
