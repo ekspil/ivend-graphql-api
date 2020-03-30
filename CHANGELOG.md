@@ -207,3 +207,7 @@
 # 1.3.11 - Release
 
 * Fix orderNumber in pdf generate
+
+# 1.3.12 - Release
+
+* Fix column in equipment
