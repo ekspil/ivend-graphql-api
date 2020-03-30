@@ -321,7 +321,7 @@ class App {
             TransactionModel,
         })
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
-        services.reportService = new ReportService({})
+        services.reportService = new ReportService({redis})
 
 
         const populateWithFakeData = async () => {

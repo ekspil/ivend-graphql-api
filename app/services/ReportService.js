@@ -7,7 +7,8 @@ const logger = require("my-custom-logger")
 
 class ReportService {
 
-    constructor() {
+    constructor({redis}) {
+        this.redis = redis
         this.generateExcel = this.generateExcel.bind(this)
     }
 
@@ -47,6 +48,15 @@ class ReportService {
         }
 
         const body = input
+
+        const numOrderString = await this.redis.get("orders_number_")
+        if(!numOrderString){
+            await this.redis.set("orders_number_", "1")
+            body.orderNumber = 1
+        }
+        body.orderNumber = String(Number(numOrderString) + 1)
+        await this.redis.set("orders_number_", `${body.orderNumber}`)
+
 
         const response = await fetch(`${process.env.EXCEL_URL}/api/v1/pdf/generate`, {
             method: "POST",
