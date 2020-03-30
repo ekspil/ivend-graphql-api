@@ -203,3 +203,7 @@
 # 1.3.10 - Release
 
 * Fix billing query
+
+# 1.3.11 - Release
+
+* Fix orderNumber in pdf generate
