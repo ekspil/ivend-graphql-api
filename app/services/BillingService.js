@@ -1,4 +1,4 @@
-const ControllerStatus = require("../enum/ControllerStatus")
+
 const NotAuthorized = require("../errors/NotAuthorized")
 const AnotherDepositPending = require("../errors/AnotherDepositPending")
 const InvalidPeriod = require("../errors/InvalidPeriod")
@@ -55,18 +55,10 @@ class BillingService {
             throw new NotAuthorized()
         }
 
-        const controllers = await this.Controller.findAll({
-            where: {
-                user_id: userId,
-                status: ControllerStatus.ENABLED
-            }
-        })
 
         const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY", userId)
 
-        return controllers.reduce((acc) => {
-            return acc + Number(telemetryPrice)
-        }, 0).toFixed(2)
+        return telemetryPrice.toFixed(2)
     }
 
     async getDaysLeft(user, userId) {
