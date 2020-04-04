@@ -14,7 +14,7 @@ const MachineLogType = require("../enum/MachineLogType")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, redis}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis}) {
         this.Controller = ControllerModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
@@ -25,6 +25,7 @@ class ControllerService {
         this.Encashment = EncashmentModel
         this.revisionService = revisionService
         this.machineService = machineService
+        this.kktService = kktService
 
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
@@ -262,6 +263,46 @@ class ControllerService {
                 ["id", "DESC"],
             ]
         })
+    }
+
+    async getControllerServices(id, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
+            throw new NotAuthorized()
+        }
+        const services = []
+        const controller = await this.getControllerById(id, user)
+        const allUserControllers = await this.getAllOfCurrentUser(user)
+        const kkts = await this.kktService.getUserKkts(user)
+        if(controller){
+            services.push({
+                id: 1,
+                name: "Услуги телеметрии",
+                price: 100,
+                billingType: null
+            })
+        }
+        if(controller && controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false"){
+            services.push({
+                id: 10,
+                name: "Услуги эквайринга",
+                price: 100,
+                billingType: null
+            })
+        }
+        if(kkts && allUserControllers &&  kkts.length > 0){
+            const price = (kkts.length * 2000 / allUserControllers.length).toFixed(2)
+            services.push({
+                id: 5,
+                name: "Услуги фискализации",
+                price,
+                billingType: null,
+                fixCount: kkts.length
+            })
+        }
+        return services
+
+
+
     }
 
 

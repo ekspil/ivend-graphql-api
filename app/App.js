@@ -270,6 +270,7 @@ class App {
             revisionService: services.revisionService,
             serviceService: services.serviceService,
             machineService: services.machineService,
+            kktService: services.kktService,
             redis
         })
 

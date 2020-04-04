@@ -7,6 +7,7 @@ const typeDefs = gql`
     type Controller {
         id: Int!
         uid: String!
+        services: [ControllerService!]
         status: ControllerStatus!
         mode: ControllerMode!
         readStatMode: ReadStatMode!
@@ -24,6 +25,14 @@ const typeDefs = gql`
         connected: Boolean!
         remotePrinterId: String
         simCardNumber: String
+    }
+    
+    type ControllerService {
+        id: Int!
+        name: String!
+        price: Float
+        fixCount: Int
+        billingType: String
     }
 
     enum ReadStatMode {
