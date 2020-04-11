@@ -551,6 +551,8 @@ const typeDefs = gql`
         place: String!
         kktStatus: String
         terminalStatus: String
+        coinCollectorStatus: String
+        banknoteCollectorStatus: String
         error: String
         encashment: String
         group: MachineGroup!
@@ -618,7 +620,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
-        getAllControllers: [Controller]
+        getAllControllers(offset: Int, limit: Int): [Controller]
         getMachineById(id: Int!): Machine
         getMachines: [Machine]
         getMachineGroups: [MachineGroup]

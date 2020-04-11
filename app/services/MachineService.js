@@ -41,6 +41,8 @@ class MachineService {
         this.getEncashmentById = this.getEncashmentById.bind(this)
         this.getMachineEncashments = this.getMachineEncashments.bind(this)
         this.getLastMachineEncashment = this.getLastMachineEncashment.bind(this)
+        this.getBanknoteCollectorStatus = this.getBanknoteCollectorStatus.bind(this)
+        this.getCoinCollectorStatus = this.getCoinCollectorStatus.bind(this)
     }
 
     async createMachine(input, user) {
@@ -405,6 +407,22 @@ class MachineService {
                 machine_id: machineId
             }
         })
+    }
+
+    async getCoinCollectorStatus(machineId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.redis.get("machine_coin_collector_status_" + machineId)
+    }
+
+    async getBanknoteCollectorStatus(machineId, user) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.redis.get("machine_banknote_collector_status_" + machineId)
     }
 }
 

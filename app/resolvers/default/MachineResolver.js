@@ -202,6 +202,27 @@ function MachineResolver({machineService, saleService, kktService}) {
 
         return new EncashmentDTO(encashment)
     }
+    const coinCollectorStatus = async (obj, args, context) => {
+        const {user} = context
+
+        const status = await machineService.getCoinCollectorStatus(obj.id, user)
+        if (!status) {
+            return null
+        }
+
+        return status
+    }
+    const banknoteCollectorStatus = async (obj, args, context) => {
+        const {user} = context
+
+        const status = await machineService.getBanknoteCollectorStatus(obj.id, user)
+
+        if (!status) {
+            return null
+        }
+
+        return status
+    }
 
     return {
         controller,
@@ -217,7 +238,9 @@ function MachineResolver({machineService, saleService, kktService}) {
         encashments,
         lastEncashment,
         salesByEncashment,
-        encashmentsSummaries
+        encashmentsSummaries,
+        coinCollectorStatus,
+        banknoteCollectorStatus
     }
 
 }

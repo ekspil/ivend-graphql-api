@@ -173,12 +173,23 @@ class ControllerService {
     }
 
 
-    async getAll(user) {
+    async getAll(offset, limit, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
 
-        return await this.Controller.findAll()
+        if (!limit) {
+            limit = 50
+        }
+
+
+        return await this.Controller.findAll({
+            offset,
+            limit,
+            order: [
+                ["id", "DESC"],
+            ]
+        })
     }
 
     async getAllOfCurrentUser(user) {

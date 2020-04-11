@@ -2,6 +2,7 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
 const MachineNotFound = require("../errors/MachineNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
+const ControllerDisabled = require("../errors/ControllerDisabled")
 const UserNotFound = require("../errors/UserNotFound")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
@@ -80,7 +81,11 @@ class SaleService {
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
         if (!controller) {
-            throw new ControllerNotFound
+            throw new ControllerNotFound()
+        }
+
+        if (controller.status === "PAUSED") {
+            throw new ControllerDisabled()
         }
 
         const machine = await this.machineService.getMachineByControllerId(controller.id, user)
@@ -91,6 +96,16 @@ class SaleService {
 
         if(type === "CASHLESS"){
             await this.redis.set("terminal_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+        }
+
+        if(type === "CASH"){
+            if(price % 50){
+                await this.redis.set("machine_coin_collector_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+            }
+            else{
+                await this.redis.set("machine_banknote_collector_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+            }
+
         }
 
         const itemMatrix = await machine.getItemMatrix()
