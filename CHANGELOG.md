@@ -211,3 +211,7 @@
 # 1.3.12 - Release
 
 * Fix column in equipment
+
+# 1.3.13 - Release
+
+* New admin functions
