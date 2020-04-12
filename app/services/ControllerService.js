@@ -284,7 +284,7 @@ class ControllerService {
         const controller = await this.getControllerById(id, user)
         const allUserControllers = await this.getAllOfCurrentUser(user)
         const kkts = await this.kktService.getUserKkts(user)
-        if(controller){
+        if(controller && controller.status === "ENABLED"){
             services.push({
                 id: 1,
                 name: "Услуги телеметрии",
@@ -292,7 +292,7 @@ class ControllerService {
                 billingType: null
             })
         }
-        if(controller && controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false"){
+        if(controller && controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false" && controller.status === "ENABLED"){
             services.push({
                 id: 10,
                 name: "Услуги эквайринга",
@@ -301,7 +301,7 @@ class ControllerService {
             })
         }
         if(kkts && allUserControllers &&  kkts.length > 0){
-            const price = (kkts.length * 2000 / allUserControllers.length).toFixed(2)
+            const price = kkts.length * 2000
             services.push({
                 id: 5,
                 name: "Услуги фискализации",
