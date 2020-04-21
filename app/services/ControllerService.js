@@ -284,6 +284,7 @@ class ControllerService {
         const controller = await this.getControllerById(id, user)
         const allUserControllers = await this.getAllOfCurrentUser(user)
         const kkts = await this.kktService.getUserKkts(user)
+        const kktOk = kkts.filter(kkt => kkt.kktActivationDate)
         const fiscalControllers = allUserControllers.filter(controller => controller.fiscalizationMode !== "NO_FISCAL")
         if(controller && controller.status === "ENABLED"){
             services.push({
@@ -302,7 +303,7 @@ class ControllerService {
             })
         }
         if(kkts && allUserControllers &&  kkts.length > 0){
-            const price = fiscalControllers.length > 20 ? fiscalControllers.length * 100 : 2000
+            const price = fiscalControllers.length > (20 * kktOk.length) ? fiscalControllers.length * 100 : 2000 * kktOk.length
             services.push({
                 id: 5,
                 name: "Услуги фискализации",
