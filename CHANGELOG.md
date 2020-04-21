@@ -219,3 +219,7 @@
 # 1.3.14 - Release
 
 * Fix fiscal price
+
+# 1.3.15 - Release
+
+* Fix fiscal price
