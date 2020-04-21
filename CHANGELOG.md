@@ -215,3 +215,7 @@
 # 1.3.13 - Release
 
 * New admin functions
+
+# 1.3.14 - Release
+
+* Fix fiscal price
