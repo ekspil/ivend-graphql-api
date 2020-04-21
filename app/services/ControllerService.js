@@ -302,7 +302,7 @@ class ControllerService {
                 billingType: null
             })
         }
-        if(kkts && allUserControllers &&  kkts.length > 0){
+        if(kktOk && allUserControllers &&  kktOk.length > 0){
             const price = fiscalControllers.length > (20 * kktOk.length) ? fiscalControllers.length * 100 : 2000 * kktOk.length
             services.push({
                 id: 5,
