@@ -224,7 +224,10 @@
 
 * Fix fiscal price
 
-
 # 1.3.16 - Release
 
 * Fix fiscal price
+
+# 1.3.17 - Release
+
+* Fix NO_LEGAL_INFO balance

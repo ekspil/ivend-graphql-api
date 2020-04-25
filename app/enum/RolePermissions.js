@@ -92,6 +92,7 @@ const VENDOR_NO_LEGAL_INFO = [
     Permission.UPDATE_LEGAL_INFO,
     Permission.GET_PROFILE,
     Permission.GET_LEGAL_INFO,
+    Permission.GET_SELF_DEPOSITS,
 ]
 
 const AGGREGATE = [
