@@ -231,3 +231,7 @@
 # 1.3.17 - Release
 
 * Fix NO_LEGAL_INFO balance
+
+# 1.3.18 - Release
+
+* Fix NO_LEGAL_INFO balance
