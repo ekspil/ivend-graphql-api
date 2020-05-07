@@ -252,6 +252,13 @@ const typeDefs = gql`
         CONTROLLER_ENCASHMENT
         USER_LOW_BALANCE
         USER_WILL_BLOCK
+        GET_MONTH_SALES
+        GET_WEEK_SALES
+        GET_DAY_SALES
+        GET_NEWS
+        KKT_ERROR
+        PINPAD_ERROR
+        CASH_ACCEPTOR_ERROR
         
     }
 
