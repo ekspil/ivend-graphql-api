@@ -259,7 +259,6 @@ const typeDefs = gql`
         KKT_ERROR
         PINPAD_ERROR
         CASH_ACCEPTOR_ERROR
-        
     }
 
     type Item {
