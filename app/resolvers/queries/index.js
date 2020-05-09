@@ -5,9 +5,11 @@ const UserQueries = require("./UserQueries")
 const MachineQueries = require("./MachineQueries")
 const KktQueries = require("./KktQueries")
 const NewsQueries = require("./NewsQueries")
+const InfoQueries = require("./InfoQueries")
+const InstrQueries = require("./InstrQueries")
 const SaleQueries = require("./SaleQueries")
 
-function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, machineService, kktService, saleService, newsService}) {
+function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, machineService, kktService, saleService, newsService, infoService, instrService}) {
 
     const controllerQueries = new ControllerQueries({ controllerService, revisionService})
     const itemQueries = new ItemQueries({ itemMatrixService })
@@ -16,6 +18,8 @@ function Queries({ controllerService, itemMatrixService, equipmentService, revis
     const machineQueries = new MachineQueries({ machineService })
     const kktQueries = new KktQueries({ kktService })
     const newsQueries = new NewsQueries({ newsService })
+    const infoQueries = new InfoQueries({ infoService })
+    const instrQueries = new InstrQueries({ instrService })
     const saleQueries = new SaleQueries({ saleService })
 
     return {
@@ -26,7 +30,9 @@ function Queries({ controllerService, itemMatrixService, equipmentService, revis
         ...machineQueries,
         ...kktQueries,
         ...newsQueries,
-        ...saleQueries
+        ...saleQueries,
+        ...infoQueries,
+        ...instrQueries
     }
 }
 

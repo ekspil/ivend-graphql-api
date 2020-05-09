@@ -500,9 +500,45 @@ const typeDefs = gql`
         text: String!
         link: String
         header: String!
+    }    
+    
+    type Instr {
+        id: Int!
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
+    }    
+    
+    type Info {
+        id: Int!
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
     }
     
     input NewsInput {
+        id: Int
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
+    }    
+    
+    input InstrInput {
+        id: Int
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
+    }    
+    
+    input InfoInput {
         id: Int
         active: Int!
         date: String!
@@ -646,6 +682,12 @@ const typeDefs = gql`
         getNews: [News]
         getNewsById(id: Int!): News
         getAllNews: [News]
+        getInfo: [Info]
+        getInfoById(id: Int!): Info
+        getAllInfo: [Info]
+        getInstr: [Instr]
+        getInstrById(id: Int!): Instr
+        getAllInstr: [Instr]
     }
 
     input AuthControllerInput {
@@ -735,10 +777,16 @@ const typeDefs = gql`
         editKkt(input: EditKktInput!): Kkt
         kktPlusBill(fn: String!): Kkt
         deleteKkt(id: Int!): Boolean
-        deleteNews(id: Int!): Boolean
         changeUserBalance(input: ChangeUserBalanceInput!): Float
+        deleteNews(id: Int!): Boolean
         changeNews(input: NewsInput!): News
         createNews(input: NewsInput!): News
+        deleteInfo(id: Int!): Boolean
+        changeInfo(input: InfoInput!): Info
+        createInfo(input: InfoInput!): Info
+        deleteInstr(id: Int!): Boolean
+        changeInstr(input: InstrInput!): Instr
+        createInstr(input: InstrInput!): Instr
         rememberPasswordRequest(input: RememberInput!): Boolean
         changePasswordRequest(input: ChangePasswordInput!): Boolean
     }

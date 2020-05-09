@@ -9,7 +9,7 @@ const Resolvers = function (injects) {
     const {
         userService, controllerService, equipmentService,
         saleService, itemService, itemMatrixService, revisionService, notificationSettingsService,
-        legalInfoService, billingService, serviceService, reportService, machineService, kktService, newsService
+        legalInfoService, billingService, serviceService, reportService, machineService, kktService, newsService, infoService, instrService
     } = injects
 
     const mutations = new Mutations({
@@ -26,7 +26,9 @@ const Resolvers = function (injects) {
         reportService,
         machineService,
         kktService,
-        newsService
+        newsService,
+        infoService,
+        instrService
     })
 
     const defaultResolvers = new DefaultResolvers({
@@ -39,7 +41,9 @@ const Resolvers = function (injects) {
         machineService,
         itemMatrixService,
         kktService,
-        userService
+        userService,
+        infoService,
+        instrService
     })
 
     const queries = new Queries({
@@ -52,7 +56,9 @@ const Resolvers = function (injects) {
         machineService,
         kktService,
         newsService,
-        saleService
+        saleService,
+        infoService,
+        instrService
     })
 
     return {
