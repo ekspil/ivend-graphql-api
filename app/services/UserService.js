@@ -34,6 +34,14 @@ class UserService {
         this.getLegalInfoByUserId = this.getLegalInfoByUserId.bind(this)
         this.changePasswordRequest = this.changePasswordRequest.bind(this)
         this.rememberPasswordRequest = this.rememberPasswordRequest.bind(this)
+        this.sendEmail = this.sendEmail.bind(this)
+    }
+
+    async sendEmail(input, user) {
+        if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
+            throw new NotAuthorized()
+        }
+        return await microservices.notification.sendEmail(input, user)
     }
 
 

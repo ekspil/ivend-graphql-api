@@ -18,6 +18,15 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
 
     }
 
+
+    const sendEmail = async (parent, args, context)=>{
+        const {input} = args
+        const {user} = context
+
+        return await userService.sendEmail(input, user)
+
+    }
+
     const requestToken = async (root, args) => {
         const {input} = args
 
@@ -126,7 +135,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         generatePdf,
         requestRegistrationSms,
         rememberPasswordRequest,
-        changePasswordRequest
+        changePasswordRequest,
+        sendEmail
     }
 
 }

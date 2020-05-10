@@ -740,7 +740,14 @@ const typeDefs = gql`
         password: String!
     }
 
+    input EmailInput {
+        category: String!
+        title: String!
+        text: String
+    }
+
     type Mutation {
+        sendEmail(input: EmailInput!): Boolean
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller

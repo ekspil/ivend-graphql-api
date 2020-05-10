@@ -63,6 +63,7 @@ const VENDOR = [
     Permission.GET_SALES,
     Permission.UPDATE_KKT,
     Permission.GET_RECEIPT,
+    Permission.SEND_EMAIL,
 
 
 ]
