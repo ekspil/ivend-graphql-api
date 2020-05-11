@@ -120,7 +120,7 @@ const sendChangePasswordEmail = async (email, token) => {
 }
 
 const sendEmail = async (input, user) => {
-    const body = JSON.stringify({input, email: user.email})
+    const body = JSON.stringify({input, user, email: process.env.TP_EMAIL})
     const url = `${process.env.NOTIFICATION_URL}/api/v1/template/SEND_EMAIL`
     const method = "POST"
 
