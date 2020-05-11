@@ -15,13 +15,15 @@ const hashingUtils = require("../utils/hashingUtils")
 const validationUtils = require("../utils/validationUtils")
 const logger = require("my-custom-logger")
 const microservices = require("../utils/microservices")
+const notificationTypes = require("../enum/NotificationType")
 
 class UserService {
 
-    constructor({UserModel, redis, machineService}) {
+    constructor({UserModel, redis, machineService, notificationSettingsService}) {
         this.User = UserModel
         this.redis = redis
         this.machineService = machineService
+        this.notificationSettingsService = notificationSettingsService
 
         this.registerUser = this.registerUser.bind(this)
         this.requestToken = this.requestToken.bind(this)
@@ -89,6 +91,20 @@ class UserService {
             user = await this.User.create(user, {transaction})
 
             user.checkPermission = () => true
+
+            for (let type in notificationTypes){
+                const input = {
+                    type,
+                    email: false,
+                    sms: false,
+                    tlgrm: false,
+                    extraEmail: email,
+                    telegram: null,
+                    telegramChat: null
+                }
+                if(type === "USER_WILL_BLOCK" || type === "GET_NEWS" || type === "USER_LOW_BALANCE" || type === "GET_MONTH_SALES") input.email = true
+                await this.notificationSettingsService.updateNotificationSetting(input, user)
+            }
 
             await this.machineService.createMachineGroup({name: process.env.DEFAULT_MACHINE_GROUP_NAME}, user, transaction)
 

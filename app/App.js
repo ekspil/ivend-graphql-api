@@ -301,7 +301,8 @@ class App {
         services.userService = new UserService({
             UserModel,
             redis,
-            machineService: services.machineService
+            machineService: services.machineService,
+            notificationSettingsService: services.notificationSettingsService
         })
 
         services.serviceService = new ServiceService({ServiceModel, controllerService: services.controllerService})
