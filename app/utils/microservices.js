@@ -120,7 +120,10 @@ const sendChangePasswordEmail = async (email, token) => {
 }
 
 const sendEmail = async (input, user) => {
-    const body = JSON.stringify({input, user, email: process.env.TP_EMAIL})
+
+    let legalInfo = await user.getLegalInfo()
+    if(!legalInfo) legalInfo = {companyName: "Компания не указана"}
+    const body = JSON.stringify({input, user, email: process.env.TP_EMAIL, legalInfo})
     const url = `${process.env.NOTIFICATION_URL}/api/v1/template/SEND_EMAIL`
     const method = "POST"
 
