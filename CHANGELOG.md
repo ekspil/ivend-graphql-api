@@ -244,3 +244,7 @@
 # 1.3.20 - Release
 
 * Fix email in env
+
+# 1.3.21 - Release
+
+* Fix email in env
