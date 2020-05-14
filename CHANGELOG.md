@@ -239,3 +239,8 @@
 # 1.3.19 - Release
 
 * Fix Item sales summary speed
+
+
+# 1.3.20 - Release
+
+* Fix email in env
