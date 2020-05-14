@@ -235,3 +235,7 @@
 # 1.3.18 - Release
 
 * Fix NO_LEGAL_INFO balance
+
+# 1.3.19 - Release
+
+* Fix Item sales summary speed
