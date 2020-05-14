@@ -602,6 +602,7 @@ const typeDefs = gql`
         itemMatrix: ItemMatrix
         type: MachineType!
         salesSummaryOfItem(itemId:Int, period: Period): SalesSummary
+        machineItemSales(period: Period): [MachineItemSales]
         salesSummary(machineGroupId: Int, period: Period): SalesSummary
         salesByEncashment(machineGroupId: Int): SalesSummary
         encashmentsSummaries: [EncashmentSalesSummary!]!
@@ -611,6 +612,13 @@ const typeDefs = gql`
         encashments: [Encashment!]!
         lastEncashment: Encashment
         kkt: Kkt
+    }
+    
+    type MachineItemSales {
+        id: Int!
+        name: String!
+        lastSaleTime: Timestamp
+        salesSummary: SalesSummary
     }
 
     type MachineLog {

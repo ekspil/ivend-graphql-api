@@ -541,6 +541,92 @@ class SaleService {
         return summary
     }
 
+    async getMachineItemSales(input, user) {
+
+        if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
+            throw new NotAuthorized()
+        }
+
+        const {period,  machineId} = input
+
+        const {sequelize} = this.Sale
+        const {Op} = sequelize
+        const where = {}
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
+        let machine = await this.machineService.getMachineById(machineId, user)
+        const itemMatrix = await machine.getItemMatrix()
+        const buttons = await itemMatrix.getButtons()
+        const items = await this.Item.findAll({
+            where:{
+                id: {
+                    [Op.in]: buttons.map(it => it.item_id)
+                }
+            }
+        })
+
+        where.item_id = {
+            [Op.in]: items.map(it => it.id)
+        }
+
+        const sales = await this.Sale.findAll({
+            where
+        })
+
+        const summary = []
+
+        for( let item of items ){
+            const itemSales = sales.filter(sale => sale.item_id === item.id)
+            const itemSale = {
+                id: item.id,
+                lastSaleTime: new Date(2011, 0, 1),
+                name: item.name,
+                salesSummary:{
+                    cashAmount: 0,
+                    cashlessAmount: 0,
+                    overallAmount: 0,
+                    salesCount: 0
+                }
+            }
+            for (let sal of itemSales){
+
+                const time = sal.createdAt.getTime()
+                const thisTime = itemSale.lastSaleTime.getTime()
+                if(time > thisTime){
+                    itemSale.lastSaleTime = sal.createdAt
+                }
+
+
+                if(sal.type === "CASH"){
+                    itemSale.salesSummary.cashAmount = itemSale.salesSummary.cashAmount + Number(sal.price)
+                }
+                if(sal.type === "CASHLESS"){
+                    itemSale.salesSummary.cashlessAmount =  itemSale.salesSummary.cashlessAmount  + Number(sal.price)
+                }
+                itemSale.salesSummary.overallAmount = itemSale.salesSummary.overallAmount + Number(sal.price)
+                itemSale.salesSummary.salesCount++
+            }
+            summary.push(itemSale)
+
+        }
+
+
+
+
+        return summary
+    }
+
 
     async getMachineSales(input, user) {
 

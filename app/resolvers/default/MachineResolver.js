@@ -78,6 +78,15 @@ function MachineResolver({machineService, saleService, kktService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
+    const machineItemSales = async (obj, args, context) => {
+        const {user} = context
+        const {period} = args
+
+        const salesItemSummary = await saleService.getMachineItemSales({machineId: obj.id, period}, user)
+
+        return salesItemSummary
+    }
+
     const salesSummaryOfItem = async (obj, args, context) => {
         const {user} = context
         const {itemId, period} = args
@@ -161,6 +170,8 @@ function MachineResolver({machineService, saleService, kktService}) {
 
         return new ControllerDTO(controller)
     }
+
+
     const kkt = async (obj, args, context) => {
         const {user} = context
 
@@ -240,7 +251,8 @@ function MachineResolver({machineService, saleService, kktService}) {
         salesByEncashment,
         encashmentsSummaries,
         coinCollectorStatus,
-        banknoteCollectorStatus
+        banknoteCollectorStatus,
+        machineItemSales
     }
 
 }
