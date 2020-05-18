@@ -252,3 +252,8 @@
 # 1.3.22 - Hotfix
 
 * Fix registration bag
+
+
+# 1.3.23 - Hotfix
+
+* Fix registration bag
