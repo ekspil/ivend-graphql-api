@@ -15,7 +15,6 @@ const hashingUtils = require("../utils/hashingUtils")
 const validationUtils = require("../utils/validationUtils")
 const logger = require("my-custom-logger")
 const microservices = require("../utils/microservices")
-const notificationTypes = require("../enum/NotificationType")
 
 class UserService {
 
@@ -104,22 +103,6 @@ class UserService {
             } catch (e) {
                 logger.error(`Failed to send email. Token ${token}, phone ${phone}`)
                 logger.error(e)
-            }
-
-            for (let type in notificationTypes){
-                let input = {
-                    type,
-                    email: true,
-                    sms: false,
-                    tlgrm: false,
-                    extraEmail: email,
-                    telegram: null,
-                    telegramChat: null
-                }
-                if(type === "USER_WILL_BLOCK" || type === "GET_NEWS" || type === "USER_LOW_BALANCE" || type === "GET_MONTH_SALES") {
-                    await this.notificationSettingsService.updateNotificationSetting(input, user)
-                }
-
             }
 
             return user
