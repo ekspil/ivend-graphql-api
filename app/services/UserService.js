@@ -92,19 +92,7 @@ class UserService {
 
             user.checkPermission = () => true
 
-            for (let type in notificationTypes){
-                const input = {
-                    type,
-                    email: false,
-                    sms: false,
-                    tlgrm: false,
-                    extraEmail: email,
-                    telegram: null,
-                    telegramChat: null
-                }
-                if(type === "USER_WILL_BLOCK" || type === "GET_NEWS" || type === "USER_LOW_BALANCE" || type === "GET_MONTH_SALES") input.email = true
-                await this.notificationSettingsService.updateNotificationSetting(input, user)
-            }
+
 
             await this.machineService.createMachineGroup({name: process.env.DEFAULT_MACHINE_GROUP_NAME}, user, transaction)
 
@@ -116,6 +104,20 @@ class UserService {
             } catch (e) {
                 logger.error(`Failed to send email. Token ${token}, phone ${phone}`)
                 logger.error(e)
+            }
+
+            for (let type in notificationTypes){
+                const input = {
+                    type,
+                    email: false,
+                    sms: false,
+                    tlgrm: false,
+                    extraEmail: email,
+                    telegram: null,
+                    telegramChat: null
+                }
+                if(type === "USER_WILL_BLOCK" || type === "GET_NEWS" || type === "USER_LOW_BALANCE" || type === "GET_MONTH_SALES") input.email = true
+                await this.notificationSettingsService.createNotificationSetting(input, user)
             }
 
             return user
