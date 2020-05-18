@@ -297,7 +297,7 @@ class App {
         })
 
         services.controllerService.machineService = services.machineService
-
+        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.userService = new UserService({
             UserModel,
             redis,
@@ -332,7 +332,6 @@ class App {
             ServiceModel,
             TransactionModel,
         })
-        services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.reportService = new ReportService({redis})
 
 

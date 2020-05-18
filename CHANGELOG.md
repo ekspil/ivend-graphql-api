@@ -248,3 +248,7 @@
 # 1.3.21 - Release
 
 * Fix email in env
+
+# 1.3.22 - Hotfix
+
+* Fix registration bag
