@@ -107,17 +107,19 @@ class UserService {
             }
 
             for (let type in notificationTypes){
-                const input = {
+                let input = {
                     type,
-                    email: false,
+                    email: true,
                     sms: false,
                     tlgrm: false,
                     extraEmail: email,
                     telegram: null,
                     telegramChat: null
                 }
-                if(type === "USER_WILL_BLOCK" || type === "GET_NEWS" || type === "USER_LOW_BALANCE" || type === "GET_MONTH_SALES") input.email = true
-                await this.notificationSettingsService.createNotificationSetting(input, user)
+                if(type === "USER_WILL_BLOCK" || type === "GET_NEWS" || type === "USER_LOW_BALANCE" || type === "GET_MONTH_SALES") {
+                    await this.notificationSettingsService.updateNotificationSetting(input, user)
+                }
+
             }
 
             return user
