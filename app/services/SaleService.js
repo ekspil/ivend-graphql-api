@@ -552,6 +552,7 @@ class SaleService {
         const {sequelize} = this.Sale
         const {Op} = sequelize
         const where = {}
+        where.machine_id = machineId
         if (period) {
             const {from, to} = period
 

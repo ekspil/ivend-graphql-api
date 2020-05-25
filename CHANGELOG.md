@@ -240,7 +240,6 @@
 
 * Fix Item sales summary speed
 
-
 # 1.3.20 - Release
 
 * Fix email in env
@@ -257,3 +256,9 @@
 # 1.3.23 - Hotfix
 
 * Fix registration bag
+
+
+# 1.3.24 - Hotfix
+
+* Fix problem
+
