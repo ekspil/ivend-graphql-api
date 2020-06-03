@@ -207,6 +207,10 @@ class SaleService {
                 throw new Error("LegalInfo is not set")
             }
 
+            if (controllerUser.role === "VENDOR_NEGATIVE_BALANCE") {
+                throw new Error("USER LOCKED BY BALANCE")
+            }
+
 
             const userKkts = await this.kktService.getUserKkts(controllerUser)
             const activatedKkts = userKkts.filter(kkt => kkt.kktActivationDate)
