@@ -33,6 +33,12 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return await userService.requestToken(input)
     }
 
+    const requestTokenAdmin = async (root, args) => {
+        const {input} = args
+
+        return await userService.requestTokenAdmin(input)
+    }
+
     const updateNotificationSetting = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -127,6 +133,7 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         registerUser,
         editEmail,
         requestToken,
+        requestTokenAdmin,
         editPassword,
         confirmUserAction,
         updateNotificationSetting,

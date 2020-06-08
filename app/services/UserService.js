@@ -259,6 +259,15 @@ class UserService {
             throw new PhonePasswordMatchFailed()
         }
 
+        if(user.role === "ADMIN"){
+
+            const smsCode = await hashingUtils.generateRandomFloor(10000, 99999)
+            await this.redis.hset("admin_sms", phone, smsCode)
+            await microservices.notification.sendRegistrationSms(phone, smsCode)
+            return "NEED_SMS"
+        }
+
+
         const token = await hashingUtils.generateRandomAccessKey()
 
         await this.redis.hset("tokens", token, user.id)
@@ -271,6 +280,30 @@ class UserService {
                 this.redis.hdel("tokens", token)
             }, 5000)
         }
+
+        return token
+    }
+
+    async requestTokenAdmin(input) {
+        const {phone, sms} = input
+
+        //todo validation
+        const savedSMS = await this.redis.hget("admin_sms", phone)
+
+
+        if (savedSMS !== sms) {
+            throw new PhonePasswordMatchFailed()
+        }
+
+        const user = await this.User.findOne({
+            where: {
+                phone
+            }
+        })
+
+        const token = await hashingUtils.generateRandomAccessKey()
+
+        await this.redis.hset("tokens", token, user.id)
 
         return token
     }

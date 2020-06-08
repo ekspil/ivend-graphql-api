@@ -362,6 +362,11 @@ const typeDefs = gql`
         phone: String!
         password: String!
     }
+    
+    input RequestTokenAdminInput {
+        phone: String!
+        sms: String!
+    }
 
     enum BusStatus {
         OK,
@@ -766,6 +771,7 @@ const typeDefs = gql`
         editPassword(password: String!): Boolean
         confirmUserAction(input: UserActionConfirmation!): User
         requestToken(input: RequestTokenInput!): String
+        requestTokenAdmin(input: RequestTokenAdminInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment
         createController(input: CreateControllerInput!): Controller
         deleteController(id: Int!): Machine

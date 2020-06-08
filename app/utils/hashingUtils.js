@@ -21,8 +21,15 @@ async function hashPassword(password) {
     return await bcryptjs.hash(password, bcryptRounds)
 }
 
+async function generateRandomFloor(min, max) {
+    let rand = min + Math.random() * (max + 1 - min)
+    return Math.floor(rand)
+}
+
+
 
 module.exports = {
     generateRandomAccessKey,
-    hashPassword
+    hashPassword,
+    generateRandomFloor
 }
