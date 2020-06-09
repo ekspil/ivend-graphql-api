@@ -687,7 +687,7 @@ const typeDefs = gql`
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts(offset: Int, limit: Int): [Kkt]
-        getAllUsers: [User]
+        getAllUsers(input: AllUsersInput): [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int): [Sale!]!
         getItemSales(machineGroupId: Int, period: Period): [ItemsSales]
@@ -706,6 +706,9 @@ const typeDefs = gql`
     input AuthControllerInput {
         controllerUid: String!
         firmwareId: String!
+    }
+    input AllUsersInput {
+        role: String
     }
 
     input Registration1StepInput {

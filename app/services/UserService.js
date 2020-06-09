@@ -392,12 +392,17 @@ class UserService {
     }
 
 
-    async getAllUsers(user) {
+    async getAllUsers(input, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
         }
+        const {role} = input
+        const where = {}
+        if(role && role !== "ALL"){
+            where.role = role
+        }
 
-        return await this.User.findAll({})
+        return await this.User.findAll({where})
     }
 
     async closeUser(id, user) {
