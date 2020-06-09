@@ -396,10 +396,13 @@ class UserService {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
         }
-        const {role} = input
+        const {role, userId} = input
         const where = {}
         if(role && role !== "ALL"){
             where.role = role
+        }
+        if(userId){
+            where.id = userId
         }
 
         return await this.User.findAll({where})

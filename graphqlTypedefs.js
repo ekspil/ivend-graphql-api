@@ -709,6 +709,7 @@ const typeDefs = gql`
     }
     input AllUsersInput {
         role: String
+        userId: Int
     }
 
     input Registration1StepInput {
