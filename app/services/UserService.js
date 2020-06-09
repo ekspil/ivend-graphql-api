@@ -397,11 +397,20 @@ class UserService {
             throw new NotAuthorized()
         }
 
-        return await this.User.findAll({
+        return await this.User.findAll({})
+    }
+
+    async closeUser(id, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
+            throw new NotAuthorized()
+        }
+
+        const selectedUser = await this.User.findOne({
             where: {
-                role: "VENDOR"
-            }
-        })
+                id
+            }})
+        selectedUser.role = "CLOSED"
+        return await selectedUser.save()
     }
 
 

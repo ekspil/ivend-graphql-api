@@ -770,6 +770,7 @@ const typeDefs = gql`
         editEmail(email: String!): Boolean
         editPassword(password: String!): Boolean
         confirmUserAction(input: UserActionConfirmation!): User
+        closeUser(id: Int!): User
         requestToken(input: RequestTokenInput!): String
         requestTokenAdmin(input: RequestTokenAdminInput!): String
         createEquipment(input: CreateEquipmentInput!): Equipment

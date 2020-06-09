@@ -97,6 +97,9 @@ const VENDOR_NO_LEGAL_INFO = [
     Permission.GET_BALANCE
 ]
 
+const CLOSED = [
+]
+
 const AGGREGATE = [
     Permission.CREATE_ITEM,
     Permission.GET_CONTROLLER_BY_ID,
@@ -114,6 +117,7 @@ const AGGREGATE = [
 
 const RolePermissions = {
     VENDOR,
+    CLOSED,
     VENDOR_NEGATIVE_BALANCE,
     VENDOR_NOT_CONFIRMED,
     VENDOR_NO_LEGAL_INFO,
