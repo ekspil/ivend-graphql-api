@@ -129,12 +129,23 @@ class KktService {
         })
     }
 
-    async getAllKkts(user) {
+    async getAllKkts(offset, limit, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_KKTS)) {
             throw new NotAuthorized()
         }
 
-        return await this.Kkt.findAll({})
+        if (!limit) {
+            limit = 50
+        }
+
+
+        return await this.Kkt.findAll({
+            offset,
+            limit,
+            order: [
+                ["id", "DESC"],
+            ]
+        })
     }
 
 }
