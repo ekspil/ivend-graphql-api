@@ -58,6 +58,15 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return new LegalInfoDTO(legalInfo)
     }
 
+    const updateLegalInfoToUser = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const legalInfo = await legalInfoService.updateLegalInfoToUser(input, user)
+
+        return new LegalInfoDTO(legalInfo)
+    }
+
     const closeUser = async (root, args, context) => {
         const {id} = args
         const {user} = context
@@ -153,7 +162,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         rememberPasswordRequest,
         changePasswordRequest,
         sendEmail,
-        closeUser
+        closeUser,
+        updateLegalInfoToUser
     }
 
 }

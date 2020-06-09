@@ -497,6 +497,22 @@ const typeDefs = gql`
         contactEmail: String!
         sno: SNO!
     }
+    input LegalInfoToUserInput {
+        userId: String!
+        companyName: String!
+        city: String!
+        actualAddress: String!
+        inn: String!
+        ogrn: String!
+        legalAddress: String!
+        director: String!
+        directorPhone: String!
+        directorEmail: String!
+        contactPerson: String!
+        contactPhone: String!
+        contactEmail: String!
+        sno: SNO!
+    }
     
     type News {
         id: Int!
@@ -795,6 +811,7 @@ const typeDefs = gql`
         createNotificationSetting(input: CreateNotificationSettingInput!): NotificationSetting
         insertTelegramToNotificationSetting(input: NotificationSettingTelegramChat!): Boolean
         updateLegalInfo(input: LegalInfoInput!): LegalInfo
+        updateLegalInfoToUser(input: LegalInfoToUserInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
         generatePdf(input: pdfInput!): Pdf
         generateExcel(input: GenerateExcelInput!): ExcelReport

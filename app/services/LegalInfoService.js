@@ -84,6 +84,45 @@ class LegalInfoService {
         return await legalInfo.save()
     }
 
+    async updateLegalInfoToUser(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
+            throw new NotAuthorized()
+        }
+
+        const {
+            userId, companyName, city, actualAddress, inn, ogrn, legalAddress, director,
+            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno
+        } = input
+
+        const selectedUser = await this.User.findOne({
+            where: {
+                id: userId
+            }
+        })
+
+        const legalInfo = await this.LegalInfo.findOne({
+            where: {
+                id: selectedUser.legal_info_id
+            }
+        })
+
+
+        legalInfo.companyName = companyName
+        legalInfo.city = city
+        legalInfo.actualAddress = actualAddress
+        legalInfo.inn = inn
+        legalInfo.ogrn = ogrn
+        legalInfo.legalAddress = legalAddress
+        legalInfo.director = director
+        legalInfo.directorPhone = directorPhone
+        legalInfo.directorEmail = directorEmail
+        legalInfo.contactPerson = contactPerson
+        legalInfo.contactPhone = contactPhone
+        legalInfo.contactEmail = contactEmail
+        legalInfo.sno = sno
+        return await legalInfo.save()
+    }
+
 }
 
 module.exports = LegalInfoService
