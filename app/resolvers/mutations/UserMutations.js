@@ -62,7 +62,7 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         const {id} = args
         const {user} = context
 
-        const closedUser = await legalInfoService.closeUser(id, user)
+        const closedUser = await userService.closeUser(id, user)
 
         return new UserDTO(closedUser)
     }
