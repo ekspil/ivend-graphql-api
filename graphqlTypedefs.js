@@ -467,19 +467,19 @@ const typeDefs = gql`
     }
 
     type LegalInfo {
-        companyName: String!
-        city: String!
-        actualAddress: String!
-        inn: String!
-        ogrn: String!
-        legalAddress: String!
-        director: String!
-        directorPhone: String!
-        directorEmail: String!
-        contactPerson: String!
-        contactPhone: String!
-        contactEmail: String!
-        sno: SNO!
+        companyName: String
+        city: String
+        actualAddress: String
+        inn: String
+        ogrn: String
+        legalAddress: String
+        director: String
+        directorPhone: String
+        directorEmail: String
+        contactPerson: String
+        contactPhone: String
+        contactEmail: String
+        sno: SNO
     }
 
     input LegalInfoInput {
