@@ -498,7 +498,7 @@ const typeDefs = gql`
         sno: SNO!
     }
     input LegalInfoToUserInput {
-        userId: String!
+        userId: Int!
         companyName: String!
         city: String!
         actualAddress: String!
