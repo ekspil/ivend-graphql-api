@@ -84,7 +84,7 @@ class SaleService {
             throw new ControllerNotFound()
         }
 
-        if (controller.status === "PAUSED") {
+        if (controller.status === "DISABLED") {
             throw new ControllerDisabled()
         }
 

@@ -266,3 +266,8 @@
 
 * New admin functions
 
+
+# 1.3.26 - Hotfix
+
+* disable sales in disabled controllers
+
