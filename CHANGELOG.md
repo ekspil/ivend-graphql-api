@@ -262,3 +262,7 @@
 
 * Fix problem
 
+# 1.3.25 - Hotfix
+
+* New admin functions
+
