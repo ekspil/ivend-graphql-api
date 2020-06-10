@@ -396,7 +396,7 @@ class UserService {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
         }
-        const {role, userId} = input
+        let {role, userId, limit, offset} = input
         const where = {}
         if(role && role !== "ALL"){
             where.role = role
@@ -404,8 +404,15 @@ class UserService {
         if(userId){
             where.id = userId
         }
+        if (!limit) {
+            limit = 100
+        }
 
-        return await this.User.findAll({where})
+        return await this.User.findAll({
+            limit,
+            offset,
+            where
+        })
     }
 
     async closeUser(id, user) {

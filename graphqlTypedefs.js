@@ -726,6 +726,8 @@ const typeDefs = gql`
     input AllUsersInput {
         role: String
         userId: Int
+        limit: Int
+        offset: Int
     }
 
     input Registration1StepInput {
