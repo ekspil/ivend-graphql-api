@@ -75,6 +75,14 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
 
         return new UserDTO(closedUser)
     }
+    const updateUser = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const updatedUser = await userService.updateUser(input, user)
+
+        return new UserDTO(updatedUser)
+    }
 
 
     const generateExcel = async (root, args, context) => {
@@ -163,7 +171,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         changePasswordRequest,
         sendEmail,
         closeUser,
-        updateLegalInfoToUser
+        updateLegalInfoToUser,
+        updateUser
     }
 
 }

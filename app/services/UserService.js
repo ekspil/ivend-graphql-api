@@ -109,6 +109,41 @@ class UserService {
         })
     }
 
+
+    async updateUser(input, adminUser) {
+        if(!adminUser && !adminUser.checkPermission(Permission.GET_ALL_USERS)){
+            throw new NotAuthorized()
+        }
+        const {email, id, phone, password, role} = input
+
+        //todo validation
+        if (!validationUtils.validatePhoneNumber(phone)) {
+            throw new PhoneNotValid()
+        }
+
+        const user = await this.User.findOne({
+            where: {
+                id
+            }
+        })
+
+        if (!user) {
+            throw new NotAuthorized()
+        }
+
+        user.phone = phone
+        user.email = email
+        user.role = role
+        if(password){
+            user.passwordHash = await this.hashPassword(password) 
+        }
+            
+
+
+        return await user.save()
+        
+    }
+
     async editEmail(newEmail, user) {
         if (!user || !user.checkPermission(Permission.EDIT_EMAIL)) {
             throw new NotAuthorized()

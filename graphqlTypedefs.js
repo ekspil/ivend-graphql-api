@@ -357,6 +357,14 @@ const typeDefs = gql`
         password: String!
         code: String!
     }
+    
+    input UpdateUserInput {
+        id: Int!
+        phone: String!
+        email: String!
+        password: String
+        role: String!
+    }
 
     input RequestTokenInput {
         phone: String!
@@ -789,6 +797,7 @@ const typeDefs = gql`
         registerSale(input: SaleEventInput!): Sale
         registerEvent(input: RegisterEventInput!): Controller
         registerUser(input: CreateUserInput!): User
+        updateUser(input: UpdateUserInput!): User
         editEmail(email: String!): Boolean
         editPassword(password: String!): Boolean
         confirmUserAction(input: UserActionConfirmation!): User
