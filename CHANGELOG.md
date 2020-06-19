@@ -271,3 +271,7 @@
 
 * disable sales in disabled controllers
 
+# 1.3.27 - Hotfix
+
+* Hotfix
+
