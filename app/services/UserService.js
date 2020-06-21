@@ -3,6 +3,7 @@ const TokenNotFound = require("../errors/TokenNotFound")
 const UserNotFound = require("../errors/UserNotFound")
 const UserExists = require("../errors/UserExists")
 const PhonePasswordMatchFailed = require("../errors/PhonePasswordMatchFailed")
+const SendSMSFailed = require("../errors/SendSMSFailed")
 const SmsCodeMatchFailed = require("../errors/SmsCodeMatchFailed")
 const SmsCodeTimeout = require("../errors/SmsCodeTimeout")
 const PhoneNotValid = require("../errors/PhoneNotValid")
@@ -298,7 +299,13 @@ class UserService {
 
             const smsCode = await hashingUtils.generateRandomFloor(10000, 99999)
             await this.redis.hset("admin_sms", phone, smsCode)
-            await microservices.notification.sendRegistrationSms(phone, smsCode)
+            try {
+                await microservices.notification.sendRegistrationSms(phone, smsCode)
+            }
+            catch(err){
+                throw new SendSMSFailed()
+            }
+
             return "NEED_SMS"
         }
 
