@@ -13,7 +13,7 @@ const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, redis, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService}) {
+    constructor({MachineModel, redis, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService, itemService}) {
         this.Machine = MachineModel
         this.Encashment = EncashmentModel
         this.MachineGroup = MachineGroupModel
@@ -21,6 +21,7 @@ class MachineService {
         this.MachineLog = MachineLogModel
         this.equipmentService = equipmentService
         this.itemMatrixService = itemMatrixService
+        this.itemService = itemService
         this.controllerService = controllerService
         this.redis = redis
 
@@ -90,8 +91,10 @@ class MachineService {
             machine = await this.Machine.create(machine, {transaction})
 
             const itemMatrix = await this.itemMatrixService.createItemMatrix(machine.id, user, transaction)
+            const item = await this.itemService.createItem({name: "Товар1"}, user, transaction)
 
             machine.item_matrix_id = itemMatrix.id
+            await this.itemMatrixService.addButtonToItemMatrix({itemMatrixId: itemMatrix.id, buttonId: 1, itemId: item.id, multiplier: 1}, user)
 
             return machine.save({transaction})
         })

@@ -292,6 +292,7 @@ class App {
             EncashmentModel,
             equipmentService: services.equipmentService,
             itemMatrixService: services.itemMatrixService,
+            itemService: services.itemService,
             controllerService: services.controllerService,
             redis
         })
