@@ -94,7 +94,8 @@ class MachineService {
             const item = await this.itemService.createItem({name: "Товар1"}, user, transaction)
 
             machine.item_matrix_id = itemMatrix.id
-            await this.itemMatrixService.addButtonToItemMatrix({itemMatrixId: itemMatrix.id, buttonId: 1, itemId: item.id, multiplier: 1}, user)
+
+            await this.itemMatrixService.addButtonToItemMatrixTrx({itemMatrixId: itemMatrix.id, buttonId: 1, itemId: item.id, multiplier: 1}, user, transaction)
 
             return machine.save({transaction})
         })

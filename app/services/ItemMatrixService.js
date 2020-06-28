@@ -79,6 +79,24 @@ class ItemMatrixService {
         return this.getItemMatrixById(itemMatrixId, user)
     }
 
+    async addButtonToItemMatrixTrx(input, user, transaction) {
+        if (!user || !user.checkPermission(Permission.ADD_BUTTON_ITEM_TO_ITEM_MATRIX)) {
+            throw new NotAuthorized()
+        }
+
+        const {itemMatrixId, buttonId, itemId, multiplier} = input
+
+
+        const buttonItem = new ButtonItem()
+        buttonItem.buttonId = buttonId
+        buttonItem.item_matrix_id = itemMatrixId
+        buttonItem.item_id = itemId
+        buttonItem.multiplier = multiplier
+        await this.ButtonItem.create(buttonItem, {transaction})
+
+        return true
+    }
+
     async editButtonToItemMatrix(input, user) {
         if (!user || !user.checkPermission(Permission.ADD_BUTTON_ITEM_TO_ITEM_MATRIX)) {
             throw new NotAuthorized()
