@@ -150,7 +150,7 @@ class SaleService {
             const sale = new Sale()
             sale.type = type
             sale.price = price * button.multiplier
-            if(sale.price > 1000){
+            if(sale.price > 4999){
                 throw new ItemNotFound()
             }
             sale.item_id = itemId
