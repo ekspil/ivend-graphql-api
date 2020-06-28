@@ -674,6 +674,7 @@ const typeDefs = gql`
         place: String
         groupId: Int
         typeId: Int
+        equipmentId: Int
         controllerId: Int
         kktId: Int
     }
