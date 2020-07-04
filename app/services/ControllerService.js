@@ -189,12 +189,12 @@ class ControllerService {
         if (terminal) {
             if(terminal === "ENABLED"){
                 where.simCardNumber = {
-                    [Op.notIn]: [null, "false", false]
+                    [Op.notIn]: [null, "false", "FALSE"]
                 }
             }
             if(terminal === "DISABLED"){
                 where.simCardNumber = {
-                    [Op.in]: [null, "false", false]
+                    [Op.in]: [null, "false", "FALSE"]
                 }
             }
 
