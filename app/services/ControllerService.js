@@ -243,8 +243,18 @@ class ControllerService {
                 const to = new Date().getTime() - (1000 * 60 * 60 * 24)
                 const from = new Date().getTime() - (1000 * 60 * 60 * 24 * 365 * 10)
                 where.registrationTime = {
-                    [Op.lt]: to,
-                    [Op.gt]: from
+                    [Op.or]:
+                        [
+                            {
+                                [Op.lt]: to,
+                                [Op.gt]: from
+                            },
+                            {
+                                [Op.is]: null
+                            }
+
+                        ]
+
                 }
             }
 
