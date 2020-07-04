@@ -700,7 +700,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
-        getAllControllers(offset: Int, limit: Int): [Controller]
+        getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String ): [Controller]
         getMachineById(id: Int!): Machine
         getMachines: [Machine]
         getMachineGroups: [MachineGroup]

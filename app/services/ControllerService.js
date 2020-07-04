@@ -11,6 +11,7 @@ const Permission = require("../enum/Permission")
 const hashingUtils = require("../utils/hashingUtils")
 const logger = require("my-custom-logger")
 const MachineLogType = require("../enum/MachineLogType")
+const {Op} = require("sequelize")
 
 class ControllerService {
 
@@ -173,19 +174,81 @@ class ControllerService {
     }
 
 
-    async getAll(offset, limit, user) {
+    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
 
+        const where = {}
         if (!limit) {
             limit = 50
+        }
+        if (bankTerminalMode && bankTerminalMode !== "ALL") {
+            where.bankTerminalMode = bankTerminalMode
+        }
+        if (terminal) {
+            if(terminal === "ENABLED"){
+                where.simCardNumber = {
+                    [Op.notIn]: [null, "false", false]
+                }
+            }
+            if(terminal === "DISABLED"){
+                where.simCardNumber = {
+                    [Op.in]: [null, "false", false]
+                }
+            }
+
+        }
+        if (fiscalizationMode && fiscalizationMode !== "ALL") {
+            where.fiscalizationMode = fiscalizationMode
+        }
+
+        if (status && status !== "ALL") {
+            where.status = status
+        }
+        if (connection && connection !== "ALL") {
+
+            if(connection === "OK"){
+                const to = new Date().getTime()
+                const from = new Date().getTime() - (1000 * 60 * 15)
+                where.registrationTime = {
+                    [Op.lt]: to,
+                    [Op.gt]: from
+                }
+            }
+            if(connection === "WARNING"){
+                const to = new Date().getTime() - (1000 * 60 * 15)
+                const from = new Date().getTime() - (1000 * 60 * 30)
+                where.registrationTime = {
+                    [Op.lt]: to,
+                    [Op.gt]: from
+                }
+            }
+            if(connection === "ALERT"){
+
+                const to = new Date().getTime() - (1000 * 60 * 30)
+                const from = new Date().getTime() - (1000 * 60 * 60 * 24)
+                where.registrationTime = {
+                    [Op.lt]: to,
+                    [Op.gt]: from
+                }
+            }
+            if(connection === "NO"){
+                const to = new Date().getTime() - (1000 * 60 * 60 * 24)
+                const from = new Date().getTime() - (1000 * 60 * 60 * 24 * 365 * 10)
+                where.registrationTime = {
+                    [Op.lt]: to,
+                    [Op.gt]: from
+                }
+            }
+
         }
 
 
         return await this.Controller.findAll({
             offset,
             limit,
+            where,
             order: [
                 ["id", "DESC"],
             ]
