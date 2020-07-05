@@ -185,7 +185,7 @@ class ControllerService {
         }
         if (bankTerminalMode && bankTerminalMode !== "ALL") {
             if(terminal === "ENABLED"){
-                bankTerminalMode.bankTerminalMode = {
+                where.bankTerminalMode = {
                     [Op.and]: {
                         [Op.not]: null,
                         [Op.notIn]: ["NO_BANK_TERMINAL"]
