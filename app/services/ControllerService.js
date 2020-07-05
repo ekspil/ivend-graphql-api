@@ -184,7 +184,22 @@ class ControllerService {
             limit = 50
         }
         if (bankTerminalMode && bankTerminalMode !== "ALL") {
-            where.bankTerminalMode = bankTerminalMode
+            if(terminal === "ENABLED"){
+                bankTerminalMode.bankTerminalMode = {
+                    [Op.and]: {
+                        [Op.not]: null,
+                        [Op.notIn]: ["NO_BANK_TERMINAL"]
+                    }
+                }
+            }
+            if(bankTerminalMode === "DISABLED"){
+                where.bankTerminalMode = {
+                    [Op.or]: {
+                        [Op.is]: null,
+                        [Op.in]: ["NO_BANK_TERMINAL"]
+                    }
+                }
+            }
         }
         if (terminal) {
             if(terminal === "ENABLED"){
@@ -206,7 +221,22 @@ class ControllerService {
 
         }
         if (fiscalizationMode && fiscalizationMode !== "ALL") {
-            where.fiscalizationMode = fiscalizationMode
+            if(fiscalizationMode === "ENABLED"){
+                where.fiscalizationMode = {
+                    [Op.and]: {
+                        [Op.not]: null,
+                        [Op.notIn]: ["NO_FISCAL"]
+                    }
+                }
+            }
+            if(fiscalizationMode === "DISABLED"){
+                where.fiscalizationMode = {
+                    [Op.or]: {
+                        [Op.is]: null,
+                        [Op.in]: ["NO_FISCAL"]
+                    }
+                }
+            }
         }
 
         if (status && status !== "ALL") {
