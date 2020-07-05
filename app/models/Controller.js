@@ -1,5 +1,5 @@
 class Controller {
-    constructor(id, name, uid, revision, mode, status, accessKey, user, readStatMode, bankTerminalMode, fiscalizationMode, firmwareId, registrationTime, connected, remotePrinterId, simCardNumber) {
+    constructor(id, name, uid, revision, mode, status, accessKey, user, readStatMode, bankTerminalMode, fiscalizationMode, firmwareId, registrationTime, connected, remotePrinterId, simCardNumber, imsi) {
         this.id = id
         this.name = name
         this.uid = uid
@@ -16,6 +16,7 @@ class Controller {
         this.connected = connected
         this.remotePrinterId = remotePrinterId
         this.simCardNumber = simCardNumber
+        this.imsi = imsi
     }
 }
 

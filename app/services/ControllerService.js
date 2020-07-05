@@ -555,14 +555,16 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {controllerUid, firmwareId} = input
+        const {controllerUid, firmwareId, imsi} = input
 
         const controller = await this.getControllerByUID(controllerUid, user)
 
         if (!controller) {
             throw new ControllerNotFound()
         }
-
+        if(imsi){
+            controller.imsi = imsi
+        }
         controller.registrationTime = new Date()
         controller.firmwareId = firmwareId
         controller.accessKey = await hashingUtils.generateRandomAccessKey(4)

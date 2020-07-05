@@ -7,6 +7,7 @@ const typeDefs = gql`
     type Controller {
         id: Int!
         uid: String!
+        imsi: String
         services: [ControllerService!]
         status: ControllerStatus!
         mode: ControllerMode!
@@ -731,6 +732,7 @@ const typeDefs = gql`
     input AuthControllerInput {
         controllerUid: String!
         firmwareId: String!
+        imsi: String
     }
     input AllUsersInput {
         role: String
