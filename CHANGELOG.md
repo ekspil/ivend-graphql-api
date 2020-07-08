@@ -275,3 +275,9 @@
 
 * Hotfix
 
+# 1.3.28 - Release
+
+* IMSI added
+* new sorting parameters
+
+
