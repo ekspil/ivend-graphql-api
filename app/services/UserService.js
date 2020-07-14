@@ -453,7 +453,10 @@ class UserService {
         return await this.User.findAll({
             limit,
             offset,
-            where
+            where,
+            order: [
+                ["id", "DESC"],
+            ]
         })
     }
 
