@@ -242,56 +242,10 @@ class ControllerService {
         if (status && status !== "ALL") {
             where.status = status
         }
-        if (connection && connection !== "ALL") {
-
-            if(connection === "OK"){
-                const to = new Date().getTime()
-                const from = new Date().getTime() - (1000 * 60 * 15)
-                where.registrationTime = {
-                    [Op.lt]: to,
-                    [Op.gt]: from
-                }
-            }
-            if(connection === "WARNING"){
-                const to = new Date().getTime() - (1000 * 60 * 15)
-                const from = new Date().getTime() - (1000 * 60 * 30)
-                where.registrationTime = {
-                    [Op.lt]: to,
-                    [Op.gt]: from
-                }
-            }
-            if(connection === "ALERT"){
-
-                const to = new Date().getTime() - (1000 * 60 * 30)
-                const from = new Date().getTime() - (1000 * 60 * 60 * 24)
-                where.registrationTime = {
-                    [Op.lt]: to,
-                    [Op.gt]: from
-                }
-            }
-            if(connection === "NO"){
-                const to = new Date().getTime() - (1000 * 60 * 60 * 24)
-                const from = new Date().getTime() - (1000 * 60 * 60 * 24 * 365 * 10)
-                where.registrationTime = {
-                    [Op.or]:
-                        [
-                            {
-                                [Op.lt]: to,
-                                [Op.gt]: from
-                            },
-                            {
-                                [Op.is]: null
-                            }
-
-                        ]
-
-                }
-            }
-
-        }
 
 
-        return await this.Controller.findAll({
+
+        const controllers = await this.Controller.findAll({
             offset,
             limit,
             where,
@@ -299,6 +253,72 @@ class ControllerService {
                 ["id", "DESC"],
             ]
         })
+
+        if (connection && connection !== "ALL") {
+
+            const filtredControllers = controllers.filter(async (controller) =>{
+                let lastState = await controller.getLastState()
+
+
+                if(connection === "NO"){
+                    if(!lastState)return true
+                    if(!lastState.registrationTime)return true
+                    let rt = lastState.registrationTime.getTime()
+                    const to = new Date().getTime() - (1000 * 60 * 60 * 24)
+                    const from = new Date().getTime() - (1000 * 60 * 60 * 24 * 365 * 10)
+                    if( rt > from && rt <= to){
+                        return true
+                    }
+                    else{
+                        return false
+                    }
+                }
+                if(!lastState)return false
+                if(!lastState.registrationTime)return false
+                let rt = lastState.registrationTime.getTime()
+                if(connection === "OK"){
+                    const to = new Date().getTime()
+                    const from = new Date().getTime() - (1000 * 60 * 15)
+                    if( rt > from && rt <= to){
+                        return true
+                    }
+                    else{
+                        return false
+                    }
+                    
+                }
+                if(connection === "WARNING"){
+                    const to = new Date().getTime() - (1000 * 60 * 15)
+                    const from = new Date().getTime() - (1000 * 60 * 30)
+                    if( rt > from && rt <= to){
+                        return true
+                    }
+                    else{
+                        return false
+                    }
+                }
+                if(connection === "ALERT"){
+
+                    const to = new Date().getTime() - (1000 * 60 * 30)
+                    const from = new Date().getTime() - (1000 * 60 * 60 * 24)
+                    if( rt > from && rt <= to){
+                        return true
+                    }
+                    else{
+                        return false
+                    }
+                }
+
+            })
+
+
+            return filtredControllers
+
+        }
+        
+
+        
+        return controllers
     }
 
     async getAllOfCurrentUser(user) {
