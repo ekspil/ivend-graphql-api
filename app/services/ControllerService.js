@@ -280,7 +280,7 @@ class ControllerService {
                         
                     }
                     else{
-                        return false
+                        continue
                     }
                 }
                 if(!lastState)continue
