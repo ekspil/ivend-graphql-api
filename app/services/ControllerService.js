@@ -256,34 +256,47 @@ class ControllerService {
 
         if (connection && connection !== "ALL") {
 
-            const filtredControllers = controllers.filter(async (controller) =>{
+            const filtredControllers = []
+            for (let controller of controllers) {
                 let lastState = await controller.getLastState()
 
 
                 if(connection === "NO"){
-                    if(!lastState)return true
-                    if(!lastState.registrationTime)return true
+                    if(!lastState) {
+                        filtredControllers.push(controller)
+                        continue
+                    }
+                    if(!lastState.registrationTime) {
+                        filtredControllers.push(controller)
+                        continue
+                    }
                     let rt = lastState.registrationTime.getTime()
                     const to = new Date().getTime() - (1000 * 60 * 60 * 24)
                     const from = new Date().getTime() - (1000 * 60 * 60 * 24 * 365 * 10)
                     if( rt > from && rt <= to){
-                        return true
+                        
+                        filtredControllers.push(controller)
+                        continue
+                        
                     }
                     else{
                         return false
                     }
                 }
-                if(!lastState)return false
-                if(!lastState.registrationTime)return false
+                if(!lastState)continue
+                if(!lastState.registrationTime)continue
                 let rt = lastState.registrationTime.getTime()
                 if(connection === "OK"){
                     const to = new Date().getTime()
                     const from = new Date().getTime() - (1000 * 60 * 15)
                     if( rt > from && rt <= to){
-                        return true
+                        
+                        filtredControllers.push(controller)
+                        continue
+                        
                     }
                     else{
-                        return false
+                        continue
                     }
                     
                 }
@@ -291,10 +304,13 @@ class ControllerService {
                     const to = new Date().getTime() - (1000 * 60 * 15)
                     const from = new Date().getTime() - (1000 * 60 * 30)
                     if( rt > from && rt <= to){
-                        return true
+                        
+                        filtredControllers.push(controller)
+                        continue
+                        
                     }
                     else{
-                        return false
+                        continue
                     }
                 }
                 if(connection === "ALERT"){
@@ -302,14 +318,17 @@ class ControllerService {
                     const to = new Date().getTime() - (1000 * 60 * 30)
                     const from = new Date().getTime() - (1000 * 60 * 60 * 24)
                     if( rt > from && rt <= to){
-                        return true
+                        
+                        filtredControllers.push(controller)
+                        continue
+                        
                     }
                     else{
-                        return false
+                        continue
                     }
                 }
 
-            })
+            }
 
 
             return filtredControllers
