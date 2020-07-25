@@ -250,7 +250,19 @@ class MachineService {
             where.user_id = user.id
         }
 
-        return await this.Machine.findOne({where})
+        const machine = await this.Machine.findOne({where})
+
+        machine.kktStatus = await this.redis.get("kkt_status_" + machine.id)
+        machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
+        machine.encashment = await this.redis.get("machine_encashment_" + machine.id)
+        machine.error = await this.redis.get("machine_error_" + machine.id)
+
+        if(!machine.kktStatus) machine.kktStatus = "24H"
+        if(!machine.terminalStatus)  machine.terminalStatus = "24H"
+        if(!machine.encashment) machine.encashment = "31D"
+        if(!machine.error)  machine.error = "OK"
+
+        return machine
     }
 
     async createMachineGroup(input, user, transaction) {
