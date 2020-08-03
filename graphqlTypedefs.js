@@ -763,6 +763,7 @@ const typeDefs = gql`
     amount: Float!
     inn: String!
     companyName: String!
+    services: String!    
     }
     
     input UserActionConfirmation {
