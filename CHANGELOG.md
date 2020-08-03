@@ -289,4 +289,8 @@
 
 * hotfix
 
+# 1.3.31 - Release
+
+* edit admin queries
+
 
