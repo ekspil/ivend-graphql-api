@@ -267,7 +267,7 @@ class SaleService {
                         receipt = await microservices.fiscal.getReceiptById(receiptId)
 
                         if (new Date() > timeoutDate) {
-                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "px", 24 * 60 * 60 * 1000)
+
                             throw new Error("Receipt status timeout")
                         }
 
