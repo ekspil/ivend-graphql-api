@@ -169,6 +169,7 @@ const typeDefs = gql`
     type ButtonItem {
         buttonId: Int
         multiplier: Int
+        type: String
         item: Item
     }
     
@@ -431,6 +432,7 @@ const typeDefs = gql`
         itemMatrixId: Int!
         buttonId: Int!
         multiplier: Int!
+        type: String
         itemId: Int!
     }
 
@@ -439,6 +441,7 @@ const typeDefs = gql`
         itemMatrixId: Int!
         buttonId: Int!
         multiplier: Int!
+        type: String
         itemId: Int!
     }
 

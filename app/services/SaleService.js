@@ -77,7 +77,7 @@ class SaleService {
 
         let {controllerUid, type, price, buttonId} = input
 
-
+        let itemType = "commodity"
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)
 
         if (!controller) {
@@ -93,6 +93,7 @@ class SaleService {
         if (!machine) {
             throw new MachineNotFound()
         }
+
 
         if(type === "CASHLESS"){
             await this.redis.set("terminal_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
@@ -127,6 +128,8 @@ class SaleService {
 
                 const button = new ButtonItem()
                 button.buttonId = buttonId
+                button.type = itemType
+                button.multiplier = 1
                 button.item_id = item.id
                 button.item_matrix_id = itemMatrix.id
 
@@ -144,9 +147,14 @@ class SaleService {
                 throw new ItemNotFound()
             }
             const [button] = buttons.filter((buttonItem) => Number(buttonItem.buttonId) === buttonId)
+
             if(!button.multiplier){
                 button.multiplier = 1
             }
+            if(!button.type){
+                button.type = "commodity"
+            }
+            itemType = button.type
             const sale = new Sale()
             sale.type = type
             sale.price = price * button.multiplier
@@ -246,7 +254,8 @@ class SaleService {
                         itemName: productName,
                         itemPrice: productPrice,
                         paymentType: type,
-                        kktRegNumber
+                        kktRegNumber,
+                        itemType
                     })
 
 

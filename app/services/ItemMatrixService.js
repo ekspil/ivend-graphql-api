@@ -49,13 +49,14 @@ class ItemMatrixService {
             throw new NotAuthorized()
         }
 
-        const {itemMatrixId, buttonId, itemId, multiplier} = input
+        const {itemMatrixId, buttonId, itemId, multiplier, type} = input
 
         const item = await this.itemService.getItemById(itemId, user)
 
         if (!item) {
             throw new ItemNotFound()
         }
+
 
         const itemMatrix = await this.getItemMatrixById(itemMatrixId, user)
 
@@ -74,9 +75,11 @@ class ItemMatrixService {
         buttonItem.item_matrix_id = itemMatrix.id
         buttonItem.item_id = item.id
         buttonItem.multiplier = multiplier
+        buttonItem.type = type || "commodity"
         await this.ButtonItem.create(buttonItem)
 
         return this.getItemMatrixById(itemMatrixId, user)
+        
     }
 
     async addButtonToItemMatrixTrx(input, user, transaction) {
@@ -84,7 +87,7 @@ class ItemMatrixService {
             throw new NotAuthorized()
         }
 
-        const {itemMatrixId, buttonId, itemId, multiplier} = input
+        const {itemMatrixId, buttonId, itemId, multiplier, type} = input
 
 
         const buttonItem = new ButtonItem()
@@ -92,9 +95,11 @@ class ItemMatrixService {
         buttonItem.item_matrix_id = itemMatrixId
         buttonItem.item_id = itemId
         buttonItem.multiplier = multiplier
+        buttonItem.type = type || "commodity"
         await this.ButtonItem.create(buttonItem, {transaction})
 
         return true
+
     }
 
     async editButtonToItemMatrix(input, user) {
@@ -102,7 +107,7 @@ class ItemMatrixService {
             throw new NotAuthorized()
         }
 
-        const {itemMatrixId, buttonId, itemId, multiplier} = input
+        const {itemMatrixId, buttonId, itemId, multiplier, type} = input
 
         const item = await this.itemService.getItemById(itemId, user)
 
@@ -124,6 +129,7 @@ class ItemMatrixService {
             }
         })
         buttonItem.multiplier = multiplier
+        buttonItem.type = type || "commodity"
         buttonItem.item_id = item.id
 
         await buttonItem.save()
