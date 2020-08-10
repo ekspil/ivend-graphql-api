@@ -7,10 +7,16 @@ const ButtonItem = {
         primaryKey: true,
         autoIncrement: true
     },
+
     multiplier: {
         type: Sequelize.DataTypes.INTEGER,
         defaultValue: 1,
         allowNull: false
+    },
+
+    type: {
+        type: Sequelize.DataTypes.TEXT,
+        defaultValue: "commodity",
     },
     buttonId: {
         type: Sequelize.DataTypes.INTEGER,
