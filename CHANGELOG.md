@@ -293,4 +293,8 @@
 
 * edit admin queries
 
+# 1.3.32 - Release
+
+* Service\commodity
+
 
