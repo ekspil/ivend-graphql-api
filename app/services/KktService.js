@@ -5,8 +5,10 @@ const Permission = require("../enum/Permission")
 
 class KktService {
 
-    constructor({KktModel}) {
+    constructor({KktModel, redis, MachineModel}) {
         this.Kkt = KktModel
+        this.Machine = MachineModel
+        this.redis = redis
 
         this.createKkt = this.createKkt.bind(this)
         this.editKkt = this.editKkt.bind(this)
@@ -86,6 +88,7 @@ class KktService {
         return await kkt.save()
     }
 
+
     async kktPlusBill(fn, user) {
         if (!user || !user.checkPermission(Permission.GET_USER_KKTS)) {
             throw new NotAuthorized()
@@ -139,13 +142,37 @@ class KktService {
         }
 
 
-        return await this.Kkt.findAll({
+        const kkts = await this.Kkt.findAll({
             offset,
             limit,
             order: [
                 ["id", "DESC"],
             ]
         })
+
+        for (let kkt of kkts){
+            const machines = await this.Machine.findAll({
+                where: {
+                    kktId: kkt.id
+                }
+            })
+            if(machines){
+                let ok = 0
+                let not = 0
+                for( let machine of machines){
+                    let status = await this.redis.get("kkt_status_" + machine.id)
+                    if (status == "ERROR") not++
+                    if (status == "OK") ok++
+                }
+
+                if(not > 0 && ok === 0) {kkt.kktStatus = "ERROR"}
+                else if(not === 0 && ok > 0) {kkt.kktStatus = "OK"}
+                else {kkt.kktStatus = "NOT_OK"}
+
+            }
+        }
+
+        return kkts
     }
 
 }

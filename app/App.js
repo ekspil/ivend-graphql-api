@@ -9,6 +9,7 @@ const SaleType = require("./enum/SaleType")
 
 const Resolvers = require("./resolvers")
 
+
 const ContextResolver = require("./resolvers/ContextResolver")
 
 const UserService = require("./services/UserService")
@@ -252,7 +253,7 @@ class App {
 
         services.itemService = new ItemService({ItemModel})
 
-        services.kktService = new KktService({KktModel})
+        services.kktService = new KktService({KktModel, redis, MachineModel})
         services.newsService = new NewsService({NewsModel})
         services.instrService = new InstrService({InstrModel})
         services.infoService = new InfoService({InfoModel})

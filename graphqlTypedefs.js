@@ -222,6 +222,7 @@ const typeDefs = gql`
         kktBillsCount: Int
         kktOFDRegKey: String
         kktLastBill: String
+        kktStatus: String
         server: String
     }
 
