@@ -282,7 +282,8 @@ class App {
             serviceService: services.serviceService,
             machineService: services.machineService,
             kktService: services.kktService,
-            redis
+            redis,
+            SaleModel
         })
 
         services.machineService = new MachineService({

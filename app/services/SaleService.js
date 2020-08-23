@@ -2,7 +2,6 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const ItemNotFound = require("../errors/ItemNotFound")
 const MachineNotFound = require("../errors/MachineNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
-const ControllerDisabled = require("../errors/ControllerDisabled")
 const UserNotFound = require("../errors/UserNotFound")
 const InvalidPeriod = require("../errors/InvalidPeriod")
 const ItemMatrixNotFound = require("../errors/ItemMatrixNotFound")
@@ -84,9 +83,7 @@ class SaleService {
             throw new ControllerNotFound()
         }
 
-        if (controller.status === "DISABLED") {
-            throw new ControllerDisabled()
-        }
+
 
         const machine = await this.machineService.getMachineByControllerId(controller.id, user)
 
@@ -165,6 +162,7 @@ class SaleService {
             sale.machine_id = machine.id
 
             controller.connected = true
+            controller.status = "ENABLED"
             await controller.save({transaction})
 
             return await this.Sale.create(sale, {transaction})

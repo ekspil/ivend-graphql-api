@@ -799,6 +799,7 @@ const typeDefs = gql`
 
     type Mutation {
         sendEmail(input: EmailInput!): Boolean
+        randomAction: Boolean
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller

@@ -101,6 +101,7 @@ class MachineService {
         })
     }
 
+
     async editMachine(input, user) {
         if (!user || !user.checkPermission(Permission.EDIT_MACHINE)) {
             throw new NotAuthorized()
@@ -251,7 +252,7 @@ class MachineService {
         }
 
         const machine = await this.Machine.findOne({where})
-
+        if(!machine) return null
         machine.kktStatus = await this.redis.get("kkt_status_" + machine.id)
         machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
         machine.encashment = await this.redis.get("machine_encashment_" + machine.id)

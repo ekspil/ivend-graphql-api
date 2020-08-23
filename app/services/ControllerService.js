@@ -15,8 +15,9 @@ const {Op} = require("sequelize")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
         this.Controller = ControllerModel
+        this.Sale = SaleModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
         this.Item = ItemModel
@@ -443,12 +444,22 @@ class ControllerService {
             })
         }
         if(controller && controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false" && controller.status === "ENABLED"){
-            services.push({
-                id: 10,
-                name: "Услуги эквайринга",
-                price: 100,
-                billingType: null
+            const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+            const lastCashlessSale = await this.Sale.findOne({
+                where: {
+                    machine_id: machine.id,
+                    type: "CASHLESS"
+                }
             })
+            if(lastCashlessSale){
+                services.push({
+                    id: 10,
+                    name: "Услуги эквайринга",
+                    price: 100,
+                    billingType: null
+                })
+            }
+
         }
         if(kktOk && allUserControllers &&  kktOk.length > 0){
             const price = fiscalControllers.length > (20 * kktOk.length) ? fiscalControllers.length * 100 : 2000 * kktOk.length

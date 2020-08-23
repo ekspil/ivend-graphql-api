@@ -166,8 +166,42 @@ class UserService {
         return token
     }
 
+    async randomAction(user) {
+        if (!user || !user.checkPermission(Permission.EDIT_EMAIL)) {
+            throw new NotAuthorized()
+        }
 
+        const users = await this.User.findAll({
+            where: {
+                role: "VENDOR"
+            }
+        })
 
+        for (let u of users){
+            u.checkPermission = () => true
+            const input = {
+                type: "USER_WILL_BLOCK",
+                email: true,
+                sms: false,
+                tlgrm: false,
+                extraEmail: u.email,
+                telegram: "",
+                telegramChat: ""}
+
+            const input2 = {
+                type: "USER_LOW_BALANCE",
+                email: true,
+                sms: false,
+                tlgrm: false,
+                extraEmail: u.email,
+                telegram: "",
+                telegramChat: ""}
+
+            await this.notificationSettingsService.updateNotificationSetting(input, u)
+            await this.notificationSettingsService.updateNotificationSetting(input2, u)
+        }
+        return true
+    }
 
     async editPassword(password, user) {
         if (!user || !user.checkPermission(Permission.EDIT_PASSWORD)) {
@@ -209,7 +243,7 @@ class UserService {
 
             const user = await this.User.findOne({
                 where: {
-                    id: Number(userId)
+                    id: userId
                 }
             })
 
@@ -219,7 +253,29 @@ class UserService {
 
             await this.redis.del("action_confirm_email_" + token)
 
+            const input = {
+                type: "USER_WILL_BLOCK",
+                email: true,
+                sms: false,
+                tlgrm: false,
+                extraEmail: user.email,
+                telegram: "",
+                telegramChat: ""}
+
+            const input2 = {
+                type: "USER_LOW_BALANCE",
+                email: true,
+                sms: false,
+                tlgrm: false,
+                extraEmail: user.email,
+                telegram: "",
+                telegramChat: ""}
+            user.checkPermission = () => true
+            await this.notificationSettingsService.updateNotificationSetting(input, user)
+            await this.notificationSettingsService.updateNotificationSetting(input2, user)
+
             user.role = "VENDOR_NO_LEGAL_INFO"
+
 
             return await user.save()
         }

@@ -68,12 +68,17 @@ const VENDOR = [
 ]
 
 const VENDOR_NOT_CONFIRMED = [
+
     Permission.GET_SELF_DEPOSITS,
     Permission.GET_DAILY_BILL,
     Permission.GET_DAYS_LEFT,
     Permission.GET_BALANCE,
     Permission.GET_PROFILE,
     Permission.CONFIRM_USER_ACTION,
+    Permission.CREATE_NOTIFICATION_SETTING,
+    Permission.FIND_ALL_NOTIFICATION_SETTINGS,
+    Permission.FIND_NOTIFICATION_SETTING_BY_TYPE,
+    Permission.UPDATE_NOTIFICATION_SETTING,
 ]
 
 
@@ -131,7 +136,11 @@ const VENDOR_NO_LEGAL_INFO = [
     Permission.GET_PROFILE,
     Permission.GET_LEGAL_INFO,
     Permission.GET_SELF_DEPOSITS,
-    Permission.GET_BALANCE
+    Permission.GET_BALANCE,
+    Permission.CREATE_NOTIFICATION_SETTING,
+    Permission.FIND_ALL_NOTIFICATION_SETTINGS,
+    Permission.FIND_NOTIFICATION_SETTING_BY_TYPE,
+    Permission.UPDATE_NOTIFICATION_SETTING,
 ]
 
 const CLOSED = [

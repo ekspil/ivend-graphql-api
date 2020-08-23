@@ -27,6 +27,14 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
 
     }
 
+    const randomAction = async (parent, args, context)=>{
+        const {user} = context
+
+        return await userService.randomAction(user)
+
+    }
+
+
     const requestToken = async (root, args) => {
         const {input} = args
 
@@ -172,7 +180,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         sendEmail,
         closeUser,
         updateLegalInfoToUser,
-        updateUser
+        updateUser,
+        randomAction
     }
 
 }
