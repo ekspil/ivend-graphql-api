@@ -93,15 +93,15 @@ class SaleService {
 
 
         if(type === "CASHLESS"){
-            await this.redis.set("terminal_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+            await this.redis.set("terminal_status_" + machine.id, `OK`, "EX", 24 * 60 * 60)
         }
 
         if(type === "CASH"){
             if(price % 50){
-                await this.redis.set("machine_coin_collector_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+                await this.redis.set("machine_coin_collector_status_" + machine.id, `OK`, "EX", 24 * 60 * 60)
             }
             else{
-                await this.redis.set("machine_banknote_collector_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+                await this.redis.set("machine_banknote_collector_status_" + machine.id, `OK`, "EX", 24 * 60 * 60)
             }
 
         }
@@ -175,7 +175,7 @@ class SaleService {
         logger.debug(`sale_created ${createdSale.id} ${item.name} ${createdSale.price} ${createdSale.createdAt}`)
 
         //set machine error to OK
-        await this.redis.set("machine_error_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+        await this.redis.set("machine_error_" + machine.id, `OK`, "EX", 24 * 60 * 60)
 
         const getTwoDigitDateFormat = (monthOrDate) => {
             return (monthOrDate < 10) ? "0" + monthOrDate : "" + monthOrDate
@@ -279,7 +279,7 @@ class SaleService {
                         }
 
                         if (receipt.status === "ERROR") {
-                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "px", 24 * 60 * 60 * 1000)
+                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
                             throw new Error("Receipt failed to process")
                         }
                     }
@@ -301,7 +301,7 @@ class SaleService {
                     kkt.kktLastBill = receiptDatetime
 
                     await kkt.save()
-                    await this.redis.set("kkt_status_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+                    await this.redis.set("kkt_status_" + machine.id, `OK`, "EX", 24 * 60 * 60)
 
 
                     createdSale.sqr = getFiscalString(receipt)

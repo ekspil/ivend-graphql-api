@@ -30,7 +30,6 @@ function ControllerResolver({controllerService, machineService}) {
 
     const machine = async (obj, args, context) => {
         const {user} = context
-
         const machine = await machineService.getMachineByControllerId(obj.id, user)
 
         if (!machine) {

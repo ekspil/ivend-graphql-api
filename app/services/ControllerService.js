@@ -175,7 +175,7 @@ class ControllerService {
     }
 
 
-    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, user) {
+    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
@@ -198,6 +198,41 @@ class ControllerService {
                     [Op.or]: {
                         [Op.is]: null,
                         [Op.in]: ["NO_BANK_TERMINAL"]
+                    }
+                }
+            }
+        }
+        if (printer && printer !== "ALL") {
+            if(printer === "ENABLED"){
+                where.remotePrinterId = {
+                    [Op.and]: {
+                        [Op.not]: null,
+                        [Op.notIn]: ["0", "false", "FALSE", "False"],
+                    }
+                }
+            }
+            if(printer === "DISABLED"){
+                where.remotePrinterId = {
+                    [Op.or]: {
+                        [Op.is]: null,
+                        [Op.in]: ["0", "false", "FALSE", "False"]
+                    }
+                }
+            }
+        }
+
+        if (registrationTime && registrationTime !== "ALL") {
+            if(registrationTime === "ENABLED"){
+                where.registrationTime = {
+                    [Op.and]: {
+                        [Op.not]: null
+                    }
+                }
+            }
+            if(registrationTime === "DISABLED"){
+                where.registrationTime = {
+                    [Op.or]: {
+                        [Op.is]: null
                     }
                 }
             }
@@ -246,7 +281,7 @@ class ControllerService {
 
 
 
-        const controllers = await this.Controller.findAll({
+        let controllers = await this.Controller.findAll({
             offset,
             limit,
             where,
@@ -254,6 +289,22 @@ class ControllerService {
                 ["id", "DESC"],
             ]
         })
+
+
+        if(terminalStatus && terminalStatus !== "ALL"){
+            const controllersFiltred = []
+
+            for (let controller of controllers){
+                const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+                if(!machine) continue
+                let status = await this.redis.get("terminal_status_" + machine.id)
+                if(!status) status = "24H"
+                if(status === terminalStatus && controller.bankTerminalMode !== "NO_BANK_TERMINAL"){
+                    controllersFiltred.push(controller)
+                }
+            }
+            controllers = controllersFiltred
+        }
 
         if (connection && connection !== "ALL") {
 
@@ -335,7 +386,7 @@ class ControllerService {
             return filtredControllers
 
         }
-        
+
 
         
         return controllers
@@ -578,7 +629,7 @@ class ControllerService {
 
             const machineError = await this.redis.get("machine_error_" + machine.id)
             if(machineError !== "NO SALES 24H"){
-                await this.redis.set("machine_error_" + machine.id, `OK`, "px", 24 * 60 * 60 * 1000)
+                await this.redis.set("machine_error_" + machine.id, `OK`, "EX", 24 * 60 * 60)
             }
 
 
@@ -681,7 +732,7 @@ class ControllerService {
         }
 
         await this.machineService.createEncashment(machine.id, timestamp, controllerUser)
-        await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "px", 31 * 24 * 60 * 60 * 1000)
+        await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
 
         return await this.getControllerById(controller.id, user)
     }

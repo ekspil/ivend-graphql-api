@@ -164,9 +164,8 @@ class KktService {
                     if (status == "ERROR") not++
                     if (status == "OK") ok++
                 }
-
                 if(not > 0 && ok === 0) {kkt.kktStatus = "ERROR"}
-                else if(not === 0 && ok >= 0) {kkt.kktStatus = "OK"}
+                else if(not === 0 && ok > 0) {kkt.kktStatus = "OK"}
                 else {kkt.kktStatus = "NOT_OK"}
 
             }
