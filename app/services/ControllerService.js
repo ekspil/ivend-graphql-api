@@ -461,6 +461,29 @@ class ControllerService {
     }
 
 
+    async updatePrinterOnController(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_ERRORS)) {
+            throw new NotAuthorized()
+        }
+        const {controllerId, printerId} = input
+        const where = {
+            id: controllerId
+        }
+        if(user.role !== "ADMIN"){
+            where.user_id = user.id
+        }
+
+        const controller = await this.Controller.findOne({
+            where
+        })
+        if(!controller) return false
+        controller.remotePrinterId = printerId
+        await controller.save()
+        return true
+
+    }
+
+
     async getLastControllerError(id, user) {
         if (!user || !user.checkPermission(Permission.GET_CONTROLLER_ERRORS)) {
             throw new NotAuthorized()

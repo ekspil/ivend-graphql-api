@@ -796,9 +796,15 @@ const typeDefs = gql`
         title: String!
         text: String
     }
+    
+    input UpdatePrinter {
+        controllerId: Int!
+        printerId: String!
+    }
 
     type Mutation {
         sendEmail(input: EmailInput!): Boolean
+        updatePrinterOnController(input: UpdatePrinter!): Boolean
         randomAction: Boolean
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError

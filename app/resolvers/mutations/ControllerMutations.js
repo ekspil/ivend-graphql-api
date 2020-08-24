@@ -14,6 +14,7 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         return new ControllerDTO(controller)
     }
 
+
     const editController = async (root, args, context) => {
         const {id, input} = args
         const {user} = context
@@ -21,6 +22,15 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         const controller = await controllerService.editController(id, input, user)
 
         return new ControllerDTO(controller)
+    }
+
+
+    const updatePrinterOnController = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        return await controllerService.updatePrinterOnController(input, user)
+
     }
 
     const deleteController = async (root, args, context) => {
@@ -93,7 +103,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         registerControllerError,
         registerSale,
         createRevision,
-        registerEvent
+        registerEvent,
+        updatePrinterOnController
     }
 
 }
