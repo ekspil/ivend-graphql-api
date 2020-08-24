@@ -719,6 +719,50 @@ class SaleService {
         return summary
     }
 
+    async getEncashmentsSummary(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
+            throw new NotAuthorized()
+        }
+        const {sequelize} = this.Sale
+        const {Op} = sequelize
+
+        const {period, machineId} = input
+
+        const where = {}
+
+        where.machine_id = machineId
+
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
+        const encashmentsCount = 0
+
+        const encashmentsAmount = await this.Sale.findAll({
+            where,
+            attributes: [
+                "type",
+                [sequelize.fn("COUNT", "sales.id"), "overallCount"],
+                [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
+            ],
+        })
+
+        return {
+            encashmentsAmount,
+            encashmentsCount
+        }
+
+    }
+
     async getSalesSummary(input, user) {
         if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()

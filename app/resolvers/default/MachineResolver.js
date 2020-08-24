@@ -121,8 +121,9 @@ function MachineResolver({machineService, saleService, kktService}) {
 
     const encashmentsSummaries = async (obj, args, context) => {
         const {user} = context
+        const {interval} = args
 
-        const encashments = await machineService.getMachineEncashments(obj.id, user)
+        const encashments = await machineService.getMachineEncashments(obj.id, user, interval)
 
         return await Promise.all(encashments.map(async (encashment) => {
             const {prevEncashmentId} = encashment
@@ -138,7 +139,6 @@ function MachineResolver({machineService, saleService, kktService}) {
             const period = {from, to}
 
             const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
-
             return new EncashmentSalesSummaryDTO({encashment, salesSummary})
         }))
 

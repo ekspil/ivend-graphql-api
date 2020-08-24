@@ -1,6 +1,7 @@
 const NotAuthorized = require("../errors/NotAuthorized")
 const MachineNotFound = require("../errors/MachineNotFound")
 const MachineGroupNotFound = require("../errors/MachineGroupNotFound")
+const InvalidPeriod = require("../errors/InvalidPeriod")
 const MachineTypeNotFound = require("../errors/MachineTypeNotFound")
 const ControllerNotFound = require("../errors/ControllerNotFound")
 const EquipmentNotFound = require("../errors/EquipmentNotFound")
@@ -425,15 +426,32 @@ class MachineService {
         })
     }
 
-    async getMachineEncashments(machineId, user) {
+    async getMachineEncashments(machineId, user, interval) {
         if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
             throw new NotAuthorized()
         }
+        const {sequelize} = this.Encashment
+        const {Op} = sequelize
+
+        const where = {
+            machine_id: machineId
+        }
+
+        if (interval) {
+            const {from, to} = interval
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
 
         return await this.Encashment.findAll({
-            where: {
-                machine_id: machineId
-            }
+            where
         })
     }
 

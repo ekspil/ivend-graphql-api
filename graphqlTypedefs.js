@@ -639,7 +639,7 @@ const typeDefs = gql`
         machineItemSales(period: Period): [MachineItemSales]
         salesSummary(machineGroupId: Int, period: Period): SalesSummary
         salesByEncashment(machineGroupId: Int): SalesSummary
-        encashmentsSummaries: [EncashmentSalesSummary!]!
+        encashmentsSummaries(interval: Period): [EncashmentSalesSummary!]!
         logs: [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
