@@ -270,15 +270,20 @@ class UserService {
                 extraEmail: user.email,
                 telegram: "",
                 telegramChat: ""}
-            user.checkPermission = () => true
-            await this.notificationSettingsService.updateNotificationSetting(input, user)
-            await this.notificationSettingsService.updateNotificationSetting(input2, user)
+
 
             user.role = "VENDOR_NO_LEGAL_INFO"
 
 
-            return await user.save()
+            await user.save()
+
+            user.checkPermission = () => true
+            await this.notificationSettingsService.updateNotificationSetting(input, user)
+            await this.notificationSettingsService.updateNotificationSetting(input2, user)
+
+            return user
         }
+
 
         if (type === UserActionType.EDIT_EMAIL_CONFIRM) {
             const tokenValue = await this.redis.get("action_edit_email_" + token)
