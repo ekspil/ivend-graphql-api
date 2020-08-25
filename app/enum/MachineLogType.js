@@ -3,7 +3,12 @@ const MachineLogType = {
     "COINACCEPTOR": "COINACCEPTOR",
     "BILLACCEPTOR": "BILLACCEPTOR",
     "BUS_ERROR": "BUS_ERROR",
-    "REGISTRATION": "REGISTRATION"
+    "REGISTRATION": "REGISTRATION",
+    "KKT": "KKT",
+    "ALL": "ALL",
+    "TERMINAL": "TERMINAL",
+    "ENCASHMENT": "ENCASHMENT",
 }
+
 
 module.exports = MachineLogType

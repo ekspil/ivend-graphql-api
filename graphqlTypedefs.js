@@ -640,7 +640,7 @@ const typeDefs = gql`
         salesSummary(machineGroupId: Int, period: Period): SalesSummary
         salesByEncashment(machineGroupId: Int): SalesSummary
         encashmentsSummaries(interval: Period): [EncashmentSalesSummary!]!
-        logs: [MachineLog!]!
+        logs(type: MachineLogType): [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
         encashments: [Encashment!]!
@@ -696,9 +696,13 @@ const typeDefs = gql`
         CONNECTION
         COINACCEPTOR
         BILLACCEPTOR
+        KKT
         BUS_ERROR
         REGISTRATION
         ENABLED
+        ALL
+        TERMINAL
+        ENCASHMENT
     }
 
     type Query {

@@ -463,6 +463,24 @@ class MachineService {
         return await this.redis.get("machine_coin_collector_status_" + machineId)
     }
 
+    async getLogs(machineId, user, type) {
+        if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
+            throw new NotAuthorized()
+        }
+        const where = {
+            machine_id: machineId
+        }
+
+        if(type && type !== "ALL"){
+            where.type = type
+        }
+        const logs = await this.MachineLog.findAll({
+            where
+        })
+
+        return logs
+    }
+
     async getBanknoteCollectorStatus(machineId, user) {
         if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
             throw new NotAuthorized()

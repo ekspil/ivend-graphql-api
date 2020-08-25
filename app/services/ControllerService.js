@@ -756,6 +756,7 @@ class ControllerService {
 
         await this.machineService.createEncashment(machine.id, timestamp, controllerUser)
         await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
+        await this.machineService.addLog(machine.id, `Выполнена инкассация`, MachineLogType.ENCASHMENT, controllerUser)
 
         return await this.getControllerById(controller.id, user)
     }

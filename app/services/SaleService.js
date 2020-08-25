@@ -13,6 +13,8 @@ const Permission = require("../enum/Permission")
 const SalesSummary = require("../models/SalesSummary")
 const microservices = require("../utils/microservices")
 const logger = require("my-custom-logger")
+
+const MachineLogType = require("../enum/MachineLogType")
 const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
@@ -280,6 +282,7 @@ class SaleService {
 
                         if (receipt.status === "ERROR") {
                             await this.redis.set("kkt_status_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
+                            await this.machineService.addLog(machine.id, `Ошибка отправки чека`, MachineLogType.KKT, controllerUser)
                             throw new Error("Receipt failed to process")
                         }
                     }

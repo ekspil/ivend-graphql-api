@@ -43,10 +43,9 @@ function MachineResolver({machineService, saleService, kktService}) {
 
     const logs = async (obj, args, context) => {
         const {user} = context
+        const {type} = args
 
-        const machine = await machineService.getMachineById(obj.id, user)
-
-        const logs = await machine.getLogs()
+        const logs = await machineService.getLogs(obj.id, user, type)
 
         return logs.map(log => (new MachineLogDTO(log)))
     }
