@@ -117,10 +117,6 @@ class UserService {
         }
         const {email, id, phone, password, role} = input
 
-        //todo validation
-        if (!validationUtils.validatePhoneNumber(phone)) {
-            throw new PhoneNotValid()
-        }
 
         const user = await this.User.findOne({
             where: {
