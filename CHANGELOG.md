@@ -309,4 +309,8 @@
 
 * users list speed
 
+# 1.3.36 - Release
+
+* controllers list speed
+
 
