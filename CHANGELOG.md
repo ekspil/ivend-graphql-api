@@ -305,4 +305,8 @@
 
 * FixBug
 
+# 1.3.35 - Release
+
+* users list speed
+
 

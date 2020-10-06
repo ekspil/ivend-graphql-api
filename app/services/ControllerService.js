@@ -517,22 +517,15 @@ class ControllerService {
                 billingType: null
             })
         }
-        if(controller && controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false" && controller.status === "ENABLED"){
-            const machine = await this.machineService.getMachineByControllerId(controller.id, user)
-            const lastCashlessSale = await this.Sale.findOne({
-                where: {
-                    machine_id: machine.id,
-                    type: "CASHLESS"
-                }
+        if(controller && controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false" && controller.status === "ENABLED" && controller.cashless === "ON"){
+
+            services.push({
+                id: 10,
+                name: "Услуги эквайринга",
+                price: 100,
+                billingType: null
             })
-            if(lastCashlessSale){
-                services.push({
-                    id: 10,
-                    name: "Услуги эквайринга",
-                    price: 100,
-                    billingType: null
-                })
-            }
+
 
         }
         if(kktOk && allUserControllers &&  kktOk.length > 0){
