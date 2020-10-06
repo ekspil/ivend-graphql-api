@@ -22,7 +22,8 @@ const User = {
         allowNull: false,
     },
     companyName: {
-        type: Sequelize.DataTypes.TEXT
+        type: Sequelize.DataTypes.TEXT,
+        field: "company_name"
     },
     inn: {
         type: Sequelize.DataTypes.TEXT
