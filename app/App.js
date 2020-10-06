@@ -115,7 +115,7 @@ class App {
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
         const TransactionModel = sequelize.define("transactions", Transaction)
-        const TempModel = sequelize.define("temp", Temp)
+        const TempModel = sequelize.define("temps", Temp)
         const MachineModel = sequelize.define("machines", Machine, {paranoid: true})
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
