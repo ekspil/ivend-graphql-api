@@ -54,9 +54,9 @@ function ControllerResolver({controllerService, machineService}) {
     const lastState = async (obj, args, context) => {
         const {user} = context
 
-        const controller = await controllerService.getControllerById(obj.id, user)
+        const controllerState = await controllerService.lastState(obj.id, user)
 
-        const controllerState = await controller.getLastState()
+        //const controllerState = await controller.getLastState()
 
         if (!controllerState) {
             return null

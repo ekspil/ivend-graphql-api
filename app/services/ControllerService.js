@@ -29,6 +29,8 @@ class ControllerService {
         this.machineService = machineService
         this.kktService = kktService
 
+
+
         this.createController = this.createController.bind(this)
         this.editController = this.editController.bind(this)
         this.deleteController = this.deleteController.bind(this)
@@ -499,6 +501,18 @@ class ControllerService {
         })
     }
 
+
+    async lastState(id, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
+            throw new NotAuthorized()
+        }
+
+        const json = await this.redis.get("controller_last_state_" + id)
+        const parse = JSON.parse(json)
+        parse.registrationTime = new Date(parse.registrationTime)
+        return parse
+    }
+
     async getControllerServices(id, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
             throw new NotAuthorized()
@@ -650,6 +664,7 @@ class ControllerService {
 
 
             controllerState = await this.ControllerState.create(controllerState, {transaction})
+            await this.redis.set("controller_last_state_" + controller.id, JSON.stringify(controllerState))
 
             if (lastState && !controller.connected) {
                 //add log connection regain

@@ -21,6 +21,12 @@ const User = {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false,
     },
+    companyName: {
+        type: Sequelize.DataTypes.TEXT
+    },
+    inn: {
+        type: Sequelize.DataTypes.TEXT
+    },
     role: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,

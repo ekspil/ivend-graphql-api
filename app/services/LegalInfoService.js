@@ -41,6 +41,8 @@ class LegalInfoService {
 
             //todo ensure not legal info already created for this user
             user.role = "VENDOR"
+            user.inn = inn
+            user.companyName = companyName
             await user.save({transaction})
 
             return await this.LegalInfo.create(legalInfo, {transaction})
@@ -81,6 +83,9 @@ class LegalInfoService {
         legalInfo.contactPhone = contactPhone
         legalInfo.contactEmail = contactEmail
         legalInfo.sno = sno
+        user.inn = inn
+        user.companyName = companyName
+        await user.save()
         return await legalInfo.save()
     }
 
@@ -105,6 +110,10 @@ class LegalInfoService {
                 id: selectedUser.legal_info_id
             }
         })
+
+        selectedUser.inn = inn
+        selectedUser.companyName = companyName
+        await selectedUser.save()
 
 
         legalInfo.companyName = companyName

@@ -232,6 +232,8 @@ const typeDefs = gql`
         id: Int!
         phone: String!
         role: String!
+        companyName: String
+        inn: String
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
         billing: Billing!

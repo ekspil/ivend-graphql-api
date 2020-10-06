@@ -171,7 +171,7 @@ class SaleService {
             return await this.Sale.create(sale, {transaction})
         })
 
-
+        await this.redis.set("machine_last_sale_" + machine.id, createdSale.createdAt)
         const item = await createdSale.getItem()
         createdSale.item = item
 
@@ -353,12 +353,12 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        return await this.Sale.findOne({
-            where: {machine_id: machineId},
-            order: [
-                ["id", "DESC"],
-            ]
-        })
+        const lastSale = await this.redis.get("machine_last_sale_" + machineId)
+
+        return {createdAt: new Date(lastSale)}
+
+
+
     }
 
     async getSales({offset, limit, machineId, itemId, user}) {
