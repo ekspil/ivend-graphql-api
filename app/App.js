@@ -606,6 +606,7 @@ class App {
 
 
         }
+
         const users = await UserModel.findAll()
         for( let user of users){
             const legalInfo = await user.getLegalInfo()
