@@ -47,6 +47,7 @@ const LegalInfo = require("./models/sequelize/LegalInfo")
 const Deposit = require("./models/sequelize/Deposit")
 const PaymentRequest = require("./models/sequelize/PaymentRequest")
 const Transaction = require("./models/sequelize/Transaction")
+const Temp = require("./models/sequelize/Temp")
 const Machine = require("./models/sequelize/Machine")
 const MachineGroup = require("./models/sequelize/MachineGroup")
 const MachineType = require("./models/sequelize/MachineType")
@@ -114,6 +115,7 @@ class App {
         const DepositModel = sequelize.define("deposits", Deposit)
         const PaymentRequestModel = sequelize.define("payment_requests", PaymentRequest)
         const TransactionModel = sequelize.define("transactions", Transaction)
+        const TempModel = sequelize.define("temp", Temp)
         const MachineModel = sequelize.define("machines", Machine, {paranoid: true})
         const MachineGroupModel = sequelize.define("machine_groups", MachineGroup)
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
@@ -129,6 +131,7 @@ class App {
 
         ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
         TransactionModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        TempModel.belongsTo(UserModel, {foreignKey: "user_id"})
 
         SaleModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
@@ -334,6 +337,7 @@ class App {
             PaymentRequestModel,
             ServiceModel,
             TransactionModel,
+            TempModel
         })
         services.reportService = new ReportService({redis})
 
