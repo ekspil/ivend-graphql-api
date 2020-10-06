@@ -9,10 +9,11 @@ const microservices = require("../utils/microservices")
 
 class BillingService {
 
-    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel}) {
+    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel, TempModel}) {
         this.Controller = ControllerModel
         this.Service = ServiceModel
         this.Transaction = TransactionModel
+        this.Temp = TempModel
         this.Deposit = DepositModel
         this.PaymentRequest = PaymentRequestModel
 
@@ -56,6 +57,7 @@ class BillingService {
         }
 
 
+
         const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY", userId)
 
         return telemetryPrice.toFixed(2)
@@ -85,6 +87,11 @@ class BillingService {
 
         const where = {
             user_id: userId
+        }
+
+        const row = await this.Temp.findOne({where})
+        if (row){
+            return row.amount
         }
 
         const balance = await this.Transaction.sum("amount", {where})
