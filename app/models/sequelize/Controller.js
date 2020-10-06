@@ -20,6 +20,9 @@ const Controller = {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
     },
+    cashless: {
+        type: Sequelize.DataTypes.TEXT
+    },
     accessKey: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,

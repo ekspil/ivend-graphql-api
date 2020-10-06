@@ -96,6 +96,7 @@ class SaleService {
 
         if(type === "CASHLESS"){
             await this.redis.set("terminal_status_" + machine.id, `OK`, "EX", 24 * 60 * 60)
+            controller.cashless = "ON"
         }
 
         if(type === "CASH"){

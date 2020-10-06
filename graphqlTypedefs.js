@@ -26,6 +26,7 @@ const typeDefs = gql`
         connected: Boolean!
         remotePrinterId: String
         simCardNumber: String
+        cashless: String
     }
     
     type ControllerService {
