@@ -177,7 +177,7 @@ class ControllerService {
     }
 
 
-    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, user) {
+    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
@@ -281,6 +281,30 @@ class ControllerService {
             where.status = status
         }
 
+        let orderData = ["id", "DESC"]
+
+        if(orderDesc === true){
+            orderData =["id"]
+        }
+        if(orderKey){
+            if(orderKey === "id"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "uid"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "mode"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "status"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "fiscalizationMode"){
+                orderData[0] = "fiscalization_mode"
+            }
+
+        }
+
 
 
         let controllers = await this.Controller.findAll({
@@ -288,7 +312,7 @@ class ControllerService {
             limit,
             where,
             order: [
-                ["id", "DESC"],
+                orderData,
             ]
         })
 

@@ -28,9 +28,9 @@ function ControllerQueries({controllerService, revisionService}) {
 
     const getAllControllers = async (root, args, context) => {
         const {user} = context
-        const {offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus} = args
+        const {offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey} = args
 
-        const controllers = await controllerService.getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, user)
+        const controllers = await controllerService.getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey, user)
 
         return controllers.map(controller => (new ControllerDTO(controller)))
     }
