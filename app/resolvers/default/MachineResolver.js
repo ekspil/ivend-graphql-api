@@ -127,11 +127,9 @@ function MachineResolver({machineService, saleService, kktService}) {
         return await Promise.all(encashments.map(async (encashment) => {
             const {prevEncashmentId} = encashment
             let prevEncashment = null
-
             if (prevEncashmentId) {
                 prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
             }
-
             const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
             const to = new Date(encashment.timestamp)
 
@@ -139,6 +137,32 @@ function MachineResolver({machineService, saleService, kktService}) {
 
             const salesSummary = await saleService.getSalesSummary({machineId: obj.id, period}, user)
             return new EncashmentSalesSummaryDTO({encashment, salesSummary})
+        }))
+
+    }
+
+    const encashmentsSummariesFast = async (obj, args, context) => {
+        const {user} = context
+        const {interval} = args
+
+        const encashments = await machineService.getMachineEncashments(obj.id, user, interval)
+
+        return await Promise.all(encashments.map(async (encashment) => {
+            const {prevEncashmentId} = encashment
+            let prevEncashment = null
+            if (prevEncashmentId) {
+                prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
+            }
+            const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+            const to = new Date(encashment.timestamp)
+
+            const period = {from, to}
+            const salesSummary = await saleService.getEncashmentsSummary({machineId: obj.id, period}, user)
+            let encashmentsAmount = 0
+            if(salesSummary && salesSummary.encashmentsAmount && salesSummary.encashmentsAmount[0] && salesSummary.encashmentsAmount[0].overallAmount){
+                encashmentsAmount = Number(salesSummary.encashmentsAmount[0].overallAmount)
+            }
+            return { encashmentsAmount}
         }))
 
     }
@@ -251,7 +275,8 @@ function MachineResolver({machineService, saleService, kktService}) {
         encashmentsSummaries,
         coinCollectorStatus,
         banknoteCollectorStatus,
-        machineItemSales
+        machineItemSales,
+        encashmentsSummariesFast
     }
 
 }

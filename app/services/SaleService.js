@@ -731,9 +731,8 @@ class SaleService {
         const {Op} = sequelize
 
         const {period, machineId} = input
-
         const where = {}
-
+        where.type = "CASH"
         where.machine_id = machineId
 
         if (period) {
@@ -750,16 +749,12 @@ class SaleService {
         }
 
         const encashmentsCount = 0
-
         const encashmentsAmount = await this.Sale.findAll({
             where,
             attributes: [
-                "type",
-                [sequelize.fn("COUNT", "sales.id"), "overallCount"],
                 [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
             ],
         })
-
         return {
             encashmentsAmount,
             encashmentsCount
