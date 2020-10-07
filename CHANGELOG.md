@@ -329,4 +329,8 @@
 
 * controllers list order
 
+# 1.3.41 - Hotfix
+
+* add sum to encashment
+
 
