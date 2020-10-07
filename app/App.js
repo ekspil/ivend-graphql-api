@@ -57,7 +57,7 @@ const News = require("./models/sequelize/News")
 const Info = require("./models/sequelize/Info")
 const Instr = require("./models/sequelize/Instr")
 
-//const ControllerStateDTO = require("./models/dto/ControllerStateDTO")
+const ControllerStateDTO = require("./models/dto/ControllerStateDTO")
 
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
 
@@ -594,31 +594,31 @@ class App {
 
         logger.info(`GraphQL Server ready at ${serverInfo.url}`)
 
-        // const controllers = await ControllerModel.findAll()
-        // for( let controller of controllers){
-        //     const lastState = await controller.getLastState()
-        //     if(lastState){
-        //
-        //         const lastStateDTO = new ControllerStateDTO(lastState)
-        //         await redis.set("controller_last_state_"+ controller.id, JSON.stringify(lastStateDTO))
-        //         logger.info(`Update redis last state for controller ${controller.id}`)
-        //     }
-        //
-        //
-        // }
-        //
-        // const users = await UserModel.findAll()
-        // for( let user of users){
-        //     const legalInfo = await user.getLegalInfo()
-        //     if(legalInfo){
-        //         user.inn = legalInfo.inn
-        //         user.companyName = legalInfo.companyName
-        //         user.save()
-        //         logger.info(`Update user base info ${user.id}`)
-        //     }
-        //
-        //
-        // }
+        const controllers = await ControllerModel.findAll()
+        for( let controller of controllers){
+            const lastState = await controller.getLastState()
+            if(lastState){
+
+                const lastStateDTO = new ControllerStateDTO(lastState)
+                await redis.set("controller_last_state_"+ controller.id, JSON.stringify(lastStateDTO))
+                logger.info(`Update redis last state for controller ${controller.id}`)
+            }
+
+
+        }
+
+        const users = await UserModel.findAll()
+        for( let user of users){
+            const legalInfo = await user.getLegalInfo()
+            if(legalInfo){
+                user.inn = legalInfo.inn
+                user.companyName = legalInfo.companyName
+                user.save()
+                logger.info(`Update user base info ${user.id}`)
+            }
+
+
+        }
 
 
     }

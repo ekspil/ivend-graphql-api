@@ -321,4 +321,8 @@
 
 * controllers list speed
 
+# 1.3.39 - Hotfix
+
+* controllers list speed
+
 
