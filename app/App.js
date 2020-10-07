@@ -301,7 +301,8 @@ class App {
             itemMatrixService: services.itemMatrixService,
             itemService: services.itemService,
             controllerService: services.controllerService,
-            redis
+            redis,
+            SaleModel,
         })
 
         services.controllerService.machineService = services.machineService
@@ -619,6 +620,59 @@ class App {
         //
         //
         // }
+
+
+        ////////////////////////////////////////////////////////
+        // const {Op} = sequelize
+        // const encashments = await EncashmentModel.findAll({
+        //     where: {
+        //         sum: {
+        //             [Op.is]: null
+        //         }
+        //     },
+        //     order: [
+        //         ["id", "DESC"],
+        //     ]
+        // })
+        //
+        // for(let encashment of encashments){
+        //     console.log({
+        //         id: encashment.id,
+        //         machine: encashment.machine_id,
+        //         sum_old: encashment.sum
+        //     })
+        //
+        //     const user = {}
+        //     user.checkPermission = () => true
+        //     const {prevEncashmentId, machine_id} = encashment
+        //     let prevEncashment = null
+        //     if (prevEncashmentId) {
+        //         prevEncashment = await services.machineService.getEncashmentById(prevEncashmentId, user)
+        //     }
+        //     const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+        //     const to = new Date(encashment.timestamp)
+        //
+        //     const period = {from, to}
+        //     const salesSummary = await services.saleService.getEncashmentsSummary({machineId: machine_id, period}, user)
+        //
+        //     let encashmentsAmount = 0
+        //
+        //     if(salesSummary && salesSummary.encashmentsAmount && salesSummary.encashmentsAmount[0] && salesSummary.encashmentsAmount[0].dataValues && salesSummary.encashmentsAmount[0].dataValues.overallAmount){
+        //         encashmentsAmount = Number(salesSummary.encashmentsAmount[0].dataValues.overallAmount)
+        //
+        //     }
+        //     encashment.sum = encashmentsAmount
+        //     await encashment.save()
+        //     console.log({
+        //         id: encashment.id,
+        //         machine: machine_id,
+        //         sum: encashment.sum
+        //     })
+        //
+        //
+        // }
+
+
 
 
     }

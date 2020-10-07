@@ -7,6 +7,9 @@ const Encashment = {
         primaryKey: true,
         autoIncrement: true
     },
+    sum: {
+        type: Sequelize.DataTypes.INTEGER,
+    },
     //timestamp of encashment on controller side
     timestamp: {
         type: Sequelize.DataTypes.DATE,

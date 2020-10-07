@@ -613,6 +613,7 @@ const typeDefs = gql`
 
     type Encashment {
         id: Int!
+        sum: Int
         prevEncashment: Encashment
         timestamp: Timestamp!
         createdAt: Timestamp!
@@ -647,13 +648,13 @@ const typeDefs = gql`
         salesSummary(machineGroupId: Int, period: Period): SalesSummary
         salesByEncashment(machineGroupId: Int): SalesSummary
         encashmentsSummaries(interval: Period): [EncashmentSalesSummary!]!
-        encashmentsSummariesFast(interval: Period): [EncashmentSalesSummaryFast!]!
         logs(type: MachineLogType): [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
-        encashments: [Encashment!]!
+        encashments(period: Period): [Encashment!]!
         lastEncashment: Encashment
         kkt: Kkt
+        cashInMachine: Int!
     }
     
     type MachineItemSales {
@@ -719,7 +720,7 @@ const typeDefs = gql`
         getControllers: [Controller]
         getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String  ): [Controller]
         getMachineById(id: Int!): Machine
-        getMachines: [Machine]
+        getMachines(machineGroupId: Int): [Machine]
         getMachineGroups: [MachineGroup]
         getMachineTypes: [MachineType]
         getEquipments: [Equipment]

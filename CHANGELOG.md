@@ -333,4 +333,8 @@
 
 * add sum to encashment
 
+# 1.3.42 - Hotfix
+
+* add sum to encashment
+
 

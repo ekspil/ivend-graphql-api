@@ -117,6 +117,24 @@ function MachineResolver({machineService, saleService, kktService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
+    const cashInMachine = async (obj, args, context) => {
+        const {user} = context
+
+        const lastEncashment = await machineService.getLastMachineEncashment(obj.id, user)
+
+        const period = {from: lastEncashment ? lastEncashment.timestamp : new Date(0), to: new Date()}
+
+        const salesSummary = await saleService.getEncashmentsSummary({machineId: obj.id, period}, user)
+        let encashmentsAmount = 0
+
+        if(salesSummary && salesSummary.encashmentsAmount && salesSummary.encashmentsAmount[0] && salesSummary.encashmentsAmount[0].dataValues && salesSummary.encashmentsAmount[0].dataValues.overallAmount){
+            encashmentsAmount = Number(salesSummary.encashmentsAmount[0].dataValues.overallAmount)
+        }
+
+
+        return encashmentsAmount
+    }
+
 
     const encashmentsSummaries = async (obj, args, context) => {
         const {user} = context
@@ -141,31 +159,56 @@ function MachineResolver({machineService, saleService, kktService}) {
 
     }
 
-    const encashmentsSummariesFast = async (obj, args, context) => {
-        const {user} = context
-        const {interval} = args
-
-        const encashments = await machineService.getMachineEncashments(obj.id, user, interval)
-
-        return await Promise.all(encashments.map(async (encashment) => {
-            const {prevEncashmentId} = encashment
-            let prevEncashment = null
-            if (prevEncashmentId) {
-                prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
-            }
-            const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
-            const to = new Date(encashment.timestamp)
-
-            const period = {from, to}
-            const salesSummary = await saleService.getEncashmentsSummary({machineId: obj.id, period}, user)
-            let encashmentsAmount = 0
-            if(salesSummary && salesSummary.encashmentsAmount && salesSummary.encashmentsAmount[0] && salesSummary.encashmentsAmount[0].overallAmount){
-                encashmentsAmount = Number(salesSummary.encashmentsAmount[0].overallAmount)
-            }
-            return { encashmentsAmount}
-        }))
-
-    }
+    // const encashmentsSummariesFast = async (obj, args, context) => {
+    //     const {user} = context
+    //     const {interval} = args
+    //     console.log("Before getEncachments for machine: " + obj.id)
+    //     const encashments = await machineService.getMachineEncashments(obj.id, user, interval)
+    //     console.log("Before PromiseAll for machine: " + obj.id)
+    //
+    //     for(let encashment of encashments){
+    //         const {prevEncashmentId} = encashment
+    //         let prevEncashment = null
+    //         if (prevEncashmentId) {
+    //             prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
+    //         }
+    //         const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+    //         const to = new Date(encashment.timestamp)
+    //
+    //         const period = {from, to}
+    //         console.log("PromiseAll before getSales for machine: " + obj.id)
+    //         const salesSummary = await saleService.getEncashmentsSummary({machineId: obj.id, period}, user)
+    //         let encashmentsAmount = 0
+    //
+    //         if(salesSummary && salesSummary.encashmentsAmount && salesSummary.encashmentsAmount[0] && salesSummary.encashmentsAmount[0].dataValues && salesSummary.encashmentsAmount[0].dataValues.overallAmount){
+    //             encashmentsAmount = Number(salesSummary.encashmentsAmount[0].dataValues.overallAmount)
+    //         }
+    //
+    //     }
+    //     return await Promise.all(encashments.map(async (encashment) => {
+    //         console.log("PromiseAll start for machine: " + obj.id)
+    //         if(!encashment) return {encashmentsAmount: 0}
+    //         const {prevEncashmentId} = encashment
+    //         let prevEncashment = null
+    //         if (prevEncashmentId) {
+    //             prevEncashment = await machineService.getEncashmentById(prevEncashmentId, user)
+    //         }
+    //         const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+    //         const to = new Date(encashment.timestamp)
+    //
+    //         const period = {from, to}
+    //         console.log("PromiseAll before getSales for machine: " + obj.id)
+    //         const salesSummary = await saleService.getEncashmentsSummary({machineId: obj.id, period}, user)
+    //         let encashmentsAmount = 0
+    //
+    //         if(salesSummary && salesSummary.encashmentsAmount && salesSummary.encashmentsAmount[0] && salesSummary.encashmentsAmount[0].dataValues && salesSummary.encashmentsAmount[0].dataValues.overallAmount){
+    //             encashmentsAmount = Number(salesSummary.encashmentsAmount[0].dataValues.overallAmount)
+    //
+    //         }
+    //         return {encashmentsAmount}
+    //     }))
+    //
+    // }
 
     const lastSaleTime = async (obj, args, context) => {
         const {user} = context
@@ -215,8 +258,9 @@ function MachineResolver({machineService, saleService, kktService}) {
 
     const encashments = async (obj, args, context) => {
         const {user} = context
+        const {period} = args
 
-        const encashments = await machineService.getMachineEncashments(obj.id, user)
+        const encashments = await machineService.getMachineEncashments(obj.id, user, period)
 
         if (!encashments) {
             return null
@@ -276,7 +320,8 @@ function MachineResolver({machineService, saleService, kktService}) {
         coinCollectorStatus,
         banknoteCollectorStatus,
         machineItemSales,
-        encashmentsSummariesFast
+        //encashmentsSummariesFast,
+        cashInMachine
     }
 
 }

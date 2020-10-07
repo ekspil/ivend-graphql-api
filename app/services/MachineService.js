@@ -14,7 +14,7 @@ const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, redis, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService, itemService}) {
+    constructor({MachineModel, redis, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService, itemService, SaleModel}) {
         this.Machine = MachineModel
         this.Encashment = EncashmentModel
         this.MachineGroup = MachineGroupModel
@@ -25,6 +25,7 @@ class MachineService {
         this.itemService = itemService
         this.controllerService = controllerService
         this.redis = redis
+        this.Sale = SaleModel
 
         this.createMachine = this.createMachine.bind(this)
         this.editMachine = this.editMachine.bind(this)
@@ -176,15 +177,20 @@ class MachineService {
         return await machine.save()
     }
 
-    async getAllMachinesOfUser(user) {
+    async getAllMachinesOfUser(user, machineGroupId) {
         if (!user || !user.checkPermission(Permission.GET_ALL_SELF_MACHINES)) {
             throw new NotAuthorized()
         }
 
+        const where = {
+            user_id: user.id
+        }
+
+        if(machineGroupId){
+            where.machine_group_id = machineGroupId
+        }
         const machines = await this.Machine.findAll({
-            where: {
-                user_id: user.id
-            }
+            where
         })
         const controllers = await this.controllerService.getAllOfCurrentUser(user)
 
@@ -385,6 +391,8 @@ class MachineService {
         }
 
         const prevEncashment = await this.getLastMachineEncashment(machineId, user)
+        const {sequelize} = this.Sale
+        const {Op} = sequelize
 
         const encashment = new Encashment()
         encashment.timestamp = timestamp
@@ -394,6 +402,44 @@ class MachineService {
         if (prevEncashment) {
             encashment.prevEncashmentId = prevEncashment.id
         }
+        const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+        const to = new Date(encashment.timestamp)
+
+        const period = {from, to}
+
+        const where = {}
+        where.type = "CASH"
+        where.machine_id = machineId
+
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
+        const salesSummary = await this.Sale.findAll({
+            where,
+            attributes: [
+                [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
+            ],
+        })
+
+
+
+        let encashmentsAmount = 0
+
+        if(salesSummary && salesSummary[0] && salesSummary[0].dataValues && salesSummary[0].dataValues.overallAmount){
+            encashmentsAmount = Number(salesSummary[0].dataValues.overallAmount)
+        }
+        encashment.sum = encashmentsAmount
+
 
         return await this.Encashment.create(encashment)
     }
@@ -426,7 +472,7 @@ class MachineService {
         })
     }
 
-    async getMachineEncashments(machineId, user, interval) {
+    async getMachineEncashments(machineId, user, period) {
         if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
             throw new NotAuthorized()
         }
@@ -437,8 +483,8 @@ class MachineService {
             machine_id: machineId
         }
 
-        if (interval) {
-            const {from, to} = interval
+        if (period) {
+            const {from, to} = period
 
             if (from > to) {
                 throw new InvalidPeriod()
