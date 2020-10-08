@@ -19,13 +19,14 @@ const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
 
-    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, controllerService, itemService, machineService, kktService, redis}) {
+    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, TempMachineModel, controllerService, itemService, machineService, kktService, redis}) {
         this.Sale = SaleModel
         this.redis = redis
         this.MachineGroup = MachineGroupModel
         this.Machine = MachineModel
         this.Item = ItemModel
         this.ButtonItem = ButtonItemModel
+        this.TempMachine = TempMachineModel
         this.controllerService = controllerService
         this.itemService = itemService
         this.machineService = machineService
@@ -759,6 +760,24 @@ class SaleService {
             encashmentsAmount,
             encashmentsCount
         }
+
+    }
+    async cashInMachine(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
+            throw new NotAuthorized()
+        }
+
+        const {machineId} = input
+
+        const machineCash = await this.TempMachine.findOne({
+            where: {
+                machine_id: machineId
+            }
+        })
+        if(!machineCash){
+            return null
+        }
+        return machineCash.amount
 
     }
 

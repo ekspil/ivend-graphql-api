@@ -124,6 +124,15 @@ function MachineResolver({machineService, saleService, kktService}) {
 
         const period = {from: lastEncashment ? lastEncashment.timestamp : new Date(0), to: new Date()}
 
+
+
+        const cash = await saleService.cashInMachine({machineId: obj.id}, user)
+        if(cash){
+            return Number(cash)
+        }
+
+
+
         const salesSummary = await saleService.getEncashmentsSummary({machineId: obj.id, period}, user)
         let encashmentsAmount = 0
 
