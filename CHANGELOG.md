@@ -337,4 +337,8 @@
 
 * add sum to encashment
 
+# 1.3.43 - Hotfix
+
+* add new temp cash table
+
 
