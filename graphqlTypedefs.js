@@ -238,6 +238,7 @@ const typeDefs = gql`
         legalInfo: LegalInfo
         billing: Billing!
         salesSummary(period: Period): SalesSummary
+        fastSummary: FastSummary
         items: [Item!]!
         kkts: [Kkt!]!
     }
@@ -250,6 +251,13 @@ const typeDefs = gql`
         telegram: String
         extraEmail: String
         telegramChat: String
+    }
+
+    type FastSummary {
+        amountToday: Int
+        amountYesterday: Int
+        countToday: Int
+        countYesterday: Int
     }
 
     enum NotificationType {

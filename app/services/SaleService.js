@@ -19,7 +19,7 @@ const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
 
-    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, TempMachineModel, controllerService, itemService, machineService, kktService, redis}) {
+    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, TempMachineModel, TempModel, controllerService, itemService, machineService, kktService, redis}) {
         this.Sale = SaleModel
         this.redis = redis
         this.MachineGroup = MachineGroupModel
@@ -27,6 +27,7 @@ class SaleService {
         this.Item = ItemModel
         this.ButtonItem = ButtonItemModel
         this.TempMachine = TempMachineModel
+        this.Temp = TempModel
         this.controllerService = controllerService
         this.itemService = itemService
         this.machineService = machineService
@@ -432,6 +433,19 @@ class SaleService {
         const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
 
         return new Receipt(sale.createdAt, receipt.status, receipt.paymentType)
+    }
+
+    async getFastSummary(user) {
+        if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
+            throw new NotAuthorized()
+        }
+
+        return this.Temp.findOne({
+            where: {
+                user_id: user.id
+            }
+        })
+
     }
 
     async getItemOfSale(saleId, user) {

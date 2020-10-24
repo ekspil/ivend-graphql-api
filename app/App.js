@@ -328,6 +328,7 @@ class App {
             ItemModel,
             ButtonItemModel,
             TempMachineModel,
+            TempModel,
             controllerService: services.controllerService,
             itemService: services.itemService,
             machineService: services.machineService,

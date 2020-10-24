@@ -4,6 +4,7 @@ const ItemDTO = require("../../models/dto/ItemDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const BillingDTO = require("../../models/dto/BillingDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
+const FastSummaryDTO = require("../../models/dto/FastSummaryDTO")
 const KktDTO = require("../../models/dto/KktDTO")
 
 function UserResolver({notificationSettingsService, itemService, saleService, kktService, userService}) {
@@ -72,13 +73,26 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
         return new SalesSummaryDTO(salesSummary)
     }
 
+    const fastSummary = async (obj, args, context) => {
+        const {user} = context
+
+        const fastSummary = await saleService.getFastSummary(user)
+
+        if (!fastSummary) {
+            return null
+        }
+
+        return new FastSummaryDTO(fastSummary)
+    }
+
     return {
         notificationSettings,
         legalInfo,
         billing,
         items,
         salesSummary,
-        kkts
+        kkts,
+        fastSummary
     }
 
 }
