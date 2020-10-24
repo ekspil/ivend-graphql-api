@@ -341,4 +341,7 @@
 
 * add new temp cash table
 
+# 1.3.44 - Hotfix
+
+* add fast sales summury
 
