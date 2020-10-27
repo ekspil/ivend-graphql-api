@@ -526,6 +526,10 @@ class UserService {
             where: {
                 id
             }})
+        if(selectedUser.role === "CLOSED"){
+            return await selectedUser.destroy()
+        }
+
         selectedUser.role = "CLOSED"
         return await selectedUser.save()
     }
