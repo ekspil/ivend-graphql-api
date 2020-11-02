@@ -58,6 +58,7 @@ class BillingService {
 
 
 
+
         const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY", userId)
 
         return telemetryPrice.toFixed(2)
@@ -115,6 +116,24 @@ class BillingService {
 
         return await this.Deposit.findOne({where})
     }
+
+    async removeDeposit(id, user) {
+        if (!user || !user.checkPermission(Permission.GET_DEPOSIT_BY_ID)) {
+            throw new NotAuthorized()
+        }
+
+        const where = {
+            id,
+            user_id: user.id
+        }
+
+        const deposit = await this.Deposit.findOne({where})
+        if(!deposit) return false
+        await deposit.destroy()
+        return true
+    }
+
+
     async changeUserBalance(id, sum, user) {
         if (!user || !user.checkPermission(Permission.CHANGE_USER_BALANCE)) {
             throw new NotAuthorized()

@@ -509,10 +509,15 @@ class MachineService {
         return await this.redis.get("machine_coin_collector_status_" + machineId)
     }
 
-    async getLogs(machineId, user, type) {
+
+    async getLogs(machineId, user, type, period) {
         if (!user || !user.checkPermission(Permission.GET_MACHINE_ENCASHMENTS)) {
             throw new NotAuthorized()
         }
+
+        const {sequelize} = this.MachineLog
+        const {Op} = sequelize
+
         const where = {
             machine_id: machineId
         }
@@ -520,6 +525,20 @@ class MachineService {
         if(type && type !== "ALL"){
             where.type = type
         }
+
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
         const logs = await this.MachineLog.findAll({
             where
         })

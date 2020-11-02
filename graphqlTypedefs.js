@@ -656,7 +656,7 @@ const typeDefs = gql`
         salesSummary(machineGroupId: Int, period: Period): SalesSummary
         salesByEncashment(machineGroupId: Int): SalesSummary
         encashmentsSummaries(interval: Period): [EncashmentSalesSummary!]!
-        logs(type: MachineLogType): [MachineLog!]!
+        logs(type: MachineLogType, period: Period): [MachineLog!]!
         lastSaleTime: Timestamp
         controller: Controller
         encashments(period: Period): [Encashment!]!
@@ -738,7 +738,7 @@ const typeDefs = gql`
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts(offset: Int, limit: Int): [Kkt]
-        getAllUsers(input: AllUsersInput): [User]
+        getAllUsers(input: AllUsersInput, orderDesc: Boolean, orderKey: String ): [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int): [Sale!]!
         getItemSales(machineGroupId: Int, period: Period): [ItemsSales]
@@ -827,6 +827,7 @@ const typeDefs = gql`
         sendEmail(input: EmailInput!): Boolean
         updatePrinterOnController(input: UpdatePrinter!): Boolean
         randomAction: Boolean
+        removeDeposit(id: Int!): Boolean
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller

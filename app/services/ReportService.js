@@ -4,6 +4,7 @@ const PdfGenerationFailed = require("../errors/PdfGenerationFailed")
 const Permission = require("../enum/Permission")
 const fetch = require("node-fetch")
 const logger = require("my-custom-logger")
+const microservices = require("../utils/microservices")
 
 class ReportService {
 
@@ -42,6 +43,7 @@ class ReportService {
 
         return {url: `${process.env.EXCEL_URL}/api/v1/excel/${id}`}
     }
+
     async generatePdf(input, user) {
         if (!user || !user.checkPermission(Permission.CREATE_ITEM)) {
             throw new NotAuthorized()
@@ -72,6 +74,9 @@ class ReportService {
         }
 
         const {id} = await response.json()
+        input.url = `${process.env.EXCEL_URL}/api/v1/pdf/${id}`
+
+        await microservices.notification.sendEmailOrder(input, user)
 
         return {url: `${process.env.EXCEL_URL}/api/v1/pdf/${id}`}
     }

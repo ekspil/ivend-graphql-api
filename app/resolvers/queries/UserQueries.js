@@ -15,11 +15,12 @@ function UserQueries({userService}) {
     }
 
     const getAllUsers = async (root, args, context) => {
-        const {input} = args
-        const users = await userService.getAllUsers(input, context.user)
+        const {input, orderDesc, orderKey} = args
+        const users = await userService.getAllUsers(input, context.user, orderDesc, orderKey)
 
         return users.map(user => (new UserDTO(user)))
     }
+
 
     const getLegalInfoByUserId = async (root, args, context) => {
         const {user} = context

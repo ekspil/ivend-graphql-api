@@ -148,6 +148,37 @@ const sendEmail = async (input, user) => {
             throw new MicroserviceUnknownError(method, url, res.status)
     }
 }
+
+const sendEmailOrder = async (input, user) => {
+
+    let legalInfo = await user.getLegalInfo()
+    if(!legalInfo) legalInfo = {companyName: "Компания не указана"}
+    const body = JSON.stringify({input, user, email: process.env.TP_EMAIL, legalInfo})
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/SEND_ORDER`
+    const method = "POST"
+
+    const res = await fetch(url, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+    switch (res.status) {
+        case 200:
+            const json = await res.json()
+            const {sent} = json
+
+            if (!sent) {
+                return false
+            }
+
+            return true
+        default:
+            throw new MicroserviceUnknownError(method, url, res.status)
+    }
+}
+
 const sendRememberPasswordEmail = async (email, token) => {
     const body = JSON.stringify({token, email})
     const url = `${process.env.NOTIFICATION_URL}/api/v1/template/REMEMBER_PASSWORD`
@@ -352,7 +383,8 @@ module.exports = {
         sendChangeEmailEmail,
         sendChangePasswordEmail,
         sendRememberPasswordEmail,
-        sendEmail
+        sendEmail,
+        sendEmailOrder
     },
     billing: {
         getServiceDailyPrice,

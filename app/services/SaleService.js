@@ -262,6 +262,7 @@ class SaleService {
                     })
 
 
+
                     //const uuid = await sendCheck(fiscalData, token, server, machineKkt)
                     const receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
 

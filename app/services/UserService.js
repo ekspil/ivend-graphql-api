@@ -491,7 +491,7 @@ class UserService {
     }
 
 
-    async getAllUsers(input, user) {
+    async getAllUsers(input, user, orderDesc, orderKey) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
         }
@@ -507,12 +507,40 @@ class UserService {
             limit = 100
         }
 
+
+        let orderData = ["id", "DESC"]
+
+        if(orderDesc === true){
+            orderData =["id"]
+        }
+        if(orderKey){
+            if(orderKey === "id"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "companyName"){
+                orderData[0] = "company_name"
+            }
+            if(orderKey === "inn"){
+                orderData[0] = "company_name"
+            }
+            if(orderKey === "phone"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "role"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "email"){
+                orderData[0] = orderKey
+            }
+
+        }
+
         return await this.User.findAll({
             limit,
             offset,
             where,
             order: [
-                ["id", "DESC"],
+                orderData
             ]
         })
     }

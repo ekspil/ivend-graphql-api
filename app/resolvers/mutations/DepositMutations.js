@@ -16,6 +16,18 @@ function DepositMutations({billingService}) {
         return new DepositDTO({id, amount: deposit.amount, status, redirectUrl})
     }
 
+    const removeDeposit = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        const deposit = await billingService.removeDeposit(id, user)
+        if(!deposit) {
+            throw new Error("Not deleted")
+        }
+        return true
+    }
+
+
     const changeUserBalance = async (root, args, context) => {
         const {id, sum} = args.input
         const {user} = context
@@ -28,7 +40,8 @@ function DepositMutations({billingService}) {
 
     return {
         requestDeposit,
-        changeUserBalance
+        changeUserBalance,
+        removeDeposit
     }
 
 }
