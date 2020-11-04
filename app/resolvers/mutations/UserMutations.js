@@ -161,6 +161,13 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return answer
     }
 
+    const userAutoSend = async (root, args, context) => {
+        const {value} = args
+        const {user} = context
+
+        return await userService.userAutoSend(value, user)
+    }
+
 
 
     return {
@@ -181,7 +188,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         closeUser,
         updateLegalInfoToUser,
         updateUser,
-        randomAction
+        randomAction,
+        userAutoSend
     }
 
 }

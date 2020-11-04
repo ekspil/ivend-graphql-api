@@ -230,6 +230,8 @@ const typeDefs = gql`
     type User {
         email: String!
         id: Int!
+        step: Int
+        autoSend: Boolean
         phone: String!
         role: String!
         companyName: String
@@ -828,6 +830,7 @@ const typeDefs = gql`
         updatePrinterOnController(input: UpdatePrinter!): Boolean
         randomAction: Boolean
         removeDeposit(id: Int!): Boolean
+        userAutoSend(value: Boolean!): Boolean
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError
         registerControllerState(input: ControllerStateInput!): Controller

@@ -1,5 +1,5 @@
 class User {
-    constructor(id, email, passwordHash, phone, role, companyName, inn) {
+    constructor(id, email, passwordHash, phone, role, companyName, inn, step, autoSend) {
         this.id = id
         this.email = email
         this.passwordHash = passwordHash
@@ -7,8 +7,10 @@ class User {
         this.role = role
         this.companyName = companyName
         this.inn = inn
+        this.step = step
+        this.autoSend = autoSend
     }
-
 }
+
 
 module.exports = User

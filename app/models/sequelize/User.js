@@ -1,11 +1,19 @@
 const Sequelize = require("sequelize")
 
+
 const User = {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
+    },
+    step: {
+        type: Sequelize.DataTypes.INTEGER
+    },
+    autoSend: {
+        type: Sequelize.DataTypes.BOOLEAN,
+        field: "auto_send"
     },
     email: {
         type: Sequelize.DataTypes.STRING,

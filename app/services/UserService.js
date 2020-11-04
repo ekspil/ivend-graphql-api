@@ -545,6 +545,22 @@ class UserService {
         })
     }
 
+    async userAutoSend(value, user) {
+        if (!user || !user.checkPermission(Permission.GET_LEGAL_INFO)) {
+            throw new NotAuthorized()
+        }
+
+        const selectedUser = await this.User.findOne({
+            where: {
+                id: user.id
+            }})
+
+        selectedUser.autoSend = value
+        await selectedUser.save()
+        return true
+    }
+
+
     async closeUser(id, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
