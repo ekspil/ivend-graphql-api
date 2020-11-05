@@ -9,13 +9,14 @@ const microservices = require("../utils/microservices")
 
 class BillingService {
 
-    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel, TempModel}) {
+    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel, TempModel, UserModel}) {
         this.Controller = ControllerModel
         this.Service = ServiceModel
         this.Transaction = TransactionModel
         this.Temp = TempModel
         this.Deposit = DepositModel
         this.PaymentRequest = PaymentRequestModel
+        this.User = UserModel
 
         this.getDeposits = this.getDeposits.bind(this)
         this.getDailyBill = this.getDailyBill.bind(this)
@@ -161,6 +162,18 @@ class BillingService {
                 as: "paymentRequest"
             }]
         })
+
+        const targetUser = await this.User.findOne({
+            where: {
+                id
+            }
+        })
+
+        if(targetUser.step < 6){
+            targetUser.step = 6
+            await targetUser.save()
+        }
+
         return balance
 
 
@@ -185,6 +198,12 @@ class BillingService {
 
         if (deposit && deposit.paymentRequest.status === "pending") {
             throw new AnotherDepositPending()
+        }
+
+
+        if(user.step < 6){
+            user.step = 6
+            await user.save()
         }
 
         //todo transaction here is overkill

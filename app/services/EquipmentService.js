@@ -3,6 +3,7 @@ const Permission = require("../enum/Permission")
 
 const Equipment = require("../models/Equipment")
 
+
 class EquipmentService {
 
     constructor({EquipmentModel}) {
@@ -20,6 +21,10 @@ class EquipmentService {
         const equipment = new Equipment()
         equipment.name = createControllerInput.name
         equipment.machineTypeId = createControllerInput.machineTypeId
+        if(user.step < 3){
+            user.step = 3
+            await user.save()
+        }
 
         return await this.Equipment.create(equipment)
     }

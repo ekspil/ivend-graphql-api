@@ -351,7 +351,8 @@ class App {
             PaymentRequestModel,
             ServiceModel,
             TransactionModel,
-            TempModel
+            TempModel,
+            UserModel
         })
         services.reportService = new ReportService({redis})
 

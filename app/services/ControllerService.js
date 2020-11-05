@@ -83,6 +83,11 @@ class ControllerService {
 
         const savedController = await this.Controller.create(controller)
 
+        if(user.step < 2){
+            user.step = 2
+            await user.save()
+        }
+
         return await this.Controller.find({
             where: {
                 id: savedController.id
@@ -152,7 +157,6 @@ class ControllerService {
 
         return this.getControllerById(id, user)
     }
-
 
     async deleteController(id, user) {
         if (!user || !user.checkPermission(Permission.DELETE_CONTROLLER)) {

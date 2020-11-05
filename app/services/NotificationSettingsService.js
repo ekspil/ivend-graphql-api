@@ -13,8 +13,7 @@ class NotificationSettingsService {
         this.insertTelegramToNotificationSetting = this.insertTelegramToNotificationSetting.bind(this)
     }
 
-
-    createNotificationSetting(input, user) {
+    async createNotificationSetting(input, user) {
         if (!user || !user.checkPermission(Permission.CREATE_NOTIFICATION_SETTING)) {
             throw new NotAuthorized()
         }
@@ -31,6 +30,7 @@ class NotificationSettingsService {
         notificationSetting.telegram = ""
         notificationSetting.telegramChat = ""
         notificationSetting.user_id = user.id
+
 
         return this.NotificationSetting.create(notificationSetting)
     }
@@ -84,6 +84,12 @@ class NotificationSettingsService {
             notificationSetting.telegram = telegram
         }
         notificationSetting.telegramChat = telegramChat
+
+
+        if(user.step < 5){
+            user.step = 5
+            await user.save()
+        }
 
         return await notificationSetting.save()
     }

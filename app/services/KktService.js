@@ -48,6 +48,11 @@ class KktService {
         kkt.user_id = user.id
         kkt.kktBillsCount = 0
 
+        if(user.step < 7){
+            user.step = 7
+            await user.save()
+        }
+
         return await this.Kkt.create(kkt)
     }
 

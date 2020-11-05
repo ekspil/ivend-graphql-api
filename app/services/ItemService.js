@@ -11,6 +11,7 @@ class ItemService {
         this.getItemById = this.getItemById.bind(this)
     }
 
+
     async createItem(input, user, transaction) {
         if (!user || !user.checkPermission(Permission.CREATE_ITEM)) {
             throw new NotAuthorized()
@@ -21,6 +22,10 @@ class ItemService {
         const item = new Item()
         item.name = name
         item.user_id = user.id
+        if(user.step < 4){
+            user.step = 4
+            await user.save({transaction})
+        }
 
         return await this.Item.create(item, {transaction})
     }

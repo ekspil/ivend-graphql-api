@@ -12,7 +12,6 @@ class LegalInfoService {
         this.updateLegalInfo = this.updateLegalInfo.bind(this)
     }
 
-
     async createLegalInfo(input, user) {
         if (!user || !user.checkPermission(Permission.CREATE_LEGAL_INFO)) {
             throw new NotAuthorized()
@@ -43,6 +42,11 @@ class LegalInfoService {
             user.role = "VENDOR"
             user.inn = inn
             user.companyName = companyName
+
+            if(user.step < 1){
+                user.step = 1
+            }
+
             await user.save({transaction})
 
             return await this.LegalInfo.create(legalInfo, {transaction})
