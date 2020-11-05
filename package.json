@@ -16,6 +16,7 @@
     "graphql": "^14.0.2",
     "ioredis": "^4.6.2",
     "my-custom-logger": "^1.0.2",
+    "node-cron": "^2.0.3",
     "node-fetch": "^2.3.0",
     "pg": "^7.7.1",
     "sequelize": "^4.44.3"

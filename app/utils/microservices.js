@@ -149,11 +149,14 @@ const sendEmail = async (input, user) => {
     }
 }
 
-const sendEmailOrder = async (input, user) => {
-
+const sendEmailOrder = async (input, user, sameUser) => {
+    let email = process.env.TP_EMAIL
+    if(sameUser){
+        email = user.email
+    }
     let legalInfo = await user.getLegalInfo()
     if(!legalInfo) legalInfo = {companyName: "Компания не указана"}
-    const body = JSON.stringify({input, user, email: process.env.TP_EMAIL, legalInfo})
+    const body = JSON.stringify({input, user, email, legalInfo})
     const url = `${process.env.NOTIFICATION_URL}/api/v1/template/SEND_ORDER`
     const method = "POST"
 

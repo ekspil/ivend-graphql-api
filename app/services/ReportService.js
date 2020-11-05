@@ -44,7 +44,7 @@ class ReportService {
         return {url: `${process.env.EXCEL_URL}/api/v1/excel/${id}`}
     }
 
-    async generatePdf(input, user) {
+    async generatePdf(input, user, toUser) {
         if (!user || !user.checkPermission(Permission.CREATE_ITEM)) {
             throw new NotAuthorized()
         }
@@ -77,6 +77,9 @@ class ReportService {
         input.url = `${process.env.EXCEL_URL}/api/v1/pdf/${id}`
 
         await microservices.notification.sendEmailOrder(input, user)
+        if(toUser){
+            await microservices.notification.sendEmailOrder(input, user, true)
+        }
 
         return {url: `${process.env.EXCEL_URL}/api/v1/pdf/${id}`}
     }

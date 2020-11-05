@@ -58,6 +58,10 @@ const News = require("./models/sequelize/News")
 const Info = require("./models/sequelize/Info")
 const Instr = require("./models/sequelize/Instr")
 
+
+
+const scheduler = require("./utils/scheduler")
+
 //const ControllerStateDTO = require("./models/dto/ControllerStateDTO")
 
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
@@ -72,6 +76,7 @@ const redis = new Redis({
 const logger = require("my-custom-logger")
 
 class App {
+
 
     async start() {
 
@@ -600,6 +605,8 @@ class App {
         const serverInfo = await server.listen()
 
         logger.info(`GraphQL Server ready at ${serverInfo.url}`)
+
+        await scheduler.scheduleTasks({UserModel, services})
 
         // const controllers = await ControllerModel.findAll()
         // for( let controller of controllers){
