@@ -345,3 +345,7 @@
 
 * add fast sales summury
 
+# 1.3.45 - Release
+
+* 7 steps, speed
+
