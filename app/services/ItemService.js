@@ -17,15 +17,18 @@ class ItemService {
             throw new NotAuthorized()
         }
 
-        const {name} = input
+        const {name, notStep} = input
 
         const item = new Item()
         item.name = name
         item.user_id = user.id
-        if(user.step < 4){
-            user.step = 4
-            await user.save({transaction})
+        if(!notStep){
+            if(user.step < 4){
+                user.step = 4
+                await user.save({transaction})
+            }
         }
+
 
         return await this.Item.create(item, {transaction})
     }

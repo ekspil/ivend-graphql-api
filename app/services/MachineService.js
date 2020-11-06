@@ -91,9 +91,13 @@ class MachineService {
             machine.machine_type_id = machineType.id
 
             machine = await this.Machine.create(machine, {transaction})
+            if(user.step < 3){
+                user.step = 3
+                await user.save({transaction})
+            }
 
             const itemMatrix = await this.itemMatrixService.createItemMatrix(machine.id, user, transaction)
-            const item = await this.itemService.createItem({name: "Товар1"}, user, transaction)
+            const item = await this.itemService.createItem({name: "Товар1", notStep: true}, user, transaction)
 
             machine.item_matrix_id = itemMatrix.id
 
