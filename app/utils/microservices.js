@@ -150,7 +150,7 @@ const sendEmail = async (input, user) => {
 }
 
 const sendEmailOrder = async (input, user, sameUser) => {
-    let email = process.env.TP_EMAIL
+    let email = "sale@ivend.pro"
     if(sameUser){
         email = user.email
     }

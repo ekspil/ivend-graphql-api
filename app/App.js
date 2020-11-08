@@ -137,7 +137,7 @@ class App {
         })
 
         NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
-
+        //
         ItemModel.belongsTo(UserModel, {foreignKey: "user_id"})
         TransactionModel.belongsTo(UserModel, {foreignKey: "user_id"})
         TempModel.belongsTo(UserModel, {foreignKey: "user_id"})
@@ -318,6 +318,7 @@ class App {
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.userService = new UserService({
             UserModel,
+            ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel,
             redis,
             machineService: services.machineService,
             notificationSettingsService: services.notificationSettingsService

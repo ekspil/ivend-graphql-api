@@ -19,9 +19,21 @@ const microservices = require("../utils/microservices")
 
 class UserService {
 
-    constructor({UserModel, redis, machineService, notificationSettingsService}) {
+    constructor({UserModel, redis, machineService, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel}) {
         this.User = UserModel
         this.redis = redis
+
+        this.ItemModel = ItemModel
+        this.NotificationSettingModel = NotificationSettingModel
+        this.TransactionModel = TransactionModel
+        this.TempModel = TempModel
+        this.ItemMatrixModel = ItemMatrixModel
+        this.ControllerModel = ControllerModel
+        this.DepositModel = DepositModel
+        this.MachineModel = MachineModel
+        this.MachineGroupModel = MachineGroupModel
+        this.KktModel = KktModel
+
         this.machineService = machineService
         this.notificationSettingsService = notificationSettingsService
 
@@ -571,7 +583,54 @@ class UserService {
                 id
             }})
         if(selectedUser.role === "CLOSED"){
-            return await selectedUser.destroy()
+            const where = {
+                user_id: selectedUser.id
+            }
+
+            const is = await this.ItemModel.findAll({where})
+            for (let item of is){
+                await item.destroy()
+            }
+            const nss = await this.NotificationSettingModel.findAll({where})
+            for (let item of nss){
+                await item.destroy()
+            }
+            const ts = await this.TransactionModel.findAll({where})
+            for (let item of ts){
+                await item.destroy()
+            }
+            const tmps = await this.TempModel.findAll({where})
+            for (let item of tmps){
+                await item.destroy()
+            }
+            const ims = await this.ItemMatrixModel.findAll({where})
+            for (let item of ims){
+                await item.destroy()
+            }
+            const cs = await this.ControllerModel.findAll({where})
+            for (let item of cs){
+                await item.destroy()
+            }
+            const ds = await this.DepositModel.findAll({where})
+            for (let item of ds){
+                await item.destroy()
+            }
+            const ms = await this.MachineModel.findAll({where})
+            for (let item of ms){
+                await item.destroy()
+            }
+            const mgs = await this.MachineGroupModel.findAll({where})
+            for (let item of mgs){
+                await item.destroy()
+            }
+            const kkts = await this.KktModel.findAll({where})
+            for (let item of kkts){
+                await item.destroy()
+            }
+
+            const usr = {id: selectedUser.id, email: selectedUser.email, role: selectedUser.role, phone: selectedUser.phone}
+            await selectedUser.destroy()
+            return usr
         }
 
         selectedUser.role = "CLOSED"

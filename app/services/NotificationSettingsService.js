@@ -86,7 +86,7 @@ class NotificationSettingsService {
         notificationSetting.telegramChat = telegramChat
 
 
-        if(user.step < 5){
+        if(user.step < 5 && user.step > 2){
             user.step = 5
             await user.save()
         }
