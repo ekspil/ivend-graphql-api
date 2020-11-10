@@ -573,7 +573,6 @@ class UserService {
         return true
     }
 
-
     async closeUser(id, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
@@ -628,12 +627,12 @@ class UserService {
             for (let item of ds){
                 await item.destroy()
             }
-            const ms = await this.MachineModel.findAll({where})
-            for (let item of ms){
-                await item.destroy()
-            }
             const mgs = await this.MachineGroupModel.findAll({where})
             for (let item of mgs){
+                await item.destroy()
+            }
+            const ms = await this.MachineModel.findAll({where})
+            for (let item of ms){
                 await item.destroy()
             }
             const kkts = await this.KktModel.findAll({where})
