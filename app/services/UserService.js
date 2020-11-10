@@ -19,7 +19,7 @@ const microservices = require("../utils/microservices")
 
 class UserService {
 
-    constructor({UserModel, redis, machineService, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel}) {
+    constructor({UserModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel}) {
         this.User = UserModel
         this.redis = redis
 
@@ -33,6 +33,7 @@ class UserService {
         this.MachineModel = MachineModel
         this.MachineGroupModel = MachineGroupModel
         this.KktModel = KktModel
+        this.ButtonItemModel = ButtonItemModel
 
         this.machineService = machineService
         this.notificationSettingsService = notificationSettingsService
@@ -587,10 +588,6 @@ class UserService {
                 user_id: selectedUser.id
             }
 
-            const is = await this.ItemModel.findAll({where})
-            for (let item of is){
-                await item.destroy()
-            }
             const nss = await this.NotificationSettingModel.findAll({where})
             for (let item of nss){
                 await item.destroy()
@@ -605,6 +602,22 @@ class UserService {
             }
             const ims = await this.ItemMatrixModel.findAll({where})
             for (let item of ims){
+
+                const bis = await this.ButtonItemModel.findAll({
+                    where: {
+                        item_matrix_id: item.id
+                    }
+                })
+                for (let it of bis){
+                    await it.destroy()
+                }
+
+
+                await item.destroy()
+            }
+
+            const is = await this.ItemModel.findAll({where})
+            for (let item of is){
                 await item.destroy()
             }
             const cs = await this.ControllerModel.findAll({where})

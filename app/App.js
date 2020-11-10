@@ -318,7 +318,7 @@ class App {
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.userService = new UserService({
             UserModel,
-            ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel,
+            ItemModel, ButtonItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel,
             redis,
             machineService: services.machineService,
             notificationSettingsService: services.notificationSettingsService

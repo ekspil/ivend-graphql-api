@@ -354,3 +354,8 @@
 
 * hotfix
 
+
+# 1.3.47 - Hotfix
+
+* delete fix
+
