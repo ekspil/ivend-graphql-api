@@ -370,3 +370,7 @@
 
 * delete fix
 
+# 1.3.50 - Hotfix
+
+* delete fix
+

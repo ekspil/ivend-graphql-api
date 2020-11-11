@@ -587,25 +587,26 @@ class UserService {
                 user_id: Number(selectedUser.id)
             }
 
-            const nss = await this.NotificationSettingModel.findAll({where})
+            const nss = await this.NotificationSettingModel.findAll({where, paranoid: false})
             for (let item of nss){
                 await item.destroy({force: true})
             }
-            const ts = await this.TransactionModel.findAll({where})
+            const ts = await this.TransactionModel.findAll({where, paranoid: false})
             for (let item of ts){
                 await item.destroy({force: true})
             }
-            const tmps = await this.TempModel.findAll({where})
+            const tmps = await this.TempModel.findAll({where, paranoid: false})
             for (let item of tmps){
                 await item.destroy({force: true})
             }
-            const ims = await this.ItemMatrixModel.findAll({where})
+            const ims = await this.ItemMatrixModel.findAll({where, paranoid: false})
             for (let item of ims){
 
                 const bis = await this.ButtonItemModel.findAll({
                     where: {
                         item_matrix_id: item.id
-                    }
+                    },
+                    paranoid: false
                 })
                 for (let it of bis){
                     await it.destroy({force: true})
@@ -615,31 +616,31 @@ class UserService {
                 await item.destroy({force: true})
             }
 
-            const is = await this.ItemModel.findAll({where})
+            const is = await this.ItemModel.findAll({where, paranoid: false})
             for (let item of is){
                 await item.destroy({force: true})
             }
-            const cs = await this.ControllerModel.findAll({where})
+            const cs = await this.ControllerModel.findAll({where, paranoid: false})
             for (let item of cs){
                 await item.destroy({force: true})
             }
-            const ds = await this.DepositModel.findAll({where})
+            const ds = await this.DepositModel.findAll({where, paranoid: false})
             for (let item of ds){
                 await item.destroy({force: true})
             }
 
 
-            const ms = await this.MachineModel.findAll({where})
+            const ms = await this.MachineModel.findAll({where, paranoid: false})
             for (let item of ms){
                 await item.destroy({force: true})
             }
 
-            const mgs = await this.MachineGroupModel.findAll({where})
+            const mgs = await this.MachineGroupModel.findAll({where, paranoid: false})
             for (let item of mgs){
                 await item.destroy({force: true})
             }
 
-            const kkts = await this.KktModel.findAll({where})
+            const kkts = await this.KktModel.findAll({where, paranoid: false})
             for (let item of kkts){
                 await item.destroy({force: true})
             }
