@@ -584,20 +584,20 @@ class UserService {
             }})
         if(selectedUser.role === "CLOSED"){
             const where = {
-                user_id: selectedUser.id
+                user_id: Number(selectedUser.id)
             }
 
             const nss = await this.NotificationSettingModel.findAll({where})
             for (let item of nss){
-                await item.destroy()
+                await item.destroy({force: true})
             }
             const ts = await this.TransactionModel.findAll({where})
             for (let item of ts){
-                await item.destroy()
+                await item.destroy({force: true})
             }
             const tmps = await this.TempModel.findAll({where})
             for (let item of tmps){
-                await item.destroy()
+                await item.destroy({force: true})
             }
             const ims = await this.ItemMatrixModel.findAll({where})
             for (let item of ims){
@@ -608,40 +608,44 @@ class UserService {
                     }
                 })
                 for (let it of bis){
-                    await it.destroy()
+                    await it.destroy({force: true})
                 }
 
 
-                await item.destroy()
+                await item.destroy({force: true})
             }
 
             const is = await this.ItemModel.findAll({where})
             for (let item of is){
-                await item.destroy()
+                await item.destroy({force: true})
             }
             const cs = await this.ControllerModel.findAll({where})
             for (let item of cs){
-                await item.destroy()
+                await item.destroy({force: true})
             }
             const ds = await this.DepositModel.findAll({where})
             for (let item of ds){
-                await item.destroy()
+                await item.destroy({force: true})
             }
-            const mgs = await this.MachineGroupModel.findAll({where})
-            for (let item of mgs){
-                await item.destroy()
-            }
+
+
             const ms = await this.MachineModel.findAll({where})
             for (let item of ms){
-                await item.destroy()
+                await item.destroy({force: true})
             }
+
+            const mgs = await this.MachineGroupModel.findAll({where})
+            for (let item of mgs){
+                await item.destroy({force: true})
+            }
+
             const kkts = await this.KktModel.findAll({where})
             for (let item of kkts){
-                await item.destroy()
+                await item.destroy({force: true})
             }
 
             const usr = {id: selectedUser.id, email: selectedUser.email, role: selectedUser.role, phone: selectedUser.phone}
-            await selectedUser.destroy()
+            await selectedUser.destroy({force: true})
             return usr
         }
 
