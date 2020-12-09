@@ -1,5 +1,6 @@
 "use strict"
 
+
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.addColumn("users", "partner",
@@ -8,7 +9,7 @@ module.exports = {
             })
         await queryInterface.addColumn("users", "partner_id",
             {
-                type: Sequelize.TEXT
+                type: Sequelize.BIGINT
             })
 
         await queryInterface.createTable("partner_settings", {
