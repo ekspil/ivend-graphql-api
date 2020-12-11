@@ -62,7 +62,7 @@ class UserService {
 
     async registerUser(input, role) {
         return this.User.sequelize.transaction(async (transaction) => {
-            const {email, code, phone, password} = input
+            const {email, code, phone, password, partnerId} = input
 
             //todo validation
             if (!validationUtils.validatePhoneNumber(phone)) {
@@ -101,6 +101,10 @@ class UserService {
             user.passwordHash = await this.hashPassword(password)
             user.role = role || "VENDOR_NOT_CONFIRMED"
 
+            if(partnerId){
+                user.partnerId = partnerId
+            }
+
             user = await this.User.create(user, {transaction})
 
             user.checkPermission = () => true
@@ -128,7 +132,7 @@ class UserService {
         if(!adminUser && !adminUser.checkPermission(Permission.GET_ALL_USERS)){
             throw new NotAuthorized()
         }
-        const {email, id, phone, password, role} = input
+        const {email, id, phone, password, role, partnerId} = input
 
 
         const user = await this.User.findOne({
@@ -144,6 +148,9 @@ class UserService {
         user.phone = phone
         user.email = email
         user.role = role
+        if(partnerId){
+            user.partnerId = partnerId
+        }
         if(password){
             user.passwordHash = await this.hashPassword(password) 
         }

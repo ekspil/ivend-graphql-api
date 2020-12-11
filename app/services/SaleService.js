@@ -437,6 +437,7 @@ class SaleService {
         return new Receipt(sale.createdAt, receipt.status, receipt.paymentType)
     }
 
+
     async getFastSummary(user) {
         if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()

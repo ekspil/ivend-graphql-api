@@ -4,12 +4,13 @@ const InvalidTimestampFormat = require("../errors/InvalidTimestampFormat")
 const {GraphQLScalarType, Kind} = require("graphql")
 const DefaultResolvers = require("./default")
 
+
 const Resolvers = function (injects) {
 
     const {
         userService, controllerService, equipmentService,
         saleService, itemService, itemMatrixService, revisionService, notificationSettingsService,
-        legalInfoService, billingService, serviceService, reportService, machineService, kktService, newsService, infoService, instrService
+        legalInfoService, billingService, serviceService, reportService, machineService, kktService, newsService, infoService, instrService, partnerService
     } = injects
 
     const mutations = new Mutations({
@@ -28,7 +29,8 @@ const Resolvers = function (injects) {
         kktService,
         newsService,
         infoService,
-        instrService
+        instrService,
+        partnerService
     })
 
     const defaultResolvers = new DefaultResolvers({
@@ -43,7 +45,8 @@ const Resolvers = function (injects) {
         kktService,
         userService,
         infoService,
-        instrService
+        instrService,
+        partnerService
     })
 
     const queries = new Queries({
@@ -58,7 +61,8 @@ const Resolvers = function (injects) {
         newsService,
         saleService,
         infoService,
-        instrService
+        instrService,
+        partnerService
     })
 
     return {

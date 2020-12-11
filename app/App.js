@@ -13,6 +13,7 @@ const Resolvers = require("./resolvers")
 const ContextResolver = require("./resolvers/ContextResolver")
 
 const UserService = require("./services/UserService")
+const PartnerService = require("./services/PartnerService")
 const ControllerService = require("./services/ControllerService")
 const EquipmentService = require("./services/EquipmentService")
 const SaleService = require("./services/SaleService")
@@ -57,6 +58,7 @@ const Kkt = require("./models/sequelize/Kkt")
 const News = require("./models/sequelize/News")
 const Info = require("./models/sequelize/Info")
 const Instr = require("./models/sequelize/Instr")
+const PartnerSettings = require("./models/sequelize/PartnerSettings")
 
 
 
@@ -130,10 +132,15 @@ class App {
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
         const MachineLogModel = sequelize.define("machine_logs", MachineLog)
         const EncashmentModel = sequelize.define("encashments", Encashment, {timestamps: false})
+        const PartnerSettingsModel = sequelize.define("partner_settings", PartnerSettings, )
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
             as: "legalInfo"
+        })
+        PartnerSettingsModel.belongsTo(UserModel, {
+            foreignKey: "user_id",
+            as: "user"
         })
 
         NotificationSettingModel.belongsTo(UserModel, {foreignKey: "user_id"})
@@ -257,6 +264,7 @@ class App {
             newsService: undefined,
             infoService: undefined,
             instrService: undefined,
+            partnerService: undefined,
         }
 
 
@@ -314,6 +322,7 @@ class App {
             TempMachineModel
         })
 
+
         services.controllerService.machineService = services.machineService
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.userService = new UserService({
@@ -356,6 +365,11 @@ class App {
             UserModel
         })
         services.reportService = new ReportService({redis})
+
+        services.partnerService = new PartnerService({
+            UserModel,
+            PartnerSettingsModel
+        })
 
 
         const populateWithFakeData = async () => {

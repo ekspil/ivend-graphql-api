@@ -8,8 +8,10 @@ const NewsQueries = require("./NewsQueries")
 const InfoQueries = require("./InfoQueries")
 const InstrQueries = require("./InstrQueries")
 const SaleQueries = require("./SaleQueries")
+const PartnerQueries = require("./PartnerQueries")
 
-function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, machineService, kktService, saleService, newsService, infoService, instrService}) {
+
+function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, machineService, kktService, saleService, newsService, infoService, instrService, partnerService}) {
 
     const controllerQueries = new ControllerQueries({ controllerService, revisionService})
     const itemQueries = new ItemQueries({ itemMatrixService })
@@ -21,6 +23,7 @@ function Queries({ controllerService, itemMatrixService, equipmentService, revis
     const infoQueries = new InfoQueries({ infoService })
     const instrQueries = new InstrQueries({ instrService })
     const saleQueries = new SaleQueries({ saleService })
+    const partnerQueries = new PartnerQueries({ partnerService })
 
     return {
         ...controllerQueries,
@@ -32,7 +35,8 @@ function Queries({ controllerService, itemMatrixService, equipmentService, revis
         ...newsQueries,
         ...saleQueries,
         ...infoQueries,
-        ...instrQueries
+        ...instrQueries,
+        ...partnerQueries
     }
 }
 

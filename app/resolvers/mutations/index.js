@@ -9,8 +9,10 @@ const NewsMutations = require("./NewsMutations")
 const InfoMutations = require("./InfoMutations")
 const InstrMutations = require("./InstrMutations")
 const NotificationMutations = require("./NotificationMutations")
+const PartnerMutations = require("./PartnerMutations")
 
-function Mutations({userService, controllerService, equipmentService, saleService, itemService, itemMatrixService, revisionService, notificationSettingsService, legalInfoService, billingService, reportService, machineService, kktService, newsService, instrService, infoService}) {
+
+function Mutations({userService, controllerService, equipmentService, saleService, itemService, itemMatrixService, revisionService, notificationSettingsService, legalInfoService, billingService, reportService, machineService, kktService, newsService, instrService, infoService, partnerService}) {
 
     const userMutations = new UserMutations({userService, notificationSettingsService, legalInfoService, reportService})
     const controllerMutations = new ControllerMutations({controllerService, saleService, revisionService})
@@ -23,6 +25,7 @@ function Mutations({userService, controllerService, equipmentService, saleServic
     const instrMutations = new InstrMutations({instrService})
     const infoMutations = new InfoMutations({infoService})
     const notificationMutations = new NotificationMutations({notificationSettingsService})
+    const partnerMutations = new PartnerMutations({userService, partnerService})
 
 
     return {
@@ -36,7 +39,8 @@ function Mutations({userService, controllerService, equipmentService, saleServic
         ...newsMutations,
         ...infoMutations,
         ...instrMutations,
-        ...notificationMutations
+        ...notificationMutations,
+        ...partnerMutations
     }
 }
 

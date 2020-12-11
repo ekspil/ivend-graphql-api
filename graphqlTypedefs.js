@@ -243,6 +243,8 @@ const typeDefs = gql`
         fastSummary: FastSummary
         items: [Item!]!
         kkts: [Kkt!]!
+        partner: String
+        partnerId: String
     }
 
     type NotificationSetting {
@@ -372,6 +374,7 @@ const typeDefs = gql`
         email: String!
         password: String!
         code: String!
+        partnerId: Int
     }
     
     input UpdateUserInput {
@@ -380,6 +383,7 @@ const typeDefs = gql`
         email: String!
         password: String
         role: String!
+        partnerId: Int
     }
 
     input RequestTokenInput {
@@ -754,6 +758,7 @@ const typeDefs = gql`
         getInstr: [Instr]
         getInstrById(id: Int!): Instr
         getAllInstr: [Instr]
+        getPartnerFee(userId: Int!): PartnerFee
     }
 
     input AuthControllerInput {
@@ -824,6 +829,20 @@ const typeDefs = gql`
         controllerId: Int!
         printerId: String!
     }
+    
+    input ChangePartnerFeeInput {
+        userId: Int!
+        kkmFee: Float!
+        terminalFee: Float!
+        controllerFee: Float!
+    }
+    
+    type PartnerFee {
+        userId: Int!
+        kkmFee: Float!
+        terminalFee: Float!
+        controllerFee: Float!
+    }
 
     type Mutation {
         sendEmail(input: EmailInput!): Boolean
@@ -883,6 +902,7 @@ const typeDefs = gql`
         createInstr(input: InstrInput!): Instr
         rememberPasswordRequest(input: RememberInput!): Boolean
         changePasswordRequest(input: ChangePasswordInput!): Boolean
+        changePartnerFee(input: ChangePartnerFeeInput!): PartnerFee
     }
 `
 

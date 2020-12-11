@@ -11,6 +11,13 @@ const User = {
     step: {
         type: Sequelize.DataTypes.INTEGER
     },
+    partnerId: {
+        type: Sequelize.DataTypes.INTEGER,
+        field: "partner_id"
+    },
+    partner: {
+        type: Sequelize.DataTypes.TEXT
+    },
     autoSend: {
         type: Sequelize.DataTypes.BOOLEAN,
         field: "auto_send"
