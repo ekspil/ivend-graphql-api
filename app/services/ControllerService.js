@@ -422,11 +422,13 @@ class ControllerService {
         return controllers
     }
 
-    async getAllOfCurrentUser(user) {
+    async getAllOfCurrentUser(user, id) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
             throw new NotAuthorized()
         }
-
+        if(id){
+            return await this.Controller.findAll({where: {user_id: id}})
+        }
         return await this.Controller.findAll({where: {user_id: user.id}})
     }
 

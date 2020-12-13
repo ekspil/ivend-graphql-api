@@ -112,6 +112,9 @@ const Permission = {
     // SUPERADMIN
     "SUPERADMIN": "SUPERADMIN",
 
+    // PARTNER
+    "PARTNER": "PARTNER",
+
 }
 
 

@@ -60,6 +60,40 @@ class UserService {
     }
 
 
+
+    async monthPay(user, id, period) {
+        if (!user || !user.checkPermission(Permission.GET_PROFILE)) {
+            throw new NotAuthorized()
+        }
+
+        const where = {}
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new Error("Invalid Period")
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+        where.amount = {
+            [Op.lt]: 0
+        }
+        where.user_id = id
+        const trs = await this.TransactionModel.findAll({
+            where
+        })
+
+        const summa = trs.reduce((acc,item) => {
+            return acc + Number(item.amount)
+        }, 0)
+        return Number(-summa.toFixed(2))
+    }
+
+
     async registerUser(input, role) {
         return this.User.sequelize.transaction(async (transaction) => {
             const {email, code, phone, password, partnerId} = input
@@ -525,6 +559,9 @@ class UserService {
         }
         if (!limit) {
             limit = 100
+        }
+        if(user.role === "PARTNER"){
+            where.partnerId = user.id
         }
 
 

@@ -245,6 +245,10 @@ const typeDefs = gql`
         kkts: [Kkt!]!
         partner: String
         partnerId: String
+        controllers: [Controller!]!
+        monthPay(period: Period): Float
+        partnerFee(period: Period): Float
+        vendors: [User!]!
     }
 
     type NotificationSetting {

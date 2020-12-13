@@ -59,6 +59,7 @@ const News = require("./models/sequelize/News")
 const Info = require("./models/sequelize/Info")
 const Instr = require("./models/sequelize/Instr")
 const PartnerSettings = require("./models/sequelize/PartnerSettings")
+const PartnerFee = require("./models/sequelize/PartnerFee")
 
 
 
@@ -132,7 +133,8 @@ class App {
         const MachineTypeModel = sequelize.define("machine_types", MachineType)
         const MachineLogModel = sequelize.define("machine_logs", MachineLog)
         const EncashmentModel = sequelize.define("encashments", Encashment, {timestamps: false})
-        const PartnerSettingsModel = sequelize.define("partner_settings", PartnerSettings, )
+        const PartnerSettingsModel = sequelize.define("partner_settings", PartnerSettings)
+        const PartnerFeeModel = sequelize.define("partner_fees", PartnerFee)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -362,13 +364,15 @@ class App {
             ServiceModel,
             TransactionModel,
             TempModel,
-            UserModel
+            UserModel,
+            PartnerFeeModel,
         })
         services.reportService = new ReportService({redis})
 
         services.partnerService = new PartnerService({
             UserModel,
-            PartnerSettingsModel
+            PartnerSettingsModel,
+            PartnerFeeModel
         })
 
 

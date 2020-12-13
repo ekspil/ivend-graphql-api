@@ -67,6 +67,8 @@ const VENDOR = [
 
 ]
 const PARTNER = [
+    Permission.PARTNER,
+    Permission.GET_ALL_USERS,
     Permission.GET_SELF_DEPOSITS,
     Permission.GET_NEWS,
     Permission.GET_DAILY_BILL,

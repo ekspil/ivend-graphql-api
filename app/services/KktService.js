@@ -125,9 +125,17 @@ class KktService {
         })
     }
 
-    async getUserKkts(user) {
+    async getUserKkts(user, id) {
         if (!user || !user.checkPermission(Permission.GET_USER_KKTS)) {
             throw new NotAuthorized()
+        }
+
+        if(id){
+            return await this.Kkt.findAll({
+                where: {
+                    user_id: id
+                }
+            })
         }
 
         return await this.Kkt.findAll({

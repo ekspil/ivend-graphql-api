@@ -4,7 +4,7 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
 
-        await queryInterface.addColumn("partner_fee", "partner_id",
+        await queryInterface.addColumn("partner_fees", "partner_id",
             {
                 type: Sequelize.BIGINT,
                 allowNull: false,

@@ -6,8 +6,10 @@ const BillingDTO = require("../../models/dto/BillingDTO")
 const SalesSummaryDTO = require("../../models/dto/SalesSummaryDTO")
 const FastSummaryDTO = require("../../models/dto/FastSummaryDTO")
 const KktDTO = require("../../models/dto/KktDTO")
+const UserDTO = require("../../models/dto/UserDTO")
+const ControllerDTO = require("../../models/dto/ControllerDTO")
 
-function UserResolver({notificationSettingsService, itemService, saleService, kktService, userService}) {
+function UserResolver({controllerService, notificationSettingsService, itemService, saleService, kktService, userService, partnerService}) {
 
     const notificationSettings = async (obj, args, context) => {
         const {user} = context
@@ -50,11 +52,47 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
 
     const kkts = async (obj, args, context) => {
         const {user} = context
+        const {id} = obj
 
-        const kkts = await kktService.getUserKkts(user)
+        const kkts = await kktService.getUserKkts(user, id)
 
         return kkts.map(kkt => (new KktDTO(kkt)))
     }
+
+    const monthPay = async (obj, args, context) => {
+        const {user} = context
+        const {id} = obj
+        const {period} = args
+
+        return await userService.monthPay(user, id, period)
+    }
+
+    const partnerFee = async (obj, args, context) => {
+        const {user} = context
+        const {id} = obj
+        const {period} = args
+
+        return await partnerService.getUserPartnerFee(id, period, user)
+    }
+
+    const vendors = async (obj, args, context) => {
+        const {user} = context
+        const {id} = obj
+
+        const vendors = await partnerService.getPartnerVendors(id, user)
+
+        return vendors.map(vendor => new UserDTO(vendor))
+    }
+
+    const controllers = async (obj, args, context) => {
+        const {user} = context
+        const {id} = obj
+
+        const controllers = await controllerService.getAllOfCurrentUser(user, id)
+
+        return controllers.map(controller => (new ControllerDTO(controller)))
+    }
+
 
     const billing = async (obj) => {
         return new BillingDTO({userId: obj.id})
@@ -92,7 +130,11 @@ function UserResolver({notificationSettingsService, itemService, saleService, kk
         items,
         salesSummary,
         kkts,
-        fastSummary
+        fastSummary,
+        controllers,
+        monthPay,
+        partnerFee,
+        vendors
     }
 
 }
