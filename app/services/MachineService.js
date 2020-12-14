@@ -501,7 +501,10 @@ class MachineService {
         }
 
         return await this.Encashment.findAll({
-            where
+            where,
+            order: [
+                ["id"],
+            ]
         })
     }
 
