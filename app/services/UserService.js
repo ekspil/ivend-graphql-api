@@ -182,9 +182,9 @@ class UserService {
         user.phone = phone
         user.email = email
         user.role = role
-        if(partnerId){
-            user.partnerId = partnerId
-        }
+
+        user.partnerId = partnerId
+
         if(password){
             user.passwordHash = await this.hashPassword(password) 
         }
