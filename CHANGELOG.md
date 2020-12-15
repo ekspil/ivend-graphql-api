@@ -374,3 +374,8 @@
 
 * delete fix
 
+
+# 1.4.1 - Release
+
+* add partner service
+
