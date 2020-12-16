@@ -379,3 +379,7 @@
 
 * add partner service
 
+# 1.4.2 - Release
+
+* new terminals
+

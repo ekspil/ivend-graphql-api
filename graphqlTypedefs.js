@@ -55,6 +55,10 @@ const typeDefs = gql`
         otiu_t
         otit_v 
         otit_t
+        vdk3_v
+        vdk3_p
+        vdk3_t
+        
     }
 
     enum FiscalizationMode {
