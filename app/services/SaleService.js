@@ -309,7 +309,7 @@ class SaleService {
                     kkt.kktLastBill = receiptDatetime
 
                     await kkt.save()
-                    await this.redis.set("kkt_status_" + machine.id, `OK`, "EX", 24 * 60 * 60)
+                    await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
 
 
                     createdSale.sqr = getFiscalString(receipt)
