@@ -94,7 +94,7 @@ class KktService {
     }
 
 
-    async kktPlusBill(fn, user) {
+    async kktPlusBill(fn, user, fd) {
         if (!user || !user.checkPermission(Permission.GET_USER_KKTS)) {
             throw new NotAuthorized()
         }
@@ -106,6 +106,10 @@ class KktService {
         })
         if (!kkt) {
             throw new KktNotFound()
+        }
+        if(fd){
+            kkt.kktBillsCount = Number(fd)
+            return await kkt.save()
         }
 
 
