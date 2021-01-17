@@ -82,9 +82,13 @@ class SaleService {
 
         let itemType = "commodity"
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)
-
         if (!controller) {
             throw new ControllerNotFound()
+        }
+
+        const controllerUser = await controller.getUser()
+        if (!controllerUser) {
+            throw new UserNotFound()
         }
 
 
@@ -165,9 +169,12 @@ class SaleService {
             }
             sale.item_id = itemId
             sale.machine_id = machine.id
-
+            if (!controller.connected) {
+                await this.machineService.addLog(machine.id, `Связь восстановлена`, MachineLogType.CONNECTION, controllerUser, transaction)
+            }
             controller.connected = true
             controller.status = "ENABLED"
+
             await controller.save({transaction})
 
             return await this.Sale.create(sale, {transaction})
@@ -207,11 +214,6 @@ class SaleService {
 
         if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED") {
 
-            const controllerUser = await controller.getUser()
-
-            if (!controllerUser) {
-                throw new UserNotFound()
-            }
 
             controllerUser.checkPermission = () => true
 
@@ -281,7 +283,8 @@ class SaleService {
                         receipt = await microservices.fiscal.getReceiptById(receiptId)
 
                         if (new Date() > timeoutDate) {
-
+                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
+                            await this.machineService.addLog(machine.id, `Таймаут ожидания регистрации чека`, MachineLogType.KKT, controllerUser)
                             throw new Error("Receipt status timeout")
                         }
 
