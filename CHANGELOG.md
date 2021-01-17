@@ -383,3 +383,7 @@
 
 * new terminals
 
+# 1.4.3 - Release
+
+* fix logs
+
