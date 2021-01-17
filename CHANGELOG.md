@@ -387,3 +387,7 @@
 
 * fix logs
 
+# 1.4.4 - Release
+
+* fix controller filter
+

@@ -329,7 +329,7 @@ class ControllerService {
                 if(!machine) continue
                 let status = await this.redis.get("terminal_status_" + machine.id)
                 if(!status) status = "24H"
-                if(status === terminalStatus && controller.bankTerminalMode !== "NO_BANK_TERMINAL"){
+                if(status === terminalStatus ){  //&& controller.bankTerminalMode !== "NO_BANK_TERMINAL"
                     controllersFiltred.push(controller)
                 }
             }
