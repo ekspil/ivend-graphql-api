@@ -60,6 +60,7 @@ const Info = require("./models/sequelize/Info")
 const Instr = require("./models/sequelize/Instr")
 const PartnerSettings = require("./models/sequelize/PartnerSettings")
 const PartnerFee = require("./models/sequelize/PartnerFee")
+const AdminStatistic = require("./models/sequelize/AdminStatistic")
 
 
 
@@ -135,6 +136,7 @@ class App {
         const EncashmentModel = sequelize.define("encashments", Encashment, {timestamps: false})
         const PartnerSettingsModel = sequelize.define("partner_settings", PartnerSettings)
         const PartnerFeeModel = sequelize.define("partner_fees", PartnerFee)
+        const AdminStatisticModel = sequelize.define("admin_statistics", AdminStatistic)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -329,6 +331,7 @@ class App {
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.userService = new UserService({
             UserModel,
+            AdminStatisticModel,
             ItemModel, ButtonItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel,
             redis,
             machineService: services.machineService,

@@ -19,7 +19,7 @@ const microservices = require("../utils/microservices")
 
 class UserService {
 
-    constructor({UserModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel}) {
+    constructor({UserModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, AdminStatisticModel}) {
         this.User = UserModel
         this.redis = redis
 
@@ -34,6 +34,7 @@ class UserService {
         this.MachineGroupModel = MachineGroupModel
         this.KktModel = KktModel
         this.ButtonItemModel = ButtonItemModel
+        this.AdminStatistic = AdminStatisticModel
 
         this.machineService = machineService
         this.notificationSettingsService = notificationSettingsService
@@ -57,6 +58,33 @@ class UserService {
             throw new NotAuthorized()
         }
         return await microservices.notification.sendEmail(input, user)
+    }
+
+    async getAdminStatistic(input, user) {
+        if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
+            throw new NotAuthorized()
+        }
+
+        const orderData = ["id", "DESC"]
+        const data = await this.AdminStatistic.findOne({
+            order: [
+                orderData
+            ]
+        })
+
+        if(!data) {
+            throw new Error("No statistic")
+        }
+        const statTime = new Date(data.createdAt).getTime()
+        const nowTime = new Date().getTime()
+        const result = (Number(nowTime) - Number(statTime))
+        if (result > 25 * 60 * 60 * 1000){
+            data.informationStatus = false
+        }
+        else {
+            data.informationStatus = true
+        }
+        return data
     }
 
 

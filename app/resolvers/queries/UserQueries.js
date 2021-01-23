@@ -1,4 +1,5 @@
 const UserDTO = require("../../models/dto/UserDTO")
+const AdminStatisticDTO = require("../../models/dto/AdminStatisticDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const UserNotFound = require("../../errors/UserNotFound")
 
@@ -12,6 +13,16 @@ function UserQueries({userService}) {
         }
 
         return new UserDTO(user)
+    }
+
+    const getAdminStatistic = async (root, args, context) => {
+        const data = await userService.getAdminStatistic(context.user)
+
+        if (!data) {
+            throw new UserNotFound()
+        }
+
+        return new AdminStatisticDTO(data)
     }
 
     const getAllUsers = async (root, args, context) => {
@@ -37,7 +48,8 @@ function UserQueries({userService}) {
     return {
         getProfile,
         getAllUsers,
-        getLegalInfoByUserId
+        getLegalInfoByUserId,
+        getAdminStatistic
     }
 
 }

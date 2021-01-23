@@ -692,6 +692,23 @@ const typeDefs = gql`
         timestamp: Timestamp!
     }
 
+    type AdminStatistic {
+        id: Int!
+        billingAmount: Float!
+        billingBalance: Float!
+        billingCredit: Float!
+
+        controllersCount: Int!
+        controllersDisabled: Int!
+        controllersDisconnected: Int!
+
+        kktsCount: Int!
+        kktsNormal: Int!
+        kktsError: Int!
+
+        informationStatus: Boolean!
+    }
+
     input CreateMachineInput {
         number: String!
         name: String!
@@ -767,6 +784,7 @@ const typeDefs = gql`
         getInstrById(id: Int!): Instr
         getAllInstr: [Instr]
         getPartnerFee(userId: Int!): PartnerFee
+        getAdminStatistic: AdminStatistic
     }
 
     input AuthControllerInput {
