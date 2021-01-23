@@ -60,8 +60,8 @@ class UserService {
         return await microservices.notification.sendEmail(input, user)
     }
 
-    async getAdminStatistic(input, user) {
-        if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
+    async getAdminStatistic(user) {
+        if(!user || !user.checkPermission(Permission.GET_ALL_USERS)){
             throw new NotAuthorized()
         }
 
