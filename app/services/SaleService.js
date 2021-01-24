@@ -368,10 +368,13 @@ class SaleService {
 
     }
 
-    async getSales({offset, limit, machineId, itemId, user}) {
+    async getSales({offset, limit, machineId, itemId, user, period}) {
         if (!user || !user.checkPermission(Permission.GET_SALES)) {
             throw new NotAuthorized()
         }
+
+        const {sequelize} = this.Sale
+        const {Op} = sequelize
 
         if (!limit) {
             limit = Number(process.env.PAGINATION_DEFAULT_LIMIT)
@@ -389,6 +392,19 @@ class SaleService {
 
         if (itemId) {
             where.item_id = itemId
+        }
+
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
         }
 
         return await this.Sale.findAll({

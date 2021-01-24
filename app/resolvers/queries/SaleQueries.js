@@ -4,9 +4,9 @@ function SaleQueries({saleService}) {
 
     const getSales = async (root, args, context) => {
         const {user} = context
-        const {offset, limit, machineId, itemId} = args
+        const {offset, limit, machineId, itemId, period} = args
 
-        const sales = await saleService.getSales({offset, limit, machineId, itemId, user})
+        const sales = await saleService.getSales({offset, limit, machineId, itemId, user, period})
 
         return sales.map(sale => (new SaleDTO(sale)))
     }
