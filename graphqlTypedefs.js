@@ -124,6 +124,7 @@ const typeDefs = gql`
         dex2Status: BusStatus!,
         exeStatus: BusStatus!,
         mdbStatus: BusStatus!,
+        attentionRequired: Boolean,
         signalStrength: SignalStrength!,
         registrationTime: Timestamp!
     }
@@ -341,6 +342,7 @@ const typeDefs = gql`
         billAcceptorStatus: BusStatus!,
         coinAmount: Int!,
         billAmount: Int!,
+        attentionRequired: Int,
         dex1Status: BusStatus!,
         dex2Status: BusStatus!,
         exeStatus: BusStatus!,

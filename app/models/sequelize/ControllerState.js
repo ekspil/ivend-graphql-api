@@ -27,6 +27,10 @@ const ControllerState = {
         allowNull: false,
         field: "bill_amount"
     },
+    attentionRequired: {
+        type: Sequelize.DataTypes.BOOLEAN,
+        field: "attention_required"
+    },
     dex1Status: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,

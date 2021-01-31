@@ -1,5 +1,5 @@
 class ControllerState {
-    constructor(id, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime, controller) {
+    constructor(id, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime, controller, attentionRequired) {
         this.id = id
         this.coinAcceptorStatus = coinAcceptorStatus
         this.billAcceptorStatus = billAcceptorStatus
@@ -12,6 +12,7 @@ class ControllerState {
         this.signalStrength = signalStrength
         this.registrationTime = registrationTime
         this.controller = controller
+        this.attentionRequired = attentionRequired
     }
 
 }

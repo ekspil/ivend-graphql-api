@@ -633,7 +633,8 @@ class ControllerService {
             dex2Status,
             exeStatus,
             mdbStatus,
-            signalStrength
+            signalStrength,
+            attentionRequired
         } = controllerStateInput
 
 
@@ -686,6 +687,7 @@ class ControllerService {
             controllerState.signalStrength = signalStrength
             controllerState.registrationTime = new Date()
             controllerState.controller_id = controller.id
+            controllerState.attentionRequired = Boolean(attentionRequired)
 
             const machineError = await this.redis.get("machine_error_" + machine.id)
             if(machineError !== "NO SALES 24H"){
@@ -702,6 +704,7 @@ class ControllerService {
             }
 
             controller.connected = true
+
             await controller.save({transaction})
 
             controller.last_state_id = controllerState.id

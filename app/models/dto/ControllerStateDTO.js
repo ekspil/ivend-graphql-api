@@ -1,6 +1,6 @@
 class ControllerStateDTO {
 
-    constructor({id, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime}) {
+    constructor({id, coinAcceptorStatus, billAcceptorStatus, coinAmount, billAmount, dex1Status, dex2Status, exeStatus, mdbStatus, signalStrength, registrationTime, attentionRequired}) {
         this.id = id
         this.coinAcceptorStatus = coinAcceptorStatus
         this.billAcceptorStatus = billAcceptorStatus
@@ -12,6 +12,7 @@ class ControllerStateDTO {
         this.mdbStatus = mdbStatus
         this.signalStrength = signalStrength
         this.registrationTime = registrationTime
+        this.attentionRequired = attentionRequired
     }
 }
 
