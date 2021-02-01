@@ -539,6 +539,7 @@ class ControllerService {
 
         const json = await this.redis.get("controller_last_state_" + id)
         const parse = JSON.parse(json)
+        if(!parse) return null
         parse.registrationTime = new Date(parse.registrationTime)
         return parse
     }
