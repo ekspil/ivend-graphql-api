@@ -33,6 +33,11 @@ class SaleService {
         this.machineService = machineService
         this.kktService = kktService
 
+        this.arrayRandElement = (arr) => {
+            let rand = Math.floor(Math.random() * arr.length)
+            return arr[rand]
+        }
+
         this.createSale = this.createSale.bind(this)
         this.registerSale = this.registerSale.bind(this)
         this.getLastSale = this.getLastSale.bind(this)
@@ -231,9 +236,11 @@ class SaleService {
             const userKkts = await this.kktService.getUserKkts(controllerUser)
             const activatedKkts = userKkts.filter(kkt => kkt.kktActivationDate)
 
-            const [kkt] = activatedKkts.filter(kkt => kkt.id === machine.kktId || machine.kktId === 0)
 
-            if (activatedKkts.length) {
+            const kktArray = activatedKkts.filter(kkt => kkt.id === machine.kktId || Number(machine.kktId) === 0)
+
+            if (kktArray.length) {
+                const kkt = this.arrayRandElement(kktArray)
                 const {inn, sno, companyName} = legalInfo
 
                 const place = machine.place || "Торговый автомат"

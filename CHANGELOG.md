@@ -401,3 +401,7 @@
 
 * fix
 
+# 1.4.8 - Hotfix
+
+* fix kkt selection error
+
