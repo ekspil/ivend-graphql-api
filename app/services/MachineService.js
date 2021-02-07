@@ -278,7 +278,21 @@ class MachineService {
         const machine = await this.Machine.findOne({where})
         if(!machine) return null
         const controller = await machine.getController()
-        machine.kktStatus = await this.redis.get("kkt_status_" + machine.id)
+
+        let kktId = 0
+        if(machine.kktId){
+            kktId = machine.kktId
+        }
+        else{
+            const userKkts = await this.kktService.getUserKkts(user)
+            const [activatedKkt] = userKkts.filter(kkt => kkt.kktActivationDate)
+            if(activatedKkt) {
+                kktId = activatedKkt.id
+            }
+        }
+
+
+        machine.kktStatus = await this.redis.get("kkt_status_" + kktId)
         machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
         machine.encashment = await this.redis.get("machine_encashment_" + machine.id)
         machine.error = await this.redis.get("machine_error_" + machine.id)

@@ -409,3 +409,7 @@
 
 * fix sale reject error
 
+# 1.4.10 - Hotfix
+
+* fix kkt status error
+
