@@ -417,3 +417,7 @@
 
 * fix aggregate role
 
+# 1.4.12 - Hotfix
+
+* fix aggregate role
+
