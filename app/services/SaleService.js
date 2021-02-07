@@ -132,7 +132,7 @@ class SaleService {
 
             if (!buttons.some((buttonItem) => Number(buttonItem.buttonId) === buttonId)) {
                 const name = `Товар ${buttonId}`
-                const itemUser = itemMatrix.getUser()
+                const itemUser = await itemMatrix.getUser()
                 itemUser.checkPermission = () => true
 
                 const item = await this.itemService.createItem({name}, itemUser, transaction)

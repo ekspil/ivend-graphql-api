@@ -161,7 +161,9 @@ class App {
 
         ButtonItemModel.belongsTo(ItemMatrixModel, {foreignKey: "item_matrix_id"})
 
-        ItemMatrixModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        ItemMatrixModel.belongsTo(UserModel, {
+            foreignKey: "user_id",
+            as: "user"})
         ItemMatrixModel.hasMany(ButtonItemModel, {
             as: "buttons",
             foreignKey: "item_matrix_id"
