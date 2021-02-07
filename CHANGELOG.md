@@ -413,3 +413,7 @@
 
 * fix kkt status error
 
+# 1.4.11 - Hotfix
+
+* fix aggregate role
+

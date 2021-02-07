@@ -216,6 +216,7 @@ const CLOSED = [
 
 const AGGREGATE = [
     Permission.CREATE_ITEM,
+    Permission.GET_USER_KKTS,
     Permission.GET_CONTROLLER_BY_ID,
     Permission.GET_CONTROLLER_BY_UID,
     Permission.AUTH_CONTROLLER,
