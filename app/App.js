@@ -321,6 +321,7 @@ class App {
             itemMatrixService: services.itemMatrixService,
             itemService: services.itemService,
             controllerService: services.controllerService,
+            kktService: services.kktService,
             redis,
             SaleModel,
             TempMachineModel

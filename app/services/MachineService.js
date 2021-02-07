@@ -14,7 +14,7 @@ const Permission = require("../enum/Permission")
 
 class MachineService {
 
-    constructor({MachineModel, redis, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService, itemService, SaleModel}) {
+    constructor({MachineModel, redis, EncashmentModel, MachineGroupModel, MachineTypeModel, MachineLogModel, equipmentService, itemMatrixService, controllerService, itemService, SaleModel, kktService}) {
         this.Machine = MachineModel
         this.Encashment = EncashmentModel
         this.MachineGroup = MachineGroupModel
@@ -23,6 +23,7 @@ class MachineService {
         this.equipmentService = equipmentService
         this.itemMatrixService = itemMatrixService
         this.itemService = itemService
+        this.kktService = kktService
         this.controllerService = controllerService
         this.redis = redis
         this.Sale = SaleModel
@@ -206,8 +207,20 @@ class MachineService {
 
             const [controller] = controllers.filter(control => control.id === machine.controller_id)
             if(!controller) return machine
+            let kktId = 0
 
-            machine.kktStatus = await this.redis.get("kkt_status_" + machine.id)
+            if(machine.kktId){
+                kktId = machine.kktId
+            }
+            else{
+                const userKkts = await this.kktService.getUserKkts(user)
+                const [activatedKkt] = userKkts.filter(kkt => kkt.kktActivationDate)
+                if(activatedKkt) {
+                    kktId = activatedKkt.id
+                }
+            }
+
+            machine.kktStatus = await this.redis.get("kkt_status_" + kktId)
             machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
             machine.encashment = await this.redis.get("machine_encashment_" + machine.id)
             machine.error = await this.redis.get("machine_error_" + machine.id)
@@ -264,6 +277,7 @@ class MachineService {
 
         const machine = await this.Machine.findOne({where})
         if(!machine) return null
+        const controller = await machine.getController()
         machine.kktStatus = await this.redis.get("kkt_status_" + machine.id)
         machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
         machine.encashment = await this.redis.get("machine_encashment_" + machine.id)
@@ -273,6 +287,12 @@ class MachineService {
         if(!machine.terminalStatus)  machine.terminalStatus = "24H"
         if(!machine.encashment) machine.encashment = "31D"
         if(!machine.error)  machine.error = "OK"
+
+        if(controller){
+            if(controller.fiscalizationMode === "NO_FISCAL") machine.kktStatus = "ОТКЛ"
+            if(controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false") machine.terminalStatus += " (100руб/мес)"
+            if(controller.bankTerminalMode ==="NO_BANK_TERMINAL") machine.terminalStatus = "ОТКЛ"
+        }
 
         return machine
     }

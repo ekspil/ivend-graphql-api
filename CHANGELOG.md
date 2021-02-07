@@ -405,3 +405,7 @@
 
 * fix kkt selection error
 
+# 1.4.9 - Hotfix
+
+* fix sale reject error
+

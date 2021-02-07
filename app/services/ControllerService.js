@@ -712,8 +712,6 @@ class ControllerService {
 
             controller.connected = true
 
-            await controller.save({transaction})
-
             controller.last_state_id = controllerState.id
 
             return await controller.save({transaction})

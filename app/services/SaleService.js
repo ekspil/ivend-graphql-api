@@ -175,6 +175,7 @@ class SaleService {
             sale.item_id = itemId
             sale.machine_id = machine.id
             if (!controller.connected) {
+                controllerUser.checkPermission = () => true
                 await this.machineService.addLog(machine.id, `Связь восстановлена`, MachineLogType.CONNECTION, controllerUser, transaction)
             }
             controller.connected = true
@@ -290,13 +291,13 @@ class SaleService {
                         receipt = await microservices.fiscal.getReceiptById(receiptId)
 
                         if (new Date() > timeoutDate) {
-                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
+                            await this.redis.set("kkt_status_" + kkt.id, `ERROR`, "EX", 24 * 60 * 60)
                             await this.machineService.addLog(machine.id, `Таймаут ожидания регистрации чека`, MachineLogType.KKT, controllerUser)
                             throw new Error("Receipt status timeout")
                         }
 
                         if (receipt.status === "ERROR") {
-                            await this.redis.set("kkt_status_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
+                            await this.redis.set("kkt_status_" + kkt.id, `ERROR`, "EX", 24 * 60 * 60)
                             await this.machineService.addLog(machine.id, `Ошибка отправки чека`, MachineLogType.KKT, controllerUser)
                             throw new Error("Receipt failed to process")
                         }
