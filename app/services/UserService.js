@@ -591,7 +591,7 @@ class UserService {
         if(user.role === "PARTNER"){
             where.partnerId = user.id
         }
-        if(user.role === "VENDOR"){
+        if(role === "VENDOR"){
             where.role = {
                 [Op.in]: ["VENDOR", "PARTNER"]
             }
