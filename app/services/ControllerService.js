@@ -707,6 +707,15 @@ class ControllerService {
                 //add log connection regain
                 await this.machineService.addLog(machine.id, `Требуется внимание`, MachineLogType.BUS_ERROR, machineUser, transaction)
                 await this.redis.set("machine_error_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
+
+                if(lastState.attentionRequired !== controllerState.attentionRequired){
+                    if(controllerState.attentionRequired){
+                        await this.redis.set("MACHINE_ATTENTION_REQUIRED_NOTIFICATION_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
+                    }
+                    else {
+                        await this.redis.set("MACHINE_ATTENTION_REQUIRED_NOTIFICATION_" + machine.id, `OK`, "EX", 24 * 60 * 60)
+                    }
+                }
             }
 
 
