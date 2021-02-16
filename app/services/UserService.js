@@ -591,6 +591,11 @@ class UserService {
         if(user.role === "PARTNER"){
             where.partnerId = user.id
         }
+        if(user.role === "VENDOR"){
+            where.role = {
+                [Op.in]: ["VENDOR", "PARTNER"]
+            }
+        }
 
 
         let orderData = ["id", "DESC"]
