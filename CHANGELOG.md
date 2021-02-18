@@ -434,3 +434,8 @@
 
 * fix auto create item error
 
+
+# 1.4.15 - Hotfix
+
+* new controller columns
+
