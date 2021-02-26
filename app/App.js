@@ -304,6 +304,7 @@ class App {
             ControllerErrorModel,
             ControllerStateModel,
             UserModel,
+            MachineModel,
             RevisionModel,
             revisionService: services.revisionService,
             serviceService: services.serviceService,
