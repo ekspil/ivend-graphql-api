@@ -445,3 +445,8 @@
 
 * new machine columns
 
+
+# 1.4.17 - Hotfix
+
+* new machine columns
+
