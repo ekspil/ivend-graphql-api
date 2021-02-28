@@ -439,3 +439,9 @@
 
 * new controller columns
 
+
+
+# 1.4.16 - Hotfix
+
+* new machine columns
+
