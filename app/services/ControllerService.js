@@ -15,12 +15,13 @@ const {Op} = require("sequelize")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
         this.Controller = ControllerModel
         this.Sale = SaleModel
         this.ControllerState = ControllerStateModel
         this.ControllerError = ControllerErrorModel
         this.Item = ItemModel
+        this.Machine = MachineModel
         this.redis = redis
         this.User = UserModel
         this.Revision = RevisionModel
@@ -100,7 +101,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -149,6 +150,14 @@ class ControllerService {
         if (simCardNumber) {
             controller.simCardNumber = simCardNumber
         }
+
+        if (sim) {
+            controller.sim = simCardNumber
+        }
+
+        if (imsiTerminal) {
+            controller.imsiTerminal = imsiTerminal
+        }
         else if(simCardNumber === "false" || simCardNumber === "0" ){
             controller.simCardNumber = null
         }
@@ -156,6 +165,93 @@ class ControllerService {
         await controller.save()
 
         return this.getControllerById(id, user)
+    }
+
+    async editControllerGroupSettings(id, input, user) {
+        if (!user || !user.checkPermission(Permission.EDIT_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal} = input
+
+        const controllers = await this.getAllOfCurrentUser(user)
+        if(!controllers) return false
+
+        return this.Controller.sequelize.transaction(async (transaction) => {
+
+            for (let controller of controllers){
+                const machine = await this.Machine.findOne({
+                    transaction,
+                    where: {
+                        controller_id: controller.id
+                    }
+                })
+                if(Number(machine.machine_group_id) !== Number(id)) continue
+
+
+                if (revisionId) {
+                    const revision = await this.revisionService.getRevisionById(revisionId, user)
+
+                    if (!revision) {
+                        throw new RevisionNotFound()
+                    }
+
+                    controller.revision_id = revision.id
+                }
+
+                if (name) {
+                    controller.name = name
+                }
+
+                if (status) {
+                    controller.status = status
+                }
+
+                if (mode) {
+                    controller.mode = mode
+                }
+
+                if (readStatMode) {
+                    controller.readStatMode = readStatMode
+                }
+
+                if (bankTerminalMode) {
+                    controller.bankTerminalMode = bankTerminalMode
+                }
+
+                if (fiscalizationMode) {
+                    controller.fiscalizationMode = fiscalizationMode
+                }
+
+                if (remotePrinterId) {
+                    controller.remotePrinterId = remotePrinterId
+                }
+
+                if (simCardNumber) {
+                    controller.simCardNumber = simCardNumber
+                }
+
+                if (sim) {
+                    controller.sim = simCardNumber
+                }
+
+                if (imsiTerminal) {
+                    controller.imsiTerminal = imsiTerminal
+                }
+                else if(simCardNumber === "false" || simCardNumber === "0" ){
+                    controller.simCardNumber = null
+                }
+
+                await controller.save(transaction)
+
+            }
+
+            return true
+
+        })
+
+
+
     }
 
     async deleteController(id, user) {

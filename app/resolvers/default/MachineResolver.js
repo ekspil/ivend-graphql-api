@@ -20,6 +20,21 @@ function MachineResolver({machineService, saleService, kktService}) {
 
         return new MachineGroupDTO(machineGroup)
     }
+    const group2 = async (obj, args, context) => {
+        const {user} = context
+
+        const machineGroup = await machineService.getMachineGroupById(obj.machineGroup2Id, user)
+        if(!machineGroup) return {id: null, name: "Нет"}
+        return new MachineGroupDTO(machineGroup)
+    }
+    const group3 = async (obj, args, context) => {
+        const {user} = context
+
+        const machineGroup = await machineService.getMachineGroupById(obj.machineGroup3Id, user)
+        if(!machineGroup) return {id: null, name: "Нет"}
+
+        return new MachineGroupDTO(machineGroup)
+    }
 
     const equipment = async (obj, args, context) => {
         const {user} = context
@@ -318,6 +333,8 @@ function MachineResolver({machineService, saleService, kktService}) {
         salesSummary,
         salesSummaryOfItem,
         group,
+        group2,
+        group3,
         equipment,
         type,
         logs,

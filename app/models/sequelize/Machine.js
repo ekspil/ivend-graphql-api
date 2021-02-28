@@ -19,6 +19,16 @@ const Machine = {
         type: Sequelize.DataTypes.INTEGER,
         allowNull: true
     },
+    machineGroup2Id: {
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: true,
+        field: "machine_group2_id"
+    },
+    machineGroup3Id: {
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: true,
+        field: "machine_group3_id"
+    },
     place: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false

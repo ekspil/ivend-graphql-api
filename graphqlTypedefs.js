@@ -8,6 +8,8 @@ const typeDefs = gql`
         id: Int!
         uid: String!
         imsi: String
+        sim: String
+        imsiTerminal: String
         services: [ControllerService!]
         status: ControllerStatus!
         mode: ControllerMode!
@@ -148,6 +150,8 @@ const typeDefs = gql`
         revisionId: Int
         remotePrinterId: String
         simCardNumber: String
+        sim: String
+        imsiTerminal: String
     }
 
     input CreateItemMatrixInput {
@@ -627,8 +631,8 @@ const typeDefs = gql`
     }
 
     type MachineGroup {
-        id: Int!
-        name: String!
+        id: Int
+        name: String
     }
 
     type MachineType {
@@ -665,6 +669,8 @@ const typeDefs = gql`
         error: String
         encashment: String
         group: MachineGroup!
+        group2: MachineGroup
+        group3: MachineGroup
         equipment: Equipment!
         itemMatrix: ItemMatrix
         type: MachineType!
@@ -717,6 +723,8 @@ const typeDefs = gql`
         name: String!
         place: String!
         groupId: Int!
+        group2Id: Int
+        group3Id: Int
         typeId: Int!
         equipmentId: Int!
         controllerId: Int
@@ -729,9 +737,18 @@ const typeDefs = gql`
         name: String
         place: String
         groupId: Int
+        group2Id: Int
+        group3Id: Int
         typeId: Int
         equipmentId: Int
         controllerId: Int
+        kktId: Int
+    }
+
+    input GroupEditMachineInput {
+        place: String
+        typeId: Int
+        equipmentId: Int
         kktId: Int
     }
 
@@ -897,6 +914,7 @@ const typeDefs = gql`
         deleteController(id: Int!): Machine
         createMachine(input: CreateMachineInput!): Machine
         editMachine(input: EditMachineInput!): Machine
+        editMachineGroupSettings(id:Int, input: GroupEditMachineInput!): Boolean
         deleteMachine(id: Int!): Machine
         createMachineType(input: CreateMachineTypeInput!): MachineType
         createMachineGroup(input: CreateMachineGroupInput!): MachineGroup
@@ -906,6 +924,7 @@ const typeDefs = gql`
         removeButtonFromItemMatrix(input: RemoveButtonFromItemMatrixInput!): ItemMatrix
         createRevision(input: CreateRevisionInput!): Revision
         editController(id:Int, input: EditControllerInput!): Controller
+        editControllerGroupSettings(id:Int, input: EditControllerInput!): Boolean
         updateNotificationSetting(input: UpdateNotificationSettingInput!): NotificationSetting
         createNotificationSetting(input: CreateNotificationSettingInput!): NotificationSetting
         insertTelegramToNotificationSetting(input: NotificationSettingTelegramChat!): Boolean

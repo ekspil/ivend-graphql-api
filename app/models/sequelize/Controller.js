@@ -33,6 +33,21 @@ const Controller = {
         allowNull: true,
         field: "sim_card_number"
     },
+    imsi: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        field: "imsi"
+    },
+    sim: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        field: "sim"
+    },
+    imsiTerminal: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        field: "imsi_terminal"
+    },
     readStatMode: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: true,

@@ -55,7 +55,7 @@ class MachineService {
         }
 
         return this.Machine.sequelize.transaction(async (transaction) => {
-            const {number, name, place, groupId, typeId, equipmentId, controllerId, kktId} = input
+            const {number, name, place, groupId, group2Id, group3Id, typeId, equipmentId, controllerId, kktId} = input
 
             let machine = new Machine()
 
@@ -70,6 +70,8 @@ class MachineService {
 
 
             const machineGroup = await this.getMachineGroupById(groupId, user)
+            const machineGroup2 = await this.getMachineGroupById(group2Id, user)
+            const machineGroup3 = await this.getMachineGroupById(group3Id, user)
 
             if (!machineGroup) {
                 throw new MachineGroupNotFound()
@@ -89,6 +91,8 @@ class MachineService {
 
             machine.equipment_id = equipment.id
             machine.machine_group_id = machineGroup.id
+            machine.machineGroup2Id = machineGroup2.id
+            machine.machineGroup3Id = machineGroup3.id
             machine.machine_type_id = machineType.id
 
             machine = await this.Machine.create(machine, {transaction})
@@ -114,7 +118,7 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        const {machineId, controllerId, number, name, place, groupId, typeId, kktId, equipmentId} = input
+        const {machineId, controllerId, number, name, place, groupId, group2Id, group3Id, typeId, kktId, equipmentId} = input
 
         const machine = await this.getMachineById(machineId, user)
 
@@ -142,6 +146,26 @@ class MachineService {
             }
 
             machine.machine_group_id = machineGroup.id
+        }
+
+        if (group2Id) {
+            const machineGroup = await this.getMachineGroupById(group2Id, user)
+
+            if (!machineGroup) {
+                throw new MachineGroupNotFound()
+            }
+
+            machine.machineGroup2Id = machineGroup.id
+        }
+
+        if (group3Id) {
+            const machineGroup = await this.getMachineGroupById(group3Id, user)
+
+            if (!machineGroup) {
+                throw new MachineGroupNotFound()
+            }
+
+            machine.machineGroup3Id = machineGroup.id
         }
 
 
@@ -182,18 +206,67 @@ class MachineService {
         return await machine.save()
     }
 
+
+    async editMachineGroupSettings(id, input, user) {
+        if (!user || !user.checkPermission(Permission.EDIT_MACHINE)) {
+            throw new NotAuthorized()
+        }
+
+        const {place, typeId, kktId, equipmentId} = input
+
+        const machines = await this.Machine.findAll({
+            where: {
+                machine_group_id: id,
+                user_id: user.id
+            }
+        })
+
+        return this.Machine.sequelize.transaction(async (transaction) => {
+            for (let machine of machines){
+
+                if (equipmentId) {
+
+                    machine.equipment_id = equipmentId
+                }
+
+                if (typeId) {
+                    machine.machine_type_id = typeId
+                }
+
+
+                if (place) {
+                    machine.place = place
+                }
+
+                machine.kktId = kktId
+
+                await machine.save({transaction})
+            }
+
+            return true
+        })
+
+
+    }
+
     async getAllMachinesOfUser(user, machineGroupId) {
         if (!user || !user.checkPermission(Permission.GET_ALL_SELF_MACHINES)) {
             throw new NotAuthorized()
         }
-
-        const where = {
-            user_id: user.id
-        }
-
+        let where = {}
+        const {sequelize} = this.Machine
+        const {Op} = sequelize
         if(machineGroupId){
-            where.machine_group_id = machineGroupId
+            where = {
+                [Op.or]: [{ machine_group_id: machineGroupId }, { machineGroup2Id: machineGroupId }, { machineGroup3Id: machineGroupId }],
+            }
+
         }
+
+        where.user_id=user.id
+
+
+
         const machines = await this.Machine.findAll({
             where
         })
@@ -323,7 +396,17 @@ class MachineService {
         machineGroup.name = name
         machineGroup.user_id = user.id
 
-        return await this.MachineGroup.create(machineGroup, {transaction})
+        const exist = await this.MachineGroup.findOne({
+            where: {
+                user_id: user.id,
+                name
+            }
+        })
+        if (exist) {
+            throw new Error("Group Already Exist")
+        }
+
+        return this.MachineGroup.create(machineGroup, {transaction})
     }
 
     async getMachineGroupById(id, user) {

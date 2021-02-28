@@ -25,6 +25,17 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
     }
 
 
+
+    const editControllerGroupSettings = async (root, args, context) => {
+        const {id, input} = args
+        const {user} = context
+
+        await controllerService.editControllerGroupSettings(id, input, user)
+
+        return true
+    }
+
+
     const updatePrinterOnController = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -104,7 +115,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         registerSale,
         createRevision,
         registerEvent,
-        updatePrinterOnController
+        updatePrinterOnController,
+        editControllerGroupSettings
     }
 
 }
