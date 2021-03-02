@@ -454,3 +454,7 @@
 
 * new fiches
 
+# 1.5.2 - Release
+
+* new fiches
+
