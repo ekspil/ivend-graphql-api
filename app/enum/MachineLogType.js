@@ -7,7 +7,10 @@ const MachineLogType = {
     "KKT": "KKT",
     "ALL": "ALL",
     "TERMINAL": "TERMINAL",
-    "ENCASHMENT": "ENCASHMENT",
+    "NO_COINS_24H": "NO_COINS_24H",
+    "NO_CASH_24H": "NO_CASH_24H",
+    "NO_CASHLESS_24H": "NO_CASHLESS_24H",
+    "NO_RECEIPT_24H": "NO_RECEIPT_24H",
 }
 
 

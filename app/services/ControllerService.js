@@ -798,10 +798,11 @@ class ControllerService {
             if (lastState && !controller.connected) {
                 //add log connection regain
                 await this.machineService.addLog(machine.id, `Связь восстановлена`, MachineLogType.CONNECTION, machineUser, transaction)
+                await this.redis.set("controller_connected_back" + machine.id, `OK`, "EX", 24 * 60 * 60)
             }
             if (controllerState.attentionRequired) {
                 //add log connection regain
-                await this.machineService.addLog(machine.id, `Требуется внимание`, MachineLogType.BUS_ERROR, machineUser, transaction)
+                await this.machineService.addLog(machine.id, `Автомат не работает`, MachineLogType.BUS_ERROR, machineUser, transaction)
                 await this.redis.set("machine_error_" + machine.id, `ERROR`, "EX", 24 * 60 * 60)
 
                 if(lastState.attentionRequired !== controllerState.attentionRequired){
@@ -810,6 +811,8 @@ class ControllerService {
                     }
                     else {
                         await this.redis.set("MACHINE_ATTENTION_REQUIRED_NOTIFICATION_" + machine.id, `OK`, "EX", 24 * 60 * 60)
+                        await this.machineService.addLog(machine.id, `Автомат работает`, MachineLogType.BUS_ERROR, machineUser, transaction)
+
                     }
                 }
             }

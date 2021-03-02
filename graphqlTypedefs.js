@@ -291,6 +291,11 @@ const typeDefs = gql`
         PINPAD_ERROR
         CASH_ACCEPTOR_ERROR
         MACHINE_ATTENTION_REQUIRED
+        NO_CASH_24H
+        NO_COINS_24H
+        NO_CASHLESS_24H
+        NO_RECEIPT_24H
+        ALARM_SMS
     }
 
     type Item {
