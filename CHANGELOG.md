@@ -450,3 +450,7 @@
 
 * new machine columns
 
+# 1.5.1 - Release
+
+* new fiches
+
