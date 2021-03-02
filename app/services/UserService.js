@@ -433,6 +433,9 @@ class UserService {
         if (!user || !passwordMatched) {
             throw new PhonePasswordMatchFailed()
         }
+        if (user.role === "CLOSED") {
+            throw new Error("CLOSED_USER")
+        }
 
         if(user.role === "ADMIN" && user.phone !== "9147073304"){
 
