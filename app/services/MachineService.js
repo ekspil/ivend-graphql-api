@@ -70,11 +70,29 @@ class MachineService {
 
 
             const machineGroup = await this.getMachineGroupById(groupId, user)
-            const machineGroup2 = await this.getMachineGroupById(group2Id, user)
-            const machineGroup3 = await this.getMachineGroupById(group3Id, user)
 
             if (!machineGroup) {
                 throw new MachineGroupNotFound()
+            }
+
+            if (group2Id) {
+                const machineGroup2 = await this.getMachineGroupById(group2Id, user)
+
+                if (!machineGroup2) {
+                    throw new MachineGroupNotFound()
+                }
+
+                machine.machineGroup2Id = machineGroup2.id
+            }
+
+            if (group3Id) {
+                const machineGroup3 = await this.getMachineGroupById(group3Id, user)
+
+                if (!machineGroup3) {
+                    throw new MachineGroupNotFound()
+                }
+
+                machine.machineGroup3Id = machineGroup3.id
             }
 
             const machineType = await this.getMachineTypeById(typeId, user)
@@ -91,8 +109,6 @@ class MachineService {
 
             machine.equipment_id = equipment.id
             machine.machine_group_id = machineGroup.id
-            machine.machineGroup2Id = machineGroup2.id
-            machine.machineGroup3Id = machineGroup3.id
             machine.machine_type_id = machineType.id
 
             machine = await this.Machine.create(machine, {transaction})

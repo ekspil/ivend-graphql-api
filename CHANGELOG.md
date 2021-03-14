@@ -458,3 +458,8 @@
 
 * new fiches
 
+
+# 1.5.3 - Hotfix
+
+* add machine error
+
