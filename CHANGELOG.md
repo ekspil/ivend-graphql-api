@@ -471,3 +471,7 @@
 
 * change qr options
 
+# 1.5.6 - Hotfix
+
+* change qr options
+

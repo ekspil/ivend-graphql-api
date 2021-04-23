@@ -6,7 +6,7 @@ module.exports = {
      * @returns {string}
      */
     getFiscalString: function (receipt) {
-        const {sno} = receipt
+        //const {sno} = receipt
         const {fiscalData} = receipt
         const {totalAmount, fnNumber, fiscalDocumentNumber, fiscalDocumentAttribute} = fiscalData
 
