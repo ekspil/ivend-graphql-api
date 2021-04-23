@@ -27,29 +27,29 @@ module.exports = {
 
         let n = 1
 
-        switch (sno) {
-            case "usn_income":
-                n = 1
-                break
-            case "usn_income_outcome":
-                n = 2
-                break
-            case "envd":
-                n = 3
-                break
-            case "esn":
-                n = 4
-                break
-            case "patent":
-                n = 5
-                break
-            case "osn":
-                n = 0
-                break
-            default:
-                n = 1
-                break
-        }
+        // switch (sno) {
+        //     case "usn_income":
+        //         n = 1
+        //         break
+        //     case "usn_income_outcome":
+        //         n = 2
+        //         break
+        //     case "envd":
+        //         n = 3
+        //         break
+        //     case "esn":
+        //         n = 4
+        //         break
+        //     case "patent":
+        //         n = 5
+        //         break
+        //     case "osn":
+        //         n = 0
+        //         break
+        //     default:
+        //         n = 1
+        //         break
+        // }
 
 
         return "t=" + t + "&s=" + s + "&fn=" + fn + "&i=" + i + "&fp=" + fp + "&n=" + n

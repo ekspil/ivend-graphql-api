@@ -467,3 +467,7 @@
 
 * reload
 
+# 1.5.5 - Hotfix
+
+* change qr options
+
