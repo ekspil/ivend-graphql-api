@@ -230,9 +230,12 @@ class MachineService {
 
         const {place, typeId, kktId, equipmentId} = input
 
+        const {sequelize} = this.Machine
+        const {Op} = sequelize
+
         const machines = await this.Machine.findAll({
             where: {
-                machine_group_id: id,
+                [Op.or]: [{machine_group_id: id}, {machine_group2_id: id}, {machine_group3_id: id}],
                 user_id: user.id
             }
         })

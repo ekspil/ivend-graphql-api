@@ -186,7 +186,7 @@ class ControllerService {
                         controller_id: controller.id
                     }
                 })
-                if(Number(machine.machine_group_id) !== Number(id)) continue
+                if(Number(machine.machine_group_id) !== Number(id) && Number(machine.machine_group2_id) !== Number(id)  && Number(machine.machine_group3_id) !== Number(id)  ) continue
 
 
                 if (revisionId) {

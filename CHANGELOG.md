@@ -475,3 +475,7 @@
 
 * change qr options
 
+# 1.5.7 - Hotfix
+
+* change groupSettings options
+
