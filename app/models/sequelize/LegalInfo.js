@@ -17,6 +17,13 @@ const LegalInfo = {
         allowNull: false,
         field: "city"
     },
+    kpp: {
+        type: Sequelize.DataTypes.TEXT,
+    },
+    timeZone: {
+        type: Sequelize.DataTypes.TEXT,
+        field: "time_zone"
+    },
     actualAddress: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false,

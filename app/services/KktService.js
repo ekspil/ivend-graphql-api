@@ -164,14 +164,23 @@ class KktService {
             })
         }
 
-        return await this.Kkt.findAll({
+        const answer =  await this.Kkt.findAll({
             where: {
-                user_id: user.id,
-                action: {
-                    [Op.ne]: "DELETE"
-                }
+                [Op.and]: [
+                    { user_id: user.id }, 
+                    { 
+                        action: {
+                            [Op.is]: null
+                        } 
+                    }]
+                // user_id: user.id,
+                // action: {
+                //     [Op.ne]: "DELETE"
+                // }
             }
         })
+
+        return answer
     }
 
     async getAllKkts(offset, limit, user) {

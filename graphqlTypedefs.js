@@ -522,6 +522,8 @@ const typeDefs = gql`
         city: String
         actualAddress: String
         inn: String
+        timeZone: String
+        kpp: String
         ogrn: String
         legalAddress: String
         director: String
@@ -547,6 +549,8 @@ const typeDefs = gql`
         contactPhone: String!
         contactEmail: String!
         sno: SNO!
+        timeZone: String!
+        kpp: String
     }
     input LegalInfoToUserInput {
         userId: Int!
@@ -563,6 +567,8 @@ const typeDefs = gql`
         contactPhone: String!
         contactEmail: String!
         sno: SNO!
+        timeZone: String!
+        kpp: String
     }
     
     type News {

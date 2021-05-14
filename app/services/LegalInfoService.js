@@ -19,7 +19,7 @@ class LegalInfoService {
 
         const {
             companyName, city, actualAddress, inn, ogrn, legalAddress, director,
-            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno
+            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno, kpp, timeZone
         } = input
 
         return await this.LegalInfo.sequelize.transaction(async (transaction) => {
@@ -37,6 +37,8 @@ class LegalInfoService {
             legalInfo.contactPhone = contactPhone
             legalInfo.contactEmail = contactEmail
             legalInfo.sno = sno
+            legalInfo.kpp = kpp
+            legalInfo.timeZone = timeZone
 
             //todo ensure not legal info already created for this user
             user.role = "VENDOR"
@@ -71,7 +73,7 @@ class LegalInfoService {
 
         const {
             companyName, city, actualAddress, inn, ogrn, legalAddress, director,
-            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno
+            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno, kpp, timeZone
         } = input
 
         legalInfo.companyName = companyName
@@ -89,6 +91,9 @@ class LegalInfoService {
         legalInfo.sno = sno
         user.inn = inn
         user.companyName = companyName
+
+        legalInfo.kpp = kpp
+        legalInfo.timeZone = timeZone
         await user.save()
         return await legalInfo.save()
     }
@@ -100,7 +105,7 @@ class LegalInfoService {
 
         const {
             userId, companyName, city, actualAddress, inn, ogrn, legalAddress, director,
-            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno
+            directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno, kpp, timeZone
         } = input
 
         const selectedUser = await this.User.findOne({
@@ -133,6 +138,9 @@ class LegalInfoService {
         legalInfo.contactPhone = contactPhone
         legalInfo.contactEmail = contactEmail
         legalInfo.sno = sno
+
+        legalInfo.kpp = kpp
+        legalInfo.timeZone = timeZone
         return await legalInfo.save()
     }
 

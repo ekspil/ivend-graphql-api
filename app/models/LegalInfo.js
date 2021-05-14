@@ -1,5 +1,5 @@
 class LegalInfo {
-    constructor(id, companyName, city, actualAddress, inn, ogrn, legalAddress, director, directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno) {
+    constructor(id, companyName, city, actualAddress, inn, ogrn, legalAddress, director, directorPhone, directorEmail, contactPerson, contactPhone, contactEmail, sno, kpp, timeZone) {
         this.id = id
         this.companyName = companyName
         this.city = city
@@ -14,6 +14,8 @@ class LegalInfo {
         this.contactPhone = contactPhone
         this.contactEmail = contactEmail
         this.sno = sno
+        this.kpp = kpp
+        this.timeZone = timeZone
     }
 }
 
