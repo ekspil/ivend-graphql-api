@@ -29,6 +29,11 @@ const Kkt = {
         allowNull: true,
         unique: false
     },
+    action: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false
+    },
     server: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,

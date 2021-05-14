@@ -3,7 +3,7 @@
 
 class KktDTO {
 
-    constructor({id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, kktLastBill, server, kktStatus}) {
+    constructor({id, action, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, kktLastBill, server, kktStatus}) {
         this.id = id
         this.inn = inn
         this.companyName = companyName
@@ -17,6 +17,7 @@ class KktDTO {
         this.kktOFDRegKey = kktOFDRegKey
         this.kktLastBill = kktLastBill
         this.server = server
+        this.action = action
     }
 }
 

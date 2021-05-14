@@ -1,6 +1,6 @@
 class Kkt {
 
-    constructor(id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, kktLastBill, server) {
+    constructor(id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, kktLastBill, server, action) {
         this.id = id
         this.kktModel = kktModel
         this.inn = inn
@@ -13,6 +13,7 @@ class Kkt {
         this.kktOFDRegKey = kktOFDRegKey
         this.kktLastBill = kktLastBill
         this.server = server
+        this.action = action
     }
 
 }

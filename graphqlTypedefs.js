@@ -234,6 +234,7 @@ const typeDefs = gql`
         kktLastBill: String
         kktStatus: String
         server: String
+        action: String
     }
 
     type User {
@@ -943,6 +944,7 @@ const typeDefs = gql`
         editKkt(input: EditKktInput!): Kkt
         kktPlusBill(fn: String!): Kkt
         deleteKkt(id: Int!): Boolean
+        userDeleteKkt(id: Int!): Boolean
         changeUserBalance(input: ChangeUserBalanceInput!): Float
         deleteNews(id: Int!): Boolean
         changeNews(input: NewsInput!): News

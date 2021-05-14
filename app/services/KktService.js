@@ -34,6 +34,22 @@ class KktService {
         return await kkt.destroy()
     }
 
+    async userDeleteKkt(id, user) {
+        if (!user || !user.checkPermission(Permission.UPDATE_KKT)) {
+            throw new NotAuthorized()
+        }
+
+        const kkt = await this.getKktById(id, user)
+
+        if (!kkt) {
+            throw new KktNotFound()
+        }
+
+        kkt.action = "DELETE"
+
+        return await kkt.save()
+    }
+
     async createKkt(input, user) {
         if (!user || !user.checkPermission(Permission.CREATE_KKT)) {
             throw new NotAuthorized()
@@ -134,17 +150,26 @@ class KktService {
             throw new NotAuthorized()
         }
 
+        const {sequelize} = this.Kkt
+        const {Op} = sequelize
+
         if(id){
             return await this.Kkt.findAll({
                 where: {
-                    user_id: id
+                    user_id: id,
+                    action: {
+                        [Op.ne]: "DELETE"
+                    }
                 }
             })
         }
 
         return await this.Kkt.findAll({
             where: {
-                user_id: user.id
+                user_id: user.id,
+                action: {
+                    [Op.ne]: "DELETE"
+                }
             }
         })
     }

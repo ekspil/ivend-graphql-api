@@ -21,6 +21,15 @@ function KktMutations({kktService}) {
         return true
     }
 
+    const userDeleteKkt = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        await kktService.userDeleteKkt(id, user)
+
+        return true
+    }
+
     const editKkt = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -41,7 +50,8 @@ function KktMutations({kktService}) {
         createKkt,
         editKkt,
         kktPlusBill,
-        deleteKkt
+        deleteKkt,
+        userDeleteKkt
     }
 
 }
