@@ -479,3 +479,7 @@
 
 * change groupSettings options
 
+# 1.5.8 - Hotfix
+
+* fix bugs
+
