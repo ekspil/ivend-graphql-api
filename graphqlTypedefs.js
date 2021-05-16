@@ -903,8 +903,8 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        sendNewsSMS(id: $id): Boolean
-        sendNewsEmail(id: $id): Boolean
+        sendNewsSMS(id: Int!): Boolean
+        sendNewsEmail(id: Int!): Boolean
         sendEmail(input: EmailInput!): Boolean
         updatePrinterOnController(input: UpdatePrinter!): Boolean
         randomAction: Boolean
