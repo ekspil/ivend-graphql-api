@@ -27,6 +27,22 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
 
     }
 
+    const sendNewsEmail = async (parent, args, context)=>{
+        const {id} = args
+        const {user} = context
+
+        return await userService.sendNewsEmail(id, user)
+
+    }
+
+    const sendNewsSMS = async (parent, args, context)=>{
+        const {id} = args
+        const {user} = context
+
+        return await userService.sendNewsSMS(id, user)
+
+    }
+
     const randomAction = async (parent, args, context)=>{
         const {user} = context
 
@@ -171,6 +187,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
 
 
     return {
+        sendNewsSMS,
+        sendNewsEmail,
         registerUser,
         editEmail,
         requestToken,

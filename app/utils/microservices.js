@@ -119,6 +119,62 @@ const sendChangePasswordEmail = async (email, token) => {
     }
 }
 
+const sendTextEmail = async (email, text) => {
+    const body = JSON.stringify({text, email})
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/TEXT_EMAIL`
+    const method = "POST"
+
+    const response = await fetch(url, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200:
+            const json = await response.json()
+            const {sent} = json
+
+            if (!sent) {
+                throw new EmailNotSent()
+            }
+
+            return
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+}
+
+const sendTextSMS = async (phone, text) => {
+    const body = JSON.stringify({text, phone})
+    const url = `${process.env.NOTIFICATION_URL}/api/v1/template/SMS_NEWS`
+    const method = "POST"
+
+    const response = await fetch(url, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200:
+            const json = await response.json()
+            const {sent} = json
+
+            if (!sent) {
+                throw new EmailNotSent()
+            }
+
+            return
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+}
+
 const sendEmail = async (input, user) => {
 
     let legalInfo = await user.getLegalInfo()
@@ -387,7 +443,9 @@ module.exports = {
         sendChangePasswordEmail,
         sendRememberPasswordEmail,
         sendEmail,
-        sendEmailOrder
+        sendEmailOrder,
+        sendTextEmail,
+        sendTextSMS
     },
     billing: {
         getServiceDailyPrice,

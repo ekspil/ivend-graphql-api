@@ -19,7 +19,7 @@ const microservices = require("../utils/microservices")
 
 class UserService {
 
-    constructor({UserModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, AdminStatisticModel}) {
+    constructor({UserModel, NewsModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, AdminStatisticModel}) {
         this.User = UserModel
         this.redis = redis
 
@@ -35,6 +35,7 @@ class UserService {
         this.KktModel = KktModel
         this.ButtonItemModel = ButtonItemModel
         this.AdminStatistic = AdminStatisticModel
+        this.News = NewsModel
 
         this.machineService = machineService
         this.notificationSettingsService = notificationSettingsService
@@ -58,6 +59,51 @@ class UserService {
             throw new NotAuthorized()
         }
         return await microservices.notification.sendEmail(input, user)
+    }
+
+    async sendNewsEmail(id, user) {
+        if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
+            throw new NotAuthorized()
+        }
+        const {sequelize} = this.User
+        const {Op} = sequelize
+        const users = await this.User.findAll({
+            where: {
+                [Op.or]: [{role: "VENDOR"}, {role: "PARTNER"}]
+            }
+        })
+
+        const news = await this.News.findOne({
+            where: {
+                id
+            }
+        })
+        for(let us of users){
+            await microservices.notification.sendTextEmail(us.email, news.text)
+        }
+        return true
+    }
+    async sendNewsSMS(id, user) {
+        if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
+            throw new NotAuthorized()
+        }
+        const {sequelize} = this.User
+        const {Op} = sequelize
+        const users = await this.User.findAll({
+            where: {
+                [Op.or]: [{role: "VENDOR"}, {role: "PARTNER"}]
+            }
+        })
+
+        const news = await this.News.findOne({
+            where: {
+                id
+            }
+        })
+        for(let us of users){
+            await microservices.notification.sendTextSMS(us.phone, news.text)
+        }
+        return true
     }
 
     async getAdminStatistic(user) {

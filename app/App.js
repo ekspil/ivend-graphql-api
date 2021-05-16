@@ -336,7 +336,7 @@ class App {
         services.userService = new UserService({
             UserModel,
             AdminStatisticModel,
-            ItemModel, ButtonItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel,
+            ItemModel, ButtonItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, NewsModel,
             redis,
             machineService: services.machineService,
             notificationSettingsService: services.notificationSettingsService
