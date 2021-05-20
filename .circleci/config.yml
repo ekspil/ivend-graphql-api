@@ -36,10 +36,10 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            docker build -t "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_TAG" .
             echo "docker login -u iam -p $YC_SERVICE_ACCOUNT cr.yandex"
             echo "test"
             docker login -u iam -p "$YC_SERVICE_ACCOUNT" cr.yandex
+            docker build -t "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_TAG" .
             docker push "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_TAG"
   docker_push_develop:
     docker:
