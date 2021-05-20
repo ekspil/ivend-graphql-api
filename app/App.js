@@ -74,10 +74,10 @@ const redis = new Redis({
     sentinels: [
         {host: process.env.REDIS_HOST, port: process.env.REDIS_PORT}
     ],
-    name: 'redis',
+    name: "redis",
     password: process.env.REDIS_PASSWORD,
-    role: 'master'
-});
+    role: "master"
+})
 
 
 const logger = require("my-custom-logger")
