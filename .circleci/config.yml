@@ -67,7 +67,10 @@ jobs:
           command: |
             curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
             export PATH=$PATH:/home/circleci/yandex-cloud/bin/
-            yc --help
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+            kubectl
+
 
   deploy_production:
     docker:
