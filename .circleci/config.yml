@@ -34,11 +34,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - deploy:
-          name: Push application Docker image1
+          name: Push application Docker image
           command: |
-            echo "docker login -u iam -p $YC_SERVICE_ACCOUNT cr.yandex"
-            echo "test"
-            docker login -u iam -p "$YC_SERVICE_ACCOUNT" cr.yandex
+            echo ${YC_SERVICE_ACCOUNT} | docker login -u json_key --password-stdin cr.yandex
             docker build -t "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_TAG" .
             docker push "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_TAG"
   docker_push_develop:
@@ -68,7 +66,7 @@ jobs:
           name: Deploy
           command: |
             curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-            source ~/.bashrc
+            source "/home/circleci/.bashrc
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             echo $YC_SERVICE_ACCOUNT > /tmp/key.json
             yc config profile create sa-profile &&
