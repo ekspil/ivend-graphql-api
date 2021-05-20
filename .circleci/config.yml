@@ -53,8 +53,8 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            echo "docker login -u iam -p $YC_SERVICE_ACCOUNT cr.yandex"
-            docker login --username iam --password $YC_SERVICE_ACCOUNT cr.yandex
+            echo "docker login -u json_key -p '$YC_SERVICE_ACCOUNT' cr.yandex"
+            docker login --username json_key --password '$YC_SERVICE_ACCOUNT' cr.yandex
             docker build -t "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_SHA1" .
             docker push "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_SHA1"
 
