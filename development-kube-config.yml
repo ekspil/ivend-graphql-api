@@ -40,3 +40,4 @@ spec:
               name: graphql-config
       imagePullSecrets:
       - name: gitlabregistrycred
+
