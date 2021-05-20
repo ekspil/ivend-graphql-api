@@ -34,7 +34,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - deploy:
-          name: Push application Docker image
+          name: Push application Docker image1
           command: |
             echo "docker login -u iam -p $YC_SERVICE_ACCOUNT cr.yandex"
             echo "test"
