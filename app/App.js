@@ -89,6 +89,7 @@ class App {
 
         const sequelizeOptions = {
             host: process.env.POSTGRES_HOST,
+            port: process.env.POSTGRES_PORT,
             dialect: "postgres",
             operatorsAliases: false,
             logging: process.env.NODE_ENV !== "production",
