@@ -26,7 +26,7 @@ jobs:
 
   docker_push_tagged:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: docker:19.03.13-git
 
     working_directory: ~/repo
 
@@ -49,13 +49,10 @@ jobs:
 
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 19.03.13
+      - setup_remote_docker
       - deploy:
           name: Push application Docker image
           command: |
-            docker -v
-            docker login --help
             echo ${YC_SERVICE_ACCOUNT} | docker login -u json_key --password-stdin cr.yandex
             docker build -t "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_SHA1" .
             docker push "cr.yandex/$YC_REGISTRY_ID/graphql:$CIRCLE_SHA1"
@@ -71,6 +68,7 @@ jobs:
           name: Deploy
           command: |
             curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+            source ~/.bashrc
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             echo $YC_SERVICE_ACCOUNT > /tmp/key.json
             yc config profile create sa-profile &&
