@@ -186,7 +186,8 @@ class ControllerService {
                         controller_id: controller.id
                     }
                 })
-                if(Number(machine.machine_group_id) !== Number(id) && Number(machine.machine_group2_id) !== Number(id)  && Number(machine.machine_group3_id) !== Number(id)  ) continue
+                if(!machine) continue
+                if(Number(machine.machine_group_id) !== Number(id) && Number(machine.machine_group2_id) !== Number(id)  && Number(machine.machine_group3_id) !== Number(id) &&  Number(id)  !== 0 ) continue
 
 
                 if (revisionId) {
@@ -242,7 +243,7 @@ class ControllerService {
                     controller.simCardNumber = null
                 }
 
-                await controller.save(transaction)
+                await controller.save({transaction})
 
             }
 

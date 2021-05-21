@@ -71,9 +71,12 @@ const scheduler = require("./utils/scheduler")
 const ItemMatrixNotFound = require("./errors/ItemMatrixNotFound")
 
 const redis = new Redis({
-    port: 6379,
-    host: process.env.REDIS_HOST,
+    sentinels: [
+        {host: process.env.REDIS_HOST, port: process.env.REDIS_PORT}
+    ],
+    name: "redis",
     password: process.env.REDIS_PASSWORD,
+    role: "master"
 })
 
 
@@ -86,6 +89,7 @@ class App {
 
         const sequelizeOptions = {
             host: process.env.POSTGRES_HOST,
+            port: process.env.POSTGRES_PORT,
             dialect: "postgres",
             operatorsAliases: false,
             logging: process.env.NODE_ENV !== "production",
