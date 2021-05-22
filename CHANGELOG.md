@@ -492,3 +492,8 @@
 
 * fix bugs
 
+
+# 1.5.11 - Hotfix
+
+* Move to yandex
+
