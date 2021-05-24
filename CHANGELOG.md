@@ -509,3 +509,7 @@
 
 * Add postgres acquire and idle environments
 
+# 1.5.15 - Hotfix
+
+* hotfix
+
