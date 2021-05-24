@@ -501,3 +501,7 @@
 
 * Disable fiscal
 
+# 1.5.13 - Hotfix
+
+* Disable fiscal
+
