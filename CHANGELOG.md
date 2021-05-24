@@ -505,3 +505,7 @@
 
 * Disable fiscal
 
+# 1.5.14 - Hotfix
+
+* Add postgres acquire and idle environments
+
