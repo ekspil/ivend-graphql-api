@@ -497,3 +497,7 @@
 
 * Move to yandex
 
+# 1.5.12 - Hotfix
+
+* Disable fiscal
+

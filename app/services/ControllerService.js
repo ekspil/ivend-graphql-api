@@ -878,9 +878,7 @@ class ControllerService {
         controller.firmwareId = firmwareId
         controller.accessKey = await hashingUtils.generateRandomAccessKey(4)
 
-        await controller.save()
-
-        return await this.getControllerById(controller.id, user)
+        return await controller.save()
     }
 
     async registerEvent(input, user) {
@@ -913,7 +911,7 @@ class ControllerService {
         await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
         await this.machineService.addLog(machine.id, `Выполнена инкассация`, MachineLogType.ENCASHMENT, controllerUser)
 
-        return await this.getControllerById(controller.id, user)
+        return controller
     }
 
 }
