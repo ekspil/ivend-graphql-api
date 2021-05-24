@@ -233,11 +233,18 @@ class MachineService {
         const {sequelize} = this.Machine
         const {Op} = sequelize
 
-        const machines = await this.Machine.findAll({
-            where: {
+        let where = {
+            user_id: user.id
+        }
+        if(id){
+            where = {
                 [Op.or]: [{machine_group_id: id}, {machine_group2_id: id}, {machine_group3_id: id}],
                 user_id: user.id
             }
+        }
+
+        const machines = await this.Machine.findAll({
+            where
         })
 
         return this.Machine.sequelize.transaction(async (transaction) => {

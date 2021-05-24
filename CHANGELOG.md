@@ -521,3 +521,7 @@
 
 * 10 replicas
 
+# 1.5.18 - Hotfix
+
+* sequelize conf
+
