@@ -355,7 +355,7 @@ class SaleService {
                         }
                     }
                 } catch (err) {
-                    logger.info(`sale_service_err ${err} ${JSON.stringify(err)}`)
+                    logger.info(`sale_service_err ${err} ${JSON.stringify(err)}, saleId:${createdSale.id} `)
                 }
             }
         }
