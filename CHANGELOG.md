@@ -513,3 +513,7 @@
 
 * hotfix
 
+# 1.5.16 - Hotfix
+
+* 7 replicas
+
