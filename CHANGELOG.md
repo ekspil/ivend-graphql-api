@@ -517,3 +517,7 @@
 
 * 7 replicas
 
+# 1.5.17 - Hotfix
+
+* 10 replicas
+
