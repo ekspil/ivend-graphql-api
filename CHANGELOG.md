@@ -525,3 +525,7 @@
 
 * sequelize conf
 
+# 1.5.19 - Hotfix
+
+* return fiscal
+
