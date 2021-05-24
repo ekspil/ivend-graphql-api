@@ -100,8 +100,8 @@ class App {
             pool: {
                 max: Number(process.env.POSTGRES_POOL_MAX_CONNECTIONS),
                 min: Number(process.env.POSTGRES_POOL_MIN_CONNECTIONS),
-                acquire: 200000,
-                idle: 2 * 60 * 1000
+                acquire: process.env.POSTGRES_POOL_ACQUIRE ? Number(process.env.POSTGRES_POOL_ACQUIRE) : 3000,
+                idle: process.env.POSTGRES_IDLE ? Number(process.env.POSTGRES_IDLE) : 10000
             },
         }
 
