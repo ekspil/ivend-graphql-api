@@ -529,3 +529,7 @@
 
 * return fiscal
 
+# 1.5.20 - Hotfix
+
+* 7 replicas
+

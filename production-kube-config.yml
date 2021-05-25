@@ -6,7 +6,7 @@ metadata:
   labels:
     app: graphql
 spec:
-  replicas: 10
+  replicas: 7
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: graphql
-          image: cr.yandex/crpfb8t478v3of681kce/graphql:1.5.19
+          image: cr.yandex/crpfb8t478v3of681kce/graphql:1.5.20
           ports:
             - containerPort: 4000
           readinessProbe:
