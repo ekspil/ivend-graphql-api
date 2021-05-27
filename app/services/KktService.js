@@ -156,10 +156,7 @@ class KktService {
         if(id){
             return await this.Kkt.findAll({
                 where: {
-                    user_id: id,
-                    action: {
-                        [Op.ne]: "DELETE"
-                    }
+                    user_id: id
                 }
             })
         }
@@ -167,12 +164,7 @@ class KktService {
         const answer =  await this.Kkt.findAll({
             where: {
                 [Op.and]: [
-                    { user_id: user.id }, 
-                    { 
-                        action: {
-                            [Op.is]: null
-                        } 
-                    }]
+                    { user_id: user.id }]
                 // user_id: user.id,
                 // action: {
                 //     [Op.ne]: "DELETE"
