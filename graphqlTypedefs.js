@@ -909,6 +909,7 @@ const typeDefs = gql`
         updatePrinterOnController(input: UpdatePrinter!): Boolean
         randomAction: Boolean
         removeDeposit(id: Int!): Boolean
+        deleteMachineGroup(id: Int!): Boolean
         userAutoSend(value: Boolean!): Boolean
         authController(input: AuthControllerInput!): Controller
         registerControllerError(input: ControllerErrorInput!): ControllerError

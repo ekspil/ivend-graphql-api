@@ -518,6 +518,37 @@ class MachineService {
         await machine.destroy()
     }
 
+
+    async deleteMachineGroup(id, user) {
+        if (!user || !user.checkPermission(Permission.DELETE_MACHINE)) {
+            throw new NotAuthorized()
+        }
+        const {sequelize} = this.Machine
+        const {Op} = sequelize
+
+        const group = this.MachineGroup.findOne({
+            where: {
+                id,
+                user_id: user.id
+            }
+        })
+
+        if(!group){
+            throw new Error("Group not found")
+        }
+
+        const machines = this.Machine.findAll({
+            where: {
+                [Op.or]: [{ machine_group_id: id }, { machineGroup2Id: id }, { machineGroup3Id: id }],
+
+            }
+        })
+        if (machines && machines.length > 0){
+            throw new Error("Machines in group")
+        }
+        return true
+    }
+
     async addLog(machineId, message, type, user, transaction) {
         if (!user || !user.checkPermission(Permission.CREATE_MACHINE_LOG)) {
             throw new NotAuthorized()
