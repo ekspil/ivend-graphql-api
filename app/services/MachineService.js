@@ -526,7 +526,7 @@ class MachineService {
         const {sequelize} = this.Machine
         const {Op} = sequelize
 
-        const group = this.MachineGroup.findOne({
+        const group = await this.MachineGroup.findOne({
             where: {
                 id,
                 user_id: user.id
@@ -537,7 +537,7 @@ class MachineService {
             throw new Error("Group not found")
         }
 
-        const machines = this.Machine.findAll({
+        const machines = await this.Machine.findAll({
             where: {
                 [Op.or]: [{ machine_group_id: id }, { machineGroup2Id: id }, { machineGroup3Id: id }],
 
@@ -546,6 +546,8 @@ class MachineService {
         if (machines && machines.length > 0){
             throw new Error("Machines in group")
         }
+
+        await group.destroy()
         return true
     }
 

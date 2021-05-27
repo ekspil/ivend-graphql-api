@@ -533,3 +533,7 @@
 
 * 7 replicas
 
+# 1.5.21 - Hotfix
+
+* delete group mutation
+
