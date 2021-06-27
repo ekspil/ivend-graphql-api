@@ -2,12 +2,15 @@ const NotAuthorized = require("../errors/NotAuthorized")
 const KktNotFound = require("../errors/KktNotFound")
 const Kkt = require("../models/Kkt")
 const Permission = require("../enum/Permission")
+const microservices = require("../utils/microservices")
 
 class KktService {
 
-    constructor({KktModel, redis, MachineModel}) {
+    constructor({KktModel, redis, MachineModel, SaleModel, LegalInfoModel}) {
         this.Kkt = KktModel
         this.Machine = MachineModel
+        this.Sale = SaleModel
+        this.LegalInfo = LegalInfoModel
         this.redis = redis
 
         this.createKkt = this.createKkt.bind(this)
@@ -143,6 +146,54 @@ class KktService {
                 id: id
             }
         })
+    }
+
+    async getFiscalReceipt(receiptId) {
+        // if (!user || !user.checkPermission(Permission.GET_KKT_BY_ID)) {
+        //     throw new NotAuthorized()
+        // }
+
+
+        const saleO = await this.Sale.findOne({
+            where: {
+                receiptId
+            }
+        })
+
+
+        if(!saleO){
+            throw new Error("Receipt not found")
+        }
+        const sale = saleO.dataValues
+
+        const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
+
+
+
+
+        if(!receipt){
+            throw new Error("Fiscal receipt not found")
+        }
+
+
+        const legalInfoO = await this.LegalInfo.findOne({
+            where: {
+                inn:receipt.inn
+            }
+        })
+        const legalInfo = legalInfoO.dataValues
+
+        return {
+            id: sale.receiptId,
+            inn: receipt.inn,
+            legalAddress: legalInfo.legalAddress,
+            companyName: legalInfo.companyName,
+            kpp: legalInfo.kpp,
+            ...receipt.fiscalData,
+            sale
+        }
+
+
     }
 
     async getUserKkts(user, id) {

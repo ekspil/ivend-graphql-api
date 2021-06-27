@@ -92,6 +92,23 @@ const typeDefs = gql`
         redirectUrl: String!
     }
 
+    type FiscalReceipt {
+        id: Int!
+        inn: String!
+        companyName: String!
+        legalAddress: String!
+        kpp: String!
+        sale: Sale!
+        fnsSite: String!
+        receiptDatetime: String!
+        shiftNumber: String!
+        fiscalReceiptNumber: String!
+        fiscalDocumentNumber: String!
+        ecrRegistrationNumber: String!
+        fiscalDocumentAttribute: String!
+        fnNumber: String!
+    }
+
     type Pdf {
         url: String!
     }
@@ -817,6 +834,7 @@ const typeDefs = gql`
         getAllInstr: [Instr]
         getPartnerFee(userId: Int!): PartnerFee
         getAdminStatistic: AdminStatistic
+        getFiscalReceipt(receiptId: String!): FiscalReceipt!
     }
 
     input AuthControllerInput {

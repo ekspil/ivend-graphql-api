@@ -1,4 +1,5 @@
 const KktDTO = require("../../models/dto/KktDTO")
+const FiscalReceiptDTO = require("../../models/dto/FiscalReceiptDTO")
 
 function KktQueries({kktService}) {
 
@@ -45,10 +46,23 @@ function KktQueries({kktService}) {
         return new KktDTO(kkt)
     }
 
+    const getFiscalReceipt = async (root, args) => {
+        const {receiptId} = args
+
+        const Receipt = await kktService.getFiscalReceipt(receiptId)
+
+        if (!Receipt) {
+            return null
+        }
+
+        return new FiscalReceiptDTO(Receipt)
+    }
+
     return {
         getAllKkts,
         getUserKkts,
-        getKktById
+        getKktById,
+        getFiscalReceipt
     }
 
 }

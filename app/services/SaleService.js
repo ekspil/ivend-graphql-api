@@ -282,74 +282,85 @@ class SaleService {
                     }
 
                     createdSale.receiptId = receiptId
+                    createdSale.sqr = `https://cabinet.ivend.pro/bill/${receiptId}`
                     await createdSale.save()
 
-                    let receipt = {status: "PENDING"}
-                    let timeoutDate = (new Date()).getTime() + (1000 * Number(process.env.FISCAL_STATUS_POLL_TIMEOUT_SECONDS))
-
-                    while (receipt.status === "PENDING") {
-                        receipt = await microservices.fiscal.getReceiptById(receiptId)
-
-                        if (new Date() > timeoutDate) {
-                            await this.redis.set("kkt_status_" + kkt.id, `ERROR`, "EX", 24 * 60 * 60)
-                            await this.machineService.addLog(machine.id, `Таймаут ожидания регистрации чека`, MachineLogType.KKT, controllerUser)
-                            throw new Error("Receipt status timeout")
-                        }
-
-                        if (receipt.status === "ERROR") {
-                            await this.redis.set("kkt_status_" + kkt.id, `ERROR`, "EX", 24 * 60 * 60)
-                            await this.machineService.addLog(machine.id, `Ошибка отправки чека`, MachineLogType.KKT, controllerUser)
-                            throw new Error("Receipt failed to process")
-                        }
-                    }
-
-                    const {
-                        fnsSite,
-                        receiptDatetime,
-                        shiftNumber,
-                        fiscalReceiptNumber,
-                        fiscalDocumentNumber,
-                        ecrRegistrationNumber,
-                        fiscalDocumentAttribute,
-                        fnNumber
-                    } = receipt.fiscalData
-
-
-                    const kkt = await this.kktService.kktPlusBill(fnNumber, controllerUser, fiscalDocumentNumber)
-
-                    kkt.kktLastBill = receiptDatetime
-
-                    await kkt.save()
-                    await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
-
-
-                    createdSale.sqr = getFiscalString(receipt)
-
-                    const replacements = {
-                        companyName,
-                        inn,
-                        fiscalReceiptNumber,
-                        receiptNumberInShift: shiftNumber,
-                        receiptDate: receiptDatetime,
-                        address: place,
-                        productName,
-                        productPrice,
-                        incomeAmountCash: type === "CASH" ? productPrice : 0,
-                        incomeAmountCashless: type === "CASHLESS" ? productPrice : 0,
-                        email,
-                        fnsSite,
-                        sno,
-                        regKKT: ecrRegistrationNumber,
-                        hwIdKKT: kktFNNumber,
-                        FD: fiscalDocumentNumber,
-                        FPD: fiscalDocumentAttribute,
-                        sqr: createdSale.sqr
-                    }
 
                     if (controller.remotePrinterId) {
                         try {
+
+
+
+
+                            let receipt = {status: "PENDING"}
+                            let timeoutDate = (new Date()).getTime() + (1000 * Number(process.env.FISCAL_STATUS_POLL_TIMEOUT_SECONDS))
+
+                            while (receipt.status === "PENDING") {
+                                receipt = await microservices.fiscal.getReceiptById(receiptId)
+
+                                if (new Date() > timeoutDate) {
+                                    await this.redis.set("kkt_status_" + kkt.id, `ERROR`, "EX", 24 * 60 * 60)
+                                    await this.machineService.addLog(machine.id, `Таймаут ожидания регистрации чека`, MachineLogType.KKT, controllerUser)
+                                    throw new Error("Receipt status timeout")
+                                }
+
+                                if (receipt.status === "ERROR") {
+                                    await this.redis.set("kkt_status_" + kkt.id, `ERROR`, "EX", 24 * 60 * 60)
+                                    await this.machineService.addLog(machine.id, `Ошибка отправки чека`, MachineLogType.KKT, controllerUser)
+                                    throw new Error("Receipt failed to process")
+                                }
+                            }
+
+                            const {
+                                fnsSite,
+                                receiptDatetime,
+                                shiftNumber,
+                                fiscalReceiptNumber,
+                                fiscalDocumentNumber,
+                                ecrRegistrationNumber,
+                                fiscalDocumentAttribute,
+                                fnNumber
+                            } = receipt.fiscalData
+
+
+                            const kkt = await this.kktService.kktPlusBill(fnNumber, controllerUser, fiscalDocumentNumber)
+
+                            kkt.kktLastBill = receiptDatetime
+
+                            await kkt.save()
+                            await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
+
+
+                            createdSale.sqr = getFiscalString(receipt)
+
+                            const replacements = {
+                                companyName,
+                                inn,
+                                fiscalReceiptNumber,
+                                receiptNumberInShift: shiftNumber,
+                                receiptDate: receiptDatetime,
+                                address: place,
+                                productName,
+                                productPrice,
+                                incomeAmountCash: type === "CASH" ? productPrice : 0,
+                                incomeAmountCashless: type === "CASHLESS" ? productPrice : 0,
+                                email,
+                                fnsSite,
+                                sno,
+                                regKKT: ecrRegistrationNumber,
+                                hwIdKKT: kktFNNumber,
+                                FD: fiscalDocumentNumber,
+                                FPD: fiscalDocumentAttribute,
+                                sqr: createdSale.sqr
+                            }
+
+
+
+
+
                             await microservices.remotePrinting.sendPrintJob(controller.remotePrinterId, replacements)
                             logger.debug("PrintJob sent")
+                            return createdSale
                         } catch (e) {
                             logger.error("Failed to send remote print job")
                         }
