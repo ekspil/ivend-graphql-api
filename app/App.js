@@ -284,7 +284,7 @@ class App {
 
         services.itemService = new ItemService({ItemModel})
 
-        services.kktService = new KktService({KktModel, redis, MachineModel})
+        services.kktService = new KktService({KktModel, redis, MachineModel, SaleModel})
         services.newsService = new NewsService({NewsModel})
         services.instrService = new InstrService({InstrModel})
         services.infoService = new InfoService({InfoModel})
