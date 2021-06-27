@@ -97,7 +97,7 @@ const typeDefs = gql`
         inn: String!
         companyName: String!
         legalAddress: String!
-        kpp: String!
+        kpp: String
         sale: Sale!
         fnsSite: String!
         receiptDatetime: String!
