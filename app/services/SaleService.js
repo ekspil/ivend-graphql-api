@@ -324,7 +324,6 @@ class SaleService {
                             } = receipt.fiscalData
 
 
-                    await this.kktService.kktPlusBill(fnNumber, controllerUser, fiscalDocumentNumber)
                             const kkt = await this.kktService.kktPlusBill(fnNumber, controllerUser, fiscalDocumentNumber)
 
                             kkt.kktLastBill = receiptDatetime
