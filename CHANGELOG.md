@@ -537,3 +537,8 @@
 
 * delete group mutation
 
+
+# 1.5.22 - Hotfix
+
+* kkt hot fix
+

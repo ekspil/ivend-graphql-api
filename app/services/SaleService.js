@@ -242,6 +242,10 @@ class SaleService {
 
             if (kktArray.length) {
                 const kkt = this.arrayRandElement(kktArray)
+                if(!kkt){
+                    logger.info(`sale_service_err kkt not selected!, saleId:${createdSale.id} `)
+                    throw new Error("kkt not selected!")
+                }
                 const {inn, sno, companyName} = legalInfo
 
                 const place = machine.place || "Торговый автомат"
@@ -250,12 +254,9 @@ class SaleService {
 
                 const email = legalInfo.contactEmail
                 const productPrice = Number(createdSale.price).toFixed(2)
-                let kktRegNumber, kktFNNumber = null
 
-                if (kkt) {
-                    kktRegNumber = kkt.kktRegNumber
-                    kktFNNumber = kkt.kktFNNumber
-                }
+                let kktRegNumber = kkt.kktRegNumber
+                let kktFNNumber = kkt.kktFNNumber
 
                 try {
 
@@ -323,6 +324,7 @@ class SaleService {
                             } = receipt.fiscalData
 
 
+                    await this.kktService.kktPlusBill(fnNumber, controllerUser, fiscalDocumentNumber)
                             const kkt = await this.kktService.kktPlusBill(fnNumber, controllerUser, fiscalDocumentNumber)
 
                             kkt.kktLastBill = receiptDatetime
