@@ -450,8 +450,8 @@ class SaleService {
         })
     }
 
-    async getSaleById(saleId, user) {
-        if (!user || !user.checkPermission(Permission.GET_SALES)) {
+    async getSaleById(saleId, user, bill) {
+        if ((!user || !user.checkPermission(Permission.GET_SALES)) && !bill) {
             throw new NotAuthorized()
         }
 
@@ -490,18 +490,18 @@ class SaleService {
 
     }
 
-    async getItemOfSale(saleId, user) {
-        if (!user || !user.checkPermission(Permission.GET_ITEM_BY_ID)) {
+    async getItemOfSale(saleId, user, bill) {
+        if ((!user || !user.checkPermission(Permission.GET_ITEM_BY_ID) ) &&!bill ) {
             throw new NotAuthorized()
         }
 
-        const sale = await this.getSaleById(saleId, user)
+        const sale = await this.getSaleById(saleId, user, bill)
 
         if (!sale) {
             throw new Error("Sale not found")
         }
 
-        const item = await this.itemService.getItemById(sale.item_id, user)
+        const item = await this.itemService.getItemById(sale.item_id, user, bill)
 
         if (!item) {
             throw new Error("Item not found")

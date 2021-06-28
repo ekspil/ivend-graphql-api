@@ -19,7 +19,7 @@ function SaleResolver({saleService}) {
     const item = async (obj, args, context) => {
         const {user} = context
 
-        const item = await saleService.getItemOfSale(obj.id, user)
+        const item = await saleService.getItemOfSale(obj.id, user, true)
 
         return new ItemDTO(item)
     }

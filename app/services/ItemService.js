@@ -33,8 +33,8 @@ class ItemService {
         return await this.Item.create(item, {transaction})
     }
 
-    async getItemById(id, user) {
-        if (!user || !user.checkPermission(Permission.GET_ITEM_BY_ID)) {
+    async getItemById(id, user, bill) {
+        if ((!user || !user.checkPermission(Permission.GET_ITEM_BY_ID)) && !bill) {
             throw new NotAuthorized()
         }
 
