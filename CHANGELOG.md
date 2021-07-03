@@ -542,3 +542,7 @@
 
 * kkt hot fix
 
+# 1.5.23 - Hotfix
+
+* kkt not wait ofg
+
