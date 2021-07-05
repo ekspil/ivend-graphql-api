@@ -285,6 +285,7 @@ class SaleService {
                     createdSale.receiptId = receiptId
                     createdSale.sqr = `https://cabinet.ivend.pro/bill/${receiptId}`
                     await createdSale.save()
+                    await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
 
 
                     if (controller.remotePrinterId) {
@@ -329,7 +330,6 @@ class SaleService {
                             kkt.kktLastBill = receiptDatetime
 
                             await kkt.save()
-                            await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
 
 
                             createdSale.sqr = getFiscalString(receipt)
@@ -371,6 +371,7 @@ class SaleService {
                 }
             }
         }
+
         return createdSale
     }
 
@@ -473,7 +474,7 @@ class SaleService {
 
         const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
 
-        return new Receipt(sale.createdAt, receipt.status, receipt.paymentType)
+        return new Receipt(sale.createdAt, receipt.status, receipt.paymentType, receipt.id)
     }
 
 

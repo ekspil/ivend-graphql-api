@@ -201,6 +201,7 @@ const typeDefs = gql`
     }
     
     type Receipt {
+        id: Int!
         timestamp: Timestamp!
         status: ReceiptStatus!
         paymentType: SaleType!

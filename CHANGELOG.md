@@ -546,3 +546,7 @@
 
 * kkt not wait ofg
 
+# 1.5.24 - Hotfix
+
+* kkt status write
+
