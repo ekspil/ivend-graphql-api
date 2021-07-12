@@ -54,7 +54,11 @@ class ControllerService {
 
         const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
 
-        let controller = await this.getControllerByUID(uid, user)
+        let controller = await this.Controller.findOne({
+            where: {
+                uid
+            }
+        })
 
         if (controller) {
             throw new ControllerUIDConflict()

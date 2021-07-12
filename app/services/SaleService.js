@@ -286,6 +286,8 @@ class SaleService {
                     createdSale.sqr = `https://cabinet.ivend.pro/bill/${receiptId}`
                     await createdSale.save()
                     await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
+                    kkt.kktLastBill = new Date().toISOString()
+                    await kkt.save()
 
 
                     if (controller.remotePrinterId) {
