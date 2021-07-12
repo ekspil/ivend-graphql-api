@@ -166,6 +166,16 @@ class KktService {
         }
         const sale = saleO.dataValues
 
+        const machine = await this.Machine.findOne({
+            where: {
+                id: sale.machine_id
+            }
+        })
+
+        if(!machine){
+            throw new Error("Machine not found")
+        }
+
         const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
 
 
@@ -189,6 +199,8 @@ class KktService {
             legalAddress: legalInfo.legalAddress,
             companyName: legalInfo.companyName,
             kpp: legalInfo.kpp,
+            sno: legalInfo.sno,
+            place: machine.place,
             ...receipt.fiscalData,
             sale
         }

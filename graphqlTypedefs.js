@@ -98,6 +98,8 @@ const typeDefs = gql`
         companyName: String!
         legalAddress: String!
         kpp: String
+        sno: String
+        place: String
         sale: Sale!
         fnsSite: String!
         receiptDatetime: String!

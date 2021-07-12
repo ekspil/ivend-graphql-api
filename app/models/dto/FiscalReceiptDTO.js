@@ -2,10 +2,12 @@ const SaleDTO = require("./SaleDTO")
 
 class FiscalReceiptDTODTO {
 
-    constructor({id, inn, kpp, legalAddress, companyName, sale, fnsSite, receiptDatetime, shiftNumber, fiscalReceiptNumber, fiscalDocumentNumber, ecrRegistrationNumber, fiscalDocumentAttribute, fnNumber}) {
+    constructor({id, inn, kpp, legalAddress, companyName, sale, fnsSite, receiptDatetime, shiftNumber, fiscalReceiptNumber, fiscalDocumentNumber, ecrRegistrationNumber, fiscalDocumentAttribute, fnNumber, sno, place}) {
         this.id = id
         this.inn = inn
         this.kpp = kpp
+        this.sno = sno
+        this.place = place
         this.legalAddress = legalAddress
         this.companyName = companyName
         this.sale = sale ? new SaleDTO(sale) : null
