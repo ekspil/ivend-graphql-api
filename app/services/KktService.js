@@ -201,6 +201,7 @@ class KktService {
             kpp: legalInfo.kpp,
             sno: legalInfo.sno,
             place: machine.place,
+            machineNumber: machine.number,
             ...receipt.fiscalData,
             sale
         }

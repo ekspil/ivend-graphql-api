@@ -100,6 +100,7 @@ const typeDefs = gql`
         kpp: String
         sno: String
         place: String
+        machineNumber: String
         sale: Sale!
         fnsSite: String!
         receiptDatetime: String!
