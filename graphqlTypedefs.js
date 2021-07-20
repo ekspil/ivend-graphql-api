@@ -49,6 +49,8 @@ const typeDefs = gql`
         NO_BANK_TERMINAL
         INPAS
         SBERBANK
+        d200i
+        d200s
         d200i_v
         d200i_t
         d200s_v
@@ -60,6 +62,9 @@ const typeDefs = gql`
         vdk3_v
         vdk3_p
         vdk3_t
+        vdk1
+        vdkl
+        vdkx
         
     }
 
