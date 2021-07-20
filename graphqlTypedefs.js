@@ -62,7 +62,7 @@ const typeDefs = gql`
         vdk3_v
         vdk3_p
         vdk3_t
-        vdk1
+        vda1
         vdkl
         vdkx
         
