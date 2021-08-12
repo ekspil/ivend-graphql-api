@@ -403,6 +403,31 @@ const createReceipt = async (fiscalReceiptDto) => {
 }
 
 
+const createReceiptRekassa = async (fiscalReceiptDto) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receipt`
+    const method = "POST"
+    const body = JSON.stringify(fiscalReceiptDto)
+
+    const response = await fetch(`${process.env.FISCAL_URL}/api/v1/fiscal/receiptRekassa`, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return new FiscalReceiptDTO(json)
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+
+
 /**
  * Get receipt by id
  *
@@ -454,6 +479,7 @@ module.exports = {
     },
     fiscal: {
         createReceipt,
-        getReceiptById
+        getReceiptById,
+        createReceiptRekassa
     }
 }

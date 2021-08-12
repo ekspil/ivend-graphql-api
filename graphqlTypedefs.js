@@ -261,6 +261,10 @@ const typeDefs = gql`
         kktStatus: String
         server: String
         action: String
+        type: KktType
+        rekassaPassword: String
+        rekassaNumber: String
+        rekassaKktId: String
     }
 
     type User {
@@ -357,8 +361,17 @@ const typeDefs = gql`
         kktModel: String!
         inn: String!
         companyName: String!
+        rekassaNumber: String
+        rekassaPassword: String
+        type: KktType
 
     }
+    
+    enum KktType {
+        umka
+        rekassa
+    }
+    
     input EditKktInput {
         id: Int!
         inn: String!
@@ -371,6 +384,10 @@ const typeDefs = gql`
         kktBillsCount: Int
         kktOFDRegKey:  String
         server:  String
+        type: KktType
+        rekassaNumber: String
+        rekassaPassword: String
+        rekassaKktId: String
     }
 
     input ControllerStateInput {

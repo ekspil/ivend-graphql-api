@@ -276,11 +276,32 @@ class SaleService {
 
 
                     //const uuid = await sendCheck(fiscalData, token, server, machineKkt)
-                    const receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
+                    let receiptId
 
-                    if (!receiptId) {
-                        throw new Error("ReceiptId is null")
+                    switch (kkt.type){
+                        case "rekassa":
+                            fiscalReceiptDTO.rekassa_password = kkt.rekassaPassword
+                            fiscalReceiptDTO.rekassa_number = kkt.rekassaNumber
+                            fiscalReceiptDTO.rekassa_kkt_id = kkt.rekassaKktId
+                            receiptId = (await microservices.fiscal.createReceiptRekassa(fiscalReceiptDTO)).id
+
+                            if (!receiptId) {
+                                throw new Error("ReceiptId is null")
+                            }
+
+                            break
+                        default:
+                            receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
+
+                            if (!receiptId) {
+                                throw new Error("ReceiptId is null")
+                            }
+
+
+                            break
+
                     }
+
 
                     createdSale.receiptId = receiptId
                     createdSale.sqr = `https://cabinet.ivend.pro/bill/${receiptId}`
@@ -288,6 +309,11 @@ class SaleService {
                     await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
                     kkt.kktLastBill = new Date().toISOString()
                     await kkt.save()
+
+
+
+
+
 
 
                     if (controller.remotePrinterId) {

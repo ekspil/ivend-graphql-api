@@ -3,6 +3,7 @@ const KktNotFound = require("../errors/KktNotFound")
 const Kkt = require("../models/Kkt")
 const Permission = require("../enum/Permission")
 const microservices = require("../utils/microservices")
+const fetch = require("node-fetch")
 
 class KktService {
 
@@ -58,7 +59,7 @@ class KktService {
             throw new NotAuthorized()
         }
 
-        const {kktModel, inn, companyName} = input
+        const {kktModel, inn, companyName, rekassaNumber, rekassaPassword, type} = input
 
         const kkt = new Kkt()
         kkt.kktModel = kktModel
@@ -66,6 +67,67 @@ class KktService {
         kkt.companyName = companyName
         kkt.user_id = user.id
         kkt.kktBillsCount = 0
+
+        kkt.rekassaNumber = rekassaNumber
+        kkt.rekassaPassword = rekassaPassword
+        kkt.type = type
+
+        if(type === "rekassa") {
+
+            const data = {
+                number: rekassaNumber,
+                password: rekassaPassword
+            }
+
+            const response = await fetch(`${process.env.REKASSA_URL}/api/auth/login?apiKey=${process.env.REKASSA_APIKEY}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+
+            let token
+
+            switch (response.status) {
+                case 200: {
+                    token = await response.text()
+                    break
+                }
+                default:
+                    throw new Error("Cannot login, unknown status code: " + response.status)
+            }
+
+
+
+            const response2 = await fetch(`${process.env.REKASSA_URL}/api/crs`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                }
+            })
+
+            let kktId
+
+            switch (response2.status) {
+                case 200: {
+                    kktId = (await response2.json())._embedded.userCashRegisterRoles[0].cashRegister.id
+                    break
+                }
+                default:
+                    throw new Error("Cannot login, unknown status code: " + response2.status)
+            }
+
+            kkt.rekassaKktId = kktId
+            kkt.kktActivationDate = new Date().toLocaleDateString()
+            kkt.kktOFDRegKey = 1
+            kkt.kktRegNumber = rekassaNumber
+            kkt.kktFactoryNumber = rekassaNumber
+
+
+
+        }
 
         if(user.step < 7){
             user.step = 7
@@ -80,7 +142,7 @@ class KktService {
             throw new NotAuthorized()
         }
 
-        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, server} = input
+        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, server, rekassaKktId, rekassaNumber, rekassaPassword} = input
 
         const kkt = await this.Kkt.findOne({
             where: {
@@ -98,6 +160,9 @@ class KktService {
         kkt.kktRegNumber = kktRegNumber
         kkt.kktFNNumber = kktFNNumber
         kkt.kktActivationDate = kktActivationDate
+        kkt.rekassaKktId = rekassaKktId
+        kkt.rekassaNumber = rekassaNumber
+        kkt.rekassaPassword = rekassaPassword
         if(kktBillsCount){
             kkt.kktBillsCount = kktBillsCount
         }

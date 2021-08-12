@@ -34,7 +34,30 @@ const Kkt = {
         allowNull: true,
         unique: false
     },
+    rekassaPassword: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false,
+        field: "rekassa_password"
+    },
+    rekassaNumber: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false,
+        field: "rekassa_number"
+    },
+    rekassaKktId: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false,
+        field: "rekassa_kkt_id"
+    },
     server: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
+        unique: false
+    },
+    type: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,
         unique: false
