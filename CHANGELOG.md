@@ -574,3 +574,9 @@
 
 * hotfix
 
+
+
+# 1.5.30 - Release
+
+* Add rekassa suppurt
+
