@@ -11,6 +11,7 @@ const MachineLog = require("../models/MachineLog")
 const MachineGroup = require("../models/MachineGroup")
 const MachineType = require("../models/MachineType")
 const Permission = require("../enum/Permission")
+const microservices = require("../utils/microservices")
 
 class MachineService {
 
@@ -306,20 +307,8 @@ class MachineService {
 
             const [controller] = controllers.filter(control => control.id === machine.controller_id)
             if(!controller) return machine
-            let kktId = 0
 
-            if(machine.kktId){
-                kktId = machine.kktId
-            }
-            else{
-                const userKkts = await this.kktService.getUserKkts(user)
-                const [activatedKkt] = userKkts.filter(kkt => kkt.kktActivationDate)
-                if(activatedKkt) {
-                    kktId = activatedKkt.id
-                }
-            }
-
-            machine.kktStatus = await this.redis.get("kkt_status_" + kktId)
+            machine.kktStatus = await microservices.fiscal.getControllerKktStatus(controller.uid)
             machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
             machine.encashment = await this.redis.get("machine_encashment_" + machine.id)
             machine.error = await this.redis.get("machine_error_" + machine.id)

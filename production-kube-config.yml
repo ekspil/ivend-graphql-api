@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: graphql
-          image: cr.yandex/crpfb8t478v3of681kce/graphql:1.5.30
+          image: cr.yandex/crpfb8t478v3of681kce/graphql:1.5.31
           ports:
             - containerPort: 4000
           readinessProbe:

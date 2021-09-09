@@ -342,9 +342,15 @@ class KktService {
             //
             // }
 
-            let status = await this.redis.get("kkt_status_" + kkt.id)
-            if (status == "ERROR") kkt.kktStatus = "NOT_OK"
-            if (status == "OK") kkt.kktStatus = "OK"
+            let status = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
+
+            kkt.kktStatus = status
+
+            let info = await microservices.fiscal.getKktInfo(kkt.kktRegNumber || kkt.rekassaNumber)
+            if (info) {
+                kkt.kktLastBill = info.createdAt
+                kkt.kktBillsCount = info.fiscalDocumentNumber
+            }
         }
 
         return kkts

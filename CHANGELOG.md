@@ -580,3 +580,8 @@
 
 * Add rekassa suppurt
 
+
+# 1.5.31 - Release
+
+* Fiscal status
+

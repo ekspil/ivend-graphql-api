@@ -457,6 +457,77 @@ const getReceiptById = async (id) => {
 }
 
 
+/**
+ * Get receipt by id
+ *
+ * @param id {number}
+ * @returns {Promise<FiscalReceiptDTO>}
+ */
+const getKktStatus = async (kktRegNumber) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/status/kktRegNumber/${kktRegNumber}`
+    const method = "GET"
+
+    const response = await fetch(url, {
+        method
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return json.status
+        }
+        case 404: {
+            return null
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+const getKktInfo = async (kktRegNumber) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/info/kktRegNumber/${kktRegNumber}`
+    const method = "GET"
+
+    const response = await fetch(url, {
+        method
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return json
+        }
+        case 404: {
+            return null
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+const getControllerKktStatus = async (controllerUid) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/status/controllerUid/${controllerUid}`
+    const method = "GET"
+
+    const response = await fetch(url, {
+        method
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return json.status
+        }
+        case 404: {
+            return null
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+
+
 module.exports = {
     remotePrinting: {
         sendPrintJob
@@ -480,6 +551,9 @@ module.exports = {
     fiscal: {
         createReceipt,
         getReceiptById,
-        createReceiptRekassa
+        createReceiptRekassa,
+        getKktStatus,
+        getKktInfo,
+        getControllerKktStatus
     }
 }

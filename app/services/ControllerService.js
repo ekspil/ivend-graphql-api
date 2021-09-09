@@ -426,6 +426,7 @@ class ControllerService {
             const controllersFiltred = []
 
             for (let controller of controllers){
+                if(controller.bankTerminalMode === "NO_BANK_TERMINAL") continue
                 const machine = await this.machineService.getMachineByControllerId(controller.id, user)
                 if(!machine) continue
                 let status = await this.redis.get("terminal_status_" + machine.id)
