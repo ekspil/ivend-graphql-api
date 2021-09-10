@@ -585,3 +585,8 @@
 
 * Fiscal status
 
+
+# 1.5.32 - Hotfix
+
+* Fix doubles
+

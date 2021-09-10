@@ -83,7 +83,13 @@ class SaleService {
 
         //todo transaction
 
-        let {controllerUid, type, price, buttonId} = input
+        let {controllerUid, type, price, buttonId, timestamp} = input
+        const checkString = controllerUid + "-" + new Date(timestamp).getTime()
+        const checkCache = await this.redis.get("receipt_check_doubles_" + checkString)
+        if(checkCache){
+            throw new Error("Check already exist")
+        }
+        await this.redis.set("receipt_check_doubles_" + checkString, `OK`, "EX", 24 * 60 * 60)
 
         let itemType = "commodity"
         const controller = await this.controllerService.getControllerByUID(controllerUid, user)

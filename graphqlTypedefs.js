@@ -426,6 +426,7 @@ const typeDefs = gql`
         buttonId: Int!
         price: Float!
         type: SaleType!
+        timestamp: Timestamp
     }
 
     enum SaleType {
