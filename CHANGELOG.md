@@ -590,3 +590,8 @@
 
 * Fix doubles
 
+
+# 1.5.33 - Hotfix
+
+* Fix doubles
+

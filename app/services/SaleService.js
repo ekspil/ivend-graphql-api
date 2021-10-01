@@ -84,6 +84,8 @@ class SaleService {
         //todo transaction
 
         let {controllerUid, type, price, buttonId, timestamp} = input
+        logger.info(`graphql_api_register_sale_: fact_time = ${new Date().toISOString()}, body_from_controller = ${JSON.stringify(input)})`)
+
         const checkString = controllerUid + "-" + new Date(timestamp).getTime()
         const checkCache = await this.redis.get("receipt_check_doubles_" + checkString)
         if(checkCache){
