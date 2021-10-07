@@ -61,6 +61,7 @@ const Instr = require("./models/sequelize/Instr")
 const PartnerSettings = require("./models/sequelize/PartnerSettings")
 const PartnerFee = require("./models/sequelize/PartnerFee")
 const AdminStatistic = require("./models/sequelize/AdminStatistic")
+const Tariff = require("./models/sequelize/Tariff")
 
 
 
@@ -141,6 +142,7 @@ class App {
         const PartnerSettingsModel = sequelize.define("partner_settings", PartnerSettings)
         const PartnerFeeModel = sequelize.define("partner_fees", PartnerFee)
         const AdminStatisticModel = sequelize.define("admin_statistics", AdminStatistic)
+        const TariffModel = sequelize.define("tariffs", Tariff)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -383,7 +385,8 @@ class App {
         services.partnerService = new PartnerService({
             UserModel,
             PartnerSettingsModel,
-            PartnerFeeModel
+            PartnerFeeModel,
+            TariffModel
         })
 
 

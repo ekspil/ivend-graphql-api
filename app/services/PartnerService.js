@@ -4,10 +4,11 @@ const {Op} = require("sequelize")
 
 class PartnerService {
 
-    constructor({UserModel, PartnerSettingsModel, PartnerFeeModel}) {
+    constructor({UserModel, PartnerSettingsModel, PartnerFeeModel, TariffModel}) {
         this.User = UserModel
         this.PartnerSettings = PartnerSettingsModel
         this.PartnerFee = PartnerFeeModel
+        this.Tariff = TariffModel
 
         this.changeFee = this.changeFee.bind(this)
         this.getUserPartnerFee = this.getUserPartnerFee.bind(this)
@@ -61,6 +62,22 @@ class PartnerService {
         const where = {}
         where.partnerId = userId
         return await this.User.findAll({where})
+
+    }
+    async getTariffs(user) {
+        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Tariff.findAll()
+
+    }
+    async createTariff(input, user) {
+        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+            throw new NotAuthorized()
+        }
+
+        return this.Tariff.create(input)
 
     }
     async getUserPartnerFee(userId, period, user) {

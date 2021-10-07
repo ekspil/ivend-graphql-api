@@ -421,6 +421,27 @@ const typeDefs = gql`
         message: String
     }
 
+    input TariffInput {
+        telemetry: Float!
+        acquiring: Float!
+        fiscal: Float!
+        partnerId: Int
+        meta: String
+        startedAt: Timestamp!
+        
+    }
+
+    type Tariff {
+        id: Int!
+        telemetry: Float!
+        acquiring: Float!
+        fiscal: Float!
+        partnerId: Int
+        meta: String
+        startedAt: Timestamp!
+        
+    }
+
     input SaleEventInput {
         controllerUid: String!
         buttonId: Int!
@@ -862,6 +883,7 @@ const typeDefs = gql`
         getPartnerFee(userId: Int!): PartnerFee
         getAdminStatistic: AdminStatistic
         getFiscalReceipt(receiptId: String!): FiscalReceipt!
+        getTariffs: [Tariff]
     }
 
     input AuthControllerInput {
@@ -1012,6 +1034,7 @@ const typeDefs = gql`
         rememberPasswordRequest(input: RememberInput!): Boolean
         changePasswordRequest(input: ChangePasswordInput!): Boolean
         changePartnerFee(input: ChangePartnerFeeInput!): PartnerFee
+        createTariff(input: TariffInput!): Tariff
     }
 `
 
