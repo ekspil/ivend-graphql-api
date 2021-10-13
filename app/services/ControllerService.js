@@ -11,6 +11,7 @@ const Permission = require("../enum/Permission")
 const hashingUtils = require("../utils/hashingUtils")
 const logger = require("my-custom-logger")
 const MachineLogType = require("../enum/MachineLogType")
+const microservices = require("../utils/microservices")
 const {Op} = require("sequelize")
 
 class ControllerService {
@@ -656,11 +657,12 @@ class ControllerService {
         const kkts = await this.kktService.getUserKkts(user)
         const kktOk = kkts.filter(kkt => kkt.kktActivationDate)
         const fiscalControllers = allUserControllers.filter(controller => controller.fiscalizationMode !== "NO_FISCAL")
+        const tariff = await microservices.billing.getTariff("TELEMETRY", user.id)
         if(controller && controller.status === "ENABLED"){
             services.push({
                 id: 1,
                 name: "Услуги телеметрии",
-                price: 100,
+                price: Number(tariff.telemetry),
                 billingType: null
             })
         }
@@ -669,14 +671,14 @@ class ControllerService {
             services.push({
                 id: 10,
                 name: "Услуги эквайринга",
-                price: 100,
+                price: Number(tariff.acquiring),
                 billingType: null
             })
 
 
         }
         if(kktOk && allUserControllers &&  kktOk.length > 0){
-            const price = fiscalControllers.length > (20 * kktOk.length) ? fiscalControllers.length * 100 : 2000 * kktOk.length
+            const price = fiscalControllers.length > (20 * kktOk.length) ? fiscalControllers.length * Number(tariff.fiscal) / 20 : Number(tariff.fiscal) * kktOk.length
             services.push({
                 id: 5,
                 name: "Услуги фискализации",
