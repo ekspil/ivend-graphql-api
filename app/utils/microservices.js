@@ -266,6 +266,7 @@ const sendRememberPasswordEmail = async (email, token) => {
     }
 }
 
+
 const getServiceDailyPrice = async (service, userId) => {
     const url = `${process.env.BILLING_URL}/api/v1/service/${service}/price/daily/${userId}`
     const method = "GET"
