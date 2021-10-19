@@ -666,6 +666,7 @@ class ControllerService {
                 billingType: null
             })
         }
+
         if(controller && controller.simCardNumber && controller.simCardNumber !== "0" && controller.simCardNumber !== "false" && controller.status === "ENABLED" && controller.cashless === "ON"){
 
             services.push({
