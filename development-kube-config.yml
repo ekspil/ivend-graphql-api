@@ -27,6 +27,9 @@ spec:
         imagePullPolicy: Always
         ports:
           - containerPort: 4000
+        volumeMounts:
+          - name: www-ps
+            mountPath: /fileshare
         readinessProbe:
           httpGet:
             path: /.well-known/apollo/server-health
@@ -38,6 +41,10 @@ spec:
         envFrom:
           - configMapRef:
               name: graphql-config
+      volumes:
+        - name: www-ps
+          persistentVolumeClaim:
+            claimName: dev-pvc
       imagePullSecrets:
       - name: gitlabregistrycred
 
