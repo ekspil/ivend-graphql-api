@@ -4,10 +4,11 @@ const {Op} = require("sequelize")
 
 class PartnerService {
 
-    constructor({UserModel, PartnerSettingsModel, PartnerFeeModel, TariffModel}) {
+    constructor({UserModel, PartnerSettingsModel, PartnerFeeModel, TariffModel, PartnerInfosModel}) {
         this.User = UserModel
         this.PartnerSettings = PartnerSettingsModel
         this.PartnerFee = PartnerFeeModel
+        this.PartnerInfos = PartnerInfosModel
         this.Tariff = TariffModel
 
         this.changeFee = this.changeFee.bind(this)
@@ -54,6 +55,23 @@ class PartnerService {
 
         return settings
     }
+    async getPartnerInfo(partnerId, user) {
+        if (!user || !user.checkPermission(Permission.GET_PROFILE)) {
+            throw new NotAuthorized()
+        }
+
+        let settings = await this.PartnerInfos.findOne({
+            where: {
+                partnerId
+            }
+        })
+        if(!settings){
+            throw new Error("No partner settings")
+        }
+
+
+        return settings
+    }
     async getPartnerVendors(userId, user) {
         if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
             throw new NotAuthorized()
@@ -72,12 +90,48 @@ class PartnerService {
         return await this.Tariff.findAll()
 
     }
+    async getTariff(partnerId, user) {
+        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+            throw new NotAuthorized()
+        }
+
+        return await this.Tariff.findOne({
+            where: {
+                partnerId
+            }
+        })
+
+    }
     async createTariff(input, user) {
         if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
             throw new NotAuthorized()
         }
 
         return this.Tariff.create(input)
+
+    }
+    async updatePartnerInfo(input, user) {
+        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+            throw new NotAuthorized()
+        }
+        const {partnerId, fileLogo, fileOferta, infoPhoneTech, infoPhoneCom, infoRequisites} = input
+
+        let settings = await this.PartnerInfos.findOne({
+            where: {
+                partnerId
+            }
+        })
+        if(!settings){
+            return this.PartnerInfos.create(input)
+        }
+
+        settings.fileLogo = fileLogo
+        settings.fileOferta = fileOferta
+        settings.infoPhoneTech = infoPhoneTech
+        settings.infoPhoneCom = infoPhoneCom
+        settings.infoRequisites = infoRequisites
+
+        return settings.save()
 
     }
     async getUserPartnerFee(userId, period, user) {

@@ -1,5 +1,6 @@
 
 const PartnerSettingsDTO = require("../../models/dto/PartnerSettingsDTO")
+const PartnerInfosDTO = require("../../models/dto/PartnerInfosDTO")
 const TariffDTO = require("../../models/dto/TariffDTO")
 
 function PartnerMutations({partnerService}) {
@@ -24,9 +25,19 @@ function PartnerMutations({partnerService}) {
 
     }
 
+    const updatePartnerInfo = async (parent, args, context)=>{
+        const {input} = args
+        const {user} = context
+
+        const result = await partnerService.updatePartnerInfo(input, user)
+        return new PartnerInfosDTO(result)
+
+    }
+
     return {
         changePartnerFee,
-        createTariff
+        createTariff,
+        updatePartnerInfo
     }
 
 }

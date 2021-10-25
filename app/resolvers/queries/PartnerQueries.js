@@ -1,5 +1,6 @@
 
 const PartnerSettingsDTO = require("../../models/dto/PartnerSettingsDTO")
+const PartnerInfosDTO = require("../../models/dto/PartnerInfosDTO")
 const TariffDTO = require("../../models/dto/TariffDTO")
 
 function PartnerQueries({partnerService}) {
@@ -15,6 +16,15 @@ function PartnerQueries({partnerService}) {
 
     }
 
+    const getPartnerInfo = async (parent, args, context)=>{
+        const {partnerId} = args
+        const {user} = context
+
+        const result = await partnerService.getPartnerInfo(partnerId, user)
+        return new PartnerInfosDTO(result)
+
+    }
+
     const getTariffs = async (parent, args, context)=>{
         const {user} = context
 
@@ -23,9 +33,19 @@ function PartnerQueries({partnerService}) {
 
     }
 
+    const getTariff = async (parent, args, context)=>{
+        const {user} = context
+        const {partnerId} = args
+        const result = await partnerService.getTariff(partnerId, user)
+        return new TariffDTO(result)
+
+    }
+
     return {
         getPartnerFee,
-        getTariffs
+        getTariffs,
+        getTariff,
+        getPartnerInfo
     }
 
 }

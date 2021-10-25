@@ -884,6 +884,8 @@ const typeDefs = gql`
         getAdminStatistic: AdminStatistic
         getFiscalReceipt(receiptId: String!): FiscalReceipt!
         getTariffs: [Tariff]
+        getTariff(partnerId: Int!): Tariff
+        getPartnerInfo(partnerId: Int!): PartnerInfo
     }
 
     input AuthControllerInput {
@@ -968,6 +970,24 @@ const typeDefs = gql`
         terminalFee: Float!
         controllerFee: Float!
     }
+    
+    type PartnerInfo {
+        partnerId: Int!
+        fileLogo: String
+        fileOferta: String
+        infoPhoneTech: String
+        infoPhoneCom: String
+        infoRequisites: String
+    }
+    
+    input PartnerInfoInput {
+        partnerId: Int!
+        fileLogo: String
+        fileOferta: String
+        infoPhoneTech: String
+        infoPhoneCom: String
+        infoRequisites: String
+    }
 
     type Mutation {
         sendNewsSMS(id: Int!): Boolean
@@ -1035,6 +1055,7 @@ const typeDefs = gql`
         changePasswordRequest(input: ChangePasswordInput!): Boolean
         changePartnerFee(input: ChangePartnerFeeInput!): PartnerFee
         createTariff(input: TariffInput!): Tariff
+        updatePartnerInfo(input: PartnerInfoInput!): PartnerInfo
     }
 `
 
