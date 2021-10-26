@@ -25,6 +25,11 @@ const PI = {
         unique: false,
         field: "info_phone_tech"
     },
+    infoMailTech: {
+        type: Sequelize.DataTypes.TEXT,
+        unique: false,
+        field: "info_mail_tech"
+    },
     infoPhoneCom: {
         type: Sequelize.DataTypes.TEXT,
         unique: false,

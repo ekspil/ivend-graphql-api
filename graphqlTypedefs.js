@@ -855,14 +855,14 @@ const typeDefs = gql`
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
         getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String  ): [Controller]
-        getMachineById(id: Int!): Machine
+        getMachineById(id: Int!):User Machine
         getMachines(machineGroupId: Int): [Machine]
         getMachineGroups: [MachineGroup]
         getMachineTypes: [MachineType]
         getEquipments: [Equipment]
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
-        getProfile: User
+        getProfile: 
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts(offset: Int, limit: Int): [Kkt]
@@ -976,6 +976,7 @@ const typeDefs = gql`
         fileLogo: String
         fileOferta: String
         infoPhoneTech: String
+        infoMailTech: String
         infoPhoneCom: String
         infoRequisites: String
     }
@@ -985,6 +986,7 @@ const typeDefs = gql`
         fileLogo: String
         fileOferta: String
         infoPhoneTech: String
+        infoMailTech: String
         infoPhoneCom: String
         infoRequisites: String
     }
