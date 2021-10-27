@@ -37,6 +37,7 @@ function PartnerQueries({partnerService}) {
         const {user} = context
         const {partnerId} = args
         const result = await partnerService.getTariff(partnerId, user)
+        if(!result) throw new Error("No tariff")
         return new TariffDTO(result)
 
     }

@@ -91,14 +91,17 @@ class PartnerService {
 
     }
     async getTariff(partnerId, user) {
-        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+        if (!user || !user.checkPermission(Permission.GET_PROFILE)) {
             throw new NotAuthorized()
         }
 
         return await this.Tariff.findOne({
             where: {
-                partnerId
-            }
+                partnerId,
+            },
+            order: [
+                ["id", "DESC"],
+            ]
         })
 
     }
