@@ -95,9 +95,9 @@ class App {
             dialect: "postgres",
             operatorsAliases: false,
             logging: process.env.NODE_ENV !== "production",
-            ssl: false,
+            ssl: true,
             dialectOptions: {
-                ssl: false
+                ssl: true
             },
             pool: {
                 max: Number(process.env.POSTGRES_POOL_MAX_CONNECTIONS),
