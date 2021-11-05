@@ -82,12 +82,20 @@ class PartnerService {
         return await this.User.findAll({where})
 
     }
-    async getTariffs(user) {
+    async getTariffs(partnerId, user) {
         if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
             throw new NotAuthorized()
         }
-
-        return await this.Tariff.findAll()
+        const where = {}
+        if(partnerId) {
+            where.partnerId = partnerId
+        }
+        return await this.Tariff.findAll({
+            where,
+            order: [
+                ["id", "DESC"],
+            ]
+        })
 
     }
     async getTariff(partnerId, user) {

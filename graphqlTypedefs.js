@@ -883,7 +883,7 @@ const typeDefs = gql`
         getPartnerFee(userId: Int!): PartnerFee
         getAdminStatistic: AdminStatistic
         getFiscalReceipt(receiptId: String!): FiscalReceipt!
-        getTariffs: [Tariff]
+        getTariffs(partnerId: Int): [Tariff]
         getTariff(partnerId: Int!): Tariff
         getPartnerInfo(partnerId: Int!): PartnerInfo
     }

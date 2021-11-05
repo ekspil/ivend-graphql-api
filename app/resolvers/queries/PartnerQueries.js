@@ -27,8 +27,9 @@ function PartnerQueries({partnerService}) {
 
     const getTariffs = async (parent, args, context)=>{
         const {user} = context
+        const {partnerId} = args
 
-        const result = await partnerService.getTariffs(user)
+        const result = await partnerService.getTariffs(partnerId, user)
         return result.map(tariff => new TariffDTO(tariff))
 
     }
