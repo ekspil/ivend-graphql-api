@@ -92,7 +92,9 @@ class SaleService {
 
             const checkCacheInfo = await this.redis.get("receipt_check_doubles_info" + checkString)
             if(checkCacheInfo){
-                return JSON.parse(checkCacheInfo)
+                const doubleCheck = JSON.parse(checkCacheInfo)
+                doubleCheck.error = "exist"
+                return doubleCheck
             }
             throw new Error("Check already exist")
         }
