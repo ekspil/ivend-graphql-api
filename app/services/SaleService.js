@@ -89,6 +89,11 @@ class SaleService {
         const checkString = controllerUid + "-" + new Date(timestamp).getTime()
         const checkCache = await this.redis.get("receipt_check_doubles_" + checkString)
         if(checkCache){
+
+            const checkCacheInfo = await this.redis.get("receipt_check_doubles_info" + checkString)
+            if(checkCacheInfo){
+                return JSON.parse(checkCacheInfo)
+            }
             throw new Error("Check already exist")
         }
         await this.redis.set("receipt_check_doubles_" + checkString, `OK`, "EX", 24 * 60 * 60)
@@ -222,6 +227,7 @@ class SaleService {
         createdSale.sqr = sqr
         if (price === 0) {
             //Если цена 0 - не делаем фискальный чек
+            await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(createdSale), "EX", 24 * 60 * 60)
             return createdSale
         }
 
@@ -397,6 +403,7 @@ class SaleService {
 
                             await microservices.remotePrinting.sendPrintJob(controller.remotePrinterId, replacements)
                             logger.debug("PrintJob sent")
+                            await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(createdSale), "EX", 24 * 60 * 60)
                             return createdSale
                         } catch (e) {
                             logger.error("Failed to send remote print job")
@@ -407,7 +414,7 @@ class SaleService {
                 }
             }
         }
-
+        await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(createdSale), "EX", 24 * 60 * 60)
         return createdSale
     }
 
