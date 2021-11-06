@@ -595,3 +595,8 @@
 
 * Fix doubles
 
+
+# 1.6.0 - Release
+
+* PArtner functions
+
