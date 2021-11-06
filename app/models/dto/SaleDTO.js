@@ -4,7 +4,7 @@ const ControllerDTO = require("./ControllerDTO")
 
 class SaleDTO {
 
-    constructor({id, buttonId, price, type, item, itemMatrix, controller, sqr, createdAt, error}) {
+    constructor({id, buttonId, price, type, item, itemMatrix, controller, sqr, createdAt, err}) {
         this.id = id
         this.buttonId = buttonId
         this.type = type
@@ -14,7 +14,7 @@ class SaleDTO {
         this.controller = controller ? new ControllerDTO(controller) : null
         this.sqr = sqr
         this.createdAt = createdAt
-        this.error = error ? error : null
+        this.err = err ? err : null
     }
 }
 

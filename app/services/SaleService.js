@@ -80,7 +80,7 @@ class SaleService {
         if (!user || !user.checkPermission(Permission.REGISTER_SALE)) {
             throw new NotAuthorized()
         }
-
+        let redisData
         //todo transaction
 
         let {controllerUid, type, price, buttonId, timestamp} = input
@@ -93,7 +93,7 @@ class SaleService {
             const checkCacheInfo = await this.redis.get("receipt_check_doubles_info" + checkString)
             if(checkCacheInfo){
                 const doubleCheck = JSON.parse(checkCacheInfo)
-                doubleCheck.error = "exist"
+                doubleCheck.err = "exist"
                 return doubleCheck
             }
             throw new Error("Check already exist")
@@ -229,7 +229,12 @@ class SaleService {
         createdSale.sqr = sqr
         if (price === 0) {
             //Если цена 0 - не делаем фискальный чек
-            await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(createdSale), "EX", 24 * 60 * 60)
+
+            redisData = {
+                ...createdSale.dataValues,
+                sqr: createdSale.sqr
+            }
+            await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(redisData), "EX", 24 * 60 * 60)
             return createdSale
         }
 
@@ -405,7 +410,12 @@ class SaleService {
 
                             await microservices.remotePrinting.sendPrintJob(controller.remotePrinterId, replacements)
                             logger.debug("PrintJob sent")
-                            await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(createdSale), "EX", 24 * 60 * 60)
+
+                            redisData = {
+                                ...createdSale.dataValues,
+                                sqr: createdSale.sqr
+                            }
+                            await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(redisData), "EX", 24 * 60 * 60)
                             return createdSale
                         } catch (e) {
                             logger.error("Failed to send remote print job")
@@ -416,7 +426,11 @@ class SaleService {
                 }
             }
         }
-        await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(createdSale), "EX", 24 * 60 * 60)
+        redisData = {
+            ...createdSale.dataValues,
+            sqr: createdSale.sqr
+        }
+        await this.redis.set("receipt_check_doubles_info" + checkString, JSON.stringify(redisData), "EX", 24 * 60 * 60)
         return createdSale
     }
 

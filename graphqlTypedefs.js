@@ -230,7 +230,7 @@ const typeDefs = gql`
         receipt: Receipt
         sqr: String
         createdAt: Timestamp!
-        error: String
+        err: String
     }
 
     type ControllerError {

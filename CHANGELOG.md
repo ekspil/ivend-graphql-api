@@ -600,3 +600,8 @@
 
 * PArtner functions
 
+
+# 1.6.1 - Hotfix
+
+* hotfix
+
