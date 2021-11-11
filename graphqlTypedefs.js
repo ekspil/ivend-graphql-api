@@ -102,6 +102,8 @@ const typeDefs = gql`
         inn: String!
         companyName: String!
         legalAddress: String!
+        email: String!
+        itemType: String
         kpp: String
         sno: String
         place: String

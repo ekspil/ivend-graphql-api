@@ -7,11 +7,12 @@ const fetch = require("node-fetch")
 
 class KktService {
 
-    constructor({KktModel, redis, MachineModel, SaleModel, LegalInfoModel}) {
+    constructor({KktModel, redis, MachineModel, SaleModel, LegalInfoModel, ButtonItemModel}) {
         this.Kkt = KktModel
         this.Machine = MachineModel
         this.Sale = SaleModel
         this.LegalInfo = LegalInfoModel
+        this.ButtonItem = ButtonItemModel
         this.redis = redis
 
         this.createKkt = this.createKkt.bind(this)
@@ -229,7 +230,22 @@ class KktService {
         if(!saleO){
             throw new Error("Receipt not found")
         }
+
         const sale = saleO.dataValues
+
+
+        const buttonItem0 = await this.ButtonItem.findOne({
+            where: {
+                item_id: sale.item_id
+            }
+        })
+
+
+        if(!buttonItem0){
+            throw new Error("Receipt not found")
+        }
+
+        const buttonItem = buttonItem0.dataValues
 
         const machine = await this.Machine.findOne({
             where: {
@@ -263,7 +279,9 @@ class KktService {
             inn: receipt.inn,
             legalAddress: legalInfo.legalAddress,
             companyName: legalInfo.companyName,
+            email: legalInfo.contactEmail,
             kpp: legalInfo.kpp,
+            itemType: buttonItem.type,
             sno: legalInfo.sno,
             place: machine.place,
             machineNumber: machine.number,
