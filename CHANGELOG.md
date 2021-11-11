@@ -605,3 +605,8 @@
 
 * hotfix
 
+
+# 1.6.2 - Hotfix
+
+* bill new data
+
