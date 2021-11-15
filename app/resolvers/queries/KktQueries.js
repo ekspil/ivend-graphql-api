@@ -7,9 +7,9 @@ function KktQueries({kktService}) {
 
         const {user} = context
 
-        const {offset, limit} = args
+        const {offset, limit, status} = args
 
-        const kkts = await kktService.getAllKkts(offset, limit, user)
+        const kkts = await kktService.getAllKkts(offset, limit, status, user)
 
         if (!kkts) {
             return null

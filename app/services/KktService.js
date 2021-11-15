@@ -15,6 +15,66 @@ class KktService {
         this.ButtonItem = ButtonItemModel
         this.redis = redis
 
+
+        this.getStatus = function getStatus(field){
+            //Проверку оставшихся дней после того как установлю формат
+            if(field.action === "DELETE"){
+                return 6
+            }
+            if(!field.kktActivationDate){
+                return 4
+            }
+            let date =new Date()
+            let year = date.getFullYear()
+            let month = date.getMonth() + 1
+            let yearF = field.kktActivationDate.replace(/[,-/ ]/g, ".").split(".")[2]
+            let monthF = field.kktActivationDate.replace(/[,-/ ]/g, ".").split(".")[1]
+
+            if(field.kktModel === "УМКА-01-ФА (ФН36)"){
+
+
+
+                if(year - yearF >= 3 && month - monthF <=0){
+                    return 5
+                }
+                if(Number(field.kktBillsCount) > 230000){
+                    return 5
+                }
+                if(year - yearF >= 3 && month - monthF == 1){
+                    return 3
+                }
+                if(Number(field.kktBillsCount) > 220000){
+                    return 3
+                }
+            }
+            if(field.kktModel === "УМКА-01-ФА (ФН15)"){
+                if(year - yearF >= 1 && month - monthF >=3){
+                    return 5
+                }
+                if(Number(field.kktBillsCount) > 230000){
+                    return 5
+                }
+                if(year - yearF >= 1 && month - monthF >=2){
+                    return 3
+                }
+                if(Number(field.kktBillsCount) > 220000){
+                    return 3
+                }
+            }
+            if(field.kktLastBill){
+                let da = new Date(field.kktLastBill).getTime()
+                let dn = new Date()
+                if (da < (dn - (1000 * 60 * 60 * 24 * 10))) {
+                    return 3
+                }
+            }
+
+
+
+
+            return 0
+        }
+
         this.createKkt = this.createKkt.bind(this)
         this.editKkt = this.editKkt.bind(this)
         this.getKktById = this.getKktById.bind(this)
@@ -322,7 +382,7 @@ class KktService {
         return answer
     }
 
-    async getAllKkts(offset, limit, user) {
+    async getAllKkts(offset, limit, status, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_KKTS)) {
             throw new NotAuthorized()
         }
@@ -331,7 +391,6 @@ class KktService {
             limit = 50
         }
 
-
         const kkts = await this.Kkt.findAll({
             offset,
             limit,
@@ -339,8 +398,14 @@ class KktService {
                 ["id", "DESC"],
             ]
         })
+        let filtredKkts
+        if(status !== undefined){
+            filtredKkts = kkts.filter(kkt => this.getStatus(kkt) === status)
+        }else{
+            filtredKkts = kkts
+        }
 
-        for (let kkt of kkts){
+        for (let kkt of filtredKkts){
             // const machines = await this.Machine.findAll({
             //     where: {
             //         kktId: kkt.id
@@ -371,7 +436,7 @@ class KktService {
             }
         }
 
-        return kkts
+        return filtredKkts
     }
 
 }

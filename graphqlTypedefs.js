@@ -868,7 +868,7 @@ const typeDefs = gql`
         getProfile: User
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
-        getAllKkts(offset: Int, limit: Int): [Kkt]
+        getAllKkts(offset: Int, limit: Int, status: Int): [Kkt]
         getAllUsers(input: AllUsersInput, orderDesc: Boolean, orderKey: String ): [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int, period: Period): [Sale!]!
