@@ -267,11 +267,21 @@ class KktService {
         }
 
 
-        return await this.Kkt.findOne({
+        const kkt = await this.Kkt.findOne({
             where: {
                 id: id
             }
         })
+
+        kkt.kktStatus = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
+
+        let info = await microservices.fiscal.getKktInfo(kkt.kktRegNumber || kkt.rekassaNumber)
+        if (info) {
+            kkt.kktLastBill = info.createdAt
+            kkt.kktBillsCount = info.fiscalDocumentNumber
+        }
+
+        return kkt
     }
 
     async getFiscalReceipt(receiptId) {
@@ -376,8 +386,25 @@ class KktService {
                 // action: {
                 //     [Op.ne]: "DELETE"
                 // }
-            }
+            },
+            order: [
+                ["id", "DESC"],
+            ]
         })
+
+
+        for (let kkt of answer){
+
+            let status = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
+
+            kkt.kktStatus = status
+
+            let info = await microservices.fiscal.getKktInfo(kkt.kktRegNumber || kkt.rekassaNumber)
+            if (info) {
+                kkt.kktLastBill = info.createdAt
+                kkt.kktBillsCount = info.fiscalDocumentNumber
+            }
+        }
 
         return answer
     }
