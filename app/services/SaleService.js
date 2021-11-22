@@ -701,23 +701,41 @@ class SaleService {
             }
         }
 
-        let machine = await this.machineService.getMachineById(machineId, user)
-        const itemMatrix = await machine.getItemMatrix()
-        const buttons = await itemMatrix.getButtons()
-        const items = await this.Item.findAll({
-            where:{
-                id: {
-                    [Op.in]: buttons.map(it => it.item_id)
-                }
-            }
-        })
-
-        where.item_id = {
-            [Op.in]: items.map(it => it.id)
-        }
+        // let machine = await this.machineService.getMachineById(machineId, user)
+        // const itemMatrix = await machine.getItemMatrix()
+        // const buttons = await itemMatrix.getButtons()
+        // const items = await this.Item.findAll({
+        //     where:{
+        //         id: {
+        //             [Op.in]: buttons.map(it => it.item_id)
+        //         }
+        //     }
+        // })
+        //
+        // where.item_id = {
+        //     [Op.in]: items.map(it => it.id)
+        // }
 
         const sales = await this.Sale.findAll({
             where
+        })
+
+        const itemsIds = sales.reduce((acc, sale) => {
+            if(acc.includes(sale.item_id)){
+                return acc
+            }
+            else {
+                acc.push(sale.item_id)
+                return acc
+            }
+        }, [])
+
+        const items = await this.Item.findAll({
+            where:{
+                id: {
+                    [Op.in]: itemsIds
+                }
+            }
         })
 
         const summary = []
