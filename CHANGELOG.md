@@ -615,3 +615,8 @@
 
 * fix bugs
 
+
+# 1.6.4 - Hotfix
+
+* fix stats
+
