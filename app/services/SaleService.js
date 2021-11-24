@@ -496,6 +496,77 @@ class SaleService {
             ]
         })
     }
+    async getSalesNoLimit({ machineId, itemId, user, period}) {
+        if (!user || !user.checkPermission(Permission.GET_SALES)) {
+            throw new NotAuthorized()
+        }
+
+        const {sequelize} = this.Sale
+        const {Op} = sequelize
+
+        const where = {}
+
+        if (machineId) {
+            where.machine_id = machineId
+        }
+
+        if (itemId) {
+            where.item_id = itemId
+        }
+
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
+        const sales = await this.Sale.findAll({
+            where,
+            order: [
+                ["id", "DESC"],
+            ]
+        })
+
+        const receiptIds = sales.map(s=>s.receiptId)
+
+
+
+        const item = await this.Item.findOne({
+            where: {
+                id: itemId
+            }
+        })
+        const statuses = await microservices.fiscal.getReceiptStatuses(receiptIds)
+        const result = sales.map(sale => {
+
+            if(sale.receiptId){
+                const status = statuses.find(s=> {
+                    if(s.id === Number(sale.receiptId)) return true
+                    return false
+                })
+                if(status){
+                    sale.status = status.status
+                }else {
+                    sale.status = "NO DATA"
+                }
+
+            }else {
+                sale.status = "NO RECEIPT"
+            }
+            sale.item = item
+            
+            return sale
+        })
+        return result
+
+    }
 
     async getLastSaleOfItem(itemId, user) {
         if (!user || !user.checkPermission(Permission.GET_LAST_SALE_OF_ITEM)) {

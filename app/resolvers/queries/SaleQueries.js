@@ -1,4 +1,5 @@
 const SaleDTO = require("../../models/dto/SaleDTO")
+const SaleNoLimitDTO = require("../../models/dto/SaleNoLimitDTO")
 
 function SaleQueries({saleService}) {
 
@@ -9,6 +10,15 @@ function SaleQueries({saleService}) {
         const sales = await saleService.getSales({offset, limit, machineId, itemId, user, period})
 
         return sales.map(sale => (new SaleDTO(sale)))
+    }
+
+    const getSalesNoLimit = async (root, args, context) => {
+        const {user} = context
+        const {machineId, itemId, period} = args
+
+        const sales = await saleService.getSalesNoLimit({ machineId, itemId, user, period})
+
+        return sales.map(sale => (new SaleNoLimitDTO(sale)))
     }
     const getItemSales = async (root, args, context) => {
         const {user} = context
@@ -30,7 +40,8 @@ function SaleQueries({saleService}) {
     return {
         getSales,
         getItemSales,
-        getMachineSales
+        getMachineSales,
+        getSalesNoLimit
     }
 
 }

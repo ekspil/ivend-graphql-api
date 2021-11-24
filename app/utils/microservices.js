@@ -479,6 +479,38 @@ const getReceiptById = async (id) => {
 }
 
 
+
+/**
+ * Get receipt by id
+ *
+ * @param id {number}
+ * @returns {Promise<FiscalReceiptDTO>}
+ */
+const getReceiptStatuses = async (ids) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/statuses`
+    const method = "POST"
+    const body = JSON.stringify(ids)
+
+    const response = await fetch(`${process.env.FISCAL_URL}/api/v1/fiscal/statuses`, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return json
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+
+
 /**
  * Get receipt by id
  *
@@ -577,6 +609,7 @@ module.exports = {
         createReceiptRekassa,
         getKktStatus,
         getKktInfo,
-        getControllerKktStatus
+        getControllerKktStatus,
+        getReceiptStatuses
     }
 }

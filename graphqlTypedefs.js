@@ -235,6 +235,17 @@ const typeDefs = gql`
         err: String
     }
 
+    type SaleNoLimit {
+        id: Int!
+        type: SaleType!
+        price: Float!
+        item: Item!
+        sqr: String
+        createdAt: Timestamp!
+        err: String
+        status: String
+    }
+
     type ControllerError {
         id: Int!
         message: String!
@@ -872,6 +883,7 @@ const typeDefs = gql`
         getAllUsers(input: AllUsersInput, orderDesc: Boolean, orderKey: String ): [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int, period: Period): [Sale!]!
+        getSalesNoLimit( machineId: Int, itemId: Int, period: Period): [SaleNoLimit!]!
         getItemSales(machineGroupId: Int, period: Period): [ItemsSales]
         getMachineSales(machineGroupId: Int, period: Period): [MachineSales]
         getNews: [News]
