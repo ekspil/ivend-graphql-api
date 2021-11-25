@@ -105,6 +105,14 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         return new ControllerDTO(controller)
     }
 
+    const reSendCheck = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        return await saleService.reSendCheck(id, user)
+
+    }
+
     return {
         createController,
         editController,
@@ -116,7 +124,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         createRevision,
         registerEvent,
         updatePrinterOnController,
-        editControllerGroupSettings
+        editControllerGroupSettings,
+        reSendCheck
     }
 
 }

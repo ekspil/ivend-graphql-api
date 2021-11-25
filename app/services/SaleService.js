@@ -608,6 +608,26 @@ class SaleService {
     }
 
 
+    async reSendCheck(saleId, user) {
+        if (!user || !user.checkPermission(Permission.GET_RECEIPT)) {
+            throw new NotAuthorized()
+        }
+
+        const sale = await this.getSaleById(saleId, user)
+
+        if (!sale || !sale.receiptId) {
+            throw new Error("SALE_NOT_FOUND")
+        }
+        try{
+            await microservices.fiscal.reSendCheck(sale.receiptId)
+            return true
+        }
+        catch (e) {
+            throw new Error("MICROSERVICE_ERROR")
+        }
+    }
+
+
     async getFastSummary(user) {
         if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()

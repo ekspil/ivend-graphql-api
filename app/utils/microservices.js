@@ -559,6 +559,23 @@ const getKktInfo = async (kktRegNumber) => {
     }
 
 }
+const reSendCheck = async (receiptId) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receipt/resend/${receiptId}`
+    const method = "GET"
+
+    const response = await fetch(url, {
+        method
+    })
+
+    switch (response.status) {
+        case 200: {
+            return true
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
 const getControllerKktStatus = async (controllerUid) => {
     const url = `${process.env.FISCAL_URL}/api/v1/fiscal/status/controllerUid/${controllerUid}`
     const method = "GET"
@@ -610,6 +627,7 @@ module.exports = {
         getKktStatus,
         getKktInfo,
         getControllerKktStatus,
-        getReceiptStatuses
+        getReceiptStatuses,
+        reSendCheck
     }
 }
