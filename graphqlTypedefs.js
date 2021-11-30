@@ -716,9 +716,11 @@ const typeDefs = gql`
     input GenerateExcelInput {
         rows: [RowDataInput!]!
     }
+    
+    scalar _Any
 
     input RowDataInput {
-        cells: [String!]!
+        cells: [_Any]
     }
 
     type MachineGroup {
