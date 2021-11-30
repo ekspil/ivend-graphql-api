@@ -304,19 +304,6 @@ class KktService {
         const sale = saleO.dataValues
 
 
-        const buttonItem0 = await this.ButtonItem.findOne({
-            where: {
-                item_id: sale.item_id
-            }
-        })
-
-
-        if(!buttonItem0){
-            throw new Error("Receipt not found")
-        }
-
-        const buttonItem = buttonItem0.dataValues
-
         const machine = await this.Machine.findOne({
             where: {
                 id: sale.machine_id
@@ -351,7 +338,7 @@ class KktService {
             companyName: legalInfo.companyName,
             email: legalInfo.contactEmail,
             kpp: legalInfo.kpp,
-            itemType: buttonItem.type,
+            itemType: receipt.itemType,
             sno: legalInfo.sno,
             place: machine.place,
             machineNumber: machine.number,
