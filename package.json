@@ -1,6 +1,6 @@
 {
   "name": "ivend-graphql-api",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "iVend GraphQL server",
   "main": "index.js",
   "scripts": {

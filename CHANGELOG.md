@@ -635,3 +635,8 @@
 
 * excel hotfix
 
+
+# 1.6.8 - Hotfix
+
+* pdf hotfix
+

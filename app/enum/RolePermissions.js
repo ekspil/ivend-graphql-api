@@ -197,6 +197,7 @@ const VENDOR_NEGATIVE_BALANCE = [
     Permission.GET_RECEIPT,
     Permission.SEND_EMAIL,
     Permission.UPDATE_KKT,
+    Permission.CREATE_ITEM,
 ]
 
 const VENDOR_NO_LEGAL_INFO = [
