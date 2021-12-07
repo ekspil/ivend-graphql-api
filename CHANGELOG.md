@@ -640,3 +640,7 @@
 
 * pdf hotfix
 
+# 1.6.9 - Hotfix
+
+* sim reset
+

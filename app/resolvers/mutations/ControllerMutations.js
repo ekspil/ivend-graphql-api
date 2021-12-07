@@ -113,6 +113,14 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
 
     }
 
+    const simReset = async (root, args, context) => {
+        const {sim} = args
+        const {user} = context
+
+        return await controllerService.simReset(sim, user)
+
+    }
+
     return {
         createController,
         editController,
@@ -125,7 +133,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         registerEvent,
         updatePrinterOnController,
         editControllerGroupSettings,
-        reSendCheck
+        reSendCheck,
+        simReset
     }
 
 }

@@ -870,7 +870,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
-        getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String  ): [Controller]
+        getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String, userRole: String  ): [Controller]
         getMachineById(id: Int!): Machine
         getMachines(machineGroupId: Int): [Machine]
         getMachineGroups: [MachineGroup]
@@ -1076,6 +1076,7 @@ const typeDefs = gql`
         changePartnerFee(input: ChangePartnerFeeInput!): PartnerFee
         createTariff(input: TariffInput!): Tariff
         updatePartnerInfo(input: PartnerInfoInput!): PartnerInfo
+        simReset(sim: String!): Boolean
     }
 `
 

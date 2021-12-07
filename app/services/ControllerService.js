@@ -157,7 +157,7 @@ class ControllerService {
         }
 
         if (sim) {
-            controller.sim = simCardNumber
+            controller.sim = sim
         }
 
         if (imsiTerminal) {
@@ -283,7 +283,7 @@ class ControllerService {
     }
 
 
-    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey, user) {
+    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey, userRole, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
@@ -645,6 +645,16 @@ class ControllerService {
         if(!parse) return null
         parse.registrationTime = new Date(parse.registrationTime)
         return parse
+    }
+
+
+    async simReset(sim, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
+            throw new NotAuthorized()
+        }
+
+        await microservices.sim.reset(sim)
+        return true
     }
 
     async getControllerServices(id, user) {

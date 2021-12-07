@@ -598,6 +598,67 @@ const getControllerKktStatus = async (controllerUid) => {
 
 }
 
+/**
+ * Get receipt by id
+ *
+ * @param id {number}
+ * @returns {String}
+ */
+const goodLineAuth = async () => {
+    const login = process.env.GOODLINE_LOGIN || "api-info@ivend.pro"
+    const pass = process.env.GOODLINE_PASS || "95aYfVAWRTG4Uh4b"
+    const url = `https://api.m2m.express/api/v2/login?email=${login}&password=${pass}`
+    const method = "POST"
+
+    const response = await fetch(url, {
+        method,
+        headers: {
+            "Accept": "application/json"
+        }
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return json.access_token
+        }
+        default:
+            throw new MicroserviceUnknownError(method, "", response.status)
+    }
+
+}
+
+/**
+ * Get receipt by id
+ *
+ * @param id {number}
+ * @returns {Boolean}
+ */
+const reset = async (sim) => {
+
+    const token = await goodLineAuth()
+
+    const url = `https://api.m2m.express/api/v2/simcards/${sim}/cancelLocation`
+    const method = "POST"
+
+    const response = await fetch(url, {
+        method,
+        headers: {
+            "Accept": "application/json",
+            "Authorization": "Bearer " + token
+        },
+    })
+
+    switch (response.status) {
+        case 200: {
+            return true
+        }
+        default:
+            return false
+    }
+
+}
+
 
 module.exports = {
     remotePrinting: {
@@ -629,5 +690,8 @@ module.exports = {
         getControllerKktStatus,
         getReceiptStatuses,
         reSendCheck
+    },
+    sim: {
+        reset
     }
 }
