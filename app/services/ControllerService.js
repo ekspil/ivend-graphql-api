@@ -292,6 +292,17 @@ class ControllerService {
         if (!limit) {
             limit = 50
         }
+        if(userRole && userRole !== "ALL"){
+            const users = await this.User.findAll({where: {
+                role: userRole
+            }})
+
+            const userIds = users.map(u=> u.id)
+
+            where.user_id = {
+                [Op.in]: userIds
+            }
+        }
         if (bankTerminalMode && bankTerminalMode !== "ALL") {
             if(bankTerminalMode === "ENABLED"){
                 where.bankTerminalMode = {

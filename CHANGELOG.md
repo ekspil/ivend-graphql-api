@@ -644,3 +644,8 @@
 
 * sim reset
 
+
+# 1.6.10 - Hotfix
+
+* controller vendor filtration
+
