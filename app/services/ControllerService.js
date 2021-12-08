@@ -293,8 +293,22 @@ class ControllerService {
             limit = 50
         }
         if(userRole && userRole !== "ALL"){
+            let roles = []
+            if(userRole === "VENDOR"){
+                roles.push("VENDOR")
+                roles.push("VENDOR_NO_LEGAL_INFO")
+                roles.push("VENDOR_NOT_CONFIRMED")
+                roles.push("VENDOR_NEGATIVE_BALANCE")
+                roles.push("PARTNER")
+                roles.push("ADMIN")
+            }
+            else{
+                roles.push(userRole)
+            }
             const users = await this.User.findAll({where: {
-                role: userRole
+                role: {
+                    [Op.in]: roles
+                }
             }})
 
             const userIds = users.map(u=> u.id)

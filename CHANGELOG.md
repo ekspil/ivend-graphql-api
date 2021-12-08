@@ -649,3 +649,7 @@
 
 * controller vendor filtration
 
+# 1.6.11 - Hotfix
+
+* controller vendor filtration
+
