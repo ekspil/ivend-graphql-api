@@ -653,3 +653,7 @@
 
 * controller vendor filtration
 
+# 1.6.12 - Hotfix
+
+* receipt resend fix
+

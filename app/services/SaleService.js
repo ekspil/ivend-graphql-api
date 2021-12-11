@@ -615,16 +615,134 @@ class SaleService {
 
         const sale = await this.getSaleById(saleId, user)
 
-        if (!sale || !sale.receiptId) {
+        if (!sale ) {
             throw new Error("SALE_NOT_FOUND")
         }
-        try{
-            await microservices.fiscal.reSendCheck(sale.receiptId)
-            return true
+        if(!sale.receiptId){
+
+
+            const type = sale.type
+            const item = await sale.getItem()
+            const buttonItem = await this.ButtonItem.findOne({
+                where: {
+                    item_id: item.id
+                }
+            })
+            const machine = await sale.getMachine()
+            const controller = await machine.getController()
+            const controllerUser = await controller.getUser()
+            if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED") {
+
+
+                controllerUser.checkPermission = () => true
+
+                const legalInfo = await controllerUser.getLegalInfo()
+
+                if (!legalInfo) {
+                    throw new Error("LegalInfo is not set")
+                }
+
+                if (controllerUser.role === "VENDOR_NEGATIVE_BALANCE") {
+                    throw new Error("USER LOCKED BY BALANCE")
+                }
+
+
+                const userKkts = await this.kktService.getUserKkts(controllerUser)
+                const activatedKkts = userKkts.filter(kkt => kkt.kktActivationDate)
+
+
+                const kktArray = activatedKkts.filter(kkt => kkt.id === machine.kktId || Number(machine.kktId) === 0)
+
+                if (kktArray.length) {
+                    const kkt = this.arrayRandElement(kktArray)
+                    if(!kkt){
+                        logger.info(`sale_service_err kkt not selected!, saleId:${sale.id} `)
+                        throw new Error("kkt not selected!")
+                    }
+                    const {inn, sno} = legalInfo
+
+                    const place = machine.place || "Торговый автомат"
+
+                    const productName = item.name
+
+                    const email = legalInfo.contactEmail
+                    const productPrice = Number(sale.price).toFixed(2)
+
+                    let kktRegNumber = kkt.kktRegNumber
+
+                    try {
+
+                        const fiscalReceiptDTO = new FiscalReceiptDTO({
+                            controllerUid: controller.uid,
+                            email,
+                            sno,
+                            inn,
+                            place,
+                            itemName: productName,
+                            itemPrice: productPrice,
+                            paymentType: type,
+                            kktRegNumber,
+                            itemType: buttonItem.type
+                        })
+
+
+
+                        //const uuid = await sendCheck(fiscalData, token, server, machineKkt)
+                        let receiptId
+
+                        switch (kkt.type){
+                            case "rekassa":
+                                fiscalReceiptDTO.rekassa_password = kkt.rekassaPassword
+                                fiscalReceiptDTO.rekassa_number = kkt.rekassaNumber
+                                fiscalReceiptDTO.rekassa_kkt_id = kkt.rekassaKktId
+                                receiptId = (await microservices.fiscal.createReceiptRekassa(fiscalReceiptDTO)).id
+
+                                if (!receiptId) {
+                                    throw new Error("ReceiptId is null")
+                                }
+
+                                break
+                            default:
+                                receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
+
+                                if (!receiptId) {
+                                    throw new Error("ReceiptId is null")
+                                }
+
+
+                                break
+
+                        }
+
+
+                        sale.receiptId = receiptId
+                        sale.sqr = `https://cabinet.ivend.pro/bill/${receiptId}`
+                        await sale.save()
+                        await this.redis.set("kkt_status_" + kkt.id, `OK`, "EX", 24 * 60 * 60)
+                        kkt.kktLastBill = new Date().toISOString()
+                        await kkt.save()
+                        return true
+                    } catch (err) {
+                        logger.info(`sale_service_err ${err} ${JSON.stringify(err)}, saleId:${sale.id} `)
+                    }
+                }
+            }
+
+
+
         }
-        catch (e) {
-            throw new Error("MICROSERVICE_ERROR")
+        else {
+
+            try{
+                await microservices.fiscal.reSendCheck(sale.receiptId)
+                return true
+            }
+            catch (e) {
+                throw new Error("MICROSERVICE_ERROR")
+            }
         }
+
+
     }
 
 
