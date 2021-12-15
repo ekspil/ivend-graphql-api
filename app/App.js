@@ -360,6 +360,7 @@ class App {
             ItemModel,
             ButtonItemModel,
             TempMachineModel,
+            ItemMatrixModel,
             TempModel,
             controllerService: services.controllerService,
             itemService: services.itemService,
