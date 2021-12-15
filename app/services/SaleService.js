@@ -19,7 +19,7 @@ const {getFiscalString} = require("./FiscalService")
 
 class SaleService {
 
-    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, TempMachineModel, TempModel, controllerService, itemService, machineService, kktService, redis}) {
+    constructor({MachineGroupModel, MachineModel, SaleModel, ButtonItemModel, ItemModel, TempMachineModel, TempModel, ItemMatrixModel, controllerService, itemService, machineService, kktService, redis}) {
         this.Sale = SaleModel
         this.redis = redis
         this.MachineGroup = MachineGroupModel
@@ -30,6 +30,7 @@ class SaleService {
         this.Temp = TempModel
         this.controllerService = controllerService
         this.itemService = itemService
+        this.ItemMatrix = ItemMatrixModel
         this.machineService = machineService
         this.kktService = kktService
 
@@ -622,15 +623,38 @@ class SaleService {
 
 
             const type = sale.type
+            const machine = await sale.getMachine()
+            const controller = await machine.getController()
+            const controllerUser = await controller.getUser()
+
+
             const item = await sale.getItem()
-            const buttonItem = await this.ButtonItem.findOne({
+            let buttonItemType = "commodity"
+            let buttonItem = await this.ButtonItem.findOne({
                 where: {
                     item_id: item.id
                 }
             })
-            const machine = await sale.getMachine()
-            const controller = await machine.getController()
-            const controllerUser = await controller.getUser()
+            if(buttonItem){
+                buttonItemType = buttonItem.type
+
+            }
+            else{
+                const itemMatrix = await this.ItemMatrix.findOne({
+                    where: {
+                        id: machine.item_matrix_id
+                    }
+                })
+
+                buttonItem = await this.ButtonItem.findOne({
+                    where: {
+                        item_matrix_id: itemMatrix.id
+                    }
+                })
+                buttonItemType = buttonItem.type
+            }
+
+
             if (controller.fiscalizationMode === "APPROVED" || controller.fiscalizationMode === "UNAPPROVED") {
 
 
@@ -682,7 +706,7 @@ class SaleService {
                             itemPrice: productPrice,
                             paymentType: type,
                             kktRegNumber,
-                            itemType: buttonItem.type
+                            itemType: buttonItemType
                         })
 
 

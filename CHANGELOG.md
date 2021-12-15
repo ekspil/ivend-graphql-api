@@ -657,3 +657,8 @@
 
 * receipt resend fix
 
+
+# 1.6.13 - Hotfix
+
+* receipt resend fix
+
