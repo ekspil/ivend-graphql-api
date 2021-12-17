@@ -650,7 +650,7 @@ class UserService {
         let orderData = ["id", "DESC"]
 
         if(orderDesc === true){
-            orderData =["id"]
+            orderData =["id", "ASC"]
         }
         if(orderKey){
             if(orderKey === "id"){

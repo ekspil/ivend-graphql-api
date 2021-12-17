@@ -207,11 +207,22 @@ const sendEmail = async (input, user) => {
 
 const sendEmailOrder = async (input, user, sameUser) => {
     let email = "sale@ivend.pro"
-    if(sameUser){
-        email = user.email
-    }
+
     let legalInfo = await user.getLegalInfo()
-    if(!legalInfo) legalInfo = {companyName: "Компания не указана"}
+    if(!legalInfo) return false
+
+    if(sameUser){
+        if(legalInfo.contactEmail.includes("@")){
+            email = email + ", " + legalInfo.contactEmail
+        }
+        else if(user.email.includes("@")) {
+            email = email + ", " + legalInfo.contactEmail
+        }
+        else{
+            return false
+        }
+
+    }
     const body = JSON.stringify({input, user, email, legalInfo})
     const url = `${process.env.NOTIFICATION_URL}/api/v1/template/SEND_ORDER`
     const method = "POST"
@@ -223,6 +234,7 @@ const sendEmailOrder = async (input, user, sameUser) => {
         },
         body
     })
+
     switch (res.status) {
         case 200:
             const json = await res.json()

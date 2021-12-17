@@ -662,3 +662,7 @@
 
 * receipt resend fix
 
+# 1.6.14 - Hotfix
+
+* autosend email orders
+

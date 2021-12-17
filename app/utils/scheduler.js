@@ -4,7 +4,7 @@ const scheduleTasks = async ({UserModel, services}) => {
 
 
     // auto order send
-    cron.schedule("* * 1 * *", async () => {
+    cron.schedule("1 14 1 * *", async () => {
         const users = await UserModel.findAll({
             where: {
                 autoSend: true
@@ -21,7 +21,7 @@ const scheduleTasks = async ({UserModel, services}) => {
                 amount,
                 inn: user.inn,
                 companyName: user.companyName,
-                services: [{count: 1, price: amount, name: "Рекомендуемый платеж за услуги IVEND за месяц"}]
+                services: JSON.stringify([{count: 1, price: amount, name: "Рекомендуемый платеж за услуги IVEND за месяц"}])
             }
             await services.reportService.generatePdf(input, user, true)
         }

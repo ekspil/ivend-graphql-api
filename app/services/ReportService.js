@@ -76,9 +76,11 @@ class ReportService {
         const {id} = await response.json()
         input.url = `${process.env.EXCEL_URL}/api/v1/pdf/${id}`
 
-        await microservices.notification.sendEmailOrder(input, user)
         if(toUser){
             await microservices.notification.sendEmailOrder(input, user, true)
+        }
+        else {
+            await microservices.notification.sendEmailOrder(input, user)
         }
 
         return {url: `${process.env.EXCEL_URL}/api/v1/pdf/${id}`}
@@ -86,5 +88,4 @@ class ReportService {
 
 }
 
-module
-    .exports = ReportService
+module.exports = ReportService
