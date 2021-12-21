@@ -666,3 +666,7 @@
 
 * autosend email orders
 
+# 1.6.15 - Hotfix
+
+* fix sending sms
+

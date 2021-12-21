@@ -73,13 +73,29 @@ class UserService {
             }
         })
 
+        if(!users){
+            throw new Error("Users table is null")
+        }
+
+
         const news = await this.News.findOne({
             where: {
                 id
             }
         })
+
+
+        if(!news){
+            throw new Error("News not found")
+        }
         for(let us of users){
-            await microservices.notification.sendTextEmail(us.email, news.text)
+            try{
+                await microservices.notification.sendTextEmail(us.email, news.text)
+                logger.info(`graphql_sending_email_success user: ${us.id}, email: ${us.email}`)
+            }
+            catch (e) {
+                logger.info(`graphql_sending_email_error user: ${us.id}, email: ${us.email}, message: ${e.message}`)
+            }
         }
         return true
     }
@@ -94,14 +110,29 @@ class UserService {
                 [Op.or]: [{role: "VENDOR"}, {role: "PARTNER"}]
             }
         })
+        if(!users){
+            throw new Error("Users table is null")
+        }
 
         const news = await this.News.findOne({
             where: {
                 id
             }
         })
+
+
+        if(!news){
+            throw new Error("News not found")
+        }
         for(let us of users){
-            await microservices.notification.sendTextSMS(us.phone, news.text)
+            try {
+                await microservices.notification.sendTextSMS(us.phone, news.text)
+                logger.info(`graphql_sending_sms_success user: ${us.id}, phone: ${us.phone}`)
+            }
+            catch (e) {
+                logger.info(`graphql_sending_sms_error user: ${us.id}, phone: ${us.phone}, message: ${e.message}`)
+            }
+
         }
         return true
     }
