@@ -678,3 +678,7 @@
 
 * fix billing
 
+# 1.6.18 - Hotfix
+
+* fix sending sms and email
+

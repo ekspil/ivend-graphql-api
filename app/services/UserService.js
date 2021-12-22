@@ -88,15 +88,27 @@ class UserService {
         if(!news){
             throw new Error("News not found")
         }
+        let tasks = []
+        let delay = 0
         for(let us of users){
-            try{
-                await microservices.notification.sendTextEmail(us.email, news.text)
-                logger.info(`graphql_sending_email_success user: ${us.id}, email: ${us.email}`)
-            }
-            catch (e) {
-                logger.info(`graphql_sending_email_error user: ${us.id}, email: ${us.email}, message: ${e.message}`)
-            }
+            tasks.push(new Promise(async (resolve) => {
+                delay += 1000
+
+                await new Promise(res => setTimeout(res, delay))
+                try{
+                    await microservices.notification.sendTextEmail(us.email, news.text)
+                    logger.info(`graphql_sending_email_success user: ${us.id}, email: ${us.email}`)
+                }
+                catch (e) {
+                    logger.info(`graphql_sending_email_error user: ${us.id}, email: ${us.email}, message: ${e.message}`)
+                }
+
+
+                resolve(  "graphql_sending_sms_started")
+            }))
+
         }
+        await Promise.all(tasks)
         return true
     }
     async sendNewsSMS(id, user) {
@@ -126,16 +138,26 @@ class UserService {
         }
         let text = news.text.replace( /(<([^>]+)>)/ig, `
 ` )
+        let tasks = []
+        let delay = 0
         for(let us of users){
-            try {
-                await microservices.notification.sendTextSMS(us.phone, text)
-                logger.info(`graphql_sending_sms_success user: ${us.id}, phone: ${us.phone}`)
-            }
-            catch (e) {
-                logger.info(`graphql_sending_sms_error user: ${us.id}, phone: ${us.phone}, message: ${e.message}`)
-            }
+            tasks.push(new Promise(async (resolve) => {
+                delay += 1000
+
+                await new Promise(res => setTimeout(res, delay))
+                try {
+                    await microservices.notification.sendTextSMS(us.phone, text)
+                    logger.info(`graphql_sending_sms_success user: ${us.id}, phone: ${us.phone}`)
+                }
+                catch (e) {
+                    logger.info(`graphql_sending_sms_error user: ${us.id}, phone: ${us.phone}, message: ${e.message}`)
+                }
+
+                resolve(  "graphql_sending_sms_started")
+            }))
 
         }
+        await Promise.all(tasks)
         return true
     }
 
