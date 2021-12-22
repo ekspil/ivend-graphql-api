@@ -691,7 +691,7 @@ class ControllerService {
         const allUserControllers = await this.getAllOfCurrentUser(user)
         const kkts = await this.kktService.getUserKkts(user)
         const kktOk = kkts.filter(kkt => kkt.kktActivationDate)
-        const fiscalControllers = allUserControllers.filter(controller => controller.fiscalizationMode !== "NO_FISCAL")
+        const fiscalControllers = allUserControllers.filter(controller => controller.fiscalizationMode !== "NO_FISCAL" && controller.status === "ENABLED")
         const tariff = await microservices.billing.getTariff("TELEMETRY", user.id)
         if(controller && controller.status === "ENABLED"){
             services.push({

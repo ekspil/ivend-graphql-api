@@ -674,3 +674,7 @@
 
 * fix sending sms
 
+# 1.6.17 - Hotfix
+
+* fix billing
+
