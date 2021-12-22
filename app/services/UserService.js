@@ -124,9 +124,11 @@ class UserService {
         if(!news){
             throw new Error("News not found")
         }
+        let text = news.text.replace( /(<([^>]+)>)/ig, `
+` )
         for(let us of users){
             try {
-                await microservices.notification.sendTextSMS(us.phone, news.text)
+                await microservices.notification.sendTextSMS(us.phone, text)
                 logger.info(`graphql_sending_sms_success user: ${us.id}, phone: ${us.phone}`)
             }
             catch (e) {

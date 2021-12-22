@@ -670,3 +670,7 @@
 
 * fix sending sms
 
+# 1.6.16 - Hotfix
+
+* fix sending sms
+
