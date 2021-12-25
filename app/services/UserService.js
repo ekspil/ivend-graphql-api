@@ -92,7 +92,7 @@ class UserService {
         let delay = 0
         for(let us of users){
             tasks.push(new Promise(async (resolve) => {
-                delay += 1000
+                delay += 10000
 
                 await new Promise(res => setTimeout(res, delay))
                 try{

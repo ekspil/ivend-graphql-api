@@ -682,3 +682,7 @@
 
 * fix sending sms and email
 
+# 1.6.19 - Hotfix
+
+* fix sending sms and email
+
