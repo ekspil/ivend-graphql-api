@@ -63,6 +63,7 @@ const PartnerFee = require("./models/sequelize/PartnerFee")
 const AdminStatistic = require("./models/sequelize/AdminStatistic")
 const Tariff = require("./models/sequelize/Tariff")
 const PartnerInfos = require("./models/sequelize/PartnerInfos")
+const BankPayments = require("./models/sequelize/BankPayment")
 
 
 
@@ -145,6 +146,7 @@ class App {
         const AdminStatisticModel = sequelize.define("admin_statistics", AdminStatistic)
         const TariffModel = sequelize.define("tariffs", Tariff)
         const PartnerInfosModel = sequelize.define("partner_infos", PartnerInfos)
+        const BankPaymentsModel = sequelize.define("bank_payments", BankPayments)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -383,7 +385,7 @@ class App {
             UserModel,
             PartnerFeeModel,
         })
-        services.reportService = new ReportService({redis})
+        services.reportService = new ReportService({redis, BankPaymentsModel})
 
         services.partnerService = new PartnerService({
             UserModel,
