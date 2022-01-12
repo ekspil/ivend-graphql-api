@@ -8,8 +8,9 @@ const microservices = require("../utils/microservices")
 
 class ReportService {
 
-    constructor({redis}) {
+    constructor({redis, BankPaymentsModel}) {
         this.redis = redis
+        this.BankPayments = BankPaymentsModel
         this.generateExcel = this.generateExcel.bind(this)
     }
 
@@ -51,13 +52,13 @@ class ReportService {
 
         const body = input
 
-        const numOrderString = await this.redis.get("orders_number_")
-        if(!numOrderString){
-            await this.redis.set("orders_number_", "1")
-            body.orderNumber = 1
-        }
-        body.orderNumber = String(Number(numOrderString) + 1)
-        await this.redis.set("orders_number_", `${body.orderNumber}`)
+
+        const bankPayment = await this.BankPayments.create({
+            applied: false,
+            userId: user.id
+        })
+
+        body.orderNumber = String(bankPayment.id)
 
 
         const response = await fetch(`${process.env.EXCEL_URL}/api/v1/pdf/generate`, {
