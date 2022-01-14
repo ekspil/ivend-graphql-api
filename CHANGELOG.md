@@ -690,3 +690,7 @@
 
 * fix sending sms and email
 
+# 1.6.21 - Hotfix
+
+* fix generate pdf
+
