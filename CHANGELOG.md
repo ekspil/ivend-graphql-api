@@ -694,3 +694,7 @@
 
 * fix generate pdf
 
+# 1.6.22 - Hotfix
+
+* delete controllers when user closed
+

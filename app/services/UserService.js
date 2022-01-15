@@ -763,10 +763,13 @@ class UserService {
             where: {
                 id
             }})
+
+        const where = {
+            user_id: Number(selectedUser.id)
+        }
+
         if(selectedUser.role === "CLOSED"){
-            const where = {
-                user_id: Number(selectedUser.id)
-            }
+
 
             const nss = await this.NotificationSettingModel.findAll({where, paranoid: false})
             for (let item of nss){
@@ -832,6 +835,12 @@ class UserService {
         }
 
         selectedUser.role = "CLOSED"
+
+        const cs = await this.ControllerModel.findAll({where, paranoid: false})
+        for (let item of cs){
+            await item.destroy()
+        }
+
         return await selectedUser.save()
     }
 
