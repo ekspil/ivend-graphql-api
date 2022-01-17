@@ -270,6 +270,7 @@ const typeDefs = gql`
         kktFNNumber: String
         kktActivationDate: String
         kktBillsCount: Int
+        status: Int
         kktOFDRegKey: String
         kktLastBill: String
         kktStatus: String

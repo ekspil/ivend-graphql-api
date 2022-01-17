@@ -87,6 +87,11 @@ const Kkt = {
         allowNull: true,
         unique: false
     },
+    status: {
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: true,
+        unique: false
+    },
     kktOFDRegKey: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,

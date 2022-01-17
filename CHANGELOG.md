@@ -698,3 +698,7 @@
 
 * delete controllers when user closed
 
+# 1.6.23 - Hotfix
+
+* fix kkt statusws
+
