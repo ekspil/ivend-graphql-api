@@ -409,7 +409,7 @@ class KktService {
             offset,
             limit,
             order: [
-                ["id", "ASC"],
+                ["status", "DESC"],
             ]
         })
         let filtredKkts
