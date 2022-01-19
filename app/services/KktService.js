@@ -404,22 +404,22 @@ class KktService {
         if (!limit) {
             limit = 50
         }
+        const where = {}
+        if(status !== undefined){
+            where.status = status
+        }
 
         const kkts = await this.Kkt.findAll({
             offset,
             limit,
+            where,
             order: [
                 ["status", "DESC"],
+                ["id", "DESC"],
             ]
         })
-        let filtredKkts
-        if(status !== undefined){
-            filtredKkts = kkts.filter(kkt => this.getStatus(kkt) === status)
-        }else{
-            filtredKkts = kkts
-        }
 
-        for (let kkt of filtredKkts){
+        for (let kkt of kkts){
             // const machines = await this.Machine.findAll({
             //     where: {
             //         kktId: kkt.id
@@ -450,7 +450,7 @@ class KktService {
             }
         }
 
-        return filtredKkts
+        return kkts
     }
 
 }
