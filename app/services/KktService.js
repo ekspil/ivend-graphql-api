@@ -414,7 +414,7 @@ class KktService {
             limit,
             where,
             order: [
-                ["status", "DESC"],
+                ["status", "ASC"],
                 ["id", "DESC"],
             ]
         })
