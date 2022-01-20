@@ -646,7 +646,7 @@ class App {
 
         logger.info(`GraphQL Server ready at ${serverInfo.url}`)
 
-        await scheduler.scheduleTasks({UserModel, services})
+        await scheduler.scheduleTasks({UserModel, services, KktModel})
 
         // const controllers = await ControllerModel.findAll()
         // for( let controller of controllers){
