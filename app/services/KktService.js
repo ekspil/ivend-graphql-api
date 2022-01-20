@@ -275,11 +275,6 @@ class KktService {
 
         kkt.kktStatus = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
 
-        let info = await microservices.fiscal.getKktInfo(kkt.kktRegNumber || kkt.rekassaNumber)
-        if (info) {
-            kkt.kktLastBill = info.createdAt
-            kkt.kktBillsCount = info.fiscalDocumentNumber
-        }
 
         return kkt
     }
@@ -386,11 +381,6 @@ class KktService {
 
             kkt.kktStatus = status
 
-            let info = await microservices.fiscal.getKktInfo(kkt.kktRegNumber || kkt.rekassaNumber)
-            if (info) {
-                kkt.kktLastBill = info.createdAt
-                kkt.kktBillsCount = info.fiscalDocumentNumber
-            }
         }
 
         return answer
@@ -443,11 +433,6 @@ class KktService {
 
             kkt.kktStatus = status
 
-            let info = await microservices.fiscal.getKktInfo(kkt.kktRegNumber || kkt.rekassaNumber)
-            if (info) {
-                kkt.kktLastBill = info.createdAt
-                kkt.kktBillsCount = info.fiscalDocumentNumber
-            }
         }
 
         return kkts

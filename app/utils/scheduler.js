@@ -1,6 +1,8 @@
 const cron = require("node-cron")
+const microservices = require("../utils/microservices")
+const logger = require("my-custom-logger")
 
-const scheduleTasks = async ({UserModel, services}) => {
+const scheduleTasks = async ({UserModel, KktModel, services}) => {
 
 
     // auto order send
@@ -25,6 +27,33 @@ const scheduleTasks = async ({UserModel, services}) => {
             }
             await services.reportService.generatePdf(input, user, true)
         }
+    })
+
+    // kkt information update
+    cron.schedule("*/10 * * * *", async () => {
+
+
+        logger.info("graphql_scheduler_kkt_information_update_started")
+        const kkts = await KktModel.findAll({
+            order: [
+                ["status", "ASC"],
+                ["id", "DESC"],
+            ]
+        })
+
+        for (let kkt of kkts){
+
+
+            let info = await microservices.fiscal.getKktInfo(kkt.kktRegNumber || kkt.rekassaNumber)
+            if (info) {
+                kkt.kktLastBill = info.createdAt
+                kkt.kktBillsCount = info.fiscalDocumentNumber
+                await kkt.save()
+            }
+        }
+
+        logger.info("graphql_scheduler_kkt_information_update_finished")
+
     })
 
 }
