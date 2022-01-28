@@ -64,6 +64,7 @@ const AdminStatistic = require("./models/sequelize/AdminStatistic")
 const Tariff = require("./models/sequelize/Tariff")
 const PartnerInfos = require("./models/sequelize/PartnerInfos")
 const BankPayments = require("./models/sequelize/BankPayment")
+const Sims = require("./models/sequelize/Sim")
 
 
 
@@ -147,6 +148,7 @@ class App {
         const TariffModel = sequelize.define("tariffs", Tariff)
         const PartnerInfosModel = sequelize.define("partner_infos", PartnerInfos)
         const BankPaymentsModel = sequelize.define("bank_payments", BankPayments)
+        const SimsModel = sequelize.define("sims", Sims)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -285,7 +287,7 @@ class App {
 
 
         services.equipmentService = new EquipmentService({
-            EquipmentModel
+            EquipmentModel, SimsModel
         })
 
         services.itemService = new ItemService({ItemModel})

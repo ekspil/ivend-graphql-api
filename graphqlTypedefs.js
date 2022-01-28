@@ -895,6 +895,7 @@ const typeDefs = gql`
         getInfo: [Info]
         getInfoById(id: Int!): Info
         getAllInfo: [Info]
+        getAllSims(input: AllSimsInput): [Sim]
         getInstr: [Instr]
         getInstrById(id: Int!): Instr
         getAllInstr: [Instr]
@@ -914,6 +915,10 @@ const typeDefs = gql`
     input AllUsersInput {
         role: String
         userId: Int
+        limit: Int
+        offset: Int
+    }
+    input AllSimsInput {
         limit: Int
         offset: Int
     }
@@ -988,6 +993,19 @@ const typeDefs = gql`
         kkmFee: Float!
         terminalFee: Float!
         controllerFee: Float!
+    }
+    
+    type Sim {
+    
+        userId: Int!
+        controllerId: Int!
+        terminalId: Int!
+        number: String!
+        phone: String!
+        imsi: String!
+        traffic: Float!
+        expense: Float!
+        
     }
     
     type PartnerInfo {

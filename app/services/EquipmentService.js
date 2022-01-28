@@ -6,8 +6,9 @@ const Equipment = require("../models/Equipment")
 
 class EquipmentService {
 
-    constructor({EquipmentModel}) {
+    constructor({EquipmentModel, SimsModel}) {
         this.Equipment = EquipmentModel
+        this.Sim = SimsModel
 
         this.createEquipment = this.createEquipment.bind(this)
         this.findById = this.findById.bind(this)
@@ -44,6 +45,18 @@ class EquipmentService {
         }
 
         return await this.Equipment.findAll()
+    }
+
+    async getAllSims(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_SIMS)) {
+            throw new NotAuthorized()
+        }
+        const {limit, offset} = input
+
+        return await this.Sim.findAll({
+            limit,
+            offset
+        })
     }
 }
 

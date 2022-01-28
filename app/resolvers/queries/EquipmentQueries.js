@@ -1,4 +1,5 @@
 const EquipmentDTO = require("../../models/dto/EquipmentDTO")
+const SimDTO = require("../../models/dto/SimDTO")
 
 function EquipmentQueries({equipmentService}) {
 
@@ -14,8 +15,19 @@ function EquipmentQueries({equipmentService}) {
         return equipments.map(equipment => (new EquipmentDTO(equipment)))
     }
 
+    const getAllSims = async (root, args, context) => {
+        const {user} = context
+        const {input} = args
+
+        const sims = await equipmentService.getAllSims(input, user)
+        if(!sims) return null
+
+        return sims.map(sim => (new SimDTO(sim)))
+    }
+
     return {
-        getEquipments
+        getEquipments,
+        getAllSims
     }
 
 }
