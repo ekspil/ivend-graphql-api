@@ -2,10 +2,13 @@ const cron = require("node-cron")
 const microservices = require("../utils/microservices")
 const logger = require("my-custom-logger")
 
-const scheduleTasks = async ({UserModel, KktModel, services}) => {
+const scheduleTasks = async ({UserModel, KktModel, services, redis}) => {
 
 
     // auto order send
+    const started = await redis.get("auto_send_already_started")
+    if(started) return
+    await redis.set("auto_send_already_started", `OK`, "EX", 24 * 60 * 60)
     cron.schedule("1 14 1 * *", async () => {
         const users = await UserModel.findAll({
             where: {
@@ -32,6 +35,9 @@ const scheduleTasks = async ({UserModel, KktModel, services}) => {
     // kkt information update
     cron.schedule("*/10 * * * *", async () => {
 
+        const started = await redis.get("update_kkt_info_already_started")
+        if(started) return
+        await redis.set("update_kkt_info_already_started", `OK`, "EX", 60)
 
         logger.info("graphql_scheduler_kkt_information_update_started")
         const kkts = await KktModel.findAll({

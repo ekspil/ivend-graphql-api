@@ -718,3 +718,7 @@
 
 * fix kkt statusws
 
+# 1.6.28 - Hotfix
+
+* fix kkt statusws
+
