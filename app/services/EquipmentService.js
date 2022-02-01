@@ -55,7 +55,10 @@ class EquipmentService {
 
         return await this.Sim.findAll({
             limit,
-            offset
+            offset,
+            order: [
+                ["traffic", "DESC"]
+            ]
         })
     }
 }

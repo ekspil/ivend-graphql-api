@@ -23,6 +23,9 @@ const Sim = {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
     },
+    terminal: {
+        type: Sequelize.DataTypes.STRING,
+    },
     phone: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,

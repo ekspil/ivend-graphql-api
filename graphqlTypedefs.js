@@ -997,14 +997,15 @@ const typeDefs = gql`
     
     type Sim {
     
-        userId: Int!
-        controllerId: Int!
-        terminalId: Int!
+        userId: Int
+        controllerId: Int
+        terminalId: Int
         number: String!
-        phone: String!
+        phone: String
+        terminal: String
         imsi: String!
-        traffic: Float!
-        expense: Float!
+        traffic: Float
+        expense: Float
         
     }
     
