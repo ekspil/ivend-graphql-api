@@ -865,6 +865,7 @@ const typeDefs = gql`
         ALL
         TERMINAL
         ENCASHMENT
+        SIM_CONTROLLER
     }
 
     type Query {

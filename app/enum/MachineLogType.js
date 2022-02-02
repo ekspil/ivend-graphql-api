@@ -12,6 +12,7 @@ const MachineLogType = {
     "NO_CASH_24H": "NO_CASH_24H",
     "NO_CASHLESS_24H": "NO_CASHLESS_24H",
     "NO_RECEIPT_24H": "NO_RECEIPT_24H",
+    "SIM_CONTROLLER": "SIM_CONTROLLER",
 }
 
 
