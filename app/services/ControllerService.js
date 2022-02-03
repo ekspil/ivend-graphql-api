@@ -46,6 +46,7 @@ class ControllerService {
         this.registerState = this.registerState.bind(this)
         this.authController = this.authController.bind(this)
         this.registerEvent = this.registerEvent.bind(this)
+        this.getControllerServices = this.getControllerServices.bind(this)
     }
 
     async createController(input, user) {

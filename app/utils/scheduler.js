@@ -2,14 +2,52 @@ const cron = require("node-cron")
 const microservices = require("../utils/microservices")
 const logger = require("my-custom-logger")
 
+const servs = async(controllers, user,  getControllerServices) => {
+    let servicesResult = []
+    for(let controller of controllers){
+        controller.services = await getControllerServices(controller.id, user)
+        for(let service of controller.services){
+            const [exist] = servicesResult.filter(serv => serv.id === service.id)
+            if(!exist){
+                let s = {
+                    id: service.id,
+                    name: service.name,
+                    price: service.price,
+                    count: 1
+                }
+                servicesResult.push(s)
+            }else{
+                servicesResult.map(serv => {
+                    if(serv.id !== service.id) return serv
+                    serv.price = serv.price + service.price
+                    serv.count++
+                    if(service.fixCount){
+                        serv.count = service.fixCount
+                        serv.price = service.price
+                    }
+                    return serv
+                })
+            }
+
+
+        }
+    }
+
+    return servicesResult
+
+}
+
+
 const scheduleTasks = async ({UserModel, KktModel, services, redis}) => {
 
 
-    // auto order send
-    const started = await redis.get("auto_send_already_started")
-    if(started) return
-    await redis.set("auto_send_already_started", `OK`, "EX", 24 * 60 * 60)
+
     cron.schedule("1 14 1 * *", async () => {
+        // auto order send
+        const started = await redis.get("auto_send_already_started")
+        if(started) return
+        await redis.set("auto_send_already_started", `OK`, "EX", 24 * 60 * 60)
+
         const users = await UserModel.findAll({
             where: {
                 autoSend: true
@@ -18,17 +56,31 @@ const scheduleTasks = async ({UserModel, KktModel, services, redis}) => {
 
 
         for (let user of users){
-            user.checkPermission = () => true
-            const dayBill = await services.billingService.getDailyBill(user, user.id)
-            const amount = Number((Number(dayBill) * 32).toFixed(0))
+            try{
 
-            const input = {
-                amount,
-                inn: user.inn,
-                companyName: user.companyName,
-                services: JSON.stringify([{count: 1, price: amount, name: "Рекомендуемый платеж за услуги IVEND за месяц"}])
+                user.checkPermission = () => true
+                const controllers = await services.controllerService.getAllOfCurrentUser(user)
+                const svs = await servs(controllers, user, services.controllerService.getControllerServices)
+
+
+
+
+                const amount = svs.reduce((acc, i) => acc + i.price, 0)
+                if(amount === 0) continue
+
+                const input = {
+                    amount,
+                    inn: user.inn,
+                    companyName: user.companyName,
+                    prefix: "VFT",
+                    services: JSON.stringify(svs)
+                }
+                await services.reportService.generatePdf(input, user, true)
             }
-            await services.reportService.generatePdf(input, user, true)
+            catch (e) {
+                logger.info(`graphql_error_sending_auto_order ${e.message}`)
+                continue
+            }
         }
     })
 
