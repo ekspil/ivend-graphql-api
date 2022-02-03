@@ -19,6 +19,10 @@ const Sim = {
         type: Sequelize.DataTypes.INTEGER,
         field: "controller_id"
     },
+    controllerUid: {
+        type: Sequelize.DataTypes.STRING,
+        field: "controller_uid"
+    },
     number: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,

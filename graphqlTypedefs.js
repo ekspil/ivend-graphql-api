@@ -1008,6 +1008,7 @@ const typeDefs = gql`
         number: String!
         phone: String
         terminal: String
+        controllerUid: String
         imsi: String!
         traffic: Float
         expense: Float
