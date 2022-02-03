@@ -44,6 +44,18 @@ const Stat = {
         type: Sequelize.DataTypes.INTEGER,
         field: "kkts_error"
     },
+    simCount: {
+        type: Sequelize.DataTypes.INTEGER,
+        field: "sim_count"
+    },
+    simExpense: {
+        type: Sequelize.DataTypes.DECIMAL,
+        field: "sim_expense"
+    },
+    simTraffic: {
+        type: Sequelize.DataTypes.DECIMAL,
+        field: "sim_traffic"
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

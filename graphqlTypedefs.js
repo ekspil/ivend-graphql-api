@@ -808,6 +808,10 @@ const typeDefs = gql`
         kktsCount: Int!
         kktsNormal: Int!
         kktsError: Int!
+        
+        simExpense: Float
+        simTraffic: Float
+        simCount: Int
 
         informationStatus: Boolean!
     }
