@@ -722,3 +722,7 @@
 
 * fix kkt statusws
 
+# 1.6.29 - Hotfix
+
+* fix sim
+
