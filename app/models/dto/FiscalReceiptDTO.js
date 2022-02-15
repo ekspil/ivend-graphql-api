@@ -2,7 +2,7 @@ const SaleDTO = require("./SaleDTO")
 
 class FiscalReceiptDTODTO {
 
-    constructor({id, inn, kpp, legalAddress, companyName, sale, fnsSite, receiptDatetime, shiftNumber, email, itemType, fiscalReceiptNumber, fiscalDocumentNumber, ecrRegistrationNumber, fiscalDocumentAttribute, fnNumber, sno, place, machineNumber}) {
+    constructor({id, inn, kpp, legalAddress, companyName, sale, fnsSite, receiptDatetime, shiftNumber, email, itemType, fiscalReceiptNumber, fiscalDocumentNumber, ecrRegistrationNumber, fiscalDocumentAttribute, fnNumber, sno, place, machineNumber, kktProvider}) {
         this.id = id
         this.inn = inn
         this.kpp = kpp
@@ -22,6 +22,7 @@ class FiscalReceiptDTODTO {
         this.ecrRegistrationNumber = ecrRegistrationNumber
         this.fiscalDocumentAttribute = fiscalDocumentAttribute
         this.fnNumber = fnNumber
+        this.kktProvider = kktProvider
 
 
     }

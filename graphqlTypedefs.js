@@ -385,6 +385,7 @@ const typeDefs = gql`
     enum KktType {
         umka
         rekassa
+        telemedia
     }
     
     input EditKktInput {

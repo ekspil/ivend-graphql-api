@@ -438,11 +438,36 @@ const createReceipt = async (fiscalReceiptDto) => {
 
 
 const createReceiptRekassa = async (fiscalReceiptDto) => {
-    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receipt`
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receiptRekassa`
     const method = "POST"
     const body = JSON.stringify(fiscalReceiptDto)
 
-    const response = await fetch(`${process.env.FISCAL_URL}/api/v1/fiscal/receiptRekassa`, {
+    const response = await fetch(url, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    })
+
+    switch (response.status) {
+        case 200: {
+            const json = await response.json()
+            return new FiscalReceiptDTO(json)
+        }
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+
+}
+
+
+const createReceiptTelemedia = async (fiscalReceiptDto) => {
+    const url = `${process.env.FISCAL_URL}/api/v1/fiscal/receiptTelemedia`
+    const method = "POST"
+    const body = JSON.stringify(fiscalReceiptDto)
+
+    const response = await fetch(url, {
         method,
         headers: {
             "Content-Type": "application/json"
@@ -697,6 +722,7 @@ module.exports = {
         createReceipt,
         getReceiptById,
         createReceiptRekassa,
+        createReceiptTelemedia,
         getKktStatus,
         getKktInfo,
         getControllerKktStatus,

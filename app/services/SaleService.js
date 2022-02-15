@@ -292,7 +292,11 @@ class SaleService {
                         itemPrice: productPrice,
                         paymentType: type,
                         kktRegNumber,
-                        itemType
+                        itemType,
+                        kktProvider: kkt.type,
+                        rekassa_password: kkt.rekassaPassword,
+                        rekassa_number: kkt.rekassaNumber,
+                        rekassa_kkt_id: kkt.rekassaKktId,
                     })
 
 
@@ -302,10 +306,15 @@ class SaleService {
 
                     switch (kkt.type){
                         case "rekassa":
-                            fiscalReceiptDTO.rekassa_password = kkt.rekassaPassword
-                            fiscalReceiptDTO.rekassa_number = kkt.rekassaNumber
-                            fiscalReceiptDTO.rekassa_kkt_id = kkt.rekassaKktId
                             receiptId = (await microservices.fiscal.createReceiptRekassa(fiscalReceiptDTO)).id
+
+                            if (!receiptId) {
+                                throw new Error("ReceiptId is null")
+                            }
+
+                            break
+                        case "telemedia":
+                            receiptId = (await microservices.fiscal.createReceiptTelemedia(fiscalReceiptDTO)).id
 
                             if (!receiptId) {
                                 throw new Error("ReceiptId is null")
