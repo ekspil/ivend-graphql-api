@@ -51,11 +51,27 @@ class EquipmentService {
         if (!user || !user.checkPermission(Permission.GET_ALL_SIMS)) {
             throw new NotAuthorized()
         }
-        const {limit, offset} = input
+        const {sequelize} = this.Sim
+        const {Op} = sequelize
+
+        const {limit, offset, status} = input
+        const where = {}
+
+        if(status === "active"){
+            where.traffic = {
+                [Op.gte]: 0.001
+            }
+        }
+        else if(status === "not_active"){
+            where.traffic = {
+                [Op.lt]: 0.001
+            }
+        }
 
         return await this.Sim.findAll({
             limit,
             offset,
+            where,
             order: [
                 ["traffic", "DESC"]
             ]

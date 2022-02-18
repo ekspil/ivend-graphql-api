@@ -2,7 +2,7 @@
 
 class SimDTO {
 
-    constructor({id, userId, controllerId, terminalId, number, phone, imsi, expense, traffic, balance, terminal, controllerUid}) {
+    constructor({id, userId, controllerId, terminalId, number, phone, imsi, expense, traffic, balance, terminal, controllerUid, userName}) {
         this.id = id
         this.userId = userId
         this.controllerId = controllerId
@@ -15,6 +15,7 @@ class SimDTO {
         this.expense = expense
         this.terminal = terminal
         this.controllerUid = controllerUid
+        this.userName = userName
     }
 }
 

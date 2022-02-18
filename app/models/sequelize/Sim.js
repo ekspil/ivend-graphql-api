@@ -15,6 +15,10 @@ const Sim = {
         type: Sequelize.DataTypes.INTEGER,
         field: "terminal_id"
     },
+    userName: {
+        type: Sequelize.DataTypes.TEXT,
+        field: "user_name"
+    },
     controllerId: {
         type: Sequelize.DataTypes.INTEGER,
         field: "controller_id"

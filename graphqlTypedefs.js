@@ -927,6 +927,7 @@ const typeDefs = gql`
     input AllSimsInput {
         limit: Int
         offset: Int
+        status: String
     }
 
     input Registration1StepInput {
@@ -1013,6 +1014,7 @@ const typeDefs = gql`
         imsi: String!
         traffic: Float
         expense: Float
+        userName: String
         
     }
     
