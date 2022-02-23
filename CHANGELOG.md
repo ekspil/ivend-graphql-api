@@ -726,3 +726,7 @@
 
 * fix sim
 
+# 1.6.30 - Hotfix
+
+* new kkt
+
