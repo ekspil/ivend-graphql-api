@@ -5,6 +5,7 @@ const Permission = require("../enum/Permission")
 const fetch = require("node-fetch")
 const logger = require("my-custom-logger")
 const microservices = require("../utils/microservices")
+require("https").globalAgent.options.ca = require("ssl-root-cas/latest").create()
 
 class ReportService {
 

@@ -730,3 +730,7 @@
 
 * new kkt
 
+# 1.6.31 - Hotfix
+
+* root sert
+
