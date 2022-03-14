@@ -1,6 +1,6 @@
 class UserDTO {
 
-    constructor({email, phone, role, id, companyName, inn, step, autoSend, partner, partnerId}) {
+    constructor({email, phone, role, id, companyName, inn, step, autoSend, partner, partnerId, countryCode}) {
         this.email = email
         this.phone = phone
         this.role = role
@@ -11,6 +11,7 @@ class UserDTO {
         this.autoSend = autoSend
         this.patner = partner
         this.partnerId = partnerId
+        this.countryCode = countryCode
     }
 }
 

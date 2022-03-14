@@ -473,6 +473,7 @@ const typeDefs = gql`
 
     input CreateUserInput {
         phone: String!
+        countryCode: String!
         email: String!
         password: String!
         code: String!
@@ -932,6 +933,7 @@ const typeDefs = gql`
 
     input Registration1StepInput {
         phone: String!
+        countryCode: String!
     }
     input ChangeUserBalanceInput {
         id: Int!

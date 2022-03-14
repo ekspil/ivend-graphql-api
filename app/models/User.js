@@ -1,5 +1,5 @@
 class User {
-    constructor(id, email, passwordHash, phone, role, companyName, inn, step, autoSend, partner, partnerId) {
+    constructor(id, email, passwordHash, phone, role, companyName, inn, step, autoSend, partner, partnerId, countryCode) {
         this.id = id
         this.email = email
         this.passwordHash = passwordHash
@@ -11,6 +11,7 @@ class User {
         this.autoSend = autoSend
         this.patner = partner
         this.partnerId = partnerId
+        this.countryCode = countryCode
     }
 }
 

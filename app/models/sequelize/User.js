@@ -32,6 +32,10 @@ const User = {
         allowNull: false,
         unique: true
     },
+    countryCode: {
+        type: Sequelize.DataTypes.STRING,
+        field: "country_code"
+    },
     passwordHash: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: false,

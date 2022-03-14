@@ -142,15 +142,17 @@ class UserService {
         let delay = 0
         for(let us of users){
             tasks.push(new Promise(async (resolve) => {
+                if(!us.countryCode) us.countryCode = "7"
+                const tel = us.countryCode + us.phone
                 delay += 1000
 
                 await new Promise(res => setTimeout(res, delay))
                 try {
-                    await microservices.notification.sendTextSMS(us.phone, text)
-                    logger.info(`graphql_sending_sms_success user: ${us.id}, phone: ${us.phone}`)
+                    await microservices.notification.sendTextSMS(tel, text)
+                    logger.info(`graphql_sending_sms_success user: ${us.id}, phone: ${tel}`)
                 }
                 catch (e) {
-                    logger.info(`graphql_sending_sms_error user: ${us.id}, phone: ${us.phone}, message: ${e.message}`)
+                    logger.info(`graphql_sending_sms_error user: ${us.id}, phone: ${tel}, message: ${e.message}`)
                 }
 
                 resolve(  "graphql_sending_sms_started")
@@ -225,7 +227,7 @@ class UserService {
 
     async registerUser(input, role) {
         return this.User.sequelize.transaction(async (transaction) => {
-            const {email, code, phone, password, partnerId} = input
+            const {email, code, phone, password, partnerId, countryCode} = input
 
             //todo validation
             if (!validationUtils.validatePhoneNumber(phone)) {
@@ -263,6 +265,7 @@ class UserService {
             user.email = email
             user.passwordHash = await this.hashPassword(password)
             user.role = role || "VENDOR_NOT_CONFIRMED"
+            user.countryCode = countryCode
 
             if(partnerId){
                 user.partnerId = partnerId
@@ -537,13 +540,15 @@ class UserService {
         if (user.role === "CLOSED") {
             throw new Error("CLOSED_USER")
         }
+        if(!user.countryCode) user.countryCode = "7"
+        const tel = user.countryCode + user.phone
 
         if(user.role === "ADMIN" && user.phone !== "9147073304"){
 
             const smsCode = await hashingUtils.generateRandomFloor(10000, 99999)
             await this.redis.hset("admin_sms", phone, smsCode)
             try {
-                await microservices.notification.sendRegistrationSms(phone, smsCode)
+                await microservices.notification.sendRegistrationSms(tel, smsCode)
             }
             catch(err){
                 throw new SendSMSFailed()
@@ -847,7 +852,9 @@ class UserService {
 
     async requestRegistrationSms(input) {
         //todo validation
-        const {phone} = input
+        const {phone, countryCode} = input
+
+        const tel = countryCode + phone
 
         if (!validationUtils.validatePhoneNumber(phone)) {
             throw new PhoneNotValid()
@@ -887,7 +894,7 @@ class UserService {
         const randomCode = await hashingUtils.generateRandomAccessKey(3)
         const smsCode = ((parseInt(randomCode, 16) % 1000000) + "").padStart(6, 0)
 
-        await microservices.notification.sendRegistrationSms(phone, smsCode)
+        await microservices.notification.sendRegistrationSms(tel, smsCode)
 
         await this.redis.hset("registration_" + phone, "code", smsCode)
         await this.redis.hset("registration_" + phone, "request_again_at", requestAgainDate.getTime())
