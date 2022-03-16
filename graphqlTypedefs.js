@@ -65,6 +65,7 @@ const typeDefs = gql`
         vda1
         vdkl
         vdkx
+        wvln
         
     }
 
