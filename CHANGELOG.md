@@ -738,3 +738,11 @@
 
 * root sert
 
+# 1.6.32 - Hotfix
+
+* root sert
+
+# 1.6.33 - Hotfix
+
+* sms to other countries
+
