@@ -930,6 +930,7 @@ const typeDefs = gql`
         limit: Int
         offset: Int
         status: String
+        search: String
     }
 
     input Registration1StepInput {

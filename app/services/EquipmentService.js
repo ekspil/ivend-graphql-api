@@ -54,8 +54,28 @@ class EquipmentService {
         const {sequelize} = this.Sim
         const {Op} = sequelize
 
-        const {limit, offset, status} = input
-        const where = {}
+        const {limit, offset, status, search} = input
+        let where = {}
+
+        if(search && search.length > 3){
+            where = {
+                [Op.or]: [
+                    { controllerUid: {
+                        [Op.like]: `%${search}%`
+                    } },
+                    { userName: {
+                        [Op.like]: `%${search}%`
+                    } },
+                    { number: {
+                        [Op.like]: `%${search}%`
+                    } },
+                    { imsi: {
+                        [Op.like]: `%${search}%`
+                    } }
+                ]
+            }
+
+        }
 
         if(status === "active"){
             where.traffic = {
@@ -67,6 +87,8 @@ class EquipmentService {
                 [Op.lt]: 0.001
             }
         }
+
+        
 
         return await this.Sim.findAll({
             limit,

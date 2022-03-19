@@ -746,3 +746,7 @@
 
 * sms to other countries
 
+# 1.6.34 - Hotfix
+
+* sms search
+
