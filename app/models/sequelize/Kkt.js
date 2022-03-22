@@ -34,6 +34,12 @@ const Kkt = {
         allowNull: true,
         unique: false
     },
+    ofdName: {
+        type: Sequelize.DataTypes.STRING,
+        field: "ofd_name",
+        allowNull: true,
+        unique: false
+    },
     rekassaPassword: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,

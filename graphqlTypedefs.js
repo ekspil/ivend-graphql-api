@@ -281,6 +281,7 @@ const typeDefs = gql`
         rekassaPassword: String
         rekassaNumber: String
         rekassaKktId: String
+        ofdName: String
     }
 
     type User {
@@ -405,6 +406,7 @@ const typeDefs = gql`
         rekassaNumber: String
         rekassaPassword: String
         rekassaKktId: String
+        ofdName: String
     }
 
     input ControllerStateInput {

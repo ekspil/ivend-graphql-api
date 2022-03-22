@@ -3,7 +3,7 @@
 
 class KktDTO {
 
-    constructor({id, action, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, type, companyName, kktLastBill, server, kktStatus, rekassaPassword, rekassaNumber, rekassaKktId, status}) {
+    constructor({id, action, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, type, companyName, kktLastBill, server, kktStatus, rekassaPassword, rekassaNumber, rekassaKktId, status, ofdName}) {
         this.id = id
         this.inn = inn
         this.companyName = companyName
@@ -23,6 +23,7 @@ class KktDTO {
         this.rekassaNumber = rekassaNumber
         this.rekassaKktId = rekassaKktId
         this.status = status
+        this.ofdName = ofdName
     }
 }
 
