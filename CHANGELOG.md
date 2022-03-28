@@ -754,3 +754,7 @@
 
 * sms search
 
+# 1.6.36 - Hotfix
+
+* hotfix
+

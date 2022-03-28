@@ -125,7 +125,7 @@ class PartnerService {
         if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
             throw new NotAuthorized()
         }
-        const {partnerId, fileLogo, fileOferta, infoPhoneTech, infoPhoneCom, infoRequisites} = input
+        const {partnerId, fileLogo, fileOferta, infoPhoneTech, infoPhoneCom, infoMailTech, infoRequisites} = input
 
         let settings = await this.PartnerInfos.findOne({
             where: {
@@ -141,6 +141,7 @@ class PartnerService {
         settings.infoPhoneTech = infoPhoneTech
         settings.infoPhoneCom = infoPhoneCom
         settings.infoRequisites = infoRequisites
+        settings.infoMailTech = infoMailTech
 
         return settings.save()
 
