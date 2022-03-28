@@ -306,6 +306,7 @@ const typeDefs = gql`
         monthPay(period: Period): Float
         partnerFee(period: Period): Float
         vendors: [User!]!
+        countryCode: String
     }
 
     type NotificationSetting {
