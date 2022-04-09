@@ -65,6 +65,7 @@ const Tariff = require("./models/sequelize/Tariff")
 const PartnerInfos = require("./models/sequelize/PartnerInfos")
 const BankPayments = require("./models/sequelize/BankPayment")
 const Sims = require("./models/sequelize/Sim")
+const ControllerIntegrations = require("./models/sequelize/ControllerIntegrations")
 
 
 
@@ -149,6 +150,7 @@ class App {
         const PartnerInfosModel = sequelize.define("partner_infos", PartnerInfos)
         const BankPaymentsModel = sequelize.define("bank_payments", BankPayments)
         const SimsModel = sequelize.define("sims", Sims)
+        const ControllerIntegrationsModel = sequelize.define("controller_integrations", ControllerIntegrations)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -318,6 +320,7 @@ class App {
             UserModel,
             MachineModel,
             RevisionModel,
+            ControllerIntegrationsModel,
             revisionService: services.revisionService,
             serviceService: services.serviceService,
             machineService: services.machineService,

@@ -1,5 +1,6 @@
 const ControllerDTO = require("../../models/dto/ControllerDTO")
 const RevisionDTO = require("../../models/dto/RevisionDTO")
+const ControllerIntegrationDTO = require("../../models/dto/ControllerIntegrationDTO")
 
 function ControllerQueries({controllerService, revisionService}) {
 
@@ -22,6 +23,22 @@ function ControllerQueries({controllerService, revisionService}) {
         const controllers = await controllerService.getAllOfCurrentUser(user)
 
         return controllers.map(controller => (new ControllerDTO(controller)))
+    }
+
+    const getControllerIntegrations = async (root, args, context) => {
+        const {user} = context
+
+        const controllerIntegrations = await controllerService.getControllerIntegrations(user)
+
+        return controllerIntegrations.map(controllerIntegration => (new ControllerIntegrationDTO(controllerIntegration)))
+    }
+
+    const getControllerUIDByIMEI = async (root, args, context) => {
+        const {user} = context
+        const {imei} = args
+
+        return await controllerService.getControllerUIDByIMEI(imei, user)
+
     }
 
 
@@ -61,7 +78,9 @@ function ControllerQueries({controllerService, revisionService}) {
         getControllers,
         getControllerByUID,
         getRevisions,
-        getAllControllers
+        getAllControllers,
+        getControllerIntegrations,
+        getControllerUIDByIMEI
     }
 
 }

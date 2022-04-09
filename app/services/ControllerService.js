@@ -16,10 +16,11 @@ const {Op} = require("sequelize")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, ControllerIntegrationsModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
         this.Controller = ControllerModel
         this.Sale = SaleModel
         this.ControllerState = ControllerStateModel
+        this.ControllerIntegration = ControllerIntegrationsModel
         this.ControllerError = ControllerErrorModel
         this.Item = ItemModel
         this.Machine = MachineModel
@@ -561,6 +562,57 @@ class ControllerService {
         return await this.Controller.findAll({where: {user_id: user.id}})
     }
 
+    async getControllerIntegrations(user, imei) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
+            throw new NotAuthorized()
+        }
+        if(imei){
+            return await this.ControllerIntegration.findAll({where: {imei}})
+        }
+        return await this.ControllerIntegration.findAll()
+    }
+
+
+    async updateControllerIntegration(user, input) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
+            throw new NotAuthorized()
+        }
+        const {id, controllerUid} = input
+        const integration =  await this.ControllerIntegration.findByPk(id)
+        if(!integration){
+            return new Error("Integration not found")
+        }
+        integration.controllerUid = controllerUid
+        await integration.save()
+
+        return integration
+    }
+
+    async getControllerUIDByIMEI(imei, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
+            throw new NotAuthorized()
+        }
+
+        // const uid = await this.redis.get("controller_integration_" + imei)
+        // if(uid) return uid
+
+        const integration =  await this.ControllerIntegration.findOne({
+            where: {
+                imei
+            }
+        })
+        if(!integration){
+            await this.ControllerIntegration.create({imei, type: "controller"})
+            return ""
+        }
+        if(integration && !integration.controllerUid){
+            return ""
+        }
+
+        //await this.redis.set("controller_integration_" + imei, imei, "EX", 60 * 60)
+        return integration.controllerUid
+    }
+
     async getControllerById(id, user) {
         if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
             throw new NotAuthorized()
@@ -957,6 +1009,26 @@ class ControllerService {
 
         return controller
     }
+
+    // async telemetronEvent(input, user) {
+    //     if (!user || !user.checkPermission(Permission.CREATE_CONTROLLER_EVENT)) {
+    //         throw new NotAuthorized()
+    //     }
+    //
+    //     const {imei, time, s, mdb, iccid, reason, qlt, bat, exe, mdb_product} = input
+    //
+    //     const newData = JSON.parse(objectString)
+    //     const oldData = await this.redis.get("telemetron_controller_string_" + controllerUid)
+    //
+    //
+    //
+    //
+    //
+    //
+    //     await this.redis.set("telemetron_controller_string_" + controllerUid, objectString, "EX", 24 * 60 * 60)
+    //
+    //     return true
+    // }
 
 }
 

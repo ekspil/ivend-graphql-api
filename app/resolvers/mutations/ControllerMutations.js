@@ -121,6 +121,22 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
 
     }
 
+    const updateControllerIntegration = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        return await controllerService.updateControllerIntegration(user, input)
+
+    }
+
+    const telemetronEvent = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        return await controllerService.telemetronEvent(input, user)
+
+    }
+
     return {
         createController,
         editController,
@@ -134,7 +150,9 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         updatePrinterOnController,
         editControllerGroupSettings,
         reSendCheck,
-        simReset
+        simReset,
+        updateControllerIntegration,
+        telemetronEvent
     }
 
 }

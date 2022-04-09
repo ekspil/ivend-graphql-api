@@ -801,6 +801,19 @@ const typeDefs = gql`
         timestamp: Timestamp!
     }
 
+    type ControllerIntegration {
+        id: Int!
+        type: String!
+        imei: String
+        controllerId: Int
+        controllerUid: String
+    }
+
+    input ControllerIntegrationInput {
+        id: Int!
+        controllerUid: String!
+    }
+
     type AdminStatistic {
         id: Int!
         billingAmount: Float!
@@ -880,8 +893,10 @@ const typeDefs = gql`
 
     type Query {
         getController(id: Int!): Controller
+        getControllerUIDByIMEI(imei: String!): String
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
+        getControllerIntegrations: [ControllerIntegration]
         getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String, userRole: String  ): [Controller]
         getMachineById(id: Int!): Machine
         getMachines(machineGroupId: Int): [Machine]
@@ -1045,7 +1060,36 @@ const typeDefs = gql`
         infoRequisites: String
     }
 
+    
+    input TelemetronEventInput {
+        imei: String!
+        time: String!
+        s: String!
+        mdb: String
+        iccid: String
+        reason: String
+        qlt: String
+        bat: String
+        exe: String
+        mdb_product: String
+    }  
+      
+    type TelemetronEvent{
+        imei: String!
+        time: String!
+        s: String!
+        mdb: String
+        iccid: String
+        reason: String
+        qlt: String
+        bat: String
+        exe: String
+        mdb_product: String
+    }
+
     type Mutation {
+        telemetronEvent(input: TelemetronEventInput!): TelemetronEvent
+        updateControllerIntegration(input: ControllerIntegrationInput!): ControllerIntegration
         sendNewsSMS(id: Int!): Boolean
         reSendCheck(id: Int!): Boolean
         sendNewsEmail(id: Int!): Boolean
