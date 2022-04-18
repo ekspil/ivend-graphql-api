@@ -307,8 +307,12 @@ class MachineService {
 
             const [controller] = controllers.filter(control => control.id === machine.controller_id)
             if(!controller) return machine
-
-            machine.kktStatus = await microservices.fiscal.getControllerKktStatus(controller.uid)
+            try{
+                machine.kktStatus = await microservices.fiscal.getControllerKktStatus(controller.uid)
+            }
+            catch (e) {
+                machine.kktStatus = "ОТКЛ"
+            }
             machine.terminalStatus = await this.redis.get("terminal_status_" + machine.id)
             machine.encashment = await this.redis.get("machine_encashment_" + machine.id)
             machine.error = await this.redis.get("machine_error_" + machine.id)

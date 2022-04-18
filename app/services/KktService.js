@@ -275,8 +275,12 @@ class KktService {
                 id: id
             }
         })
-
-        kkt.kktStatus = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
+        try{
+            kkt.kktStatus = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
+        }
+        catch (e) {
+            kkt.kktStatus = null
+        }
 
 
         return kkt
@@ -311,8 +315,13 @@ class KktService {
         if(!machine){
             throw new Error("Machine not found")
         }
-
-        const receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
+        let receipt
+        try{
+            receipt = await microservices.fiscal.getReceiptById(sale.receiptId)
+        }
+        catch (e) {
+            throw new Error("Fiscal_service_error: " + e.message)
+        }
 
 
 
@@ -380,9 +389,11 @@ class KktService {
 
         for (let kkt of answer){
 
-            let status = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
-
-            kkt.kktStatus = status
+            try{
+                kkt.kktStatus = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
+            }catch (e) {
+                kkt.kktStatus = null
+            }
 
         }
 
@@ -431,11 +442,12 @@ class KktService {
             //     else {kkt.kktStatus = "NOT_OK"}
             //
             // }
-
-            let status = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
-
-            kkt.kktStatus = status
-
+            try{
+                kkt.kktStatus = await microservices.fiscal.getKktStatus(kkt.kktRegNumber || kkt.rekassaNumber)
+            }
+            catch (e) {
+                kkt.kktStatus = null
+            }
         }
 
         return kkts
