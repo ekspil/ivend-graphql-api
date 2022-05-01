@@ -11,12 +11,12 @@ const SaleQueries = require("./SaleQueries")
 const PartnerQueries = require("./PartnerQueries")
 
 
-function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, machineService, kktService, saleService, newsService, infoService, instrService, partnerService}) {
+function Queries({ controllerService, itemMatrixService, equipmentService, revisionService, userService, machineService, kktService, saleService, newsService, infoService, instrService, partnerService, billingService}) {
 
     const controllerQueries = new ControllerQueries({ controllerService, revisionService})
     const itemQueries = new ItemQueries({ itemMatrixService })
     const equipmentQueries = new EquipmentQueries({ equipmentService })
-    const userQueries = new UserQueries({ userService })
+    const userQueries = new UserQueries({ userService, billingService })
     const machineQueries = new MachineQueries({ machineService })
     const kktQueries = new KktQueries({ kktService })
     const newsQueries = new NewsQueries({ newsService })

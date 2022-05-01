@@ -62,7 +62,8 @@ const Resolvers = function (injects) {
         saleService,
         infoService,
         instrService,
-        partnerService
+        partnerService,
+        billingService
     })
 
     return {

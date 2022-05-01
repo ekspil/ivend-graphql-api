@@ -6,6 +6,7 @@ const Permission = {
     "GET_BALANCE": "GET_BALANCE",
     "REQUEST_DEPOSIT": "REQUEST_DEPOSIT",
     "GET_DEPOSIT_BY_ID": "GET_DEPOSIT_BY_ID",
+    "GET_DEPOSITS": "GET_DEPOSITS",
 
     // ControllerService
     "CREATE_CONTROLLER": "CREATE_CONTROLLER",

@@ -9,7 +9,7 @@ const microservices = require("../utils/microservices")
 
 class BillingService {
 
-    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel, TempModel, UserModel}) {
+    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel, TempModel, UserModel, BankPaymentsModel}) {
         this.Controller = ControllerModel
         this.Service = ServiceModel
         this.Transaction = TransactionModel
@@ -17,6 +17,7 @@ class BillingService {
         this.Deposit = DepositModel
         this.PaymentRequest = PaymentRequestModel
         this.User = UserModel
+        this.BankPayment = BankPaymentsModel
 
         this.getDeposits = this.getDeposits.bind(this)
         this.getDailyBill = this.getDailyBill.bind(this)
@@ -27,13 +28,14 @@ class BillingService {
         this.changeUserBalance = this.changeUserBalance.bind(this)
     }
 
-    async getDeposits(period, user) {
+    async getDeposits(period, user, all) {
         if (!user || !user.checkPermission(Permission.GET_SELF_DEPOSITS)) {
             throw new NotAuthorized()
         }
 
-        const where = {
-            user_id: user.id
+        const where = {}
+        if(!all){
+            where.user_id = user.id
         }
 
         if (period) {
@@ -50,6 +52,37 @@ class BillingService {
         }
 
         return await this.Deposit.findAll({where, include: [{model: this.PaymentRequest, as: "paymentRequest"}]})
+    }
+
+    async getAllBills(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_DEPOSITS)) {
+            throw new NotAuthorized()
+        }
+        const {period, offset, limit} = input
+
+        const where = {}
+
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new InvalidPeriod()
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+
+        const bills =  await this.BankPayment.findAll({
+            offset,
+            limit,
+            where,
+            include: [{model: this.User, as: "user"}]
+        })
+
+        return bills
     }
 
     async getDailyBill(user, userId) {

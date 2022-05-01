@@ -931,6 +931,18 @@ const typeDefs = gql`
         getTariffs(partnerId: Int): [Tariff]
         getTariff(partnerId: Int!): Tariff
         getPartnerInfo(partnerId: Int!): PartnerInfo
+        getAllBills(input: AllBillsInput): [BankPayment!]!
+    }
+    
+    type BankPayment {
+        id: Int
+        applied: Boolean
+        meta: String
+        userId: Int
+        startedAt: Timestamp
+        createdAt: Timestamp
+        userName: String
+        userInn: String
     }
 
     input AuthControllerInput {
@@ -945,6 +957,14 @@ const typeDefs = gql`
         offset: Int
     }
     input AllSimsInput {
+        limit: Int
+        offset: Int
+        status: String
+        search: String
+    }
+
+    input AllBillsInput {
+        period: Period
         limit: Int
         offset: Int
         status: String

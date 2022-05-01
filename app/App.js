@@ -206,6 +206,10 @@ class App {
         RevisionModel.hasMany(ControllerModel, {foreignKey: "revision_id"})
 
         DepositModel.belongsTo(UserModel, {foreignKey: "user_id"})
+        BankPaymentsModel.belongsTo(UserModel, {
+            foreignKey: "user_id",
+            as: "user"
+        })
         DepositModel.belongsTo(PaymentRequestModel, {
             foreignKey: "payment_request_id",
             as: "paymentRequest"
@@ -389,6 +393,7 @@ class App {
             TempModel,
             UserModel,
             PartnerFeeModel,
+            BankPaymentsModel
         })
         services.reportService = new ReportService({redis, BankPaymentsModel})
 

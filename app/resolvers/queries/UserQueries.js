@@ -1,9 +1,29 @@
 const UserDTO = require("../../models/dto/UserDTO")
+const BankPaymentDTO = require("../../models/dto/BankPaymentDTO")
 const AdminStatisticDTO = require("../../models/dto/AdminStatisticDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
 const UserNotFound = require("../../errors/UserNotFound")
 
-function UserQueries({userService}) {
+function UserQueries({userService, billingService}) {
+
+
+
+    const getAllBills = async (obj, args, context) => {
+        const {user} = context
+        const {input} = args
+
+        const deposits = await billingService.getAllBills(input, user)
+
+        return deposits.map(deposit => (new BankPaymentDTO({
+            id: deposit.id,
+            applied: deposit.applied,
+            createdAt: deposit.createdAt,
+            userId: deposit.userId,
+            userName: deposit.user.companyName,
+            userInn: deposit.user.inn
+        })))
+    }
+
 
     const getProfile = async (root, args, context) => {
         const user = await userService.getProfile(context.user)
@@ -49,7 +69,8 @@ function UserQueries({userService}) {
         getProfile,
         getAllUsers,
         getLegalInfoByUserId,
-        getAdminStatistic
+        getAdminStatistic,
+        getAllBills
     }
 
 }

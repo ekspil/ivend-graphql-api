@@ -233,7 +233,8 @@ const AGGREGATE = [
     Permission.CREATE_CONTROLLER_EVENT,
     Permission.ADD_TELEGRAMCHAT_NOTIFICATION_SETTING,
     Permission.GET_ALL_CONTROLLERS,
-    Permission.GET_MACHINE_BY_CONTROLLER_ID
+    Permission.GET_MACHINE_BY_CONTROLLER_ID,
+    Permission.GET_DEPOSITS,
 ]
 
 const RolePermissions = {
