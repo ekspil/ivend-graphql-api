@@ -79,6 +79,9 @@ class BillingService {
             offset,
             limit,
             where,
+            order: [
+                ["id", "DESC"],
+            ],
             include: [{model: this.User, as: "user"}]
         })
 
