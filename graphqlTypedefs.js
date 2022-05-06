@@ -29,6 +29,7 @@ const typeDefs = gql`
         remotePrinterId: String
         simCardNumber: String
         cashless: String
+        pulse: ControllerPulse
     }
     
     type ControllerService {
@@ -1106,10 +1107,31 @@ const typeDefs = gql`
         exe: String
         mdb_product: String
     }
+    
+    type ControllerPulse {
+        id: Int
+        controllerId: Int
+        a: Int
+        b: Int
+        c: Int
+        o: Int
+        t: Int
+    }
+
+    
+    input ControllerPulseInput {
+        controllerId: Int!
+        a: Int
+        b: Int
+        c: Int
+        o: Int
+        t: Int
+    }
 
     type Mutation {
         telemetronEvent(input: TelemetronEventInput!): TelemetronEvent
         updateControllerIntegration(input: ControllerIntegrationInput!): ControllerIntegration
+        setControllerPulse(input: ControllerPulseInput!): ControllerPulse
         sendNewsSMS(id: Int!): Boolean
         reSendCheck(id: Int!): Boolean
         sendNewsEmail(id: Int!): Boolean

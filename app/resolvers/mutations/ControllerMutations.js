@@ -1,4 +1,5 @@
 const ControllerDTO = require("../../models/dto/ControllerDTO")
+const ControllerPulseDTO = require("../../models/dto/ControllerPulseDTO")
 const ControllerErrorDTO = require("../../models/dto/ControllerErrorDTO")
 const RevisionDTO = require("../../models/dto/RevisionDTO")
 const SaleDTO = require("../../models/dto/SaleDTO")
@@ -12,6 +13,15 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         const controller = await controllerService.createController(input, user)
 
         return new ControllerDTO(controller)
+    }
+
+    const setControllerPulse = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const pulse = await controllerService.setControllerPulse(input, user)
+
+        return new ControllerPulseDTO(pulse)
     }
 
 
@@ -152,7 +162,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         reSendCheck,
         simReset,
         updateControllerIntegration,
-        telemetronEvent
+        telemetronEvent,
+        setControllerPulse
     }
 
 }

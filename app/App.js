@@ -66,6 +66,7 @@ const PartnerInfos = require("./models/sequelize/PartnerInfos")
 const BankPayments = require("./models/sequelize/BankPayment")
 const Sims = require("./models/sequelize/Sim")
 const ControllerIntegrations = require("./models/sequelize/ControllerIntegrations")
+const ControllerPulse = require("./models/sequelize/ControllerPulse")
 
 
 
@@ -98,9 +99,9 @@ class App {
             dialect: "postgres",
             operatorsAliases: false,
             logging: process.env.NODE_ENV !== "production",
-            ssl: true,
+            ssl: false,
             dialectOptions: {
-                ssl: true
+                ssl: false
             },
             pool: {
                 max: Number(process.env.POSTGRES_POOL_MAX_CONNECTIONS),
@@ -151,6 +152,7 @@ class App {
         const BankPaymentsModel = sequelize.define("bank_payments", BankPayments)
         const SimsModel = sequelize.define("sims", Sims)
         const ControllerIntegrationsModel = sequelize.define("controller_integrations", ControllerIntegrations)
+        const ControllerPulseModel = sequelize.define("controller_pulses", ControllerPulse)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -325,6 +327,7 @@ class App {
             MachineModel,
             RevisionModel,
             ControllerIntegrationsModel,
+            ControllerPulseModel,
             revisionService: services.revisionService,
             serviceService: services.serviceService,
             machineService: services.machineService,

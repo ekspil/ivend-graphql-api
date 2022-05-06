@@ -4,6 +4,7 @@ const ServiceDTO = require("../../models/dto/ServiceDTO")
 const UserDTO = require("../../models/dto/UserDTO")
 const RevisionDTO = require("../../models/dto/RevisionDTO")
 const ControllerStateDTO = require("../../models/dto/ControllerStateDTO")
+const ControllerPulseDTO = require("../../models/dto/ControllerPulseDTO")
 
 function ControllerResolver({controllerService, machineService}) {
 
@@ -26,6 +27,18 @@ function ControllerResolver({controllerService, machineService}) {
         }
 
         return controllerError.errorTime
+    }
+
+    const pulse = async (obj, args, context) => {
+        const {user} = context
+
+        const controllerPulse = await controllerService.getControllerPulse(obj.id, user)
+
+        if (!controllerPulse) {
+            return null
+        }
+
+        return new ControllerPulseDTO(controllerPulse)
     }
 
     const machine = async (obj, args, context) => {
@@ -94,7 +107,8 @@ function ControllerResolver({controllerService, machineService}) {
         errors,
         lastErrorTime,
         machine,
-        services
+        services,
+        pulse
     }
 
 }

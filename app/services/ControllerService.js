@@ -16,7 +16,7 @@ const {Op} = require("sequelize")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, ControllerIntegrationsModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, ControllerIntegrationsModel, ControllerPulseModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
         this.Controller = ControllerModel
         this.Sale = SaleModel
         this.ControllerState = ControllerStateModel
@@ -31,6 +31,7 @@ class ControllerService {
         this.revisionService = revisionService
         this.machineService = machineService
         this.kktService = kktService
+        this.ControllerPulse = ControllerPulseModel
 
 
 
@@ -570,6 +571,41 @@ class ControllerService {
             return await this.ControllerIntegration.findAll({where: {imei}})
         }
         return await this.ControllerIntegration.findAll()
+    }
+
+    async getControllerPulse(controllerId, user) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
+            throw new NotAuthorized()
+        }
+        return await this.ControllerPulse.findOne({
+            where: {
+                controllerId
+            }
+        })
+    }
+
+    async setControllerPulse(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
+            throw new NotAuthorized()
+        }
+        const {controllerId, a, b, c, o, t} = input
+
+        const pulse = await this.ControllerPulse.findOne({
+            where: {
+                controllerId
+            }
+        })
+        if(!pulse){
+            return this.ControllerPulse.create(input)
+        }
+
+        pulse.a = a
+        pulse.b = b
+        pulse.c = c
+        pulse.o = o
+        pulse.t = t
+        return pulse.save()
+
     }
 
 
