@@ -37,7 +37,7 @@ function ControllerResolver({controllerService, machineService}) {
         if (!controllerPulse) {
             return null
         }
-
+        console.log(JSON.stringify(controllerPulse))
         if(!controllerPulse.a && !controllerPulse.b && !controllerPulse.c && !controllerPulse.o && !controllerPulse.t){
             return null
         }
