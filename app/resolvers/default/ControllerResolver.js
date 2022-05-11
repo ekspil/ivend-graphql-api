@@ -38,6 +38,10 @@ function ControllerResolver({controllerService, machineService}) {
             return null
         }
 
+        if(!controllerPulse.a && !controllerPulse.b && !controllerPulse.c && !controllerPulse.o && !controllerPulse.t){
+            return null
+        }
+
         return new ControllerPulseDTO(controllerPulse)
     }
 
