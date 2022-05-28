@@ -8,10 +8,11 @@ module.exports = {
         dialect: "postgres",
         seederStorage: "sequelize",
         migrationStorageTableName: "sequelize_meta",
-        "ssl":true,
-        "dialectOptions":{
-            "ssl":{
-                "require":true
+        ssl:true,
+        dialectOptions:{
+            ssl:{
+                require:true,
+                rejectUnauthorized: false
             }
         }
     },
@@ -27,7 +28,8 @@ module.exports = {
         ssl:true,
         dialectOptions:{
             ssl:{
-                require:true
+                require:true,
+                rejectUnauthorized: false
             }
         }
     }
