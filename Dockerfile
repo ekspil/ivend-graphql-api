@@ -1,4 +1,4 @@
-FROM node:11
+FROM node:12
 RUN mkdir -p /app/app
 WORKDIR /app
 COPY package-lock.json /app

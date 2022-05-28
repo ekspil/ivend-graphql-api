@@ -26,6 +26,15 @@ const ControllerPulse = {
     t: {
         type: Sequelize.DataTypes.INTEGER
     },
+    d: {
+        type: Sequelize.DataTypes.INTEGER
+    },
+    e: {
+        type: Sequelize.DataTypes.INTEGER
+    },
+    f: {
+        type: Sequelize.DataTypes.INTEGER
+    },
     updatedAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

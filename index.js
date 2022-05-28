@@ -2,9 +2,6 @@ require("dotenv").config()
 const App = require("./app/App")
 const app = new App()
 const logger = require("my-custom-logger")
-require("https").globalAgent.options.ca = require("ssl-root-cas/latest").create()
-const sslRootCAs = require("ssl-root-cas/latest")
-sslRootCAs.inject()
 
 app
     .start()

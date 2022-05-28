@@ -32,12 +32,37 @@ function ControllerResolver({controllerService, machineService}) {
     const pulse = async (obj, args, context) => {
         const {user} = context
 
+
+        if(obj.mode !== "ps_m_D"){
+            return null
+        }
+
         const controllerPulse = await controllerService.getControllerPulse(obj.id, user)
 
         if (!controllerPulse) {
             return null
         }
         if(!Number(controllerPulse.a) && !Number(controllerPulse.b) && !Number(controllerPulse.c) && !Number(controllerPulse.o) && !Number(controllerPulse.t)){
+            return null
+        }
+
+        return new ControllerPulseDTO(controllerPulse)
+    }
+
+
+    const mech = async (obj, args, context) => {
+        const {user} = context
+
+        if(obj.mode !== "mech"){
+            return null
+        }
+
+        const controllerPulse = await controllerService.getControllerPulse(obj.id, user)
+
+        if (!controllerPulse) {
+            return null
+        }
+        if(!Number(controllerPulse.a) && !Number(controllerPulse.b) && !Number(controllerPulse.c) && !Number(controllerPulse.o) && !Number(controllerPulse.t) && !Number(controllerPulse.d) && !Number(controllerPulse.e) && !Number(controllerPulse.f)){
             return null
         }
 
@@ -111,7 +136,8 @@ function ControllerResolver({controllerService, machineService}) {
         lastErrorTime,
         machine,
         services,
-        pulse
+        pulse,
+        mech
     }
 
 }

@@ -16,7 +16,7 @@ const {Op} = require("sequelize")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, ControllerIntegrationsModel, ControllerPulseModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, ControllerIntegrationsModel, ControllerPulseModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel, billingService}) {
         this.Controller = ControllerModel
         this.Sale = SaleModel
         this.ControllerState = ControllerStateModel
@@ -30,6 +30,7 @@ class ControllerService {
         this.Encashment = EncashmentModel
         this.revisionService = revisionService
         this.machineService = machineService
+        this.billingService = billingService
         this.kktService = kktService
         this.ControllerPulse = ControllerPulseModel
 
@@ -1010,7 +1011,13 @@ class ControllerService {
         controller.firmwareId = firmwareId
         controller.accessKey = await hashingUtils.generateRandomAccessKey(4)
 
-        return await controller.save()
+        const result = await controller.save()
+        const balance = await this.billingService.getBalance(user, controller.user_id)
+        if(Number(balance) < -1000){
+            result.bankTerminalMode = "NO_BANK_TERMINAL"
+        }
+
+        return result
     }
 
     async registerEvent(input, user) {

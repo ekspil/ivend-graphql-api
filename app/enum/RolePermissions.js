@@ -219,6 +219,7 @@ const CLOSED = [
 const AGGREGATE = [
     Permission.GET_RECEIPT,
     Permission.GET_SALES,
+    Permission.GET_BALANCE,
     Permission.CREATE_ITEM,
     Permission.GET_USER_KKTS,
     Permission.GET_MACHINE_BY_ID,

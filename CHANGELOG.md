@@ -766,3 +766,8 @@
 
 * hotfix
 
+# 1.6.40 - Hotfix
+
+* disable terminal -1000
+* mechanic mode
+

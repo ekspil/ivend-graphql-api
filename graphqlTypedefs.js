@@ -30,6 +30,7 @@ const typeDefs = gql`
         simCardNumber: String
         cashless: String
         pulse: ControllerPulse
+        mech: ControllerMech
     }
     
     type ControllerService {
@@ -551,6 +552,7 @@ const typeDefs = gql`
         ps_m_2
         ps_m_3
         rs232
+        mech
 
     }
 
@@ -1116,6 +1118,19 @@ const typeDefs = gql`
         c: Int
         o: Int
         t: Int
+    }
+    
+    type ControllerMech {
+        id: Int
+        controllerId: Int
+        a: Int
+        b: Int
+        c: Int
+        o: Int
+        t: Int
+        d: Int
+        e: Int
+        f: Int
     }
 
     
