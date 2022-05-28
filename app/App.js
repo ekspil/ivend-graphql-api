@@ -100,9 +100,11 @@ class App {
             operatorsAliases: false,
             logging: process.env.NODE_ENV !== "production",
             ssl: true,
-            dialectOptions: {
-                ssl: true,
-                rejectUnauthorized: false
+            dialectOptions:{
+                ssl:{
+                    require:true,
+                    rejectUnauthorized: false
+                }
             },
             pool: {
                 max: Number(process.env.POSTGRES_POOL_MAX_CONNECTIONS),
