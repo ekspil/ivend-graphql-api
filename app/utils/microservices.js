@@ -542,7 +542,8 @@ const getReceiptStatuses = async (ids) => {
             return json
         }
         default:
-            throw new MicroserviceUnknownError(method, url, response.status)
+
+            throw new MicroserviceUnknownError(method, url + " body: " + JSON.stringify(body), response.status)
     }
 
 }
