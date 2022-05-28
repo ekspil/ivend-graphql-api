@@ -771,3 +771,7 @@
 * disable terminal -1000
 * mechanic mode
 
+# 1.6.41 - Hotfix
+
+* fix url in error
+

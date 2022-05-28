@@ -11,7 +11,7 @@ class MicroserviceUnknownError extends Error {
     constructor(method, url, statusCode) {
         super()
 
-        logger.error("Unknown status from microservice: " + statusCode)
+        logger.error("Unknown status from microservice: " + statusCode + "; url: " + url)
 
         this.message = "Unknown error from microservice"
     }
