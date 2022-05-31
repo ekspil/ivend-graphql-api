@@ -1139,6 +1139,9 @@ const typeDefs = gql`
         a: Int
         b: Int
         c: Int
+        d: Int
+        e: Int
+        f: Int
         o: Int
         t: Int
     }

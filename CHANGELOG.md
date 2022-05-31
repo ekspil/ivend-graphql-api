@@ -775,3 +775,8 @@
 
 * fix url in error
 
+# 1.6.43 - Hotfix
+
+* mech mode
+* -1000 terminal disable
+

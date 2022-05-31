@@ -62,9 +62,6 @@ function ControllerResolver({controllerService, machineService}) {
         if (!controllerPulse) {
             return null
         }
-        if(!Number(controllerPulse.a) && !Number(controllerPulse.b) && !Number(controllerPulse.c) && !Number(controllerPulse.o) && !Number(controllerPulse.t) && !Number(controllerPulse.d) && !Number(controllerPulse.e) && !Number(controllerPulse.f)){
-            return null
-        }
 
         return new ControllerPulseDTO(controllerPulse)
     }

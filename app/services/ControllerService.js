@@ -589,7 +589,7 @@ class ControllerService {
         if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
             throw new NotAuthorized()
         }
-        const {controllerId, a, b, c, o, t} = input
+        const {controllerId, a, b, c, d, e, f, o, t} = input
 
         const pulse = await this.ControllerPulse.findOne({
             where: {
@@ -603,6 +603,9 @@ class ControllerService {
         pulse.a = a
         pulse.b = b
         pulse.c = c
+        pulse.d = d
+        pulse.e = e
+        pulse.f = f
         pulse.o = o
         pulse.t = t
         return pulse.save()
