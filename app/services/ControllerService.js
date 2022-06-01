@@ -1025,7 +1025,7 @@ class ControllerService {
         const result = await controller.save()
         const balance = await this.billingService.getBalance(user, controller.user_id)
         if(Number(balance) < -1000){
-            result.bankTerminalMode = "NO_BANK_TERMINAL"
+            result.bankTerminalMode = "d200s"
         }
 
         return result
