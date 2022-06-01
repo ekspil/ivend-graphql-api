@@ -589,7 +589,7 @@ class ControllerService {
         if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
             throw new NotAuthorized()
         }
-        const {controllerId, a, b, c, d, e, f, o, t} = input
+        let {controllerId, a, b, c, d, e, f, o, t} = input
 
         const pulse = await this.ControllerPulse.findOne({
             where: {
@@ -600,6 +600,14 @@ class ControllerService {
             return this.ControllerPulse.create(input)
         }
 
+        if(!a) a = 0
+        if(!b) b = 0
+        if(!c) c = 0
+        if(!d) d = 0
+        if(!e) e = 0
+        if(!f) f = 0
+        if(!o) o = 0
+        if(!t) t = 0
         pulse.a = a
         pulse.b = b
         pulse.c = c

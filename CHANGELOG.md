@@ -780,3 +780,7 @@
 * mech mode
 * -1000 terminal disable
 
+# 1.6.44 - Hotfix
+
+* mech mode fix
+
