@@ -57,7 +57,10 @@ const scheduleTasks = async ({UserModel, KktModel, services, redis}) => {
 
         for (let user of users){
             try{
+                const startedUser = await redis.get("auto_send_already_started_user_" + user.id,)
+                if(startedUser) continue
 
+                await redis.set("auto_send_already_started_user_" + user.id, `OK`, "EX", 24 * 60 * 60)
                 user.checkPermission = () => true
                 const controllers = await services.controllerService.getAllOfCurrentUser(user)
                 const svs = await servs(controllers, user, services.controllerService.getControllerServices)
