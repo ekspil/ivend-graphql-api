@@ -794,3 +794,7 @@
 
 * mech mode fix
 
+# 1.6.48 - Hotfix
+
+* mech mode fix
+

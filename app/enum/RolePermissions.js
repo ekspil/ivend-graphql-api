@@ -142,6 +142,7 @@ const VENDOR_NOT_CONFIRMED = [
     Permission.GET_DAYS_LEFT,
     Permission.GET_BALANCE,
     Permission.GET_PROFILE,
+    Permission.GET_LEGAL_INFO,
     Permission.CONFIRM_USER_ACTION,
     Permission.CREATE_NOTIFICATION_SETTING,
     Permission.FIND_ALL_NOTIFICATION_SETTINGS,
@@ -201,6 +202,7 @@ const VENDOR_NEGATIVE_BALANCE = [
 ]
 
 const VENDOR_NO_LEGAL_INFO = [
+
     Permission.CREATE_LEGAL_INFO,
     Permission.UPDATE_LEGAL_INFO,
     Permission.GET_PROFILE,
