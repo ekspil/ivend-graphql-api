@@ -287,6 +287,20 @@ class ControllerService {
     }
 
 
+    async getControllerCommand(id, user) {
+        if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
+            throw new NotAuthorized()
+        }
+
+        const command = await this.redis.get("CONTROLLER_COMMAND_" + id)
+        if (!command){
+            return null
+        }
+        await this.redis.set("CONTROLLER_COMMAND_" + id, "", "EX", 24 * 60 * 60)
+        return command
+    }
+
+
     async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey, userRole, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
@@ -616,6 +630,9 @@ class ControllerService {
         pulse.f = f
         pulse.o = o
         pulse.t = t
+
+
+        await this.redis.set("CONTROLLER_COMMAND_" + controllerId, "reg", "EX", 24 * 60 * 60)
         return pulse.save()
 
     }
@@ -1027,6 +1044,7 @@ class ControllerService {
         if(Number(balance) < -1000){
             result.bankTerminalMode = "d200s"
         }
+
 
         return result
     }

@@ -31,6 +31,7 @@ const typeDefs = gql`
         cashless: String
         pulse: ControllerPulse
         mech: ControllerMech
+        cmd: String
     }
     
     type ControllerService {

@@ -70,6 +70,17 @@ function ControllerResolver({controllerService, machineService}) {
         return new ControllerPulseDTO(controllerPulse)
     }
 
+    const cmd = async (obj, args, context) => {
+        const {user} = context
+        const command = await controllerService.getControllerCommand(obj.id, user)
+
+        if (!command) {
+            return null
+        }
+
+        return command
+    }
+
     const machine = async (obj, args, context) => {
         const {user} = context
         const machine = await machineService.getMachineByControllerId(obj.id, user)
@@ -138,7 +149,8 @@ function ControllerResolver({controllerService, machineService}) {
         machine,
         services,
         pulse,
-        mech
+        mech,
+        cmd
     }
 
 }
