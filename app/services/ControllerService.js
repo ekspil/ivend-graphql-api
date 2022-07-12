@@ -8,6 +8,7 @@ const Controller = require("../models/Controller")
 const ControllerState = require("../models/ControllerState")
 const ControllerError = require("../models/ControllerError")
 const Permission = require("../enum/Permission")
+const Commands = require("../enum/VendistaCommands")
 const hashingUtils = require("../utils/hashingUtils")
 const logger = require("my-custom-logger")
 const MachineLogType = require("../enum/MachineLogType")
@@ -169,6 +170,17 @@ class ControllerService {
         }
         else if(simCardNumber === "false" || simCardNumber === "0" ){
             controller.simCardNumber = null
+        }
+
+
+        if (controller.mode === "mdb" && controller.bankTerminalMode === "vda1"){
+            await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.mdbTerminalMode(2), Commands.reload()])
+        }
+        if (controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
+            await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
+        }
+        if (controller.mode === "mech" && controller.bankTerminalMode === "vda1"){
+            await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.reload()])
         }
 
         await controller.save()
@@ -630,6 +642,19 @@ class ControllerService {
         pulse.f = f
         pulse.o = o
         pulse.t = t
+        if(t > 1){
+            const controller = await this.Controller.findOne({
+                where: {
+                    id: controllerId
+                }
+            })
+            if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && b <= 1 && c <= 1 && d <= 1 && f <= 1){
+                await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.mdbCredit(Number(t + "00")), Commands.reload()])
+            }
+            if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)){
+                await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(1), Commands.reload()])
+            }
+        }
 
 
         await this.redis.set("CONTROLLER_COMMAND_" + controllerId, "reg", "EX", 24 * 60 * 60)

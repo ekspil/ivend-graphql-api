@@ -96,7 +96,7 @@ class SaleService {
                 doubleCheck.err = "exist"
                 return doubleCheck
             }
-            throw new Error("Check already exist")
+            throw new Error(`CHECK_ALREADY_EXIST ${controllerUid} ${timestamp}`)
         }
         await this.redis.set("receipt_check_doubles_" + checkString, `OK`, "EX", 24 * 60 * 60)
 

@@ -696,6 +696,70 @@ const reset = async (sim) => {
     }
 
 }
+/**
+ * Get receipt by id
+ *
+ * @param id {integer}
+ * @param commands {array}
+ * @returns {[Boolean]}
+ */
+const sendCommands = async (id, commands) => {
+
+    const url = `https://api.vendista.ru:99/terminals/${id}/commands?token=${process.env.VEDNISTA_API_TOKEN}`
+    const method = "POST"
+    const result = []
+
+   
+
+    for( let command of commands){
+        try{
+            const body = {
+                "command_id": command.id,
+                "parameter1": command.parameter1 || 0,
+                "parameter2": command.parameter2 || 0,
+                "parameter3": command.parameter3 || 0,
+                "parameter4": command.parameter4 || 0,
+                "str_parameter1": "",
+                "str_parameter2": ""
+            }
+
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    "accept": "text/plain",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            })
+            const json = await response.json()
+            switch (response.status) {
+                case 200: {
+                    if(json.success === true){
+                        result.push(true)
+                    }
+                    else {
+                        result.push(false)
+                    }
+
+                    break
+                }
+                default:
+                    result.push(false)
+            }
+
+
+
+
+        }
+        catch (e) {
+            return null
+        }
+
+    }
+    return result
+
+
+}
 
 
 module.exports = {
@@ -732,5 +796,8 @@ module.exports = {
     },
     sim: {
         reset
+    },
+    vendista: {
+        sendCommands
     }
 }

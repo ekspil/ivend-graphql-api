@@ -798,3 +798,8 @@
 
 * mech mode fix
 
+
+# 1.6.49 - Hotfix
+
+* vendista send data
+
