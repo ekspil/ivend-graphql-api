@@ -185,6 +185,7 @@ class ControllerService {
         }
 
 
+
         if (controller.mode === "mdb" && controller.bankTerminalMode === "vda1"){
             await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.mdbTerminalMode(2), Commands.reload()])
         }
