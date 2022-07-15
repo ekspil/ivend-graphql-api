@@ -58,6 +58,11 @@ const Controller = {
         allowNull: true,
         field: "bank_terminal_mode"
     },
+    bankTerminalUid: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true,
+        field: "bank_terminal_uid"
+    },
     fiscalizationMode: {
         type: Sequelize.DataTypes.TEXT,
         allowNull: true,

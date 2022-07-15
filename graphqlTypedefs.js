@@ -15,6 +15,7 @@ const typeDefs = gql`
         mode: ControllerMode!
         readStatMode: ReadStatMode!
         bankTerminalMode: BankTerminalMode!
+        bankTerminalUid: String
         fiscalizationMode: FiscalizationMode!
         revision: Revision!
         accessKey: String,
@@ -168,6 +169,7 @@ const typeDefs = gql`
         mode: ControllerMode!
         readStatMode: ReadStatMode!
         bankTerminalMode: BankTerminalMode!
+        bankTerminalUid: String
         fiscalizationMode: FiscalizationMode!
         revisionId: Int!
     }
@@ -177,6 +179,7 @@ const typeDefs = gql`
         mode: ControllerMode
         readStatMode: ReadStatMode
         bankTerminalMode: BankTerminalMode
+        bankTerminalUid: String
         fiscalizationMode: FiscalizationMode
         revisionId: Int
         remotePrinterId: String

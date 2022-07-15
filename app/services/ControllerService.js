@@ -51,6 +51,8 @@ class ControllerService {
         this.authController = this.authController.bind(this)
         this.registerEvent = this.registerEvent.bind(this)
         this.getControllerServices = this.getControllerServices.bind(this)
+        this.setControllerPulse = this.setControllerPulse.bind(this)
+        this.getVendistaId= this.getVendistaId.bind(this)
     }
 
     async createController(input, user) {
@@ -58,7 +60,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode} = input
+        const {name, uid, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, bankTerminalUid} = input
 
         let controller = await this.Controller.findOne({
             where: {
@@ -87,6 +89,7 @@ class ControllerService {
         controller.mode = mode
         controller.readStatMode = readStatMode
         controller.bankTerminalMode = bankTerminalMode
+        controller.bankTerminalUid = bankTerminalUid
         controller.fiscalizationMode = fiscalizationMode
         controller.connected = false
 
@@ -106,12 +109,17 @@ class ControllerService {
         })
     }
 
+    getVendistaId(controller){
+        if(controller.uid.slice(0, 3) === "300") return controller.bankTerminalUid
+        if(controller.uid.slice(0, 3) === "500") return controller.uid.slice(3)
+    }
+
     async editController(id, input, user) {
         if (!user || !user.checkPermission(Permission.EDIT_CONTROLLER)) {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal, bankTerminalUid} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -149,6 +157,10 @@ class ControllerService {
             controller.bankTerminalMode = bankTerminalMode
         }
 
+        if (bankTerminalUid) {
+            controller.bankTerminalUid = bankTerminalUid
+        }
+
         if (fiscalizationMode) {
             controller.fiscalizationMode = fiscalizationMode
         }
@@ -168,19 +180,19 @@ class ControllerService {
         if (imsiTerminal) {
             controller.imsiTerminal = imsiTerminal
         }
-        else if(simCardNumber === "false" || simCardNumber === "0" ){
+        else if(simCardNumber === "false"){
             controller.simCardNumber = null
         }
 
 
         if (controller.mode === "mdb" && controller.bankTerminalMode === "vda1"){
-            await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.mdbTerminalMode(2), Commands.reload()])
+            await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.mdbTerminalMode(2), Commands.reload()])
         }
         if (controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
-            await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
+            await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
         }
         if (controller.mode === "mech" && controller.bankTerminalMode === "vda1"){
-            await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.reload()])
+            await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.reload()])
         }
 
         await controller.save()
@@ -649,10 +661,10 @@ class ControllerService {
                 }
             })
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && b <= 1 && c <= 1 && d <= 1 && f <= 1){
-                await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.mdbCredit(Number(t + "00")), Commands.reload()])
+                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.mdbCredit(Number(t + "00")), Commands.reload()])
             }
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)){
-                await microservices.vendista.sendCommands(controller.uid.slice(3), [Commands.reset(), Commands.workMode(1), Commands.reload()])
+                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1), Commands.reload()])
             }
         }
 
