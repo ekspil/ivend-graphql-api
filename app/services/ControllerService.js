@@ -119,7 +119,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal, bankTerminalUid} = input
+        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal, cashless, bankTerminalUid} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -175,6 +175,10 @@ class ControllerService {
 
         if (sim) {
             controller.sim = sim
+        }
+
+        if (cashless === null || cashless === "ON") {
+            controller.cashless = cashless
         }
 
         if (imsiTerminal) {

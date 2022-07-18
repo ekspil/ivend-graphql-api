@@ -186,6 +186,7 @@ const typeDefs = gql`
         simCardNumber: String
         sim: String
         imsiTerminal: String
+        cashless: String
     }
 
     input CreateItemMatrixInput {
