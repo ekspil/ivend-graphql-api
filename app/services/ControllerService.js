@@ -709,7 +709,7 @@ class ControllerService {
             }
         })
         if(!integration){
-            await this.ControllerIntegration.create({imei, type: "controller"})
+            await this.ControllerIntegration.create({imei, type: "Vendista"})
             return ""
         }
         if(integration && !integration.controllerUid){

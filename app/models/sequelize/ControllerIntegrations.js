@@ -9,7 +9,7 @@ const ControllerIntegrations = {
     },
     type: {
         type: Sequelize.DataTypes.TEXT,
-        defaultValue: "controller",
+        defaultValue: "Vendista",
     },
     controllerUid: {
         type: Sequelize.DataTypes.TEXT,
@@ -20,9 +20,17 @@ const ControllerIntegrations = {
         allowNull: false,
         field: "imei"
     },
+    serial: {
+        type: Sequelize.DataTypes.TEXT,
+        field: "serial"
+    },
     controllerId: {
         type: Sequelize.DataTypes.INTEGER,
         field: "controller_id"
+    },
+    userId: {
+        type: Sequelize.DataTypes.INTEGER,
+        field: "user_id"
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,

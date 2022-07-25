@@ -815,6 +815,8 @@ const typeDefs = gql`
         imei: String
         controllerId: Int
         controllerUid: String
+        userId: Int
+        serial: String
     }
 
     input ControllerIntegrationInput {
