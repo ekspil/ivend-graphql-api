@@ -803,3 +803,7 @@
 
 * vendista send data
 
+# 1.6.50 - Hotfix
+
+* change cashless billing
+
