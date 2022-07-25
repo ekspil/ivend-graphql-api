@@ -3,7 +3,7 @@
 
 class ControllerIntegrationDTO {
 
-    constructor({id, imei, controllerId, controllerUid, type, serial, userId}) {
+    constructor({id, imei, controllerId, controllerUid, type, serial, userId, user}) {
         this.id = id
         this.type = type
         this.imei = imei
@@ -11,6 +11,7 @@ class ControllerIntegrationDTO {
         this.controllerUid = controllerUid
         this.serial = serial
         this.userId = userId
+        this.user = user
     }
 }
 

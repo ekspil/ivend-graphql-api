@@ -611,10 +611,24 @@ class ControllerService {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
+        let integrations
         if(imei){
-            return await this.ControllerIntegration.findAll({where: {imei}})
+            integrations = await this.ControllerIntegration.findAll({where: {imei}})
         }
-        return await this.ControllerIntegration.findAll()
+        else{
+            integrations =await this.ControllerIntegration.findAll()
+        }
+
+        for(let item of integrations){
+            if(!item.userId) continue
+
+            item.user = await this.User.findOne({
+                where: {
+                    id: item.userId
+                }
+            })
+        }
+        return integrations
     }
 
     async getControllerPulse(controllerId, user) {
