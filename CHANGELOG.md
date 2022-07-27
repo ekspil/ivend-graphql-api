@@ -811,3 +811,8 @@
 
 * fix vendista mdb sum
 
+
+# 1.6.52 - Hotfix
+
+* fix vendista mdb sum
+
