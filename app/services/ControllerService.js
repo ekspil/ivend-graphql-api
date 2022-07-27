@@ -196,9 +196,9 @@ class ControllerService {
         if (controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
             await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
         }
-        if (controller.mode === "mech" && controller.bankTerminalMode === "vda1"){
-            await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.reload()])
-        }
+        // if (controller.mode === "mech" && controller.bankTerminalMode === "vda1"){
+        //     await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.reload()])
+        // }
 
         await controller.save()
 
@@ -680,7 +680,7 @@ class ControllerService {
                 }
             })
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && b <= 1 && c <= 1 && d <= 1 && f <= 1){
-                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.mdbCredit(Number(a + "00")), Commands.reload()])
+                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.mdbCredit(Number(a + "00")), Commands.reload()])
             }
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)){
                 await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1), Commands.reload()])
