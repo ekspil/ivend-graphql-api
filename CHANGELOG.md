@@ -807,3 +807,7 @@
 
 * change cashless billing
 
+# 1.6.51 - Hotfix
+
+* fix vendista mdb sum
+

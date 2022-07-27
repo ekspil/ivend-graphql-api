@@ -680,7 +680,7 @@ class ControllerService {
                 }
             })
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && b <= 1 && c <= 1 && d <= 1 && f <= 1){
-                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.mdbCredit(Number(t + "00")), Commands.reload()])
+                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.mdbCredit(Number(a)), Commands.reload()])
             }
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)){
                 await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1), Commands.reload()])
