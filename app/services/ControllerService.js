@@ -673,7 +673,7 @@ class ControllerService {
         pulse.f = f
         pulse.o = o
         pulse.t = t
-        if(t > 1){
+        if(a > 1){
             const controller = await this.Controller.findOne({
                 where: {
                     id: controllerId
