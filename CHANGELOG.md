@@ -824,3 +824,7 @@
 
 * fix vendista commands
 
+# 1.6.55 - Hotfix
+
+* add search terminals
+

@@ -619,16 +619,66 @@ class ControllerService {
         return await this.Controller.findAll({where: {user_id: user.id}})
     }
 
-    async getControllerIntegrations(user, imei) {
+    async getControllerIntegrations(user, input) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
+
+        const {search, limit, offset} = input
         let integrations
-        if(imei){
-            integrations = await this.ControllerIntegration.findAll({where: {imei}})
+        if(search && search.length > 3){
+            const where = {
+                [Op.or]: [
+                    { controllerUid: {
+                        [Op.like]: `%${search}%`
+                    } },
+                    { imei: {
+                        [Op.like]: `%${search}%`
+                    } },
+                    { serial: {
+                        [Op.like]: `%${search}%`
+                    } }
+                ]
+            }
+
+
+            integrations = await this.ControllerIntegration.findAll({
+                where,
+                limit,
+                offset
+            })
+            
+            if(integrations.length === 0){
+
+                const usersFind = await this.User.findAll({
+                    where : {
+                        [Op.or]: [
+                            { companyName: {
+                                [Op.like]: `%${search}%`
+                            } }
+                        ]
+                    }
+                })
+                if(usersFind && usersFind.length > 0){
+
+                    integrations = await this.ControllerIntegration.findAll({
+                        where: {
+                            userId: {
+                                [Op.in]: usersFind.map(item => {
+                                    return item.id
+                                })
+                            }
+                        }
+                    })
+                }
+
+            }
         }
         else{
-            integrations =await this.ControllerIntegration.findAll()
+            integrations = await this.ControllerIntegration.findAll({
+                limit,
+                offset
+            })
         }
 
         for(let item of integrations){

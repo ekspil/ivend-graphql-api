@@ -27,8 +27,8 @@ function ControllerQueries({controllerService, revisionService}) {
 
     const getControllerIntegrations = async (root, args, context) => {
         const {user} = context
-
-        const controllerIntegrations = await controllerService.getControllerIntegrations(user)
+        const {input} = args
+        const controllerIntegrations = await controllerService.getControllerIntegrations(user, input)
 
         return controllerIntegrations.map(controllerIntegration => (new ControllerIntegrationDTO(controllerIntegration)))
     }

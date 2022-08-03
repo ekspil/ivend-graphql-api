@@ -823,6 +823,7 @@ const typeDefs = gql`
     input ControllerIntegrationInput {
         id: Int!
         controllerUid: String!
+        search: String
     }
 
     type AdminStatistic {
@@ -907,7 +908,7 @@ const typeDefs = gql`
         getControllerUIDByIMEI(imei: String!): String
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
-        getControllerIntegrations: [ControllerIntegration]
+        getControllerIntegrations(input: AllIntegrationsInput): [ControllerIntegration]
         getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String, userRole: String  ): [Controller]
         getMachineById(id: Int!): Machine
         getMachines(machineGroupId: Int): [Machine]
@@ -971,6 +972,11 @@ const typeDefs = gql`
         limit: Int
         offset: Int
         status: String
+        search: String
+    }
+    input AllIntegrationsInput {
+        limit: Int
+        offset: Int
         search: String
     }
 
