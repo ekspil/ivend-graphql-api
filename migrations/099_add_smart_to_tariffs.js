@@ -5,6 +5,7 @@ module.exports = {
         await queryInterface.addColumn("tariffs", "smart",
             {
                 type: Sequelize.DECIMAL,
+                defaultValue: 150,
                 allowNull: false,
                 unique: false
             })
