@@ -19,6 +19,10 @@ const Tariff = {
         type: Sequelize.DataTypes.DECIMAL,
         allowNull: false
     },
+    smart: {
+        type: Sequelize.DataTypes.DECIMAL,
+        allowNull: false
+    },
     meta: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false

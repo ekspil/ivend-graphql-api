@@ -452,6 +452,7 @@ const typeDefs = gql`
         telemetry: Float!
         acquiring: Float!
         fiscal: Float!
+        smart: Float!
         partnerId: Int
         meta: String
         startedAt: Timestamp!
@@ -463,6 +464,7 @@ const typeDefs = gql`
         telemetry: Float!
         acquiring: Float!
         fiscal: Float!
+        smart: Float!
         partnerId: Int
         meta: String
         startedAt: Timestamp!

@@ -929,7 +929,28 @@ class ControllerService {
         const kktOk = kkts.filter(kkt => kkt.kktActivationDate)
         const fiscalControllers = allUserControllers.filter(controller => controller.fiscalizationMode !== "NO_FISCAL" && controller.status === "ENABLED")
         const tariff = await microservices.billing.getTariff("TELEMETRY", user.id)
-        if(controller && controller.status === "ENABLED"){
+        function isSmart(controller){
+            if(controller.uid.slice(0, 3) === "400"){
+                return true
+            }
+            if(controller.uid.slice(0, 3) === "500"){
+                return true
+            }
+            return false
+        }
+
+
+        if(controller && controller.status === "ENABLED"  && isSmart(controller)){
+            services.push({
+                id: 50,
+                name: "Смарт терминал",
+                price: Number(tariff.smart),
+                billingType: null
+            })
+        }
+
+
+        if(controller && controller.status === "ENABLED"  && !isSmart(controller)){
             services.push({
                 id: 1,
                 name: "Услуги телеметрии",
@@ -938,7 +959,7 @@ class ControllerService {
             })
         }
 
-        if(controller && controller.status === "ENABLED" && controller.cashless === "ON"){
+        if(controller && controller.status === "ENABLED" && controller.cashless === "ON" && !isSmart(controller)){
 
             services.push({
                 id: 10,

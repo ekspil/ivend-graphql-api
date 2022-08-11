@@ -99,13 +99,13 @@ class App {
             dialect: "postgres",
             operatorsAliases: false,
             logging: process.env.NODE_ENV !== "production",
-            ssl: true,
-            dialectOptions:{
-                ssl:{
-                    require:true,
-                    rejectUnauthorized: false
-                }
-            },
+            // ssl: true,
+            // dialectOptions:{
+            //     ssl:{
+            //         require:true,
+            //         rejectUnauthorized: false
+            //     }
+            // },
             pool: {
                 max: Number(process.env.POSTGRES_POOL_MAX_CONNECTIONS),
                 min: Number(process.env.POSTGRES_POOL_MIN_CONNECTIONS),
