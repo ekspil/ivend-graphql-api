@@ -943,7 +943,7 @@ class ControllerService {
         if(controller && controller.status === "ENABLED"  && isSmart(controller)){
             services.push({
                 id: 50,
-                name: "Смарт терминал",
+                name: "Абонентская плата за Услугу телеметрии Смарт-терминала",
                 price: Number(tariff.smart),
                 billingType: null
             })
@@ -953,7 +953,7 @@ class ControllerService {
         if(controller && controller.status === "ENABLED"  && !isSmart(controller)){
             services.push({
                 id: 1,
-                name: "Услуги телеметрии",
+                name: "Абонентская плата за Услугу телеметрии Контроллера",
                 price: Number(tariff.telemetry),
                 billingType: null
             })
@@ -963,7 +963,7 @@ class ControllerService {
 
             services.push({
                 id: 10,
-                name: "Услуги эквайринга",
+                name: "Абонентская плата за Услугу телеметрии Терминала",
                 price: Number(tariff.acquiring),
                 billingType: null
             })
@@ -974,7 +974,7 @@ class ControllerService {
             const price = fiscalControllers.length > (20 * kktOk.length) ? fiscalControllers.length * Number(tariff.fiscal) / 20 : Number(tariff.fiscal) * kktOk.length
             services.push({
                 id: 5,
-                name: "Услуги фискализации",
+                name: "Абонентская плата за Услугу фискализации сети Автоматов",
                 price,
                 billingType: null,
                 fixCount: 1
