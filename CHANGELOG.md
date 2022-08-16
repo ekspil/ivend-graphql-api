@@ -828,3 +828,7 @@
 
 * add search terminals
 
+# 1.6.56 - Hotfix
+
+* add search terminals
+
