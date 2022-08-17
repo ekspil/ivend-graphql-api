@@ -832,3 +832,7 @@
 
 * add search terminals
 
+# 1.6.57 - Hotfix
+
+* add commands
+
