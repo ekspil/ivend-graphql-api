@@ -7,6 +7,7 @@ const ServiceNotFound = require("../errors/ServiceNotFound")
 const MicroserviceUnknownError = require("../errors/MicroserviceUnknownError")
 const FiscalReceiptDTO = require("../models/FiscalReceiptDTO")
 
+
 const sendRegistrationSms = async (phone, code) => {
     const url = `${process.env.NOTIFICATION_URL}/api/v1/template/REGISTRATION_SMS`
     const method = "POST"
@@ -719,6 +720,9 @@ const sendCommands = async (id, commands) => {
                 "parameter2": command.parameter2 || 0,
                 "parameter3": command.parameter3 || 0,
                 "parameter4": command.parameter4 || 0,
+                "parameter5": command.parameter5 || 0,
+                "parameter6": command.parameter6 || 0,
+                "parameter7": command.parameter7 || 0,
                 "str_parameter1": "",
                 "str_parameter2": ""
             }
@@ -731,6 +735,9 @@ const sendCommands = async (id, commands) => {
                 },
                 body: JSON.stringify(body)
             })
+            await new Promise(res => setTimeout(res, 2000))
+
+
             const json = await response.json()
             switch (response.status) {
                 case 200: {
