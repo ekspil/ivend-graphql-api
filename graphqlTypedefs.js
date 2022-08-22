@@ -951,12 +951,14 @@ const typeDefs = gql`
     type BankPayment {
         id: Int
         applied: Boolean
+        amount: Float
         meta: String
         userId: Int
         startedAt: Timestamp
         createdAt: Timestamp
         userName: String
         userInn: String
+        type: String
     }
 
     input AuthControllerInput {

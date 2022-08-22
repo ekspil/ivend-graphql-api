@@ -17,6 +17,10 @@ const BankPayment = {
         type: Sequelize.DataTypes.INTEGER,
         field: "user_id"
     },
+    amount: {
+        type: Sequelize.DataTypes.DECIMAL,
+        allowNull: false,
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

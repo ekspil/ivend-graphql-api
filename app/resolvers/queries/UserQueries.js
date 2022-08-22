@@ -12,16 +12,44 @@ function UserQueries({userService, billingService}) {
         const {user} = context
         const {input} = args
 
-        const deposits = await billingService.getAllBills(input, user)
+        const data = await billingService.getAllBills(input, user)
 
-        return deposits.map(deposit => (new BankPaymentDTO({
+        const {bills, deposits} = data
+
+
+        const result = bills.map(deposit => (new BankPaymentDTO({
             id: deposit.id,
             applied: deposit.applied,
             createdAt: deposit.createdAt,
             userId: deposit.userId,
             userName: deposit.user.companyName,
-            userInn: deposit.user.inn
+            userInn: deposit.user.inn,
+            amount: deposit.amount,
+            type: "BANK"
         })))
+
+
+        for ( let deposit of deposits){
+            const d = {
+                id: deposit.id + "user",
+                applied: false,
+                createdAt: deposit.createdAt,
+                userId: deposit.user.id,
+                userName: deposit.user.companyName,
+                userInn: deposit.user.inn,
+                amount: deposit.amount,
+                type: "ROBOKASSA"
+            }
+
+            if(deposit.paymentRequest && (deposit.paymentRequest.status === "SUCCEEDED" || deposit.paymentRequest.status === "ADMIN_EDIT")){
+                d.applied = true
+            }
+            if(deposit.paymentRequest && deposit.paymentRequest.status === "ADMIN_EDIT"){
+                d.type = "ADMIN"
+            }
+            result.push(d)
+        }
+        return result
     }
 
 

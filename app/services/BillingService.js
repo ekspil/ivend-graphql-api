@@ -58,9 +58,43 @@ class BillingService {
         if (!user || !user.checkPermission(Permission.GET_DEPOSITS)) {
             throw new NotAuthorized()
         }
-        const {period, offset, limit} = input
+        const {period, offset, limit, search, status} = input
 
         const where = {}
+        let whereUser = {}
+        
+        const statusDepositWhere = {}
+
+        if(status === "payed"){
+            where.applied = true
+            statusDepositWhere.status = {
+                [Op.in]: ["SUCCEEDED", "ADMIN_EDIT"]
+            }
+        }
+        if(status === "not_payed"){
+            where.applied = false
+            statusDepositWhere.status = {
+                [Op.notIn]: ["SUCCEEDED", "ADMIN_EDIT"]
+            }
+        }
+        
+        
+
+        if( Number(search)){
+            where.amount = Number(search)
+        }
+        else {
+            whereUser = {
+                [Op.or]: [
+                    { companyName: {
+                        [Op.like]: `%${search}%`
+                    } },
+                    { email: {
+                        [Op.like]: `%${search}%`
+                    } }
+                ]
+            }
+        }
 
         if (period) {
             const {from, to} = period
@@ -74,18 +108,28 @@ class BillingService {
                 [Op.gt]: from
             }
         }
-
         const bills =  await this.BankPayment.findAll({
             offset,
             limit,
             where,
             order: [
-                ["id", "DESC"],
+                ["createdAt", "DESC"],
             ],
-            include: [{model: this.User, as: "user"}]
+            include: [{model: this.User, as: "user", where: whereUser}]
         })
 
-        return bills
+        delete where.applied
+        const deposits = await this.Deposit.findAll({
+            offset,
+            limit,
+            where,
+            order: [
+                ["createdAt", "DESC"],
+            ],
+            include: [{model: this.PaymentRequest, as: "paymentRequest", where: statusDepositWhere}, {model: this.User, as: "user" , where: whereUser}]}
+        )
+
+        return {bills, deposits}
     }
 
     async getDailyBill(user, userId) {

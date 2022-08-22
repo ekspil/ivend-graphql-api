@@ -55,7 +55,8 @@ class ReportService {
 
         const bankPayment = await this.BankPayments.create({
             applied: false,
-            userId: user.id
+            userId: user.id,
+            amount: body.amount
         })
 
         body.orderNumber = String(bankPayment.id)

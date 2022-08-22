@@ -836,3 +836,8 @@
 
 * add commands
 
+# 1.6.59 - Hotfix
+
+* integrate payments
+* add payments search
+

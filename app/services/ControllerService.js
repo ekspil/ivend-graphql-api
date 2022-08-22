@@ -738,11 +738,18 @@ class ControllerService {
                     id: controllerId
                 }
             })
-            if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && b <= 1 && c <= 1 && d <= 1 && f <= 1){
-                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.mdbCredit(Number(a + "00")), Commands.reload()])
+            if (controller.uid.slice(0, 3) === "500") {
+                if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && b <= 1 && c <= 1 && d <= 1 && f <= 1) {
+                    await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1), Commands.remotePin(0, 2, 20, 1), Commands.mdbCredit(Number(a + "00")), Commands.reload()])
+                }
+                if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)) {
+                    await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.reload()])
+                }
             }
-            if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)){
-                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.reload()])
+            if (controller.uid.slice(0, 3) === "300") {
+                if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)) {
+                    await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1), Commands.reload()])
+                }
             }
             if (controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
                 if (controller.uid.slice(0, 3) === "500"){
