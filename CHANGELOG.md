@@ -845,3 +845,7 @@
 
 * fix vendista commands
 
+# 1.6.61 - Hotfix
+
+* fix cmd
+

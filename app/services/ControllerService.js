@@ -1193,7 +1193,7 @@ class ControllerService {
         if(Number(balance) < -1000){
             result.bankTerminalMode = "d200s"
         }
-
+        await this.redis.set("CONTROLLER_COMMAND_" + controller.id, "", "EX", 24 * 60 * 60)
 
         return result
     }
