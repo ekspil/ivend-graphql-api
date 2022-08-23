@@ -721,10 +721,8 @@ const sendCommands = async (id, commands) => {
                 "parameter3": command.parameter3 || 0,
                 "parameter4": command.parameter4 || 0,
                 "parameter5": command.parameter5 || 0,
-                "parameter6": command.parameter6 || 0,
-                "parameter7": command.parameter7 || 0,
-                "str_parameter1": "",
-                "str_parameter2": ""
+                "str_parameter1": command.parameter6 || 0,
+                "str_parameter2": command.parameter7 || 0,
             }
 
             const response = await fetch(url, {

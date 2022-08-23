@@ -841,3 +841,7 @@
 * integrate payments
 * add payments search
 
+# 1.6.60 - Hotfix
+
+* fix vendista commands
+
