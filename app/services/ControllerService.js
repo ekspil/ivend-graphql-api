@@ -743,7 +743,7 @@ class ControllerService {
                     await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1), Commands.remotePin(0, 2, 20, 1), Commands.mdbCredit(Number(a + "00")), Commands.reload()])
                 }
                 if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 1 && (b > 1 || c > 1 || d > 1 || f > 1)) {
-                    await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.reload()])
+                    await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(3), Commands.remotePin(0, 2,20, 5), Commands.sniffer(1, 0, 0 , 0, 0, 0,1), Commands.priceForPulse(Number(a + "00"), Number(b + "00"), Number(c + "00"), 0, 0, 0),  Commands.reload()])
                 }
             }
             if (controller.uid.slice(0, 3) === "300") {
@@ -753,7 +753,7 @@ class ControllerService {
             }
             if (controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
                 if (controller.uid.slice(0, 3) === "500"){
-                    await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(3), Commands.remotePin(0, 2,2, 0), Commands.sniffer(5, 1, Number(o + "00") , Number(a + "00"), 15, Number(b + "00"),0), Commands.priceForPulse(Number(t + "00"), 0, 0, 0, 0, 0),  Commands.reload()])
+                    await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(3), Commands.remotePin(0, 2,2, 0), Commands.sniffer(5, 1, Number(o + "00") , Number(a + "00"), 15, Number(b + "00"),3), Commands.priceForPulse(Number(t + "00"), 0, 0, 0, 0, 0),  Commands.reload()])
                 }
 
             }
