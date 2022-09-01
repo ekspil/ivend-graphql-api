@@ -775,7 +775,16 @@ class ControllerService {
         if(!integration){
             return new Error("Integration not found")
         }
-        integration.controllerUid = controllerUid
+        if(controllerUid === "DELETE"){
+            integration.controllerUid = null
+            integration.controllerId = null
+            integration.userId = null
+            integration.serial = null
+        }
+        else{
+
+            integration.controllerUid = controllerUid
+        }
         await integration.save()
 
         return integration

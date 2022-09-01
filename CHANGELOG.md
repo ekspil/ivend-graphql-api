@@ -853,3 +853,8 @@
 
 * fix cmd
 
+
+# 1.6.63 - Hotfix
+
+* fix updateIntegrations
+
