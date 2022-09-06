@@ -862,3 +862,7 @@
 
 * add buttons
 
+# 1.6.66 - Hotfix
+
+* add controller upd
+

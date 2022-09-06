@@ -1217,36 +1217,49 @@ class ControllerService {
 
         const {controllerUid, timestamp, eventType} = input
 
-        if(eventType !== "ENCASHMENT") {
+        if(eventType !== "ENCASHMENT" && eventType !== "UPDATE" ) {
             throw new Error("Unknown event type")
         }
 
-        const encash = await this.redis.get("machine_encashment_" + controllerUid + timestamp)
-        if(encash) {
-            throw new Error("DUBLICATE_ENCASHMENT")
+        if(eventType === "ENCASHMENT"){
+
+            const encash = await this.redis.get("machine_encashment_" + controllerUid + timestamp)
+            if(encash) {
+                throw new Error("DUBLICATE_ENCASHMENT")
+            }
+
+            const controller = await this.getControllerByUID(controllerUid, user)
+
+            if (!controller) {
+                throw new ControllerNotFound()
+            }
+
+            const controllerUser = await controller.getUser()
+            controllerUser.checkPermission = () => true
+
+            const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+
+            if (!machine) {
+                throw new MachineNotFound()
+            }
+
+            await this.machineService.createEncashment(machine.id, timestamp, controllerUser)
+            await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
+            await this.redis.set("machine_encashment_" + controllerUid + timestamp, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
+            await this.machineService.addLog(machine.id, `Выполнена инкассация`, MachineLogType.ENCASHMENT, controllerUser)
+
+            return controller
         }
+        if(eventType === "UPDATE"){
 
-        const controller = await this.getControllerByUID(controllerUid, user)
+            const controller = await this.getControllerByUID(controllerUid, user)
 
-        if (!controller) {
-            throw new ControllerNotFound()
+            if (!controller) {
+                throw new ControllerNotFound()
+            }
+            await this.redis.set("CONTROLLER_COMMAND_" + controller.id, "upd", "EX", 24 * 60 * 60)
+            return controller
         }
-
-        const controllerUser = await controller.getUser()
-        controllerUser.checkPermission = () => true
-
-        const machine = await this.machineService.getMachineByControllerId(controller.id, user)
-
-        if (!machine) {
-            throw new MachineNotFound()
-        }
-
-        await this.machineService.createEncashment(machine.id, timestamp, controllerUser)
-        await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
-        await this.redis.set("machine_encashment_" + controllerUid + timestamp, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
-        await this.machineService.addLog(machine.id, `Выполнена инкассация`, MachineLogType.ENCASHMENT, controllerUser)
-
-        return controller
     }
 
     // async telemetronEvent(input, user) {
