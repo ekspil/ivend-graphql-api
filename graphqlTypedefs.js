@@ -1010,6 +1010,7 @@ const typeDefs = gql`
 
     enum EventType {
         ENCASHMENT
+        UPDATE
     }
     
     input pdfInput {
