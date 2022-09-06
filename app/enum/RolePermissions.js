@@ -2,6 +2,7 @@ const Permission = require("./Permission")
 
 const VENDOR = [
     Permission.GET_SELF_DEPOSITS,
+    Permission.CREATE_CONTROLLER_EVENT,
     Permission.GET_NEWS,
     Permission.GET_DAILY_BILL,
     Permission.GET_DAYS_LEFT,
@@ -69,6 +70,7 @@ const VENDOR = [
 const PARTNER = [
     Permission.PARTNER,
     Permission.GET_ALL_USERS,
+    Permission.CREATE_CONTROLLER_EVENT,
     Permission.GET_SELF_DEPOSITS,
     Permission.GET_NEWS,
     Permission.GET_DAILY_BILL,
