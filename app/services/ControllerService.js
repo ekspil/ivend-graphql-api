@@ -1257,7 +1257,19 @@ class ControllerService {
             if (!controller) {
                 throw new ControllerNotFound()
             }
+            const controllerUser = await controller.getUser()
+            controllerUser.checkPermission = () => true
+
+
+            const machine = await this.machineService.getMachineByControllerId(controller.id, user)
+
+            if (!machine) {
+                throw new MachineNotFound()
+            }
+
+
             await this.redis.set("CONTROLLER_COMMAND_" + controller.id, "upd", "EX", 24 * 60 * 60)
+            await this.machineService.addLog(machine.id, `Запрос обновления`, MachineLogType.ALL, controllerUser)
             return controller
         }
     }

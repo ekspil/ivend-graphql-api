@@ -866,3 +866,7 @@
 
 * add controller upd
 
+# 1.6.68 - Hotfix
+
+* add controller upd
+
