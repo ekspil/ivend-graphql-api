@@ -33,6 +33,7 @@ const typeDefs = gql`
         pulse: ControllerPulse
         mech: ControllerMech
         cmd: String
+        cmdInfo: String
     }
     
     type ControllerService {

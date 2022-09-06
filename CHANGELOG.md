@@ -858,3 +858,7 @@
 
 * fix updateIntegrations
 
+# 1.6.64 - Hotfix
+
+* add buttons
+

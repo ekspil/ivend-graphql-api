@@ -81,6 +81,18 @@ function ControllerResolver({controllerService, machineService}) {
         return command
     }
 
+    const cmdInfo = async (obj, args, context) => {
+        const {user} = context
+
+        const command = await controllerService.getControllerCommand(obj.id, user, true)
+
+        if (!command) {
+            return null
+        }
+
+        return command
+    }
+
     const machine = async (obj, args, context) => {
         const {user} = context
         const machine = await machineService.getMachineByControllerId(obj.id, user)
@@ -150,7 +162,8 @@ function ControllerResolver({controllerService, machineService}) {
         services,
         pulse,
         mech,
-        cmd
+        cmd,
+        cmdInfo
     }
 
 }

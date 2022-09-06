@@ -325,7 +325,7 @@ class ControllerService {
     }
 
 
-    async getControllerCommand(id, user) {
+    async getControllerCommand(id, user, notDelete) {
         if (!user || !user.checkPermission(Permission.AUTH_CONTROLLER)) {
             throw new NotAuthorized()
         }
@@ -334,7 +334,10 @@ class ControllerService {
         if (!command){
             return null
         }
-        await this.redis.set("CONTROLLER_COMMAND_" + id, "", "EX", 24 * 60 * 60)
+        if(!notDelete){
+            await this.redis.set("CONTROLLER_COMMAND_" + id, "", "EX", 24 * 60 * 60)
+        }
+
         return command
     }
 
