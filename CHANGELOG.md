@@ -870,3 +870,7 @@
 
 * add controller upd
 
+# 1.6.69 - Hotfix
+
+* add sale_id to fiscal
+

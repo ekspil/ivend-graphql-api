@@ -297,6 +297,7 @@ class SaleService {
                         rekassa_password: kkt.rekassaPassword,
                         rekassa_number: kkt.rekassaNumber,
                         rekassa_kkt_id: kkt.rekassaKktId,
+                        id: createdSale.id,
                     })
 
 
