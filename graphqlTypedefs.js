@@ -912,7 +912,7 @@ const typeDefs = gql`
         getControllerByUID(uid: String!): Controller
         getControllers: [Controller]
         getControllerIntegrations(input: AllIntegrationsInput): [ControllerIntegration]
-        getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String, userRole: String  ): [Controller]
+        getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String, userRole: String, userId: String , search: String ): [Controller]
         getMachineById(id: Int!): Machine
         getMachines(machineGroupId: Int): [Machine]
         getMachineGroups: [MachineGroup]
@@ -923,8 +923,8 @@ const typeDefs = gql`
         getProfile: User
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
-        getAllKkts(offset: Int, limit: Int, status: Int): [Kkt]
-        getAllUsers(input: AllUsersInput, orderDesc: Boolean, orderKey: String ): [User]
+        getAllKkts(offset: Int, limit: Int, status: Int, search: String): [Kkt]
+        getAllUsers(input: AllUsersInput, orderDesc: Boolean, orderKey: String, search: String ): [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int, period: Period): [Sale!]!
         getSalesNoLimit( machineId: Int, itemId: Int, period: Period): [SaleNoLimit!]!
@@ -1238,6 +1238,7 @@ const typeDefs = gql`
         createTariff(input: TariffInput!): Tariff
         updatePartnerInfo(input: PartnerInfoInput!): PartnerInfo
         simReset(sim: String!): Boolean
+        simResetImsi(sim: String!): Boolean
     }
 `
 

@@ -280,7 +280,7 @@ class ControllerService {
                 }
 
                 if (sim) {
-                    controller.sim = simCardNumber
+                    controller.sim = sim
                 }
 
                 if (imsiTerminal) {
@@ -342,42 +342,61 @@ class ControllerService {
     }
 
 
-    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey, userRole, user) {
+    async getAll(offset, limit, status, connection, terminal, fiscalizationMode, bankTerminalMode, printer, registrationTime, terminalStatus, orderDesc, orderKey, userRole, search, userId, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
 
-        const where = {}
+        let where = {}
         if (!limit) {
             limit = 50
         }
-        if(userRole && userRole !== "ALL"){
-            let roles = []
-            if(userRole === "VENDOR"){
-                roles.push("VENDOR")
-                roles.push("VENDOR_NO_LEGAL_INFO")
-                roles.push("VENDOR_NOT_CONFIRMED")
-                roles.push("VENDOR_NEGATIVE_BALANCE")
-                roles.push("PARTNER")
-                roles.push("ADMIN")
-            }
-            else{
-                roles.push(userRole)
-            }
-            const users = await this.User.findAll({where: {
-                role: {
-                    [Op.in]: roles
-                }
-            }})
-
-            const userIds = users.map(u=> u.id)
-
-            where.user_id = {
-                [Op.in]: userIds
+        // if(userRole && userRole !== "ALL"){
+        //     let roles = []
+        //     if(userRole === "VENDOR"){
+        //         roles.push("VENDOR")
+        //         roles.push("VENDOR_NO_LEGAL_INFO")
+        //         roles.push("VENDOR_NOT_CONFIRMED")
+        //         roles.push("VENDOR_NEGATIVE_BALANCE")
+        //         roles.push("PARTNER")
+        //         roles.push("ADMIN")
+        //     }
+        //     else{
+        //         roles.push(userRole)
+        //     }
+        //     const users = await this.User.findAll({where: {
+        //         role: {
+        //             [Op.in]: roles
+        //         }
+        //     }})
+        //
+        //     const userIds = users.map(u=> u.id)
+        //
+        //     where.user_id = {
+        //         [Op.in]: userIds
+        //     }
+        // }
+        if(search && search.length > 3) {
+            where = {
+                [Op.or]: [
+                    {
+                        uid: {
+                            [Op.like]: `%${search}%`
+                        }
+                    },
+                    {
+                        mode: {
+                            [Op.like]: `%${search}%`
+                        }
+                    },
+                ]
             }
         }
+        if(userId){
+            where.user_id = Number(userId)
+        }
         if (bankTerminalMode && bankTerminalMode !== "ALL") {
-            if(bankTerminalMode === "ENABLED"){
+            if (bankTerminalMode === "ENABLED") {
                 where.bankTerminalMode = {
                     [Op.and]: {
                         [Op.not]: null,
@@ -385,7 +404,7 @@ class ControllerService {
                     }
                 }
             }
-            if(bankTerminalMode === "DISABLED"){
+            if (bankTerminalMode === "DISABLED") {
                 where.bankTerminalMode = {
                     [Op.or]: {
                         [Op.is]: null,
@@ -395,7 +414,7 @@ class ControllerService {
             }
         }
         if (printer && printer !== "ALL") {
-            if(printer === "ENABLED"){
+            if (printer === "ENABLED") {
                 where.remotePrinterId = {
                     [Op.and]: {
                         [Op.not]: null,
@@ -403,7 +422,7 @@ class ControllerService {
                     }
                 }
             }
-            if(printer === "DISABLED"){
+            if (printer === "DISABLED") {
                 where.remotePrinterId = {
                     [Op.or]: {
                         [Op.is]: null,
@@ -414,14 +433,14 @@ class ControllerService {
         }
 
         if (registrationTime && registrationTime !== "ALL") {
-            if(registrationTime === "ENABLED"){
+            if (registrationTime === "ENABLED") {
                 where.registrationTime = {
                     [Op.and]: {
                         [Op.not]: null
                     }
                 }
             }
-            if(registrationTime === "DISABLED"){
+            if (registrationTime === "DISABLED") {
                 where.registrationTime = {
                     [Op.or]: {
                         [Op.is]: null
@@ -430,7 +449,7 @@ class ControllerService {
             }
         }
         if (terminal) {
-            if(terminal === "ENABLED"){
+            if (terminal === "ENABLED") {
                 where.simCardNumber = {
                     [Op.and]: {
                         [Op.not]: null,
@@ -438,7 +457,7 @@ class ControllerService {
                     }
                 }
             }
-            if(terminal === "DISABLED"){
+            if (terminal === "DISABLED") {
                 where.simCardNumber = {
                     [Op.or]: {
                         [Op.is]: null,
@@ -449,7 +468,7 @@ class ControllerService {
 
         }
         if (fiscalizationMode && fiscalizationMode !== "ALL") {
-            if(fiscalizationMode === "ENABLED"){
+            if (fiscalizationMode === "ENABLED") {
                 where.fiscalizationMode = {
                     [Op.and]: {
                         [Op.not]: null,
@@ -457,7 +476,7 @@ class ControllerService {
                     }
                 }
             }
-            if(fiscalizationMode === "DISABLED"){
+            if (fiscalizationMode === "DISABLED") {
                 where.fiscalizationMode = {
                     [Op.or]: {
                         [Op.is]: null,
@@ -470,6 +489,7 @@ class ControllerService {
         if (status && status !== "ALL") {
             where.status = status
         }
+        
 
         let orderData = ["id", "DESC"]
 

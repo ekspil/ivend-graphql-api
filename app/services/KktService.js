@@ -5,6 +5,8 @@ const Permission = require("../enum/Permission")
 const microservices = require("../utils/microservices")
 const fetch = require("node-fetch")
 
+const {Op} = require("sequelize")
+
 class KktService {
 
     constructor({KktModel, redis, MachineModel, SaleModel, LegalInfoModel, ButtonItemModel}) {
@@ -400,7 +402,7 @@ class KktService {
         return answer
     }
 
-    async getAllKkts(offset, limit, status, user) {
+    async getAllKkts(offset, limit, status, search, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_KKTS)) {
             throw new NotAuthorized()
         }
@@ -408,7 +410,48 @@ class KktService {
         if (!limit) {
             limit = 50
         }
-        const where = {}
+        let where = {}
+        if(search && search.length > 3) {
+            where = {
+                [Op.or]: [
+                    {
+                        inn: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        companyName: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        kktFactoryNumber: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        kktFNNumber: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        kktRegNumber: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        type: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        ofdName: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                ]
+            }
+        }
         if(status !== undefined){
             where.status = status
         }

@@ -682,12 +682,46 @@ class UserService {
     }
 
 
-    async getAllUsers(input, user, orderDesc, orderKey) {
+    async getAllUsers(input, user, orderDesc, orderKey, search) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
         }
         let {role, userId, limit, offset} = input
-        const where = {}
+        let where = {}
+        if(search && search.length > 3) {
+            where = {
+                [Op.or]: [
+                    {
+                        email: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        phone: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        companyName: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        inn: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                    {
+                        inn: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    },
+                ]
+            }
+        }
+
+
+
         if(role && role !== "ALL"){
             where.role = role
         }

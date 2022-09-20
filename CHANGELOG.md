@@ -874,3 +874,8 @@
 
 * add sale_id to fiscal
 
+
+# 1.6.70 - Hotfix
+
+* search in kkts, controllers and users
+
