@@ -879,3 +879,8 @@
 
 * search in kkts, controllers and users
 
+
+# 1.6.71 - Hotfix
+
+* fix vendista commands
+
