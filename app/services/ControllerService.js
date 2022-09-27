@@ -53,6 +53,7 @@ class ControllerService {
         this.getControllerServices = this.getControllerServices.bind(this)
         this.setControllerPulse = this.setControllerPulse.bind(this)
         this.getVendistaId= this.getVendistaId.bind(this)
+        this.updateControllerIntegration= this.updateControllerIntegration.bind(this)
     }
 
     async createController(input, user) {
@@ -793,7 +794,7 @@ class ControllerService {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS)) {
             throw new NotAuthorized()
         }
-        const {id, controllerUid} = input
+        const {id, controllerUid, userId} = input
         const integration =  await this.ControllerIntegration.findByPk(id)
         if(!integration){
             return new Error("Integration not found")
@@ -805,8 +806,17 @@ class ControllerService {
             integration.serial = null
         }
         else{
+            const controllerUser = await this.User.findByPk(userId)
+            if(!controllerUser){
+                throw new Error ("USER_NOT_FOUND")
+            }
+            controllerUser.checkPermission = ()=> true
 
-            integration.controllerUid = controllerUid
+            const createdController = await this.createController({name: `vendista-${controllerUid}`, uid: controllerUid, revisionId: 1, status: "ENABLED", mode: "ps_m_D", readStatMode: "COINBOX", bankTerminalMode: "vda1", fiscalizationMode: "NO_FISCAL", bankTerminalUid: null}, controllerUser)
+            integration.controllerUid = createdController.uid
+            integration.controllerId = createdController.id
+            integration.userId = controllerUser.id
+            integration.serial = "SELF_CREATED"
         }
         await integration.save()
 

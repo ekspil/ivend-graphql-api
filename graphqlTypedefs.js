@@ -826,6 +826,7 @@ const typeDefs = gql`
     input ControllerIntegrationInput {
         id: Int!
         controllerUid: String!
+        userId: Int
         search: String
     }
 

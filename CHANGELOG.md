@@ -884,3 +884,8 @@
 
 * fix vendista commands
 
+
+# 1.6.72 - Hotfix
+
+* user vendista integration
+
