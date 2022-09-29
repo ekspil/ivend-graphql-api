@@ -598,9 +598,17 @@ class UserService {
         return token
     }
 
-    async getProfile(user) {
+    async getProfile(user, userId) {
         if (!user || !user.checkPermission(Permission.GET_PROFILE)) {
             throw new NotAuthorized()
+        }
+
+        if(userId){
+            return await this.User.findOne({
+                where: {
+                    id: userId
+                }
+            })
         }
 
         return await this.User.findOne({

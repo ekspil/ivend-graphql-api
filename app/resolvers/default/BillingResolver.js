@@ -5,14 +5,18 @@ function BillingResolver({billingService}) {
 
     const balance = async (obj, args, context) => {
         const {user} = context
+        const {userId} = args
+        if(userId){
+            return await billingService.getBalance(user, userId)
+        }
         return await billingService.getBalance(user, obj.userId)
     }
 
     const deposits = async (obj, args, context) => {
         const {user} = context
-        const {period} = args
+        const {period, userId} = args
 
-        const deposits = await billingService.getDeposits(period, user)
+        const deposits = await billingService.getDeposits(period, user, null, userId)
 
         return deposits.map(deposit => (new DepositDTO({
             id: deposit.id,
@@ -26,12 +30,20 @@ function BillingResolver({billingService}) {
     const dailyBill = async (obj, args, context) => {
         const {user} = context
 
+        const {userId} = args
+        if(userId){
+            return await billingService.getDailyBill(user, userId)
+        }
+
         return await billingService.getDailyBill(user, obj.userId)
     }
 
     const daysLeft = async (obj, args, context) => {
         const {user} = context
-
+        const {userId} = args
+        if(userId){
+            return await billingService.getDaysLeft(user, userId)
+        }
         return await billingService.getDaysLeft(user, obj.userId)
     }
 

@@ -10,7 +10,7 @@ const typeDefs = gql`
         imsi: String
         sim: String
         imsiTerminal: String
-        services: [ControllerService!]
+        services(userId: Int): [ControllerService!]
         status: ControllerStatus!
         mode: ControllerMode!
         readStatMode: ReadStatMode!
@@ -263,10 +263,10 @@ const typeDefs = gql`
 
     type Billing {
         userId: Int!
-        balance: Float!
-        deposits(period: Period): [Deposit!]!
-        dailyBill: Float!
-        daysLeft: Float!
+        balance(userId: Int): Float!
+        deposits(period: Period, userId: Int): [Deposit!]!
+        dailyBill(userId: Int): Float!
+        daysLeft(userId: Int): Float!
     }
 
     type Kkt {
@@ -303,7 +303,7 @@ const typeDefs = gql`
         inn: String
         notificationSettings: [NotificationSetting!]!
         legalInfo: LegalInfo
-        billing: Billing!
+        billing(userId: Int): Billing!
         salesSummary(period: Period): SalesSummary
         fastSummary: FastSummary
         items: [Item!]!
@@ -911,7 +911,7 @@ const typeDefs = gql`
         getController(id: Int!): Controller
         getControllerUIDByIMEI(imei: String!): String
         getControllerByUID(uid: String!): Controller
-        getControllers: [Controller]
+        getControllers(userId: Int): [Controller]
         getControllerIntegrations(input: AllIntegrationsInput): [ControllerIntegration]
         getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String, userRole: String, userId: String , search: String ): [Controller]
         getMachineById(id: Int!): Machine
@@ -921,7 +921,7 @@ const typeDefs = gql`
         getEquipments: [Equipment]
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
-        getProfile: User
+        getProfile(userId: Int): User
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts(offset: Int, limit: Int, status: Int, search: String): [Kkt]

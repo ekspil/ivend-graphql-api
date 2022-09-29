@@ -28,7 +28,7 @@ class BillingService {
         this.changeUserBalance = this.changeUserBalance.bind(this)
     }
 
-    async getDeposits(period, user, all) {
+    async getDeposits(period, user, all, userId) {
         if (!user || !user.checkPermission(Permission.GET_SELF_DEPOSITS)) {
             throw new NotAuthorized()
         }
@@ -36,6 +36,9 @@ class BillingService {
         const where = {}
         if(!all){
             where.user_id = user.id
+        }
+        if(userId){
+            where.user_id = userId
         }
 
         if (period) {

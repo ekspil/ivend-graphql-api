@@ -54,7 +54,8 @@ function UserQueries({userService, billingService}) {
 
 
     const getProfile = async (root, args, context) => {
-        const user = await userService.getProfile(context.user)
+        const {userId} = args
+        const user = await userService.getProfile(context.user, userId)
 
         if (!user) {
             throw new UserNotFound()

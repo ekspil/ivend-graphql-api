@@ -94,7 +94,11 @@ function UserResolver({controllerService, notificationSettingsService, itemServi
     }
 
 
-    const billing = async (obj) => {
+    const billing = async (obj, args) => {
+        const {userId} = args
+        if(userId){
+            return new BillingDTO({userId})
+        }
         return new BillingDTO({userId: obj.id})
     }
 

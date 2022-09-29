@@ -970,17 +970,22 @@ class ControllerService {
         return true
     }
 
-    async getControllerServices(id, user) {
+    async getControllerServices(id, user, userId) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
             throw new NotAuthorized()
         }
+        let selectedUser = user
+        if(userId){
+            selectedUser = await this.User.findByPk(userId)
+            selectedUser.checkPermission = ()=> true
+        }
         const services = []
-        const controller = await this.getControllerById(id, user)
-        const allUserControllers = await this.getAllOfCurrentUser(user)
-        const kkts = await this.kktService.getUserKkts(user)
+        const controller = await this.getControllerById(id,  selectedUser)
+        const allUserControllers = await this.getAllOfCurrentUser(selectedUser)
+        const kkts = await this.kktService.getUserKkts(selectedUser)
         const kktOk = kkts.filter(kkt => kkt.kktActivationDate)
         const fiscalControllers = allUserControllers.filter(controller => controller.fiscalizationMode !== "NO_FISCAL" && controller.status === "ENABLED")
-        const tariff = await microservices.billing.getTariff("TELEMETRY", user.id)
+        const tariff = await microservices.billing.getTariff("TELEMETRY", selectedUser.id)
         function isSmart(controller){
             if(controller.uid.slice(0, 3) === "400"){
                 return true

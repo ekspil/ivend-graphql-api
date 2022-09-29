@@ -889,3 +889,7 @@
 
 * user vendista integration
 
+# 1.6.73 - Hotfix
+
+* getControllers and its information by other id
+

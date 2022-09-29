@@ -106,8 +106,9 @@ function ControllerResolver({controllerService, machineService}) {
 
     const services = async (obj, args, context) => {
         const {user} = context
+        const {userId} = args
 
-        const servs = await controllerService.getControllerServices(obj.id, user)
+        const servs = await controllerService.getControllerServices(obj.id, user, userId)
 
         if (!servs) {
             return null
