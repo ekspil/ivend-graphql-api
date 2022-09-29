@@ -97,10 +97,10 @@ const typeDefs = gql`
 
     type Deposit {
         id: Int!
-        amount: Float!
-        status: PaymentStatus!
-        timestamp: Timestamp!
-        redirectUrl: String!
+        amount(userId: Int): Float!
+        status(userId: Int): PaymentStatus!
+        timestamp(userId: Int): Timestamp!
+        redirectUrl(userId: Int): String!
     }
 
     type FiscalReceipt {

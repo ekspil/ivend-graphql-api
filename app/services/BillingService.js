@@ -188,15 +188,24 @@ class BillingService {
         return balance
     }
 
-    async getDepositById(id, user) {
+    async getDepositById(id, user, userId) {
         if (!user || !user.checkPermission(Permission.GET_DEPOSIT_BY_ID)) {
             throw new NotAuthorized()
         }
-
-        const where = {
-            id,
-            user_id: user.id
+        let where
+        if(userId){
+            where = {
+                id,
+                user_id: userId
+            }
         }
+        else {
+            where = {
+                id,
+                user_id: user.id
+            }
+        }
+
 
         return await this.Deposit.findOne({where})
     }

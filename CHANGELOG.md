@@ -893,3 +893,7 @@
 
 * getControllers and its information by other id
 
+# 1.6.74 - Hotfix
+
+* getControllers and its information by other id
+
