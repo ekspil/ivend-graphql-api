@@ -897,3 +897,7 @@
 
 * getControllers and its information by other id
 
+# 1.6.75 - Hotfix
+
+* kkt type edit
+

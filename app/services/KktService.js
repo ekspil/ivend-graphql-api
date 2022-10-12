@@ -205,7 +205,7 @@ class KktService {
             throw new NotAuthorized()
         }
 
-        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, server, rekassaKktId, rekassaNumber, rekassaPassword, ofdName} = input
+        const {id, kktModel, kktFactoryNumber, kktRegNumber, kktFNNumber, kktActivationDate, kktBillsCount, kktOFDRegKey, inn, companyName, server, rekassaKktId, rekassaNumber, rekassaPassword, ofdName, type} = input
 
         const kkt = await this.Kkt.findOne({
             where: {
@@ -237,6 +237,9 @@ class KktService {
         }
         if(server) {
             kkt.server = server
+        }
+        if(type) {
+            kkt.type = type
         }
 
 

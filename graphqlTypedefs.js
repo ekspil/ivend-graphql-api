@@ -395,6 +395,7 @@ const typeDefs = gql`
     
     enum KktType {
         umka
+        umka_new
         rekassa
         telemedia
     }
