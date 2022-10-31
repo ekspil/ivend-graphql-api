@@ -398,6 +398,7 @@ const typeDefs = gql`
         umka_new
         rekassa
         telemedia
+        orange
     }
     
     input EditKktInput {
