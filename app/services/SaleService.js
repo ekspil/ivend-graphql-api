@@ -268,6 +268,8 @@ class SaleService {
                     logger.info(`sale_service_err kkt not selected!, saleId:${createdSale.id} `)
                     throw new Error("kkt not selected!")
                 }
+
+                createdSale.kkt_id = kkt.id
                 const {inn, sno, companyName} = legalInfo
 
                 const place = machine.place || "Торговый автомат"
@@ -320,6 +322,16 @@ class SaleService {
                             if (!receiptId) {
                                 throw new Error("ReceiptId is null")
                             }
+
+                            break
+                        case "orange":
+                            receiptId = (await microservices.fiscal.createReceipt(fiscalReceiptDTO)).id
+
+                            if (!receiptId) {
+                                throw new Error("ReceiptId is null")
+                            }
+
+
 
                             break
                         default:

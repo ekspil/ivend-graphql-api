@@ -666,7 +666,10 @@ class ControllerService {
             integrations = await this.ControllerIntegration.findAll({
                 where,
                 limit,
-                offset
+                offset,
+                order: [
+                    ["id", "DESC"],
+                ]
             })
             
             if(integrations.length === 0){
@@ -689,7 +692,10 @@ class ControllerService {
                                     return item.id
                                 })
                             }
-                        }
+                        },
+                        order: [
+                            ["id", "DESC"],
+                        ]
                     })
                 }
 
@@ -698,7 +704,10 @@ class ControllerService {
         else{
             integrations = await this.ControllerIntegration.findAll({
                 limit,
-                offset
+                offset,
+                order: [
+                    ["id", "DESC"],
+                ]
             })
         }
 
@@ -983,7 +992,8 @@ class ControllerService {
         const controller = await this.getControllerById(id,  selectedUser)
         const allUserControllers = await this.getAllOfCurrentUser(selectedUser)
         const kkts = await this.kktService.getUserKkts(selectedUser)
-        const kktOk = kkts.filter(kkt => kkt.kktActivationDate)
+        const kktOk = kkts.filter(kkt => kkt.kktActivationDate && kkt.type !== "orange")
+        const kktOrange = kkts.filter(kkt => kkt.type === "orange")
         const fiscalControllers = allUserControllers.filter(controller => controller.fiscalizationMode !== "NO_FISCAL" && controller.status === "ENABLED")
         const tariff = await microservices.billing.getTariff("TELEMETRY", selectedUser.id)
         function isSmart(controller){
@@ -1003,6 +1013,19 @@ class ControllerService {
                 name: "Абонентская плата за Услугу телеметрии Смарт-терминала",
                 price: Number(tariff.smart),
                 billingType: null
+            })
+        }
+
+
+        if(kktOrange){
+
+
+            services.push({
+                id: 60,
+                name: "Сумма списания за фискализацию чеков поштучно",
+                price: 0.25,
+                billingType: null,
+                fixCount: 1
             })
         }
 
