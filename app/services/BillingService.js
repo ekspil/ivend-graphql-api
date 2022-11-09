@@ -176,6 +176,10 @@ class BillingService {
 
         const row = await this.Temp.findOne({where})
         if (row){
+            if (!isFinite(row.amount)) {
+                return 0
+            }
+
             return row.amount
         }
 

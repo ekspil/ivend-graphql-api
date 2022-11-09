@@ -1022,7 +1022,7 @@ class ControllerService {
 
             services.push({
                 id: 60,
-                name: "Сумма списания за фискализацию чеков поштучно",
+                name: "Услуга фискализации Автоматов",
                 price: 0.25,
                 billingType: null,
                 fixCount: 1
