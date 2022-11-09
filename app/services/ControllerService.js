@@ -1017,7 +1017,7 @@ class ControllerService {
         }
 
 
-        if(kktOrange){
+        if(kktOrange && kktOrange.length > 0){
 
 
             services.push({
@@ -1050,7 +1050,7 @@ class ControllerService {
 
 
         }
-        if(kktOk && allUserControllers &&  kktOk.length > 0){
+        if(kktOk && allUserControllers && kktOk.length > 0){
             const price = fiscalControllers.length > (20 * kktOk.length) ? fiscalControllers.length * Number(tariff.fiscal) / 20 : Number(tariff.fiscal) * kktOk.length
             services.push({
                 id: 5,
