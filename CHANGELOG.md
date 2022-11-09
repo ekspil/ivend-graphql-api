@@ -901,7 +901,7 @@
 
 * kkt type edit
 
-# 1.6.77 - Hotfix
+# 1.6.78 - Hotfix
 
 * add orange fixes
 
