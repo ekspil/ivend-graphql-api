@@ -101,6 +101,7 @@ const typeDefs = gql`
         status(userId: Int): PaymentStatus!
         timestamp(userId: Int): Timestamp!
         redirectUrl(userId: Int): String!
+        meta: String!
     }
 
     type FiscalReceipt {

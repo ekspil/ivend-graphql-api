@@ -905,3 +905,7 @@
 
 * add orange fixes
 
+# 1.6.83 - Hotfix
+
+* add pay type in user billing history
+

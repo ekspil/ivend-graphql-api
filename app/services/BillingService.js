@@ -54,7 +54,12 @@ class BillingService {
             }
         }
 
-        return await this.Deposit.findAll({where, include: [{model: this.PaymentRequest, as: "paymentRequest"}]})
+        return await this.Deposit.findAll({
+            where,
+            order: [
+                ["createdAt", "DESC"],
+            ],
+            include: [{model: this.PaymentRequest, as: "paymentRequest"}]})
     }
 
     async getAllBills(input, user) {
