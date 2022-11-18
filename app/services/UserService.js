@@ -690,7 +690,7 @@ class UserService {
     }
 
 
-    async getAllUsers(input, user, orderDesc, orderKey, search) {
+    async getAllUsers(input, user, orderDesc, orderKey, search, partnerId) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
         }
@@ -735,6 +735,9 @@ class UserService {
         }
         if(userId){
             where.id = userId
+        }
+        if(partnerId){
+            where.partnerId = partnerId
         }
         if (!limit) {
             limit = 100

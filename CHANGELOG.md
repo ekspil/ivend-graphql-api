@@ -909,3 +909,7 @@
 
 * add pay type in user billing history
 
+# 1.6.84 - Hotfix
+
+* add partner_id in getAllUsers
+

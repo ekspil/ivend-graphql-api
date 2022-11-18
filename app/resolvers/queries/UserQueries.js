@@ -75,8 +75,8 @@ function UserQueries({userService, billingService}) {
     }
 
     const getAllUsers = async (root, args, context) => {
-        const {input, orderDesc, orderKey, search} = args
-        const users = await userService.getAllUsers(input, context.user, orderDesc, orderKey, search)
+        const {input, orderDesc, orderKey, search, partnerId} = args
+        const users = await userService.getAllUsers(input, context.user, orderDesc, orderKey, search, partnerId)
 
         return users.map(user => (new UserDTO(user)))
     }

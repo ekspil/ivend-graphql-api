@@ -814,6 +814,10 @@ class ControllerService {
             integration.userId = null
             integration.serial = null
         }
+        else if(controllerUid === "DELETE_FORCE"){
+            await integration.destroy()
+            return null
+        }
         else{
             const controllerUser = await this.User.findByPk(userId)
             if(!controllerUser){
