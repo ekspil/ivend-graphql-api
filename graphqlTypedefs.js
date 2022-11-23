@@ -815,6 +815,10 @@ const typeDefs = gql`
         timestamp: Timestamp!
     }
 
+    type OrangeStatistic {
+        orangeFixSum: Float
+    }
+
     type ControllerIntegration {
         id: Int!
         type: String!
@@ -925,6 +929,7 @@ const typeDefs = gql`
         getRevisions: [Revision]
         getItemMatrix(id: Int!): ItemMatrix
         getProfile(userId: Int): User
+        getOrangeStatistic(userId: Int): OrangeStatistic
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts(offset: Int, limit: Int, status: Int, search: String): [Kkt]

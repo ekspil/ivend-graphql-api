@@ -192,6 +192,36 @@ class BillingService {
 
         return balance
     }
+    async getOrangeStatistic(user, userId) {
+        if (!user || !user.checkPermission(Permission.GET_BALANCE)) {
+            throw new NotAuthorized()
+        }
+        const date = (new Date()).getTime()
+
+        const where = {
+            user_id: userId,
+        }
+
+        where.createdAt = {
+            [Op.lt]: date,
+            [Op.gt]: (date - 30 * 24 * 60 * 60 * 1000)
+        }
+        where.meta = {
+            [Op.like]: "%orange_fiscal_billing%"
+        }
+
+        const rows = await this.Transaction.findAll({where})
+
+        if(!rows || rows.length === 0) return null
+
+        return rows.reduce((acc, item)=>{
+            return acc + Number(item.amount)
+        },0)
+
+
+
+
+    }
 
     async getDepositById(id, user, userId) {
         if (!user || !user.checkPermission(Permission.GET_DEPOSIT_BY_ID)) {

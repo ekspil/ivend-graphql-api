@@ -74,6 +74,17 @@ function UserQueries({userService, billingService}) {
         return new AdminStatisticDTO(data)
     }
 
+    const getOrangeStatistic = async (root, args, context) => {
+        const {userId} = args
+        const data = await billingService.getOrangeStatistic(context.user, userId || context.user.id)
+
+        if (!data) {
+            return {orangeFixSum: 0}
+        }
+
+        return {orangeFixSum: data}
+    }
+
     const getAllUsers = async (root, args, context) => {
         const {input, orderDesc, orderKey, search, partnerId} = args
         const users = await userService.getAllUsers(input, context.user, orderDesc, orderKey, search, partnerId)
@@ -99,7 +110,8 @@ function UserQueries({userService, billingService}) {
         getAllUsers,
         getLegalInfoByUserId,
         getAdminStatistic,
-        getAllBills
+        getAllBills,
+        getOrangeStatistic
     }
 
 }

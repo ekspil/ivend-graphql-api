@@ -913,3 +913,7 @@
 
 * add partner_id in getAllUsers
 
+# 1.6.85 - Hotfix
+
+* add orange bill information
+
