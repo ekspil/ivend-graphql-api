@@ -269,7 +269,7 @@ class SaleService {
                     throw new Error("kkt not selected!")
                 }
 
-                createdSale.kkt_id = kkt.id
+                createdSale.kktId = kkt.id
                 const {inn, sno, companyName} = legalInfo
 
                 const place = machine.place || "Торговый автомат"

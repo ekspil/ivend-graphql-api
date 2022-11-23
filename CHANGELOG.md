@@ -917,3 +917,7 @@
 
 * add orange bill information
 
+# 1.6.86 - Hotfix
+
+* add kkt id in sales
+

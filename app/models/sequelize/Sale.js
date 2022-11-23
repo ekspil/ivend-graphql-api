@@ -20,6 +20,11 @@ const Sale = {
         type: Sequelize.DataTypes.TEXT,
         field: "receipt_id",
         allowNull: true
+    },    // external id from fiscal microservice (string)
+    kktId: {
+        type: Sequelize.DataTypes.INTEGER,
+        field: "kkt_id",
+        allowNull: true
     },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
