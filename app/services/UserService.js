@@ -19,7 +19,7 @@ const microservices = require("../utils/microservices")
 
 class UserService {
 
-    constructor({UserModel, NewsModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, AdminStatisticModel}) {
+    constructor({UserModel, NewsModel, ManagerModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, AdminStatisticModel}) {
         this.User = UserModel
         this.redis = redis
 
@@ -36,6 +36,7 @@ class UserService {
         this.ButtonItemModel = ButtonItemModel
         this.AdminStatistic = AdminStatisticModel
         this.News = NewsModel
+        this.Managers = ManagerModel
 
         this.machineService = machineService
         this.notificationSettingsService = notificationSettingsService
@@ -54,6 +55,13 @@ class UserService {
         this.sendEmail = this.sendEmail.bind(this)
     }
 
+    async getManagers(user) {
+        if(!user || !user.checkPermission(Permission.GET_MANAGERS)){
+            throw new NotAuthorized()
+        }
+
+        return await this.Managers.findAll()
+    }
     async sendEmail(input, user) {
         if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
             throw new NotAuthorized()
@@ -298,7 +306,7 @@ class UserService {
         if(!adminUser && !adminUser.checkPermission(Permission.GET_ALL_USERS)){
             throw new NotAuthorized()
         }
-        const {email, id, phone, password, role, partnerId} = input
+        const {email, id, phone, password, role, partnerId, managerId} = input
 
 
         const user = await this.User.findOne({
@@ -316,6 +324,7 @@ class UserService {
         user.role = role
 
         user.partnerId = partnerId
+        user.managerId = managerId
 
         if(password){
             user.passwordHash = await this.hashPassword(password) 
@@ -690,7 +699,7 @@ class UserService {
     }
 
 
-    async getAllUsers(input, user, orderDesc, orderKey, search, partnerId) {
+    async getAllUsers(input, user, orderDesc, orderKey, search, partnerId, managerId) {
         if (!user || !user.checkPermission(Permission.GET_ALL_USERS)) {
             throw new NotAuthorized()
         }
@@ -738,6 +747,9 @@ class UserService {
         }
         if(partnerId){
             where.partnerId = partnerId
+        }
+        if(managerId){
+            where.managerId = managerId
         }
         if (!limit) {
             limit = 100

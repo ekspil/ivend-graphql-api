@@ -311,6 +311,7 @@ const typeDefs = gql`
         kkts: [Kkt!]!
         partner: String
         partnerId: String
+        managerId: Int
         controllers: [Controller!]!
         monthPay(period: Period): Float
         partnerFee(period: Period): Float
@@ -504,6 +505,7 @@ const typeDefs = gql`
         password: String
         role: String!
         partnerId: Int
+        managerId: Int
     }
 
     input RequestTokenInput {
@@ -818,6 +820,10 @@ const typeDefs = gql`
     type OrangeStatistic {
         orangeFixSum: Float
     }
+    type Manager {
+        id: Int!
+        name: String
+    }
 
     type ControllerIntegration {
         id: Int!
@@ -933,7 +939,7 @@ const typeDefs = gql`
         getKktById(id: Int!): Kkt
         getUserKkts: [Kkt]
         getAllKkts(offset: Int, limit: Int, status: Int, search: String): [Kkt]
-        getAllUsers(input: AllUsersInput, orderDesc: Boolean, orderKey: String, search: String , partnerId: String ): [User]
+        getAllUsers(input: AllUsersInput, orderDesc: Boolean, orderKey: String, search: String , partnerId: String, managerId: Int ): [User]
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int, period: Period): [Sale!]!
         getSalesNoLimit( machineId: Int, itemId: Int, period: Period): [SaleNoLimit!]!
@@ -956,6 +962,7 @@ const typeDefs = gql`
         getTariff(partnerId: Int!): Tariff
         getPartnerInfo(partnerId: Int!): PartnerInfo
         getAllBills(input: AllBillsInput): [BankPayment!]!
+        getManagers: [Manager]
     }
     
     type BankPayment {

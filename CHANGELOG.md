@@ -921,3 +921,7 @@
 
 * add kkt id in sales
 
+# 1.6.87 - Hotfix
+
+* add managers functions
+

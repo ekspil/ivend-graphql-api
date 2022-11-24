@@ -85,6 +85,7 @@ const Permission = {
     "GET_ALL_USERS": "GET_ALL_USERS",
     "CHANGE_USER_BALANCE": "CHANGE_USER_BALANCE",
     "SEND_EMAIL": "SEND_EMAIL",
+    "GET_MANAGERS": "GET_MANAGERS",
 
     // KKTService
     "CREATE_KKT": "CREATE_KKT",

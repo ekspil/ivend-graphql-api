@@ -1,4 +1,5 @@
 const UserDTO = require("../../models/dto/UserDTO")
+const ManagerDTO = require("../../models/dto/ManagerDTO")
 const BankPaymentDTO = require("../../models/dto/BankPaymentDTO")
 const AdminStatisticDTO = require("../../models/dto/AdminStatisticDTO")
 const LegalInfoDTO = require("../../models/dto/LegalInfoDTO")
@@ -63,6 +64,15 @@ function UserQueries({userService, billingService}) {
 
         return new UserDTO(user)
     }
+    const getManagers = async (root, args, context) => {
+        const managers = await userService.getManagers(context.user)
+
+        if (!managers) {
+            return []
+        }
+
+        return managers.map(manager => new ManagerDTO(manager))
+    }
 
     const getAdminStatistic = async (root, args, context) => {
         const data = await userService.getAdminStatistic(context.user)
@@ -86,8 +96,8 @@ function UserQueries({userService, billingService}) {
     }
 
     const getAllUsers = async (root, args, context) => {
-        const {input, orderDesc, orderKey, search, partnerId} = args
-        const users = await userService.getAllUsers(input, context.user, orderDesc, orderKey, search, partnerId)
+        const {input, orderDesc, orderKey, search, partnerId, managerId} = args
+        const users = await userService.getAllUsers(input, context.user, orderDesc, orderKey, search, partnerId, managerId)
 
         return users.map(user => (new UserDTO(user)))
     }
@@ -111,7 +121,8 @@ function UserQueries({userService, billingService}) {
         getLegalInfoByUserId,
         getAdminStatistic,
         getAllBills,
-        getOrangeStatistic
+        getOrangeStatistic,
+        getManagers
     }
 
 }

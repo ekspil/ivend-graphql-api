@@ -15,6 +15,10 @@ const User = {
         type: Sequelize.DataTypes.INTEGER,
         field: "partner_id"
     },
+    managerId: {
+        type: Sequelize.DataTypes.INTEGER,
+        field: "manager_id"
+    },
     partner: {
         type: Sequelize.DataTypes.TEXT
     },

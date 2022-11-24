@@ -67,6 +67,7 @@ const BankPayments = require("./models/sequelize/BankPayment")
 const Sims = require("./models/sequelize/Sim")
 const ControllerIntegrations = require("./models/sequelize/ControllerIntegrations")
 const ControllerPulse = require("./models/sequelize/ControllerPulse")
+const Manager = require("./models/sequelize/Manager")
 
 
 
@@ -156,6 +157,7 @@ class App {
         const SimsModel = sequelize.define("sims", Sims)
         const ControllerIntegrationsModel = sequelize.define("controller_integrations", ControllerIntegrations)
         const ControllerPulseModel = sequelize.define("controller_pulses", ControllerPulse)
+        const ManagerModel = sequelize.define("managers", Manager)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -174,6 +176,7 @@ class App {
         TempMachineModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
 
         SaleModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
+        SaleModel.belongsTo(KktModel, {foreignKey: "kkt_id"})
         SaleModel.belongsTo(ItemModel, {foreignKey: "item_id"})
 
         EncashmentModel.belongsTo(MachineModel, {foreignKey: "machine_id"})
@@ -360,6 +363,7 @@ class App {
         services.notificationSettingsService = new NotificationSettingsService({NotificationSettingModel})
         services.userService = new UserService({
             UserModel,
+            ManagerModel,
             AdminStatisticModel,
             ItemModel, ButtonItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, NewsModel,
             redis,
