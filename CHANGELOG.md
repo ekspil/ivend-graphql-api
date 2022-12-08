@@ -925,3 +925,7 @@
 
 * add managers functions
 
+# 1.6.88 - Hotfix
+
+* add managers functions
+
