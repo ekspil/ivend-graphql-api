@@ -15,6 +15,14 @@ function PartnerMutations({partnerService}) {
         return new PartnerSettingsDTO(result)
 
     }
+    const createFeeTransaction = async (parent, args, context)=>{
+        const {input} = args
+        const {user} = context
+
+        const result = await partnerService.createFeeTransaction(input, user)
+        return new PartnerSettingsDTO(result)
+
+    }
 
     const createTariff = async (parent, args, context)=>{
         const {input} = args
@@ -37,7 +45,8 @@ function PartnerMutations({partnerService}) {
     return {
         changePartnerFee,
         createTariff,
-        updatePartnerInfo
+        updatePartnerInfo,
+        createFeeTransaction
     }
 
 }

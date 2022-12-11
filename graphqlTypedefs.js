@@ -314,7 +314,7 @@ const typeDefs = gql`
         managerId: Int
         controllers: [Controller!]!
         monthPay(period: Period): Float
-        partnerFee(period: Period): Float
+        partnerFee(period: Period, role: String): Float
         vendors: [User!]!
         countryCode: String
     }
@@ -824,6 +824,13 @@ const typeDefs = gql`
         id: Int!
         name: String
     }
+    type Act {
+        id: Int!
+        sum: Float!
+        timestamp: Timestamp
+        meta: String
+        userId: Int!
+    }
 
     type ControllerIntegration {
         id: Int!
@@ -960,9 +967,11 @@ const typeDefs = gql`
         getFiscalReceipt(receiptId: String!): FiscalReceipt!
         getTariffs(partnerId: Int): [Tariff]
         getTariff(partnerId: Int!): Tariff
+        getActs(userId: Int): [Act]
         getPartnerInfo(partnerId: Int!): PartnerInfo
         getAllBills(input: AllBillsInput): [BankPayment!]!
         getManagers: [Manager]
+        getPartnerPayments(period: Period): [PartnerFee]
     }
     
     type BankPayment {
@@ -1075,9 +1084,27 @@ const typeDefs = gql`
         terminalFee: Float!
         controllerFee: Float!
     }
+    input CreateFeeTransactionInput {
+        userId: Int!
+        partnerId: Int!
+        kkmFee: Float!
+        terminalFee: Float!
+        controllerFee: Float!
+    }
     
     type PartnerFee {
+        id: Int
         userId: Int!
+        partnerId: Int
+        kkmFee: Float!
+        terminalFee: Float!
+        controllerFee: Float!
+        createdAt: Timestamp
+    }
+       
+    type CreateFeeTransaction {
+        userId: Int!
+        partnerId: Int!
         kkmFee: Float!
         terminalFee: Float!
         controllerFee: Float!
@@ -1231,6 +1258,7 @@ const typeDefs = gql`
         updateLegalInfoToUser(input: LegalInfoToUserInput!): LegalInfo
         requestDeposit(amount: Float!): Deposit
         generatePdf(input: pdfInput!): Pdf
+        generateAct(id: Int!): Pdf
         generateExcel(input: GenerateExcelInput!): ExcelReport
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
         createKkt(input: CreateKktInput!): Kkt
@@ -1251,6 +1279,7 @@ const typeDefs = gql`
         rememberPasswordRequest(input: RememberInput!): Boolean
         changePasswordRequest(input: ChangePasswordInput!): Boolean
         changePartnerFee(input: ChangePartnerFeeInput!): PartnerFee
+        createFeeTransaction(input: CreateFeeTransactionInput!): CreateFeeTransaction
         createTariff(input: TariffInput!): Tariff
         updatePartnerInfo(input: PartnerInfoInput!): PartnerInfo
         simReset(sim: String!): Boolean

@@ -1,6 +1,7 @@
 const Permission = require("./Permission")
 
 const VENDOR = [
+    Permission.GET_ACTS,
     Permission.GET_SELF_DEPOSITS,
     Permission.AUTH_CONTROLLER,
     Permission.CREATE_CONTROLLER_EVENT,
@@ -136,6 +137,7 @@ const PARTNER = [
     Permission.UPDATE_KKT,
     Permission.GET_RECEIPT,
     Permission.SEND_EMAIL,
+    Permission.GET_ACTS,
 
 ]
 

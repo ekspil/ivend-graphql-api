@@ -929,3 +929,7 @@
 
 * add managers functions
 
+# 1.6.89 - Hotfix
+
+* create partner payments
+

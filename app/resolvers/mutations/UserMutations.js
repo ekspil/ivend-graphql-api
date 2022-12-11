@@ -128,6 +128,16 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
     }
 
 
+    const generateAct = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        const pdf = await reportService.generateAct(id, user)
+
+        return new PdfReportDTO(pdf)
+    }
+
+
     const requestRegistrationSms = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -207,7 +217,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         updateLegalInfoToUser,
         updateUser,
         randomAction,
-        userAutoSend
+        userAutoSend,
+        generateAct
     }
 
 }

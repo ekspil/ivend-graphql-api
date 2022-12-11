@@ -68,6 +68,7 @@ const Sims = require("./models/sequelize/Sim")
 const ControllerIntegrations = require("./models/sequelize/ControllerIntegrations")
 const ControllerPulse = require("./models/sequelize/ControllerPulse")
 const Manager = require("./models/sequelize/Manager")
+const Act = require("./models/sequelize/Acts")
 
 
 
@@ -158,12 +159,17 @@ class App {
         const ControllerIntegrationsModel = sequelize.define("controller_integrations", ControllerIntegrations)
         const ControllerPulseModel = sequelize.define("controller_pulses", ControllerPulse)
         const ManagerModel = sequelize.define("managers", Manager)
+        const ActsModel = sequelize.define("acts", Act)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
             as: "legalInfo"
         })
         PartnerSettingsModel.belongsTo(UserModel, {
+            foreignKey: "user_id",
+            as: "user"
+        })
+        ActsModel.belongsTo(UserModel, {
             foreignKey: "user_id",
             as: "user"
         })
@@ -403,9 +409,10 @@ class App {
             TempModel,
             UserModel,
             PartnerFeeModel,
-            BankPaymentsModel
+            BankPaymentsModel,
+            ActsModel
         })
-        services.reportService = new ReportService({redis, BankPaymentsModel})
+        services.reportService = new ReportService({redis, BankPaymentsModel, ActsModel})
         services.controllerService.billingService = services.billingService
         services.partnerService = new PartnerService({
             UserModel,

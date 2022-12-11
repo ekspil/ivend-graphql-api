@@ -70,9 +70,9 @@ function UserResolver({controllerService, notificationSettingsService, itemServi
     const partnerFee = async (obj, args, context) => {
         const {user} = context
         const {id} = obj
-        const {period} = args
+        const {period, role} = args
 
-        return await partnerService.getUserPartnerFee(id, period, user)
+        return await partnerService.getUserPartnerFee(id, period, user, role)
     }
 
     const vendors = async (obj, args, context) => {

@@ -13,6 +13,8 @@ class PartnerService {
 
         this.changeFee = this.changeFee.bind(this)
         this.getUserPartnerFee = this.getUserPartnerFee.bind(this)
+        this.createFeeTransaction = this.createFeeTransaction.bind(this)
+        this.getPartnerPayments = this.getPartnerPayments.bind(this)
     }
 
 
@@ -38,6 +40,14 @@ class PartnerService {
 
         return settings
     }
+    async createFeeTransaction(input, user) {
+        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+            throw new NotAuthorized()
+        }
+        const {userId, partnerId, controllerFee, kkmFee, terminalFee} = input
+        return await this.PartnerFee.create({controllerFee, kkmFee, terminalFee, userId, partnerId})
+    }
+
     async getFee(userId, user) {
         if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
             throw new NotAuthorized()
@@ -121,6 +131,37 @@ class PartnerService {
         return this.Tariff.create(input)
 
     }
+    async getPartnerPayments(period, user) {
+        if (!user || !user.checkPermission(Permission.PARTNER)) {
+            throw new NotAuthorized()
+        }
+
+        const where = {}
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new Error("Invalid Period")
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+        where.partnerId = user.id
+        where.controllerFee = {
+            [Op.lt]: 0
+        }
+
+
+        const transactions = await this.PartnerFee.findAll({
+            where
+        })
+
+        return transactions
+
+    }
     async updatePartnerInfo(input, user) {
         if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
             throw new NotAuthorized()
@@ -146,7 +187,7 @@ class PartnerService {
         return settings.save()
 
     }
-    async getUserPartnerFee(userId, period, user) {
+    async getUserPartnerFee(userId, period, user, role) {
         if (!user || !user.checkPermission(Permission.PARTNER)) {
             throw new NotAuthorized()
         }
@@ -164,7 +205,13 @@ class PartnerService {
             }
         }
 
-        where.user_id = userId
+        if(role === "PARTNER"){
+            where.userId = userId
+        }
+        else {
+            where.partnerId = userId
+        }
+
 
         const transactions = await this.PartnerFee.findAll({
             where

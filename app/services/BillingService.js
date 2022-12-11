@@ -9,7 +9,7 @@ const microservices = require("../utils/microservices")
 
 class BillingService {
 
-    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel, TempModel, UserModel, BankPaymentsModel}) {
+    constructor({DepositModel, PaymentRequestModel, ControllerModel, ServiceModel, TransactionModel, TempModel, UserModel, BankPaymentsModel, ActsModel}) {
         this.Controller = ControllerModel
         this.Service = ServiceModel
         this.Transaction = TransactionModel
@@ -18,6 +18,7 @@ class BillingService {
         this.PaymentRequest = PaymentRequestModel
         this.User = UserModel
         this.BankPayment = BankPaymentsModel
+        this.Acts = ActsModel
 
         this.getDeposits = this.getDeposits.bind(this)
         this.getDailyBill = this.getDailyBill.bind(this)
@@ -243,6 +244,21 @@ class BillingService {
 
 
         return await this.Deposit.findOne({where})
+    }
+
+    async getActs(userId, user) {
+        if (!user || !user.checkPermission(Permission.GET_ACTS)) {
+            throw new NotAuthorized()
+        }
+        const where = {}
+        if(userId){
+            where.userId = userId
+        }
+        else{
+            where.userId = user.id
+        }
+
+        return await this.Acts.findAll({where})
     }
 
     async removeDeposit(id, user) {

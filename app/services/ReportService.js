@@ -8,9 +8,10 @@ const microservices = require("../utils/microservices")
 
 class ReportService {
 
-    constructor({redis, BankPaymentsModel}) {
+    constructor({redis, BankPaymentsModel, ActsModel}) {
         this.redis = redis
         this.BankPayments = BankPaymentsModel
+        this.Acts = ActsModel
         this.generateExcel = this.generateExcel.bind(this)
     }
 
@@ -56,7 +57,7 @@ class ReportService {
         const bankPayment = await this.BankPayments.create({
             applied: false,
             userId: user.id,
-            amount: body.amount
+            amount: body.amount,
         })
 
         body.orderNumber = String(bankPayment.id)
@@ -86,6 +87,41 @@ class ReportService {
         }
 
         return {url: `${process.env.EXCEL_URL}/api/v1/pdf/${id}`}
+    }
+
+    async generateAct(actId, user) {
+        if (!user || !user.checkPermission(Permission.CREATE_ITEM)) {
+            throw new NotAuthorized()
+        }
+
+        const act = await this.Acts.findByPk(actId)
+        const body = {
+            inn: user.inn,
+            companyName: user.companyName,
+            amount: act.sum,
+            id: actId
+        }
+
+
+
+
+        const response = await fetch(`${process.env.EXCEL_URL}/api/v1/pdf/generateAct`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+
+        if (!(response.status === 200)) {
+            logger.error("Unexpected status code returned from PDF microservice: " + response.status)
+            throw new PdfGenerationFailed()
+        }
+
+        const {id} = await response.json()
+
+
+        return {url: `${process.env.EXCEL_URL}/api/v1/pdf/act/${id}`}
     }
 
 }

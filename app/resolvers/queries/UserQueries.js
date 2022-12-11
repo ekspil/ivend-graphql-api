@@ -1,4 +1,5 @@
 const UserDTO = require("../../models/dto/UserDTO")
+const ActDTO = require("../../models/dto/ActDTO")
 const ManagerDTO = require("../../models/dto/ManagerDTO")
 const BankPaymentDTO = require("../../models/dto/BankPaymentDTO")
 const AdminStatisticDTO = require("../../models/dto/AdminStatisticDTO")
@@ -102,6 +103,13 @@ function UserQueries({userService, billingService}) {
         return users.map(user => (new UserDTO(user)))
     }
 
+    const getActs = async (root, args, context) => {
+        const {userId} = args
+        const acts = await billingService.getActs(userId, context.user)
+
+        return acts.map(act => (new ActDTO(act)))
+    }
+
 
     const getLegalInfoByUserId = async (root, args, context) => {
         const {user} = context
@@ -122,7 +130,8 @@ function UserQueries({userService, billingService}) {
         getAdminStatistic,
         getAllBills,
         getOrangeStatistic,
-        getManagers
+        getManagers,
+        getActs
     }
 
 }
