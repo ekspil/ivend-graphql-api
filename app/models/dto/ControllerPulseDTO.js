@@ -3,7 +3,7 @@
 
 class ControllerPulseDTO {
 
-    constructor({id, controllerId, a, b, c, o ,t, d, e, f}) {
+    constructor({id, controllerId, a, b, c, o ,t, d, e, f, randomCommands}) {
         this.id = id
         this.controllerId = controllerId
         this.a = a
@@ -14,6 +14,7 @@ class ControllerPulseDTO {
         this.d = d
         this.e = e
         this.f = f
+        this.randomCommands = randomCommands
     }
 }
 

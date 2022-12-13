@@ -933,3 +933,7 @@
 
 * create partner payments
 
+# 1.6.90 - Hotfix
+
+* add random commands
+

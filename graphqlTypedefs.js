@@ -1181,6 +1181,7 @@ const typeDefs = gql`
         c: Int
         o: Int
         t: Int
+        randomCommands: String
     }
     
     type ControllerMech {
@@ -1194,6 +1195,7 @@ const typeDefs = gql`
         d: Int
         e: Int
         f: Int
+        randomCommands: String
     }
 
     
@@ -1207,6 +1209,7 @@ const typeDefs = gql`
         f: Int
         o: Int
         t: Int
+        commands: String
     }
 
     type Mutation {

@@ -738,7 +738,15 @@ class ControllerService {
         if (!user || !user.checkPermission(Permission.GET_CONTROLLER_BY_ID)) {
             throw new NotAuthorized()
         }
-        let {controllerId, a, b, c, d, e, f, o, t} = input
+        let {controllerId, a, b, c, d, e, f, o, t, commands} = input
+        let randomCommands
+        try{
+
+            randomCommands = JSON.parse(commands)
+        }catch (e) {
+            commands = null
+            logger.error(e.message)
+        }
 
         const pulse = await this.ControllerPulse.findOne({
             where: {
@@ -765,6 +773,7 @@ class ControllerService {
         pulse.f = f
         pulse.o = o
         pulse.t = t
+        pulse.randomCommands = commands
         const controller = await this.Controller.findOne({
             where: {
                 id: controllerId
@@ -789,6 +798,11 @@ class ControllerService {
             }
 
         }
+        if (randomCommands && randomCommands.length > 0){
+            await microservices.vendista.sendCommands(this.getVendistaId(controller), randomCommands)
+
+        }
+
         
 
 

@@ -35,6 +35,10 @@ const ControllerPulse = {
     f: {
         type: Sequelize.DataTypes.INTEGER
     },
+    randomCommands: {
+        type: Sequelize.DataTypes.STRING,
+        field: "random_commands"
+    },
     updatedAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,
