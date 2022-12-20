@@ -941,3 +941,7 @@
 
 * add random commands
 
+# 1.6.92 - Hotfix
+
+* change command vendista
+
