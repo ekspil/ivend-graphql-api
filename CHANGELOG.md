@@ -945,3 +945,7 @@
 
 * change command vendista
 
+# 1.6.93 - Hotfix
+
+* add swift bill
+

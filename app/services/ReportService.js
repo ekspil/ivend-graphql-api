@@ -61,9 +61,13 @@ class ReportService {
         })
 
         body.orderNumber = String(bankPayment.id)
+        let url = `${process.env.EXCEL_URL}/api/v1/pdf/generate`
+        const code = (user.countryCode + user.phone).slice(0, 2)
+        if(code !== "79"){
+            url = `${process.env.EXCEL_URL}/api/v1/pdf/generateSwift`
+        }
 
-
-        const response = await fetch(`${process.env.EXCEL_URL}/api/v1/pdf/generate`, {
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
