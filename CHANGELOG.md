@@ -949,3 +949,7 @@
 
 * add swift bill
 
+# 1.6.94 - Hotfix
+
+* add news info
+

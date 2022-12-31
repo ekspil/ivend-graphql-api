@@ -14,7 +14,7 @@ const PartnerMutations = require("./PartnerMutations")
 
 function Mutations({userService, controllerService, equipmentService, saleService, itemService, itemMatrixService, revisionService, notificationSettingsService, legalInfoService, billingService, reportService, machineService, kktService, newsService, instrService, infoService, partnerService}) {
 
-    const userMutations = new UserMutations({userService, notificationSettingsService, legalInfoService, reportService})
+    const userMutations = new UserMutations({userService, notificationSettingsService, legalInfoService, reportService, partnerService})
     const controllerMutations = new ControllerMutations({controllerService, saleService, revisionService})
     const equipmentMutations = new EquipmentMutations({equipmentService})
     const itemMutations = new ItemMutations({itemService, itemMatrixService, controllerService})

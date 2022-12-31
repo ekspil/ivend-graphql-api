@@ -31,10 +31,20 @@ function NewsMutations({newsService}) {
     }
 
 
+    const setNewsRead = async (root, args, context) => {
+        const {user} = context
+
+        const result = await newsService.setNewsRead(user)
+
+        return result
+    }
+
+
     return {
         createNews,
         changeNews,
-        deleteNews
+        deleteNews,
+        setNewsRead
     }
 
 }

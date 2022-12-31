@@ -315,8 +315,19 @@ const typeDefs = gql`
         controllers: [Controller!]!
         monthPay(period: Period): Float
         partnerFee(period: Period, role: String): Float
+        partnerInfo(period: Period): PartnerStatisticInfo
         vendors: [User!]!
         countryCode: String
+        newInfoId: Int
+    }
+    
+    type PartnerStatisticInfo {
+        lastPayment: Timestamp
+        lastPaymentAmount: Float
+        lastPaymentStatus: String
+        payments: Int
+        paymentsAmount: Float,
+        lastPaymentId: Int
     }
 
     type NotificationSetting {
@@ -1083,6 +1094,7 @@ const typeDefs = gql`
         kkmFee: Float!
         terminalFee: Float!
         controllerFee: Float!
+        status: String
     }
     input CreateFeeTransactionInput {
         userId: Int!
@@ -1100,6 +1112,7 @@ const typeDefs = gql`
         terminalFee: Float!
         controllerFee: Float!
         createdAt: Timestamp
+        status: String
     }
        
     type CreateFeeTransaction {
@@ -1108,6 +1121,7 @@ const typeDefs = gql`
         kkmFee: Float!
         terminalFee: Float!
         controllerFee: Float!
+        status: String
     }
     
     type Sim {
@@ -1213,6 +1227,7 @@ const typeDefs = gql`
     }
 
     type Mutation {
+        setNewsRead: Boolean
         telemetronEvent(input: TelemetronEventInput!): TelemetronEvent
         updateControllerIntegration(input: ControllerIntegrationInput!): ControllerIntegration
         setControllerPulse(input: ControllerPulseInput!): ControllerPulse
@@ -1262,6 +1277,7 @@ const typeDefs = gql`
         requestDeposit(amount: Float!): Deposit
         generatePdf(input: pdfInput!): Pdf
         generateAct(id: Int!): Pdf
+        generatePartnerAct(id: Int!): Pdf
         generateExcel(input: GenerateExcelInput!): ExcelReport
         requestRegistrationSms(input: Registration1StepInput!): Timestamp
         createKkt(input: CreateKktInput!): Kkt

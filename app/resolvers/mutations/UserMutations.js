@@ -4,7 +4,7 @@ const ExcelReportDTO = require("../../models/dto/ExcelReportDTO")
 const PdfReportDTO = require("../../models/dto/PdfReportDTO")
 const UserDTO = require("../../models/dto/UserDTO")
 
-function UserMutations({userService, notificationSettingsService, legalInfoService, reportService}) {
+function UserMutations({userService, notificationSettingsService, legalInfoService, reportService, partnerService}) {
 
     const registerUser = async (root, args) => {
         const {input} = args
@@ -127,6 +127,15 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         return new PdfReportDTO(pdf)
     }
 
+    const generatePartnerAct = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        const pdf = await partnerService.generatePartnerAct(id, user)
+
+        return new PdfReportDTO(pdf)
+    }
+
 
     const generateAct = async (root, args, context) => {
         const {id} = args
@@ -218,7 +227,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         updateUser,
         randomAction,
         userAutoSend,
-        generateAct
+        generateAct,
+        generatePartnerAct
     }
 
 }

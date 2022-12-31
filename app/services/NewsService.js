@@ -5,8 +5,10 @@ const Permission = require("../enum/Permission")
 
 class NewsService {
 
-    constructor({NewsModel}) {
+    constructor({NewsModel, UserModel, redis}) {
         this.News = NewsModel
+        this.User = UserModel
+        this.redis = redis
         this.createNews = this.createNews.bind(this)
         this.changeNews = this.changeNews.bind(this)
         this.deleteNews = this.deleteNews.bind(this)
@@ -29,7 +31,23 @@ class NewsService {
         news.header = header
         news.active = active
 
-        return await this.News.create(news)
+        const result = await this.News.create(news)
+
+        if(news.active){
+
+            const users = await this.User.findAll()
+
+            for (let u of users){
+
+                await this.redis.set("is_not_read_news_" + u.id, result.id)
+            }
+
+        }
+        return result
+    }
+
+    async setNewsRead(user){
+        await this.redis.set("is_not_read_news_" + user.id, null)
     }
 
     async changeNews(input, user) {
@@ -52,7 +70,20 @@ class NewsService {
         news.header = header
         news.active = active
 
-        return await news.save()
+        const result = await news.save()
+
+        if(news.active){
+
+            const users = await this.User.findAll()
+
+            for (let u of users){
+
+                await this.redis.set("is_not_read_news_" + u.id, result.id)
+            }
+
+        }
+
+        return result
     }
 
 

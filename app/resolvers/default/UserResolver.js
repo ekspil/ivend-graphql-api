@@ -75,6 +75,13 @@ function UserResolver({controllerService, notificationSettingsService, itemServi
         return await partnerService.getUserPartnerFee(id, period, user, role)
     }
 
+    const partnerInfo = async (obj, args, context) => {
+        const {user} = context
+        const {period} = args
+
+        return await partnerService.getUserPartnerInfo(obj, period, user)
+    }
+
     const vendors = async (obj, args, context) => {
         const {user} = context
         const {id} = obj
@@ -82,6 +89,15 @@ function UserResolver({controllerService, notificationSettingsService, itemServi
         const vendors = await partnerService.getPartnerVendors(id, user)
 
         return vendors.map(vendor => new UserDTO(vendor))
+    }
+
+
+    const newInfoId = async (obj, args, context) => {
+        const {user} = context
+
+        const newInfoId = await userService.newInfoId(user)
+
+        return newInfoId
     }
 
     const controllers = async (obj, args, context) => {
@@ -138,7 +154,9 @@ function UserResolver({controllerService, notificationSettingsService, itemServi
         controllers,
         monthPay,
         partnerFee,
-        vendors
+        vendors,
+        partnerInfo,
+        newInfoId
     }
 
 }

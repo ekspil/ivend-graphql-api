@@ -1,6 +1,9 @@
 const NotAuthorized = require("../errors/NotAuthorized")
+const PdfGenerationFailed = require("../errors/PdfGenerationFailed")
 const Permission = require("../enum/Permission")
+const fetch = require("node-fetch")
 const {Op} = require("sequelize")
+const logger = require("my-custom-logger")
 
 class PartnerService {
 
@@ -221,6 +224,131 @@ class PartnerService {
             return (acc + Number(item.controllerFee) + Number(item.terminalFee) + Number(item.kkmFee))
         }, 0)
         return amount
+    }
+
+
+
+
+    async generatePartnerAct(actId, user) {
+        if (!user || !user.checkPermission(Permission.CREATE_ITEM)) {
+            throw new NotAuthorized()
+        }
+
+        const act = await this.PartnerFee.findByPk(actId)
+
+        const month = new Date(act.createdAt).getUTCMonth()
+        const year = new Date(act.createdAt).getUTCFullYear()
+
+        const to = new Date(act.createdAt)
+        to.setUTCFullYear(year)
+        to.setUTCMonth(month)
+        to.setUTCDate(0)
+        to.setUTCHours(23)
+        to.setUTCMinutes(59)
+        to.setUTCSeconds(59)
+        const from = new Date()
+        from.setUTCFullYear(year)
+        from.setUTCMonth(month -1)
+        from.setUTCDate(1)
+        from.setUTCHours(0)
+        from.setUTCMinutes(0)
+        from.setUTCSeconds(0)
+
+
+        const body = {
+            inn: user.inn,
+            userId: act.userId,
+            companyName: user.companyName,
+            amount: act.controllerFee,
+            id: actId,
+            to: to.toLocaleDateString(),
+            from: from.toLocaleDateString(),
+
+        }
+
+
+
+
+        const response = await fetch(`${process.env.EXCEL_URL}/api/v1/pdf/generatePartnerAct`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+
+        if (!(response.status === 200)) {
+            logger.error("Unexpected status code returned from PDF microservice: " + response.status)
+            throw new PdfGenerationFailed()
+        }
+
+        const {id} = await response.json()
+
+
+        return {url: `${process.env.EXCEL_URL}/api/v1/pdf/act/${id}`}
+    }
+
+    async getUserPartnerInfo(partner, period, user) {
+        if (!user || !user.checkPermission(Permission.PARTNER)) {
+            throw new NotAuthorized()
+        }
+
+        if (partner.role !== "PARTNER") return null
+
+        const where = {}
+        if (period) {
+            const {from, to} = period
+
+            if (from > to) {
+                throw new Error("Invalid Period")
+            }
+
+            where.createdAt = {
+                [Op.lt]: to,
+                [Op.gt]: from
+            }
+        }
+        where.controllerFee = {
+            [Op.lt]: 0
+        }
+        where.partnerId = partner.id
+
+
+        const transactions = await this.PartnerFee.findAll({
+            where,
+            order: [
+                ["id", "DESC"]
+            ]
+        })
+
+        if(!transactions || transactions.length === 0) return null
+
+        const amount = transactions.reduce((acc, item) => {
+            if(item.status === "WAITING") {
+                return acc
+            }
+            const sum =  (acc.sum + Number(item.controllerFee) + Number(item.terminalFee) + Number(item.kkmFee))
+            const count = acc.count +1
+
+            return {
+                sum,
+                count
+            }
+
+        }, {sum: 0, count: 0})
+
+
+
+
+
+        return {
+            lastPayment: transactions[0].createdAt,
+            lastPaymentAmount: transactions[0].controllerFee,
+            lastPaymentStatus: transactions[0].status || "SUCCESS",
+            lastPaymentId: transactions[0].id,
+            payments: amount.count,
+            paymentsAmount: amount.sum,
+        }
     }
 
 

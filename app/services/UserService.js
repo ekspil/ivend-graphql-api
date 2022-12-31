@@ -963,6 +963,18 @@ class UserService {
     }
 
 
+
+    async newInfoId(user) {
+        if (!user || !user.checkPermission(Permission.GET_PROFILE)) {
+            throw new NotAuthorized()
+        }
+
+        const id = await this.redis.get("is_not_read_news_" + user.id)
+        if(!id) return null
+        return Number(id)
+    }
+
+
     async hashPassword(password) {
         return await hashingUtils.hashPassword(password)
     }
