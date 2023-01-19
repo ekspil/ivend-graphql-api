@@ -51,6 +51,22 @@ class PartnerService {
         return await this.PartnerFee.create({controllerFee, kkmFee, terminalFee, userId, partnerId})
     }
 
+    async successFeeTransaction(id, user) {
+        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+            throw new NotAuthorized()
+        }
+        try{
+
+            const fee = await this.PartnerFee.findByPk(id)
+            fee.status = "SUCCESS"
+            await fee.save()
+            return true
+        }
+        catch (e) {
+            return false
+        }
+    }
+
     async getFee(userId, user) {
         if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
             throw new NotAuthorized()

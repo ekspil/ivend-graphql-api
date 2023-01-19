@@ -30,6 +30,9 @@ const FeeTransactions = {
         unique: false,
         field: "kkm_fee"
     },
+    status: {
+        type: Sequelize.DataTypes.TEXT
+    },
     createdAt: {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,

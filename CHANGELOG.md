@@ -953,3 +953,8 @@
 
 * add news info
 
+
+# 1.6.95 - Hotfix
+
+* add partner acts
+
