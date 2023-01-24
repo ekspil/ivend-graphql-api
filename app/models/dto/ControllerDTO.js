@@ -2,7 +2,7 @@ const ControllerStateDTO = require("./ControllerStateDTO")
 
 class ControllerDTO {
 
-    constructor({id, name, uid, revision, status, mode, readStatMode, bankTerminalMode, bankTerminalUid, fiscalizationMode, accessKey, lastState, firmwareId, registrationTime, connected, remotePrinterId, simCardNumber, imsi, cashless, sim}) {
+    constructor({id, name, uid, revision, status, mode, readStatMode, bankTerminalMode, bankTerminalUid, fiscalizationMode, accessKey, lastState, firmwareId, registrationTime, connected, remotePrinterId, simCardNumber, imsi, cashless, sim, autoSetUp}) {
         this.id = id
         this.name = name
         this.uid = uid
@@ -23,6 +23,7 @@ class ControllerDTO {
         this.imsi = imsi
         this.sim = sim
         this.cashless = cashless
+        this.autoSetUp = autoSetUp
     }
 }
 

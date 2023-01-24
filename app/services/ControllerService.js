@@ -92,6 +92,7 @@ class ControllerService {
         controller.bankTerminalMode = bankTerminalMode
         controller.bankTerminalUid = bankTerminalUid
         controller.fiscalizationMode = fiscalizationMode
+        controller.autoSetUp = false
         controller.connected = false
 
         controller.user_id = user.id
@@ -103,11 +104,7 @@ class ControllerService {
             await user.save()
         }
 
-        return await this.Controller.find({
-            where: {
-                id: savedController.id
-            }
-        })
+        return savedController
     }
 
     getVendistaId(controller){
@@ -120,7 +117,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {name, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal, cashless, bankTerminalUid} = input
+        const {name, autoSetUp, revisionId, status, mode, readStatMode, bankTerminalMode, fiscalizationMode, remotePrinterId, simCardNumber, sim, imsiTerminal, cashless, bankTerminalUid} = input
 
         const controller = await this.getControllerById(id, user)
 
@@ -182,30 +179,35 @@ class ControllerService {
             controller.cashless = cashless
         }
 
+        controller.autoSetUp = autoSetUp
+
         if (imsiTerminal) {
             controller.imsiTerminal = imsiTerminal
         }
+
         else if(simCardNumber === "false"){
             controller.simCardNumber = null
         }
 
 
 
-        if (controller.mode === "mdb" && controller.bankTerminalMode === "vda1"){
+        if (controller.autoSetUp && controller.mode === "mdb" && controller.bankTerminalMode === "vda1"){
             await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.mdbTerminalMode(2), Commands.reload()])
         }
-        if (controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
+        if (controller.autoSetUp && controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
             if (controller.uid.slice(0, 3) === "300"){
                 await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
             }
 
         }
-        if (controller.mode === "rs232" && controller.bankTerminalMode === "vda1"){
+        if (controller.autoSetUp && controller.mode === "rs232" && controller.bankTerminalMode === "vda1"){
 
             if (controller.uid.slice(0, 3) === "300"){
                 await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
             }
         }
+
+
         // if (controller.mode === "mech" && controller.bankTerminalMode === "vda1"){
         //     await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.fixPaymentMode(1), Commands.mdbAlwaysIdle(1),  Commands.remotePin(0, 2, 20, 1), Commands.reload()])
         // }
@@ -748,13 +750,13 @@ class ControllerService {
             logger.error(e.message)
         }
 
-        const pulse = await this.ControllerPulse.findOne({
+        let pulse = await this.ControllerPulse.findOne({
             where: {
                 controllerId
             }
         })
         if(!pulse){
-            return this.ControllerPulse.create(input)
+            pulse = await this.ControllerPulse.create(input)
         }
 
         if(!a) a = 0
@@ -779,6 +781,7 @@ class ControllerService {
                 id: controllerId
             }
         })
+        if(!controller.autoSetUp) return pulse
         if (controller.uid.slice(0, 3) === "500") {
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 0 && b < 1 && c < 1 && d < 1 && f < 1) {
                 await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(3), Commands.remotePin(0, 0, 20, 1), Commands.priceSettingPulse(3, 0, 0), Commands.priceForPulse(0, 0, Number(a + "00"), 0, 0, 0)])

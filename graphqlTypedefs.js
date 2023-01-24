@@ -34,6 +34,7 @@ const typeDefs = gql`
         mech: ControllerMech
         cmd: String
         cmdInfo: String
+        autoSetUp: Boolean
     }
     
     type ControllerService {
@@ -189,6 +190,7 @@ const typeDefs = gql`
         sim: String
         imsiTerminal: String
         cashless: String
+        autoSetUp: Boolean
     }
 
     input CreateItemMatrixInput {

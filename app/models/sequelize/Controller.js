@@ -28,6 +28,11 @@ const Controller = {
         allowNull: true,
         field: "access_key"
     },
+    autoSetUp: {
+        type: Sequelize.DataTypes.BOOLEAN,
+        allowNull: true,
+        field: "auto_set_up"
+    },
     simCardNumber: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true,

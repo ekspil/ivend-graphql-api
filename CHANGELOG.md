@@ -958,3 +958,7 @@
 
 * add partner acts
 
+# 1.6.96 - Hotfix
+
+* add autoSetUp button
+
