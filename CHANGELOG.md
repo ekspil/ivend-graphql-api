@@ -962,3 +962,7 @@
 
 * add autoSetUp button
 
+# 1.6.97 - Hotfix
+
+* hotfix
+
