@@ -781,7 +781,7 @@ class ControllerService {
                 id: controllerId
             }
         })
-        if(!controller.autoSetUp) return pulse
+        if(!controller.autoSetUp) return pulse.save()
         if (controller.uid.slice(0, 3) === "500") {
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 0 && b < 1 && c < 1 && d < 1 && f < 1) {
                 await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(3), Commands.remotePin(0, 0, 20, 1), Commands.priceSettingPulse(3, 0, 0), Commands.priceForPulse(0, 0, Number(a + "00"), 0, 0, 0)])
