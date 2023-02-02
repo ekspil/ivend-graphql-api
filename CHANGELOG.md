@@ -975,3 +975,8 @@
 
 * duplicate machines
 
+
+# 1.6.100 - Hotfix
+
+* duplicate machines
+

@@ -526,6 +526,9 @@ class MachineService {
         machine.name = machine.name + " (copy)"
         machine.number = machine.number + " (copy)"
         delete machine.dataValues.id
+        delete machine.dataValues.item_matrix_id
+        machine.dataValues.createdAt = new Date()
+        machine.dataValues.updatedAt = new Date()
 
         return this.Machine.create(machine.dataValues)
     }
