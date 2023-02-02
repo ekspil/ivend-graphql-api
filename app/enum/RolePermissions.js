@@ -67,6 +67,7 @@ const VENDOR = [
     Permission.UPDATE_KKT,
     Permission.GET_RECEIPT,
     Permission.SEND_EMAIL,
+    Permission.DUPLICATE_MACHINE,
 
 ]
 const PARTNER = [

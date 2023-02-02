@@ -980,3 +980,8 @@
 
 * duplicate machines
 
+
+# 1.6.101 - Hotfix
+
+* duplicate machines
+
