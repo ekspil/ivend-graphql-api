@@ -1306,6 +1306,7 @@ const typeDefs = gql`
         updatePartnerInfo(input: PartnerInfoInput!): PartnerInfo
         simReset(sim: String!): Boolean
         simResetImsi(sim: String!): Boolean
+        duplicateMachine(id: Int!): Machine
     }
 `
 

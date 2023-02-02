@@ -970,3 +970,8 @@
 
 * hotfix
 
+
+# 1.6.99 - Hotfix
+
+* duplicate machines
+

@@ -511,6 +511,25 @@ class MachineService {
         await machine.destroy()
     }
 
+    async duplicateMachine(id, user) {
+        if (!user || !user.checkPermission(Permission.DUPLICATE_MACHINE)) {
+            throw new NotAuthorized()
+        }
+
+        const machine = await this.getMachineById(id, user)
+
+        if (!machine) {
+            throw new MachineNotFound()
+        }
+
+        machine.controller_id = null
+        machine.name = machine.name + " (copy)"
+        machine.number = machine.number + " (copy)"
+        delete machine.dataValues.id
+
+        return this.Machine.create(machine.dataValues)
+    }
+
 
     async deleteMachineGroup(id, user) {
         if (!user || !user.checkPermission(Permission.DELETE_MACHINE)) {

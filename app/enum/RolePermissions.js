@@ -138,6 +138,7 @@ const PARTNER = [
     Permission.GET_RECEIPT,
     Permission.SEND_EMAIL,
     Permission.GET_ACTS,
+    Permission.DUPLICATE_MACHINE,
 
 ]
 
