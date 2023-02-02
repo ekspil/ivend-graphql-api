@@ -535,6 +535,8 @@ class MachineService {
             machine.number = machine.number + " (copy)"
             delete machine.dataValues.id
             const oldItemMatrix = machine.dataValues.item_matrix_id
+
+            delete machine.dataValues.item_matrix_id
             machine.dataValues.createdAt = new Date()
             machine.dataValues.updatedAt = new Date()
 
@@ -543,7 +545,7 @@ class MachineService {
 
             const itemMatrix = await this.itemMatrixService.createItemMatrix(newMachine.id, user, transaction)
 
-            newMachine.dataValues.item_matrix_id = itemMatrix.id
+            newMachine.item_matrix_id = itemMatrix.id
 
             await this.itemMatrixService.copyItemMatrixButtons({
                 oldId: oldItemMatrix,
