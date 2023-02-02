@@ -102,6 +102,38 @@ class ItemMatrixService {
 
     }
 
+    async copyItemMatrixButtons(input, transaction) {
+
+        const {newId, oldId} = input
+
+
+        const buttonItems = await this.ButtonItem.findAll({
+            where: {
+                item_matrix_id: oldId
+
+            },
+            transaction
+        })
+
+
+
+        for (let item of buttonItems){
+
+            const buttonItem = new ButtonItem()
+            buttonItem.buttonId = item.buttonId
+            buttonItem.item_matrix_id = newId
+            buttonItem.item_id = item.item_id
+            buttonItem.multiplier = item.multiplier
+            buttonItem.type = item.type || "commodity"
+
+            await this.ButtonItem.create(buttonItem, {transaction})
+
+        }
+
+        return true
+
+    }
+
     async editButtonToItemMatrix(input, user) {
         if (!user || !user.checkPermission(Permission.ADD_BUTTON_ITEM_TO_ITEM_MATRIX)) {
             throw new NotAuthorized()

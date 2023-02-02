@@ -516,21 +516,42 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        const machine = await this.getMachineById(id, user)
+        return this.Machine.sequelize.transaction(async (transaction) => {
 
-        if (!machine) {
-            throw new MachineNotFound()
-        }
+            const machine = await this.Machine.findOne({
+                where:{
+                    id,
+                    user_id: user.id
+                },
+                transaction
+            })
 
-        machine.controller_id = null
-        machine.name = machine.name + " (copy)"
-        machine.number = machine.number + " (copy)"
-        delete machine.dataValues.id
-        delete machine.dataValues.item_matrix_id
-        machine.dataValues.createdAt = new Date()
-        machine.dataValues.updatedAt = new Date()
+            if (!machine) {
+                throw new MachineNotFound()
+            }
 
-        return this.Machine.create(machine.dataValues)
+            machine.controller_id = null
+            machine.name = machine.name + " (copy)"
+            machine.number = machine.number + " (copy)"
+            delete machine.dataValues.id
+            const oldItemMatrix = machine.dataValues.item_matrix_id
+            machine.dataValues.createdAt = new Date()
+            machine.dataValues.updatedAt = new Date()
+
+            const newMachine = await this.Machine.create(machine.dataValues,  {transaction})
+
+
+            const itemMatrix = await this.itemMatrixService.createItemMatrix(newMachine.id, user, transaction)
+
+            newMachine.dataValues.item_matrix_id = itemMatrix.id
+
+            await this.itemMatrixService.copyItemMatrixButtons({
+                oldId: oldItemMatrix,
+                newId: itemMatrix.id,
+            }, transaction)
+
+            return newMachine.save({transaction})
+        })
     }
 
 
