@@ -995,3 +995,8 @@
 
 * duplicate machines
 
+
+# 1.6.104 - Hotfix
+
+* fix vendista commands
+

@@ -191,21 +191,7 @@ class ControllerService {
 
 
 
-        if (controller.autoSetUp && controller.mode === "mdb" && controller.bankTerminalMode === "vda1"){
-            await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.mdbTerminalMode(2), Commands.reload()])
-        }
-        if (controller.autoSetUp && controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
-            if (controller.uid.slice(0, 3) === "300"){
-                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
-            }
 
-        }
-        if (controller.autoSetUp && controller.mode === "rs232" && controller.bankTerminalMode === "vda1"){
-
-            if (controller.uid.slice(0, 3) === "300"){
-                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1),  Commands.reload()])
-            }
-        }
 
 
         // if (controller.mode === "mech" && controller.bankTerminalMode === "vda1"){
@@ -782,6 +768,27 @@ class ControllerService {
             }
         })
         if(!controller.autoSetUp) return pulse.save()
+
+
+        if (controller.mode === "mdb" && controller.bankTerminalMode === "vda1"){
+            await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(0), Commands.mdbCredit(10000), Commands.mdbTerminalMode(2)])
+        }
+        if (controller.mode === "ps_m_D" && controller.bankTerminalMode === "vda1"){
+            if (controller.uid.slice(0, 3) === "300"){
+                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1),  ])
+            }
+
+        }
+        if (controller.mode === "rs232" && controller.bankTerminalMode === "vda1"){
+
+            if (controller.uid.slice(0, 3) === "300"){
+                await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(1), ])
+            }
+        }
+
+
+
+
         if (controller.uid.slice(0, 3) === "500") {
             if (controller.mode === "mech" && controller.bankTerminalMode === "vda1" && a > 0 && b < 1 && c < 1 && d < 1 && f < 1) {
                 await microservices.vendista.sendCommands(this.getVendistaId(controller), [Commands.reset(), Commands.workMode(3), Commands.remotePin(0, 0, 20, 1), Commands.priceSettingPulse(3, 0, 0), Commands.priceForPulse(0, 0, Number(a + "00"), 0, 0, 0)])
