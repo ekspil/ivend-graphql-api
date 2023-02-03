@@ -1004,3 +1004,7 @@
 
 * fix payments
 
+# 1.6.106 - Hotfix
+
+* fix payments
+

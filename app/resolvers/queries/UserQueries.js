@@ -33,12 +33,17 @@ function UserQueries({userService, billingService}) {
         
             if (deposit.meta.includes("deposit")) {
                 transaction.type = "РОБОКАССА"
+                const arr = deposit.meta.split("_")
+                transaction.meta = arr[2]
             }
             if (deposit.meta.includes("admin_change_balance")) {
                 transaction.type = "АДМИН"
+                transaction.meta = ""
             }
             if (deposit.meta.includes("BANK_PAYMENT")) {
                 transaction.type = "БАНК"
+                const arr = deposit.meta.split("_")
+                transaction.meta = "VFT" + arr[2]
             }
             return transaction
             
