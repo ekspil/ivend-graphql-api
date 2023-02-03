@@ -1000,3 +1000,7 @@
 
 * fix vendista commands
 
+# 1.6.105 - Hotfix
+
+* fix payments
+

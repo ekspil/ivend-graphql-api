@@ -16,41 +16,35 @@ function UserQueries({userService, billingService}) {
 
         const data = await billingService.getAllBills(input, user)
 
-        const {bills, deposits} = data
+        const {transactions} = data
 
 
-        const result = bills.map(deposit => (new BankPaymentDTO({
-            id: deposit.id,
-            applied: deposit.applied,
-            createdAt: deposit.createdAt,
-            userId: deposit.userId,
-            userName: deposit.user.companyName,
-            userInn: deposit.user.inn,
-            amount: deposit.amount,
-            type: "BANK"
-        })))
-
-
-        for ( let deposit of deposits){
-            const d = {
-                id: deposit.id + "user",
-                applied: false,
+        const result = transactions.map(deposit => { 
+            const transaction = new BankPaymentDTO({
+                id: deposit.id,
+                applied: true,
                 createdAt: deposit.createdAt,
-                userId: deposit.user.id,
+                userId: deposit.userId,
                 userName: deposit.user.companyName,
                 userInn: deposit.user.inn,
                 amount: deposit.amount,
-                type: "ROBOKASSA"
+                type: ""
+            })
+        
+            if (deposit.meta.includes("deposit")) {
+                transaction.type = "РОБОКАССА"
             }
-
-            if(deposit.paymentRequest && (deposit.paymentRequest.status === "SUCCEEDED" || deposit.paymentRequest.status === "ADMIN_EDIT")){
-                d.applied = true
+            if (deposit.meta.includes("admin_change_balance")) {
+                transaction.type = "АДМИН"
             }
-            if(deposit.paymentRequest && deposit.paymentRequest.status === "ADMIN_EDIT"){
-                d.type = "ADMIN"
+            if (deposit.meta.includes("BANK_PAYMENT")) {
+                transaction.type = "БАНК"
             }
-            result.push(d)
+            return transaction
+            
         }
+        )
+
         return result
     }
 

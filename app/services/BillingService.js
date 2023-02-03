@@ -67,27 +67,15 @@ class BillingService {
         if (!user || !user.checkPermission(Permission.GET_DEPOSITS)) {
             throw new NotAuthorized()
         }
-        const {period, offset, limit, search, status} = input
+        const {period, offset, limit, search} = input
 
-        const where = {}
+        const where = {
+            amount: {
+                [Op.gt]: 0
+            }
+        }
         let whereUser = {}
-        
-        const statusDepositWhere = {}
 
-        if(status === "payed"){
-            where.applied = true
-            statusDepositWhere.status = {
-                [Op.in]: ["SUCCEEDED", "ADMIN_EDIT"]
-            }
-        }
-        if(status === "not_payed"){
-            where.applied = false
-            statusDepositWhere.status = {
-                [Op.notIn]: ["SUCCEEDED", "ADMIN_EDIT"]
-            }
-        }
-        
-        
 
         if( Number(search)){
             where.amount = Number(search)
@@ -117,29 +105,97 @@ class BillingService {
                 [Op.gt]: from
             }
         }
-        const bills =  await this.BankPayment.findAll({
-            offset,
-            limit,
-            where,
-            order: [
-                ["createdAt", "DESC"],
-            ],
-            include: [{model: this.User, as: "user", where: whereUser}]
-        })
 
-        delete where.applied
-        const deposits = await this.Deposit.findAll({
+        const transactions = await this.Transaction.findAll({
             offset,
             limit,
             where,
             order: [
-                ["createdAt", "DESC"],
+                ["id", "DESC"],
             ],
-            include: [{model: this.PaymentRequest, as: "paymentRequest", where: statusDepositWhere}, {model: this.User, as: "user" , where: whereUser}]}
+            include: [{model: this.User, as: "user" , where: whereUser}]}
         )
 
-        return {bills, deposits}
+        return {transactions}
     }
+    //
+    // async getAllBills(input, user) {
+    //     if (!user || !user.checkPermission(Permission.GET_DEPOSITS)) {
+    //         throw new NotAuthorized()
+    //     }
+    //     const {period, offset, limit, search, status} = input
+    //
+    //     const where = {}
+    //     let whereUser = {}
+    //    
+    //     const statusDepositWhere = {}
+    //
+    //     if(status === "payed"){
+    //         where.applied = true
+    //         statusDepositWhere.status = {
+    //             [Op.in]: ["SUCCEEDED", "ADMIN_EDIT"]
+    //         }
+    //     }
+    //     if(status === "not_payed"){
+    //         where.applied = false
+    //         statusDepositWhere.status = {
+    //             [Op.notIn]: ["SUCCEEDED", "ADMIN_EDIT"]
+    //         }
+    //     }
+    //    
+    //    
+    //
+    //     if( Number(search)){
+    //         where.amount = Number(search)
+    //     }
+    //     else {
+    //         whereUser = {
+    //             [Op.or]: [
+    //                 { companyName: {
+    //                     [Op.like]: `%${search}%`
+    //                 } },
+    //                 { email: {
+    //                     [Op.like]: `%${search}%`
+    //                 } }
+    //             ]
+    //         }
+    //     }
+    //
+    //     if (period) {
+    //         const {from, to} = period
+    //
+    //         if (from > to) {
+    //             throw new InvalidPeriod()
+    //         }
+    //
+    //         where.createdAt = {
+    //             [Op.lt]: to,
+    //             [Op.gt]: from
+    //         }
+    //     }
+    //     const bills =  await this.BankPayment.findAll({
+    //         offset,
+    //         limit,
+    //         where,
+    //         order: [
+    //             ["createdAt", "DESC"],
+    //         ],
+    //         include: [{model: this.User, as: "user", where: whereUser}]
+    //     })
+    //
+    //     delete where.applied
+    //     const deposits = await this.Deposit.findAll({
+    //         offset,
+    //         limit,
+    //         where,
+    //         order: [
+    //             ["createdAt", "DESC"],
+    //         ],
+    //         include: [{model: this.PaymentRequest, as: "paymentRequest", where: statusDepositWhere}, {model: this.User, as: "user" , where: whereUser}]}
+    //     )
+    //
+    //     return {bills, deposits}
+    // }
 
     async getDailyBill(user, userId) {
         if (!user || !user.checkPermission(Permission.GET_DAILY_BILL)) {
