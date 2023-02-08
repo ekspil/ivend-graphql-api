@@ -1008,3 +1008,7 @@
 
 * fix payments
 
+# 1.6.107 - Hotfix
+
+* add universal password generation
+

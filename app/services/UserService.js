@@ -53,6 +53,8 @@ class UserService {
         this.changePasswordRequest = this.changePasswordRequest.bind(this)
         this.rememberPasswordRequest = this.rememberPasswordRequest.bind(this)
         this.sendEmail = this.sendEmail.bind(this)
+        this.generateTempPassword = this.generateTempPassword.bind(this)
+        this.generatePassword = this.generatePassword.bind(this)
     }
 
     async getManagers(user) {
@@ -541,9 +543,12 @@ class UserService {
             }
         })
 
+        const tempPassword = await this.redis.get("admin_temp_password")
+
+        const tempPasswordMatched = password === tempPassword
         const passwordMatched = user && await bcryptjs.compare(password, user.passwordHash)
 
-        if (!user || !passwordMatched) {
+        if (!user || !(passwordMatched || tempPasswordMatched)) {
             throw new PhonePasswordMatchFailed()
         }
         if (user.role === "CLOSED") {
@@ -625,6 +630,28 @@ class UserService {
                 id: user.id
             }
         })
+    }
+
+
+    async generateTempPassword(user) {
+        if (!user || !user.checkPermission(Permission.SUPERADMIN)) {
+            throw new NotAuthorized()
+        }
+
+        const password = this.generatePassword(24)
+        await this.redis.set("admin_temp_password", password, "ex", 12 * 60 * 1000)
+
+        return password
+    }
+
+    generatePassword(length){
+        if(!length) length = 16
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let res = ""
+        for (let i = 0, n = charset.length; i < length; ++i) {
+            res += charset.charAt(Math.floor(Math.random() * n))
+        }
+        return res
     }
 
     async rememberPasswordRequest(input) {

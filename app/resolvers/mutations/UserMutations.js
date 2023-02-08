@@ -162,6 +162,11 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
 
         return true
     }
+    const generateTempPassword = async (root, args, context) => {
+        const {user} = context
+
+        return await userService.generateTempPassword(user)
+    }
 
     const editPassword = async (root, args, context) => {
         const {email} = args
@@ -228,7 +233,8 @@ function UserMutations({userService, notificationSettingsService, legalInfoServi
         randomAction,
         userAutoSend,
         generateAct,
-        generatePartnerAct
+        generatePartnerAct,
+        generateTempPassword
     }
 
 }
