@@ -15,6 +15,14 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         return new ControllerDTO(controller)
     }
 
+    const getCubeToken = async (root, args, context) => {
+        const {user} = context
+
+        const token = await controllerService.getCubeToken(user)
+
+        return token
+    }
+
     const setControllerPulse = async (root, args, context) => {
         const {input} = args
         const {user} = context
@@ -163,7 +171,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         simReset,
         updateControllerIntegration,
         telemetronEvent,
-        setControllerPulse
+        setControllerPulse,
+        getCubeToken
     }
 
 }

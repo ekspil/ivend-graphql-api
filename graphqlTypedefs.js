@@ -1231,6 +1231,7 @@ const typeDefs = gql`
     type Mutation {
         successFeeTransaction(id: Int!): Boolean
         setNewsRead: Boolean
+        getCubeToken: String
         telemetronEvent(input: TelemetronEventInput!): TelemetronEvent
         updateControllerIntegration(input: ControllerIntegrationInput!): ControllerIntegration
         setControllerPulse(input: ControllerPulseInput!): ControllerPulse

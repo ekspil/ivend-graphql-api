@@ -247,6 +247,7 @@ const AGGREGATE = [
     Permission.GET_ALL_CONTROLLERS,
     Permission.GET_MACHINE_BY_CONTROLLER_ID,
     Permission.GET_DEPOSITS,
+    Permission.GET_CUBE_TOKEN,
 ]
 
 const RolePermissions = {

@@ -69,6 +69,7 @@ const ControllerIntegrations = require("./models/sequelize/ControllerIntegration
 const ControllerPulse = require("./models/sequelize/ControllerPulse")
 const Manager = require("./models/sequelize/Manager")
 const Act = require("./models/sequelize/Acts")
+const CubeToken = require("./models/sequelize/CubeTokens")
 
 
 
@@ -160,6 +161,7 @@ class App {
         const ControllerPulseModel = sequelize.define("controller_pulses", ControllerPulse)
         const ManagerModel = sequelize.define("managers", Manager)
         const ActsModel = sequelize.define("acts", Act)
+        const CubeTokenModel = sequelize.define("cube_tokens", CubeToken)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -339,6 +341,7 @@ class App {
             MachineModel,
             RevisionModel,
             ControllerIntegrationsModel,
+            CubeTokenModel,
             ControllerPulseModel,
             revisionService: services.revisionService,
             serviceService: services.serviceService,

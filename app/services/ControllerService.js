@@ -14,11 +14,13 @@ const logger = require("my-custom-logger")
 const MachineLogType = require("../enum/MachineLogType")
 const microservices = require("../utils/microservices")
 const {Op} = require("sequelize")
+const fetch = require("node-fetch")
 
 class ControllerService {
 
-    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, ControllerIntegrationsModel, ControllerPulseModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel, billingService}) {
+    constructor({EncashmentModel, ItemModel, ControllerModel, ControllerErrorModel, MachineModel, ControllerStateModel, CubeTokenModel, ControllerIntegrationsModel, ControllerPulseModel, UserModel, RevisionModel, revisionService, machineService, kktService, redis, SaleModel, billingService}) {
         this.Controller = ControllerModel
+        this.CubeToken = CubeTokenModel
         this.Sale = SaleModel
         this.ControllerState = ControllerStateModel
         this.ControllerIntegration = ControllerIntegrationsModel
@@ -946,6 +948,44 @@ class ControllerService {
                 controller_id: id
             }
         })
+    }
+
+
+    async getCubeToken(user) {
+        if (!user || !user.checkPermission(Permission.GET_CUBE_TOKEN)) {
+            throw new NotAuthorized()
+        }
+        try {
+
+            const oldToken = await this.CubeToken.findOne({
+                order: [
+                    ["id", "DESC"],
+                ]
+            })
+
+            const newToken = await fetch("https://api-cube-test.aqsi.ru/tlm/v1/auth/refreshToken", {
+                headers: {
+                    Authorization: "Bearer " + oldToken.token
+                }
+            })
+            if(newToken.status !== 200) return null
+
+            const json = await newToken.json()
+
+
+            await this.CubeToken.create({token: json.access_token})
+            return json.access_token
+        }
+        catch (e) {
+            logger.error("cube_token_request_error " + e.message)
+            return null
+        }
+
+
+
+
+
+
     }
 
 
