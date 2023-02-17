@@ -239,7 +239,7 @@ class PartnerService {
         const amount = transactions.reduce((acc, item) => {
             return (acc + Number(item.controllerFee) + Number(item.terminalFee) + Number(item.kkmFee))
         }, 0)
-        return amount
+        return Number(amount.toFixed(2))
     }
 
 
@@ -359,11 +359,11 @@ class PartnerService {
 
         return {
             lastPayment: transactions[0].createdAt,
-            lastPaymentAmount: transactions[0].controllerFee,
+            lastPaymentAmount: Number(Number(transactions[0].controllerFee).toFixed(2)),
             lastPaymentStatus: transactions[0].status || "SUCCESS",
             lastPaymentId: transactions[0].id,
             payments: amount.count,
-            paymentsAmount: amount.sum,
+            paymentsAmount: Number(Number(amount.sum).toFixed(2)),
         }
     }
 

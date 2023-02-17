@@ -1013,7 +1013,7 @@
 * add universal password generation
 
 
-# 1.6.108 - Hotfix
+# 1.6.109 - Hotfix
 
 * add universal password generation
 
