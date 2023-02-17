@@ -446,11 +446,21 @@ class MachineService {
             throw new NotAuthorized()
         }
 
-        return await this.MachineGroup.findAll({
+        const groups =  await this.MachineGroup.findAll({
             where: {
                 user_id: user.id
             }
         })
+
+        if (groups.length > 0) {
+            return groups
+        }
+        else {
+            const newGroup = await this.createMachineGroup({name: "Общая"}, user)
+            return [newGroup]
+
+        }
+
     }
 
     async createMachineType(input, user) {

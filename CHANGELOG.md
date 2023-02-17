@@ -1012,3 +1012,8 @@
 
 * add universal password generation
 
+
+# 1.6.108 - Hotfix
+
+* add universal password generation
+
