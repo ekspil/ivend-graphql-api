@@ -336,22 +336,23 @@ class KktService {
         }
 
 
-        const legalInfoO = await this.LegalInfo.findOne({
+        let legalInfoO = await this.LegalInfo.findOne({
             where: {
                 inn:receipt.inn
             }
         })
+        if(!legalInfoO) legalInfoO = {dataValues: {}}
         const legalInfo = legalInfoO.dataValues
 
         return {
             id: sale.receiptId,
             inn: receipt.inn,
-            legalAddress: legalInfo.legalAddress,
-            companyName: legalInfo.companyName,
-            email: legalInfo.contactEmail,
-            kpp: legalInfo.kpp,
+            legalAddress: legalInfo.legalAddress || "Нет данных",
+            companyName: legalInfo.companyName || "Нет данных",
+            email: legalInfo.contactEmail || "Нет данных",
+            kpp: legalInfo.kpp || "Нет данных",
             itemType: receipt.itemType,
-            sno: legalInfo.sno,
+            sno: legalInfo.sno || "osn",
             place: machine.place,
             machineNumber: machine.number,
             ...receipt.fiscalData,

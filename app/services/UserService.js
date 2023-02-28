@@ -19,7 +19,7 @@ const microservices = require("../utils/microservices")
 
 class UserService {
 
-    constructor({UserModel, NewsModel, ManagerModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, AdminStatisticModel}) {
+    constructor({UserModel, NewsModel, ManagerModel, redis, machineService, ButtonItemModel, notificationSettingsService, ItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, AdminStatisticModel, LongTaskModel}) {
         this.User = UserModel
         this.redis = redis
 
@@ -37,6 +37,7 @@ class UserService {
         this.AdminStatistic = AdminStatisticModel
         this.News = NewsModel
         this.Managers = ManagerModel
+        this.LongTask = LongTaskModel
 
         this.machineService = machineService
         this.notificationSettingsService = notificationSettingsService
@@ -55,6 +56,8 @@ class UserService {
         this.sendEmail = this.sendEmail.bind(this)
         this.generateTempPassword = this.generateTempPassword.bind(this)
         this.generatePassword = this.generatePassword.bind(this)
+        this.mailingJobStatus = this.mailingJobStatus.bind(this)
+        this.smsingJobStatus = this.smsingJobStatus.bind(this)
     }
 
     async getManagers(user) {
@@ -71,105 +74,45 @@ class UserService {
         return await microservices.notification.sendEmail(input, user)
     }
 
+    async smsingJobStatus(id, user) {
+        if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
+            throw new NotAuthorized()
+        }
+        return await this.redis.hget("JOBS_LONG_PROCESSES_NEWS_SMSING_STATUS", id)
+    }
+
+    async mailingJobStatus(id, user) {
+        if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
+            throw new NotAuthorized()
+        }
+        return await this.redis.hget("JOBS_LONG_PROCESSES_NEWS_MAILING_STATUS", id)
+    }
+
     async sendNewsEmail(id, user) {
         if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
             throw new NotAuthorized()
         }
-        const {sequelize} = this.User
-        const {Op} = sequelize
-        const users = await this.User.findAll({
-            where: {
-                [Op.or]: [{role: "VENDOR"}, {role: "PARTNER"}]
-            }
-        })
-
-        if(!users){
-            throw new Error("Users table is null")
+        const longTask = {
+            type: "NEWS_MAILING",
+            status: "WAITING",
+            targetId: id
         }
-
-
-        const news = await this.News.findOne({
-            where: {
-                id
-            }
-        })
-
-
-        if(!news){
-            throw new Error("News not found")
-        }
-        let tasks = []
-        let delay = 0
-        for(let us of users){
-            tasks.push(new Promise(async (resolve) => {
-                delay += 10000
-
-                await new Promise(res => setTimeout(res, delay))
-                try{
-                    await microservices.notification.sendTextEmail(us.email, news.text)
-                    logger.info(`graphql_sending_email_success user: ${us.id}, email: ${us.email}`)
-                }
-                catch (e) {
-                    logger.info(`graphql_sending_email_error user: ${us.id}, email: ${us.email}, message: ${e.message}`)
-                }
-
-
-                resolve(  "graphql_sending_sms_started")
-            }))
-
-        }
-        await Promise.all(tasks)
+        this.LongTask.create(longTask)
         return true
     }
+
+
     async sendNewsSMS(id, user) {
         if(!user || !user.checkPermission(Permission.SEND_EMAIL)){
             throw new NotAuthorized()
         }
-        const {sequelize} = this.User
-        const {Op} = sequelize
-        const users = await this.User.findAll({
-            where: {
-                [Op.or]: [{role: "VENDOR"}, {role: "PARTNER"}]
-            }
-        })
-        if(!users){
-            throw new Error("Users table is null")
+
+        const longTask = {
+            type: "NEWS_SMSING",
+            status: "WAITING",
+            targetId: id
         }
-
-        const news = await this.News.findOne({
-            where: {
-                id
-            }
-        })
-
-
-        if(!news){
-            throw new Error("News not found")
-        }
-        let text = news.text.replace( /(<([^>]+)>)/ig, `
-` )
-        let tasks = []
-        let delay = 0
-        for(let us of users){
-            tasks.push(new Promise(async (resolve) => {
-                if(!us.countryCode) us.countryCode = "7"
-                const tel = us.countryCode + us.phone
-                delay += 1000
-
-                await new Promise(res => setTimeout(res, delay))
-                try {
-                    await microservices.notification.sendTextSMS(tel, text)
-                    logger.info(`graphql_sending_sms_success user: ${us.id}, phone: ${tel}`)
-                }
-                catch (e) {
-                    logger.info(`graphql_sending_sms_error user: ${us.id}, phone: ${tel}, message: ${e.message}`)
-                }
-
-                resolve(  "graphql_sending_sms_started")
-            }))
-
-        }
-        await Promise.all(tasks)
+        this.LongTask.create(longTask)
         return true
     }
 

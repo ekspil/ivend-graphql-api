@@ -70,6 +70,7 @@ const ControllerPulse = require("./models/sequelize/ControllerPulse")
 const Manager = require("./models/sequelize/Manager")
 const Act = require("./models/sequelize/Acts")
 const CubeToken = require("./models/sequelize/CubeTokens")
+const LongTask = require("./models/sequelize/LongTasks")
 
 
 
@@ -162,6 +163,7 @@ class App {
         const ManagerModel = sequelize.define("managers", Manager)
         const ActsModel = sequelize.define("acts", Act)
         const CubeTokenModel = sequelize.define("cube_tokens", CubeToken)
+        const LongTaskModel = sequelize.define("long_tasks", LongTask)
 
         UserModel.belongsTo(LegalInfoModel, {
             foreignKey: "legal_info_id",
@@ -374,7 +376,7 @@ class App {
             UserModel,
             ManagerModel,
             AdminStatisticModel,
-            ItemModel, ButtonItemModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, NewsModel,
+            ItemModel, ButtonItemModel, LongTaskModel, NotificationSettingModel, TransactionModel, TempModel, ItemMatrixModel, ControllerModel, DepositModel, MachineModel, MachineGroupModel, KktModel, NewsModel,
             redis,
             machineService: services.machineService,
             notificationSettingsService: services.notificationSettingsService

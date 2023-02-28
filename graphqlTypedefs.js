@@ -693,6 +693,8 @@ const typeDefs = gql`
         text: String!
         link: String
         header: String!
+        smsStatus: String
+        mailStatus: String
     }    
     
     type Instr {
