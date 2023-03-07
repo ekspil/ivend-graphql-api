@@ -1021,3 +1021,8 @@
 
 * add universal password generation
 
+
+# 1.6.111 - Hotfix
+
+* fix machine logs
+

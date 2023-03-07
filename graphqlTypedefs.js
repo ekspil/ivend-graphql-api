@@ -940,6 +940,9 @@ const typeDefs = gql`
         TERMINAL
         ENCASHMENT
         SIM_CONTROLLER
+        NO_CASH_24H
+        NO_CASHLESS_24H
+        NO_COINS_24H
     }
 
     type Query {
