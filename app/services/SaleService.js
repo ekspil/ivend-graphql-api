@@ -879,7 +879,7 @@ class SaleService {
                     [Op.and]: [
                         {[Op.or]: [{machine_group_id: machineGroupId}, {machineGroup2Id: machineGroupId}, {machineGroup3Id: machineGroupId}]},
                         sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
-                            [Op.like]: `%${search ? search.toLowerCase() : ""}%`
+                            [Op.iLike]: `%${search ? search.toLowerCase() : ""}%`
                         })
                     ]
 
@@ -890,7 +890,7 @@ class SaleService {
                 machineWhere = {
                     [Op.and]: [
                         sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
-                            [Op.like]: `%${search ? search.toLowerCase() : ""}%`
+                            [Op.iLike]: `%${search ? search.toLowerCase() : ""}%`
                         })
                     ]
 

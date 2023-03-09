@@ -1030,3 +1030,7 @@
 
 * fix machine logs
 
+# 1.6.113 - Hotfix
+
+* fix machine logs
+
