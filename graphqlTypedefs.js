@@ -968,8 +968,8 @@ const typeDefs = gql`
         getLegalInfoByUserId(id: Int!): LegalInfo
         getSales(offset: Int!, limit: Int!, machineId: Int, itemId: Int, period: Period): [Sale!]!
         getSalesNoLimit( machineId: Int, itemId: Int, period: Period): [SaleNoLimit!]!
-        getItemSales(machineGroupId: Int, period: Period): [ItemsSales]
-        getMachineSales(machineGroupId: Int, period: Period): [MachineSales]
+        getItemSales(machineGroupId: Int, period: Period, search: String): [ItemsSales]
+        getMachineSales(machineGroupId: Int, period: Period, search: String): [MachineSales]
         getNews: [News]
         getNewsById(id: Int!): News
         getAllNews: [News]

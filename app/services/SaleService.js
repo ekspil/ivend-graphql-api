@@ -847,83 +847,130 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const {period,  machineGroupId} = input
+        try {
 
-        const {sequelize} = this.Sale
-        const {Op} = sequelize
-        const where = {}
-        if (period) {
-            const {from, to} = period
+            const {period,  machineGroupId, search} = input
 
-            if (from > to) {
-                throw new InvalidPeriod()
-            }
+            const {sequelize} = this.Sale
+            const {Op} = sequelize
+            const where = {}
+            let machineWhere = {}
+            if (period) {
+                const {from, to} = period
 
-            where.createdAt = {
-                [Op.lt]: to,
-                [Op.gt]: from
-            }
-        }
-        let machines = await this.machineService.getAllMachinesOfUser(user)
-        if(machineGroupId){
-            machines = machines.filter(mach => mach.machine_group_id == machineGroupId)
-        }
-
-        where.machine_id = {
-            [Op.in]: machines.map(machine => machine.id)
-        }
-
-        const userItems = await this.Item.findAll({
-            where:{
-                user_id: user.id
-            }
-        })
-
-        const sales = await this.Sale.findAll({
-            where
-        })
-
-        const summary = []
-
-        for( let item of userItems ){
-            const itemSales = sales.filter(sale => sale.item_id === item.id)
-            const itemSale = {
-                id: item.id,
-                lastSaleTime: new Date(2011, 0, 1),
-                name: item.name,
-                salesSummary:{
-                    cashAmount: 0,
-                    cashlessAmount: 0,
-                    overallAmount: 0,
-                    salesCount: 0
-                }
-            }
-            for (let sal of itemSales){
-
-                const time = sal.createdAt.getTime()
-                const thisTime = itemSale.lastSaleTime.getTime()
-                if(time > thisTime){
-                    itemSale.lastSaleTime = sal.createdAt
+                if (from > to) {
+                    throw new InvalidPeriod()
                 }
 
-
-                if(sal.type === "CASH"){
-                    itemSale.salesSummary.cashAmount = itemSale.salesSummary.cashAmount + Number(sal.price)
+                where.createdAt = {
+                    [Op.lt]: to,
+                    [Op.gt]: from
                 }
-                if(sal.type === "CASHLESS"){
-                    itemSale.salesSummary.cashlessAmount =  itemSale.salesSummary.cashlessAmount  + Number(sal.price)
-                }
-                itemSale.salesSummary.overallAmount = itemSale.salesSummary.overallAmount + Number(sal.price)
-                itemSale.salesSummary.salesCount++
             }
-            summary.push(itemSale)
 
+
+            // sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
+            //     [Op.like]: "%abcd%"
+            // })
+
+
+            if(machineGroupId){
+                machineWhere = {
+                    [Op.and]: [
+                        {[Op.or]: [{machine_group_id: machineGroupId}, {machineGroup2Id: machineGroupId}, {machineGroup3Id: machineGroupId}]},
+                        sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
+                            [Op.like]: `%${search ? search.toLowerCase() : ""}%`
+                        })
+                    ]
+
+                }
+
+            }
+            else {
+                machineWhere = {
+                    [Op.and]: [
+                        sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
+                            [Op.like]: `%${search ? search.toLowerCase() : ""}%`
+                        })
+                    ]
+
+                }
+            }
+
+
+            machineWhere.user_id = user.id
+
+            return this.Machine.sequelize.transaction(async (transaction) => {
+
+                const machines = await this.Machine.findAll({
+                    transaction,
+                    where: machineWhere,
+                    order: [
+                        ["id", "DESC"],
+                    ]
+                })
+
+                where.machine_id = {
+                    [Op.in]: machines.map(machine => machine.id)
+                }
+
+                const userItems = await this.Item.findAll({
+                    transaction,
+                    where: {
+                        user_id: user.id
+                    }
+                })
+
+                const sales = await this.Sale.findAll({
+                    transaction,
+                    where
+                })
+
+                const summary = []
+
+                for (let item of userItems) {
+                    const itemSales = sales.filter(sale => sale.item_id === item.id)
+                    const itemSale = {
+                        id: item.id,
+                        lastSaleTime: new Date(2011, 0, 1),
+                        name: item.name,
+                        salesSummary: {
+                            cashAmount: 0,
+                            cashlessAmount: 0,
+                            overallAmount: 0,
+                            salesCount: 0
+                        }
+                    }
+                    for (let sal of itemSales) {
+
+                        const time = sal.createdAt.getTime()
+                        const thisTime = itemSale.lastSaleTime.getTime()
+                        if (time > thisTime) {
+                            itemSale.lastSaleTime = sal.createdAt
+                        }
+
+
+                        if (sal.type === "CASH") {
+                            itemSale.salesSummary.cashAmount = itemSale.salesSummary.cashAmount + Number(sal.price)
+                        }
+                        if (sal.type === "CASHLESS") {
+                            itemSale.salesSummary.cashlessAmount = itemSale.salesSummary.cashlessAmount + Number(sal.price)
+                        }
+                        itemSale.salesSummary.overallAmount = itemSale.salesSummary.overallAmount + Number(sal.price)
+                        itemSale.salesSummary.salesCount++
+                    }
+                    summary.push(itemSale)
+
+                }
+
+
+                return summary
+            })
+        }
+        catch (e) {
+            throw new Error("services_getItemSales " + e.message)
         }
 
-
-
-
-        return summary
     }
 
     async getMachineItemSales(input, user) {

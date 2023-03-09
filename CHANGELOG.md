@@ -1026,3 +1026,7 @@
 
 * fix machine logs
 
+# 1.6.112 - Hotfix
+
+* fix machine logs
+
