@@ -140,16 +140,16 @@ const typeDefs = gql`
 
     type SalesSummary {
         salesCount: Int!
-        overallAmount: Int!
-        cashAmount: Int!
-        cashlessAmount: Int!
+        overallAmount: Float!
+        cashAmount: Float!
+        cashlessAmount: Float!
     }
 
     type salesSum {
         salesCount: Int!
-        overallAmount: Int!
-        cashAmount: Int!
-        cashlessAmount: Int!
+        overallAmount: Float!
+        cashAmount: Float!
+        cashlessAmount: Float!
     }
 
     type ControllerState {
@@ -343,8 +343,8 @@ const typeDefs = gql`
     }
 
     type FastSummary {
-        amountToday: Int
-        amountYesterday: Int
+        amountToday: Float
+        amountYesterday:Float
         countToday: Int
         countYesterday: Int
     }
@@ -439,8 +439,8 @@ const typeDefs = gql`
         controllerUid: String!
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
-        coinAmount: Int!,
-        billAmount: Int!,
+        coinAmount: Float!,
+        billAmount: Float!,
         attentionRequired: Int,
         dex1Status: BusStatus!,
         dex2Status: BusStatus!,
@@ -785,7 +785,7 @@ const typeDefs = gql`
     }
 
     type EncashmentSalesSummaryFast {
-        encashmentsAmount: Int!
+        encashmentsAmount: Float!
     }
 
     type Machine {
