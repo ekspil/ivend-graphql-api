@@ -1034,3 +1034,9 @@
 
 * fix machine logs
 
+* fix machine logs
+
+# 1.6.114 - Hotfix
+
+* fix machine logs
+
