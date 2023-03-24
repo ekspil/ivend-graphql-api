@@ -1202,8 +1202,12 @@ class ControllerService {
         const machineUser = await machine.getUser()
         machineUser.checkPermission = () => true
 
-        const lastState = await controller.getLastState()
-
+        const lastStateJson = await this.redis.get("controller_last_state_" + controller.id)
+        let lastState
+        if(lastStateJson){
+            lastState = JSON.parse(lastStateJson)
+        }
+        //const lastState = await controller.getLastState()
         return this.Controller.sequelize.transaction(async (transaction) => {
             if (!lastState) {
                 await this.machineService.addLog(machine.id, `Контроллер подключён`, MachineLogType.REGISTRATION, machineUser, transaction)
@@ -1245,7 +1249,7 @@ class ControllerService {
 
 
             controllerState = await this.ControllerState.create(controllerState, {transaction})
-            await this.redis.set("controller_last_state_" + controller.id, JSON.stringify(controllerState))
+            await this.redis.set("controller_last_state_" + controller.id, JSON.stringify(controllerState.dataValues))
 
             if (lastState && !controller.connected) {
                 //add log connection regain
@@ -1271,8 +1275,11 @@ class ControllerService {
 
 
             controller.connected = true
-            //
+            // //
             // controller.last_state_id = controllerState.id
+            //
+            // await this.redis.hset("controller_last_state_id", controller.id, controllerState.id)
+            // await this.redis.hset("controller_connected", controller.id, true)
 
             return await controller.save({transaction})
         })

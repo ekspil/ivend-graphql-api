@@ -1036,7 +1036,7 @@
 
 * fix machine logs
 
-# 1.6.114 - Hotfix
+# 1.6.115 - Hotfix
 
 * fix machine logs
 
