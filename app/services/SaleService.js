@@ -190,11 +190,13 @@ class SaleService {
             }
             sale.item_id = itemId
             sale.machine_id = machine.id
-            if (!controller.connected) {
+
+            const controllerConnected = Boolean(await this.redis.hget("controller_connected", controller.id))
+            if (!controllerConnected) {
                 controllerUser.checkPermission = () => true
                 await this.machineService.addLog(machine.id, `Связь восстановлена`, MachineLogType.CONNECTION, controllerUser, transaction)
             }
-            controller.connected = true
+            //controller.connected = true
             controller.status = "ENABLED"
 
             await controller.save({transaction})

@@ -1034,6 +1034,7 @@ class ControllerService {
         }
 
         const json = await this.redis.get("controller_last_state_" + id)
+        if(!json) return null
         const parse = JSON.parse(json)
         if(!parse) return null
         parse.registrationTime = new Date(parse.registrationTime)
@@ -1247,11 +1248,11 @@ class ControllerService {
                 await this.redis.set("machine_error_" + machine.id, `OK`, "EX", 24 * 60 * 60)
             }
 
-
+            const controllerConnected = Boolean(await this.redis.hget("controller_connected", controller.id))
             controllerState = await this.ControllerState.create(controllerState, {transaction})
             await this.redis.set("controller_last_state_" + controller.id, JSON.stringify(controllerState.dataValues))
 
-            if (lastState && !controller.connected) {
+            if (lastState && !controllerConnected) {
                 //add log connection regain
                 await this.machineService.addLog(machine.id, `Связь восстановлена`, MachineLogType.CONNECTION, machineUser, transaction)
                 await this.redis.set("controller_connected_back" + machine.id, `OK`, "EX", 24 * 60 * 60)
@@ -1274,14 +1275,15 @@ class ControllerService {
             }
 
 
-            controller.connected = true
+            //controller.connected = true
             // //
             // controller.last_state_id = controllerState.id
             //
             // await this.redis.hset("controller_last_state_id", controller.id, controllerState.id)
-            // await this.redis.hset("controller_connected", controller.id, true)
+            await this.redis.hset("controller_connected", controller.id, true)
+            //const controllerConnected = Boolean(await this.redis.hget("controller_connected", controller.id))
 
-            return await controller.save({transaction})
+            return controller
         })
     }
 
