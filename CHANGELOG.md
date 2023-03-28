@@ -1044,3 +1044,7 @@
 
 * fix machine logs
 
+# 1.6.117 - Hotfix
+
+* receipt status hot fix
+

@@ -231,6 +231,7 @@ const typeDefs = gql`
     
     enum ReceiptStatus {
         PENDING
+        WAITING
         ERROR
         SUCCESS
     }
