@@ -963,7 +963,7 @@ class ControllerService {
                 ]
             })
 
-            const newToken = await fetch("https://api-cube-test.aqsi.ru/tlm/v1/auth/refreshToken", {
+            const newToken = await fetch("https://api-cube.aqsi.ru/tlm/v1/auth/refreshToken", {
                 headers: {
                     Authorization: "Bearer " + oldToken.token
                 }
