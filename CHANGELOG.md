@@ -1048,3 +1048,7 @@
 
 * receipt status hot fix
 
+# 1.6.119 - Hotfix
+
+* fix act
+

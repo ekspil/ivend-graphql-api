@@ -251,6 +251,7 @@ class PartnerService {
         }
 
         const act = await this.PartnerFee.findByPk(actId)
+        const actUser = await this.User.findByPk(act.userId)
 
         const month = new Date(act.createdAt).getUTCMonth()
         const year = new Date(act.createdAt).getUTCFullYear()
@@ -272,9 +273,9 @@ class PartnerService {
 
 
         const body = {
-            inn: user.inn,
+            inn: actUser.inn,
             userId: act.userId,
-            companyName: user.companyName,
+            companyName: actUser.companyName,
             amount: act.controllerFee,
             id: actId,
             to: to.toLocaleDateString(),
