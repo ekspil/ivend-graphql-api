@@ -73,6 +73,11 @@ module.exports = function ({UserModel, redis}) {
         const {token} = authCreds
 
         const userId = await redis.hget("tokens", token)
+        const existToken = await redis.hget("tokens", `user_${userId}`)
+        if(!existToken) {
+            redis.hdel("tokens", token)
+            return
+        }
 
         if (userId) {
             const user = await UserModel.findOne({

@@ -513,11 +513,12 @@ class UserService {
 
             return "NEED_SMS"
         }
-
+        const existToken = await this.redis.hget("tokens", `user_${user.id}`)
+        if(existToken) return existToken
 
         const token = await hashingUtils.generateRandomAccessKey()
 
-        await this.redis.hset("tokens", token, user.id)
+        await this.redis.hset("tokens", token, user.id, `user_${user.id}`, token)
 
 
         if (user.email === "test_invalid_token") {
@@ -550,7 +551,7 @@ class UserService {
 
         const token = await hashingUtils.generateRandomAccessKey()
 
-        await this.redis.hset("tokens", token, user.id)
+        await this.redis.hset("tokens", token, user.id, `user_${user.id}`, token)
 
         return token
     }
@@ -641,6 +642,12 @@ class UserService {
         await user.save()
 
         await this.redis.del("action_remember_password_" + token)
+
+
+        const existToken = await this.redis.hget("tokens", `user_${user.id}`)
+
+        await this.redis.hdel("tokens", existToken)
+        await this.redis.hdel("tokens", `user_${user.id}`)
 
         return true
     }
