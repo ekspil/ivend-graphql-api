@@ -207,7 +207,11 @@ class BillingService {
 
         const telemetryPrice = await microservices.billing.getServiceDailyPrice("TELEMETRY", userId)
 
-        return telemetryPrice.toFixed(2)
+        const orangeStatistic = await this.getOrangeStatistic(user, userId)
+
+        const dayOrange = orangeStatistic / (new Date().getDate())
+
+        return (telemetryPrice + dayOrange).toFixed(2)
     }
 
     async getDaysLeft(user, userId) {
@@ -271,9 +275,12 @@ class BillingService {
 
         if(!rows || rows.length === 0) return null
 
-        return rows.reduce((acc, item)=>{
+        const result =  rows.reduce((acc, item)=>{
             return acc + Number(item.amount)
         },0)
+
+
+        return result
 
 
 

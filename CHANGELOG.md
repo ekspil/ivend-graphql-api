@@ -1060,3 +1060,7 @@
 
 * add orange count in statistic
 
+# 1.6.122 - Hotfix
+
+* add orange day price in user pay page
+
