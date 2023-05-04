@@ -1052,8 +1052,11 @@
 
 * fix act
 
-
 # 1.6.120 - Hotfix
 
 * fix act
+
+# 1.6.121 - Hotfix
+
+* add orange count in statistic
 

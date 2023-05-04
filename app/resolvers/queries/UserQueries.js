@@ -89,10 +89,10 @@ function UserQueries({userService, billingService}) {
         const data = await billingService.getOrangeStatistic(context.user, userId || context.user.id)
 
         if (!data) {
-            return {orangeFixSum: 0}
+            return {orangeFixSum: 0, orangeCount: 0}
         }
 
-        return {orangeFixSum: data}
+        return {orangeFixSum: data, orangeCount: Number((data / 0.25).toFixed(0))}
     }
 
     const getAllUsers = async (root, args, context) => {

@@ -438,6 +438,7 @@ const typeDefs = gql`
 
     input ControllerStateInput {
         controllerUid: String!
+        data: ControllerStateData
         coinAcceptorStatus: BusStatus!,
         billAcceptorStatus: BusStatus!,
         coinAmount: Float!,
@@ -448,6 +449,10 @@ const typeDefs = gql`
         exeStatus: BusStatus!,
         mdbStatus: BusStatus!,
         signalStrength: SignalStrength!
+    }
+
+    input ControllerStateData {
+        inn: String!
     }
 
     input ControllerErrorInput {
@@ -834,7 +839,8 @@ const typeDefs = gql`
     }
 
     type OrangeStatistic {
-        orangeFixSum: Float
+        orangeFixSum: Float,
+        orangeCount: Int
     }
     type Manager {
         id: Int!

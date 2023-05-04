@@ -1094,7 +1094,7 @@ class ControllerService {
 
             services.push({
                 id: 60,
-                name: "Услуга фискализации Автоматов",
+                name: "Услуга почековой фискализации Автоматов",
                 price: 0.25,
                 billingType: null,
                 fixCount: 1
@@ -1167,7 +1167,7 @@ class ControllerService {
     }
 
 
-    async registerState(controllerStateInput, user) {
+    async registerState(controllerStateInput, user, data) {
         if (!user || !user.checkPermission(Permission.REGISTER_CONTROLLER_STATE)) {
             throw new NotAuthorized()
         }
@@ -1188,9 +1188,42 @@ class ControllerService {
         } = controllerStateInput
 
 
-        const controller = await this.getControllerByUID(controllerUid, user)
+        let controller = await this.getControllerByUID(controllerUid, user)
 
         if (!controller) {
+            if(controllerUid.includes("400-")){
+
+                if(!data || !data.inn) throw new ControllerNotFound()
+
+                const user = await this.User.findOne({
+                    where: {
+                        inn: data.inn
+                    }
+                })
+
+                controller = {}
+                controller.revision_id = 1
+                controller.name = "Cube " + controllerUid
+                controller.uid = controllerUid
+                controller.revision = 1
+                controller.status = "DISABLED"
+                controller.mode = "ps_m_D"
+                controller.readStatMode = "COINBOX"
+                controller.bankTerminalMode = "NO_BANK_TERMINAL"
+                controller.bankTerminalUid = null
+                controller.fiscalizationMode = "NO_FISCAL"
+                controller.autoSetUp = false
+                controller.connected = false
+
+                controller.user_id = user.id
+
+                await this.Controller.create(controller)
+            }
+
+
+
+
+
             throw new ControllerNotFound()
         }
 

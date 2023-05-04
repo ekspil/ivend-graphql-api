@@ -82,7 +82,7 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         const {input} = args
         const {user} = context
 
-        const controller = await controllerService.registerState(input, user)
+        const controller = await controllerService.registerState(input, user, input.data)
 
         return new ControllerDTO(controller)
     }
