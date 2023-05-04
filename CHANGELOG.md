@@ -1064,3 +1064,7 @@
 
 * add orange day price in user pay page
 
+# 1.6.123 - Hotfix
+
+* orange hotfix
+

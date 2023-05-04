@@ -209,7 +209,7 @@ class BillingService {
 
         const orangeStatistic = await this.getOrangeStatistic(user, userId)
 
-        const dayOrange = orangeStatistic / (new Date().getDate())
+        const dayOrange = (-orangeStatistic) / 30
 
         return (telemetryPrice + dayOrange).toFixed(2)
     }
