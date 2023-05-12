@@ -72,6 +72,7 @@ const typeDefs = gql`
         vdkl
         vdkx
         wvln
+        cube
         
     }
 

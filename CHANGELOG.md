@@ -1072,3 +1072,7 @@
 
 * orange hotfix
 
+# 1.6.125 - Hotfix
+
+* aqsi added
+
