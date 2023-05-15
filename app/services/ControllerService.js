@@ -955,6 +955,7 @@ class ControllerService {
         if (!user || !user.checkPermission(Permission.GET_CUBE_TOKEN)) {
             throw new NotAuthorized()
         }
+        const url = process.env.AQSI_URL || "https://api-cube.aqsi.ru"
         try {
 
             const oldToken = await this.CubeToken.findOne({
@@ -963,7 +964,7 @@ class ControllerService {
                 ]
             })
 
-            const newToken = await fetch("https://api-cube.aqsi.ru/tlm/v1/auth/refreshToken", {
+            const newToken = await fetch(url + "/tlm/v1/auth/refreshToken", {
                 headers: {
                     Authorization: "Bearer " + oldToken.token
                 }
@@ -974,6 +975,8 @@ class ControllerService {
 
 
             await this.CubeToken.create({token: json.access_token})
+
+            await this.redis.set("AQSI_CUBE_TOKEN", json.access_token, "EX", 14*24*60*60)
             return json.access_token
         }
         catch (e) {
@@ -1193,13 +1196,27 @@ class ControllerService {
         if (!controller) {
             if(controllerUid.includes("400-")){
 
-                if(!data || !data.inn) throw new ControllerNotFound()
+
+
+
+                if(!data || !data.deviceId) throw new ControllerNotFound()
+
+                let token = await this.redis.get("AQSI_CUBE_TOKEN")
+                if(!token){
+                    token = await this.getCubeToken()
+                }
+
+                const device = await microservices.aqsi.getAqsiDevice(data.deviceId, token)
+
+                if(!device || !device.inn) throw new Error("AQSI_ERROR Не получены данные от сервера акси")
 
                 const user = await this.User.findOne({
                     where: {
-                        inn: data.inn
+                        inn: device.inn
                     }
                 })
+
+                if(!user) throw new Error("AQSI_ERROR Не найден пользователь по ИНН")
 
                 controller = {}
                 controller.revision_id = 1

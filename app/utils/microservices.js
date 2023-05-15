@@ -304,6 +304,8 @@ const getServiceDailyPrice = async (service, userId) => {
     }
 }
 
+
+
 const getTariff = async (service, userId) => {
     const url = `${process.env.BILLING_URL}/api/v1/service/${service}/price/tariff/${userId}`
     const method = "GET"
@@ -312,6 +314,30 @@ const getTariff = async (service, userId) => {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
+        }
+    })
+
+    switch (response.status) {
+        case 200:
+            return await response.json()
+        case 404:
+            throw new ServiceNotFound()
+        default:
+            throw new MicroserviceUnknownError(method, url, response.status)
+    }
+}
+
+const getAqsiDevice = async (deviceId, token) => {
+    const url = `${process.env.AQSI_URL || "https://api-cube.aqsi.ru"}/tlm/v1/device/${deviceId}`
+    const method = "GET"
+
+
+
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
         }
     })
 
@@ -804,5 +830,8 @@ module.exports = {
     },
     vendista: {
         sendCommands
+    },
+    aqsi: {
+        getAqsiDevice
     }
 }

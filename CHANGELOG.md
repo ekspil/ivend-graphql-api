@@ -1076,3 +1076,8 @@
 
 * aqsi added
 
+
+# 1.6.126 - Hotfix
+
+* aqsi auto register
+

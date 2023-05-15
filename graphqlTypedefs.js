@@ -453,7 +453,8 @@ const typeDefs = gql`
     }
 
     input ControllerStateData {
-        inn: String!
+        inn: String
+        deviceId: String
     }
 
     input ControllerErrorInput {
