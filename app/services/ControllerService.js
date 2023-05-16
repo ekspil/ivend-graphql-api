@@ -1194,7 +1194,7 @@ class ControllerService {
         let controller = await this.getControllerByUID(controllerUid, user)
 
         if (!controller) {
-            if(controllerUid.includes("400-")){
+            if(controllerUid.startsWith("200")){
 
 
 
