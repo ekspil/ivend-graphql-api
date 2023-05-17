@@ -1085,3 +1085,7 @@
 
 * aqsi register event
 
+# 1.6.129 - Hotfix
+
+* aqsi billing fix
+
