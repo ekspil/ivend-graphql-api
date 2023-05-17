@@ -52,6 +52,7 @@ class ControllerService {
         this.registerState = this.registerState.bind(this)
         this.authController = this.authController.bind(this)
         this.registerEvent = this.registerEvent.bind(this)
+        this.getCubeToken = this.getCubeToken.bind(this)
         this.getControllerServices = this.getControllerServices.bind(this)
         this.setControllerPulse = this.setControllerPulse.bind(this)
         this.getVendistaId= this.getVendistaId.bind(this)
@@ -1218,7 +1219,9 @@ class ControllerService {
 
                 let token = await this.redis.get("AQSI_CUBE_TOKEN")
                 if(!token){
-                    token = await this.getCubeToken()
+                    const u = {}
+                    u.checkPermission = ()=> true
+                    token = await this.getCubeToken(u)
                 }
 
                 const device = await microservices.aqsi.getAqsiDevice(data.deviceId, token)
@@ -1246,10 +1249,13 @@ class ControllerService {
                 controller.fiscalizationMode = "NO_FISCAL"
                 controller.autoSetUp = false
                 controller.connected = false
+                controller.registrationTime = new Date()
+                controller.firmwareId = "aqsi 1.0"
+
 
                 controller.user_id = user.id
 
-                await this.Controller.create(controller)
+                return this.Controller.create(controller)
             }
 
 
