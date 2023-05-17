@@ -1241,6 +1241,11 @@ const typeDefs = gql`
         t: Int
         commands: String
     }
+    
+    input UpdateCubeStatusInput {
+        controllerUid: String!
+        status: String
+    }
 
     type Mutation {
         successFeeTransaction(id: Int!): Boolean
@@ -1323,6 +1328,7 @@ const typeDefs = gql`
         simResetImsi(sim: String!): Boolean
         duplicateMachine(id: Int!): Machine
         generateTempPassword: String
+        updateCubeStatus(input: UpdateCubeStatusInput!): String
     }
 `
 

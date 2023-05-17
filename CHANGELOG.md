@@ -1081,3 +1081,7 @@
 
 * aqsi auto register
 
+# 1.6.127 - Hotfix
+
+* aqsi register event
+

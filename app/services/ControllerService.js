@@ -1045,6 +1045,21 @@ class ControllerService {
     }
 
 
+
+    async updateCubeStatus(input, user) {
+        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
+            throw new NotAuthorized()
+        }
+
+        const {controllerUid, status} = input
+        const currentStatus = await this.redis.hget("cube_current_status", controllerUid)
+        await this.redis.hset("cube_current_status", controllerUid, status)
+
+        return currentStatus || "offline"
+
+    }
+
+
     async simReset(sim, user) {
         if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
             throw new NotAuthorized()

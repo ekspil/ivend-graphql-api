@@ -155,6 +155,14 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
 
     }
 
+    const updateCubeStatus = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        return await controllerService.updateCubeStatus(input, user)
+
+    }
+
     return {
         createController,
         editController,
@@ -172,7 +180,8 @@ function ControllerMutations({controllerService, saleService, revisionService}) 
         updateControllerIntegration,
         telemetronEvent,
         setControllerPulse,
-        getCubeToken
+        getCubeToken,
+        updateCubeStatus
     }
 
 }
