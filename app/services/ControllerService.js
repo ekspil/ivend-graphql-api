@@ -1047,7 +1047,7 @@ class ControllerService {
 
 
     async updateCubeStatus(input, user) {
-        if (!user || !user.checkPermission(Permission.GET_ALL_CONTROLLERS_OF_CURRENT_USER)) {
+        if (!user || !user.checkPermission(Permission.CREATE_CONTROLLER_EVENT)) {
             throw new NotAuthorized()
         }
 
