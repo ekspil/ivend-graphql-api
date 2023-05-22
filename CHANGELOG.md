@@ -1089,3 +1089,8 @@
 
 * aqsi billing fix
 
+
+# 1.6.130 - Hotfix
+
+* fix max sale sum
+
