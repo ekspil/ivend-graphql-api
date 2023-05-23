@@ -276,7 +276,7 @@ class MachineService {
 
     }
 
-    async getAllMachinesOfUser(user, machineGroupId) {
+    async getAllMachinesOfUser(user, machineGroupId, search) {
         if (!user || !user.checkPermission(Permission.GET_ALL_SELF_MACHINES)) {
             throw new NotAuthorized()
         }
@@ -286,11 +286,17 @@ class MachineService {
         if(machineGroupId){
             where = {
                 [Op.or]: [{ machine_group_id: machineGroupId }, { machineGroup2Id: machineGroupId }, { machineGroup3Id: machineGroupId }],
+
             }
 
         }
 
         where.user_id=user.id
+        if(search){
+            where.name = {
+                [Op.iLike]:  `%${search}%`
+            }
+        }
 
 
 

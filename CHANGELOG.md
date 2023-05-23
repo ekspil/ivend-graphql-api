@@ -1094,3 +1094,7 @@
 
 * fix max sale sum
 
+# 1.6.131 - Hotfix
+
+* add search in stat
+

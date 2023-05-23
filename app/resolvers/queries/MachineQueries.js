@@ -6,9 +6,9 @@ function MachineQueries({machineService}) {
 
     const getMachines = async (root, args, context) => {
         const {user} = context
-        const {machineGroupId} = args
+        const {machineGroupId, search} = args
 
-        const machines = await machineService.getAllMachinesOfUser(user, machineGroupId)
+        const machines = await machineService.getAllMachinesOfUser(user, machineGroupId, search)
 
         return machines.map(machine => (new MachineDTO(machine)))
     }

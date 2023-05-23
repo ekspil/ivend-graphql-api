@@ -962,7 +962,7 @@ const typeDefs = gql`
         getControllerIntegrations(input: AllIntegrationsInput): [ControllerIntegration]
         getAllControllers(offset: Int, limit: Int, status: String, connection: String, terminal: String, fiscalizationMode: String, bankTerminalMode: String, printer: String, registrationTime: String, terminalStatus: String, orderDesc: Boolean, orderKey: String, userRole: String, userId: String , search: String ): [Controller]
         getMachineById(id: Int!): Machine
-        getMachines(machineGroupId: Int): [Machine]
+        getMachines(machineGroupId: Int, search: String): [Machine]
         getMachineGroups: [MachineGroup]
         getMachineTypes: [MachineType]
         getEquipments: [Equipment]

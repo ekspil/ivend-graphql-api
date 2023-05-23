@@ -851,7 +851,9 @@ class SaleService {
 
         try {
 
-            const {period,  machineGroupId, search} = input
+            let {period,  machineGroupId, search} = input
+
+            if(!search) search = ""
 
             const {sequelize} = this.Sale
             const {Op} = sequelize
@@ -869,20 +871,25 @@ class SaleService {
                     [Op.gt]: from
                 }
             }
-
-
-            // sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
-            //     [Op.like]: "%abcd%"
-            // })
+            
 
 
             if(machineGroupId){
                 machineWhere = {
                     [Op.and]: [
-                        {[Op.or]: [{machine_group_id: machineGroupId}, {machineGroup2Id: machineGroupId}, {machineGroup3Id: machineGroupId}]},
-                        sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
-                            [Op.iLike]: `%${search ? search.toLowerCase() : ""}%`
-                        })
+                        {
+                            [Op.or]:
+                                [
+                                    {machine_group_id: machineGroupId},
+                                    {machineGroup2Id: machineGroupId},
+                                    {machineGroup3Id: machineGroupId}
+                                ]
+                        },
+                        {
+                            name: {
+                                [Op.iLike]: `%${search}%`
+                            }
+                        }
                     ]
 
                 }
@@ -890,11 +897,9 @@ class SaleService {
             }
             else {
                 machineWhere = {
-                    [Op.and]: [
-                        sequelize.where(sequelize.fn("lower", sequelize.col("name")),{
-                            [Op.iLike]: `%${search ? search.toLowerCase() : ""}%`
-                        })
-                    ]
+                    name: {
+                        [Op.iLike]: `%${search}%`
+                    }
 
                 }
             }
@@ -912,16 +917,40 @@ class SaleService {
                     ]
                 })
 
-                where.machine_id = {
-                    [Op.in]: machines.map(machine => machine.id)
+
+
+                let whereItem = {}
+                if(search && !machines.length){
+                    whereItem = {
+                        name: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    }
+                }else {
+
+                    where.machine_id = {
+                        [Op.in]: machines.map(machine => machine.id)
+                    }
+
                 }
+                whereItem.user_id = user.id
 
                 const userItems = await this.Item.findAll({
                     transaction,
-                    where: {
-                        user_id: user.id
-                    }
+                    where: whereItem
                 })
+
+                if(search && !machines.length){
+                    const itemIds = userItems.map(i=>{
+                        return i.id
+                    })
+                    where.item_id = {
+                        [Op.in]: itemIds
+                    }
+                }
+
+
+
 
                 const sales = await this.Sale.findAll({
                     transaction,
@@ -1087,7 +1116,7 @@ class SaleService {
             throw new NotAuthorized()
         }
 
-        const {period,  machineGroupId} = input
+        const {period,  machineGroupId, search} = input
         const {sequelize} = this.Sale
         const {Op} = sequelize
         const where = {}
@@ -1103,7 +1132,19 @@ class SaleService {
                 [Op.gt]: from
             }
         }
-        let machines = await this.machineService.getAllMachinesOfUser(user)
+
+        const machineWhere = {
+            user_id: user.id
+        }
+
+        if(search){
+            machineWhere.name = {
+                [Op.iLike]: `%${search}%`
+            }
+        }
+        let machines = await this.Machine.findAll({
+            where: machineWhere
+        })
         if(machineGroupId){
             machines = machines.filter(mach => mach.machine_group_id == machineGroupId)
         }
@@ -1111,6 +1152,7 @@ class SaleService {
         where.machine_id = {
             [Op.in]: machines.map(machine => machine.id)
         }
+
 
         const sales = await this.Sale.findAll({
             where
