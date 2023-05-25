@@ -1098,3 +1098,7 @@
 
 * add search in stat
 
+# 1.6.131 - Hotfix
+
+* fix partner fee
+

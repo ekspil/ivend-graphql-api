@@ -231,6 +231,13 @@ class PartnerService {
             where.partnerId = userId
         }
 
+        where.status = {
+            [Op.or]: [
+                {[Op.eq]: "SUCCESS"},
+                {[Op.eq]: null},
+            ]
+        }
+
 
         const transactions = await this.PartnerFee.findAll({
             where
