@@ -1107,3 +1107,7 @@
 
 * fix imei vendista unique
 
+# 1.6.134 - Hotfix
+
+* add directory
+
