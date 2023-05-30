@@ -1102,3 +1102,8 @@
 
 * fix partner fee
 
+
+# 1.6.133 - Hotfix
+
+* fix imei vendista unique
+
