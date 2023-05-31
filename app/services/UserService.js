@@ -728,6 +728,11 @@ class UserService {
         if(managerId){
             where.managerId = managerId
         }
+        if(managerId === 0){
+            where.managerId = {
+                [Op.eq]: null
+            }
+        }
         if (!limit) {
             limit = 100
         }
