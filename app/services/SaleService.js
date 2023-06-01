@@ -49,6 +49,11 @@ class SaleService {
         this.getSales = this.getSales.bind(this)
         this.getLastSaleOfItem = this.getLastSaleOfItem.bind(this)
         this.getItemSales = this.getItemSales.bind(this)
+        this.saveSaleToRedis = this.saveSaleToRedis.bind(this)
+        this.registerAllSalesFromRedis = this.registerAllSalesFromRedis.bind(this)
+
+        // this.registerAllSalesFromRedis()
+        //     .then(logger.info("Redis_temp_finished"))
 
 
     }
@@ -77,10 +82,51 @@ class SaleService {
         return await this.Sale.create(sale)
     }
 
+
+    async saveSaleToRedis(input){
+        let {controllerUid, timestamp} = input
+        await this.redis.hset("TEMP_SAVED_SALE", `${controllerUid}-${new Date(timestamp).getTime()}`, JSON.stringify(input))
+        throw new Error("SAVED_TO_REDIS_AND_DELAYED")
+    }
+
+
+    async registerAllSalesFromRedis(){
+        const sales = await this.redis.hvals("TEMP_SAVED_SALE")
+        const user = {
+            role: "ADMIN"
+        }
+        user.checkPermission = () => true
+
+        for (let s of sales){
+            try{
+                const sale = JSON.parse(s)
+                if(sale.imported) continue
+                const registredSale = await this.registerSale(sale, user)
+                if(!registredSale && !registredSale.id) throw new Error("Can_not_register_sale")
+                sale.imported = true
+                let {controllerUid, timestamp} = sale
+                await this.redis.hset("TEMP_SAVED_SALE", `${controllerUid}-${new Date(timestamp).getTime()}`, JSON.stringify(sale))
+
+                logger.info(`SUCCESS_DURING_RETURNING_SALES ${s}`)
+            }
+            catch(e){
+                logger.info(`ERROR_DURING_RETURNING_SALES ${s} ${e.message}`)
+            }
+        }
+    }
+
     async registerSale(input, user) {
         if (!user || !user.checkPermission(Permission.REGISTER_SALE)) {
             throw new NotAuthorized()
         }
+
+        //TEMP ACTION START
+
+        await this.saveSaleToRedis(input)
+
+        //TEMP ACTION END
+
+
         let redisData
         //todo transaction
 
