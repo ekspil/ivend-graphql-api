@@ -52,8 +52,8 @@ class SaleService {
         this.saveSaleToRedis = this.saveSaleToRedis.bind(this)
         this.registerAllSalesFromRedis = this.registerAllSalesFromRedis.bind(this)
 
-        // this.registerAllSalesFromRedis()
-        //     .then(logger.info("Redis_temp_finished"))
+        this.registerAllSalesFromRedis()
+            .then(logger.info("Redis_temp_finished"))
 
 
     }
@@ -122,7 +122,7 @@ class SaleService {
 
         //TEMP ACTION START
 
-        await this.saveSaleToRedis(input)
+        //await this.saveSaleToRedis(input)
 
         //TEMP ACTION END
 
