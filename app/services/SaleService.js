@@ -51,9 +51,9 @@ class SaleService {
         this.getItemSales = this.getItemSales.bind(this)
         this.saveSaleToRedis = this.saveSaleToRedis.bind(this)
         this.registerAllSalesFromRedis = this.registerAllSalesFromRedis.bind(this)
-
-        this.registerAllSalesFromRedis()
-            .then(logger.info("Redis_temp_finished"))
+        //
+        // this.registerAllSalesFromRedis()
+        //     .then(logger.info("Redis_temp_finished"))
 
 
     }
