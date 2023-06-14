@@ -355,6 +355,7 @@ class KktService {
             sno: legalInfo.sno || "osn",
             place: machine.place,
             machineNumber: machine.number,
+            kktProvider: receipt.kktProvider,
             ...receipt.fiscalData,
             sale
         }
