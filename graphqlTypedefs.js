@@ -125,6 +125,7 @@ const typeDefs = gql`
         fiscalDocumentNumber: String!
         ecrRegistrationNumber: String!
         fiscalDocumentAttribute: String!
+        kktProvider: String!
         fnNumber: String!
     }
 
