@@ -63,7 +63,7 @@ class BillingService {
             include: [{model: this.PaymentRequest, as: "paymentRequest"}]})
     }
 
-    async getAllBills(input, user) {
+    async getAllBills(input, user, orderDesc, orderKey) {
         if (!user || !user.checkPermission(Permission.GET_DEPOSITS)) {
             throw new NotAuthorized()
         }
@@ -84,10 +84,10 @@ class BillingService {
             whereUser = {
                 [Op.or]: [
                     { companyName: {
-                        [Op.like]: `%${search}%`
+                        [Op.iLike]: `%${search}%`
                     } },
                     { email: {
-                        [Op.like]: `%${search}%`
+                        [Op.iLike]: `%${search}%`
                     } }
                 ]
             }
@@ -106,12 +106,41 @@ class BillingService {
             }
         }
 
+
+
+        let orderData = ["id", "DESC"]
+
+        if(orderDesc === true){
+            orderData =["id", "ASC"]
+        }
+        if(orderKey){
+            if(orderKey === "id"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "meta"){
+                orderData[0] = "type"
+            }
+            if(orderKey === "type"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "amount"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "createdAt"){
+                orderData[0] = orderKey
+            }
+            if(orderKey === "userName"){
+                orderData[0] = "user_id"
+            }
+
+        }
+
         const transactions = await this.Transaction.findAll({
             offset,
             limit,
             where,
             order: [
-                ["id", "DESC"],
+                orderData,
             ],
             include: [{model: this.User, as: "user" , where: whereUser}]}
         )

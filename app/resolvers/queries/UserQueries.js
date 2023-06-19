@@ -12,9 +12,9 @@ function UserQueries({userService, billingService}) {
 
     const getAllBills = async (obj, args, context) => {
         const {user} = context
-        const {input} = args
+        const {input, orderDesc, orderKey} = args
 
-        const data = await billingService.getAllBills(input, user)
+        const data = await billingService.getAllBills(input, user, orderDesc, orderKey)
 
         const {transactions} = data
 

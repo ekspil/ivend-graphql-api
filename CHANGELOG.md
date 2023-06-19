@@ -1116,3 +1116,7 @@
 
 * change bd
 
+# 1.6.140 - Hotfix
+
+* fix all payment page
+

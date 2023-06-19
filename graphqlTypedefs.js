@@ -997,7 +997,7 @@ const typeDefs = gql`
         getTariff(partnerId: Int!): Tariff
         getActs(userId: Int): [Act]
         getPartnerInfo(partnerId: Int!): PartnerInfo
-        getAllBills(input: AllBillsInput): [BankPayment!]!
+        getAllBills(input: AllBillsInput, orderDesc: Boolean, orderKey: String ): [BankPayment!]!
         getManagers: [Manager]
         getPartnerPayments(period: Period): [PartnerFee]
     }
