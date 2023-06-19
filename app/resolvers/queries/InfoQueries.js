@@ -57,7 +57,7 @@ function InfoQueries({infoService}) {
 
     }
 
-    const getPartnerInfo = async (root, args, context) => {
+    const getPartnerInformation = async (root, args, context) => {
 
         const {user} = context
 
@@ -89,7 +89,7 @@ function InfoQueries({infoService}) {
         getInfo,
         getAllInfo,
         getInfoById,
-        getPartnerInfo,
+        getPartnerInformation,
         getAllPartnerInfo,
         getPartnerInfoById,
     }
