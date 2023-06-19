@@ -43,11 +43,55 @@ function InfoQueries({infoService}) {
 
         return new InfoDTO(info)
     }
+    const getAllPartnerInfo = async (root, args, context) => {
+
+        const {user} = context
+
+        const info = await infoService.getAllPartnerInfo(user)
+
+        if (!info) {
+            return null
+        }
+
+        return info.map(info => (new InfoDTO(info)))
+
+    }
+
+    const getPartnerInfo = async (root, args, context) => {
+
+        const {user} = context
+
+        const info = await infoService.getPartnerInfo(user)
+
+        if (!info) {
+            return null
+        }
+
+        return info.map(info => (new InfoDTO(info)))
+
+    }
+
+
+    const getPartnerInfoById = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        const info = await infoService.getPartnerInfoById(id, user)
+
+        if (!info) {
+            return null
+        }
+
+        return new InfoDTO(info)
+    }
 
     return {
         getInfo,
         getAllInfo,
-        getInfoById
+        getInfoById,
+        getPartnerInfo,
+        getAllPartnerInfo,
+        getPartnerInfoById,
     }
 
 }

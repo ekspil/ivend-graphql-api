@@ -722,6 +722,14 @@ const typeDefs = gql`
         text: String!
         link: String
         header: String!
+    }    
+    type PartnerInformation {
+        id: Int!
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
     }
     
     input NewsInput {
@@ -743,6 +751,14 @@ const typeDefs = gql`
     }    
     
     input InfoInput {
+        id: Int
+        active: Int!
+        date: String!
+        text: String!
+        link: String
+        header: String!
+    }    
+    input PartnerInformationInput {
         id: Int
         active: Int!
         date: String!
@@ -981,6 +997,9 @@ const typeDefs = gql`
         getItemSales(machineGroupId: Int, period: Period, search: String): [ItemsSales]
         getMachineSales(machineGroupId: Int, period: Period, search: String): [MachineSales]
         getNews: [News]
+        getPartnerInformation: [PartnerInformation]
+        getAllPartnerInfo: [PartnerInformation]
+        getPartnerInfoById(id: Int!): PartnerInformation
         getNewsById(id: Int!): News
         getAllNews: [News]
         getInfo: [Info]
@@ -1316,6 +1335,9 @@ const typeDefs = gql`
         deleteInfo(id: Int!): Boolean
         changeInfo(input: InfoInput!): Info
         createInfo(input: InfoInput!): Info
+        deletePartnerInfo(id: Int!): Boolean
+        changePartnerInfo(input: PartnerInformationInput!): PartnerInformation
+        createPartnerInfo(input: PartnerInformationInput!): PartnerInformation
         deleteInstr(id: Int!): Boolean
         changeInstr(input: InstrInput!): Instr
         createInstr(input: InstrInput!): Instr

@@ -57,6 +57,7 @@ const MachineLog = require("./models/sequelize/MachineLog")
 const Kkt = require("./models/sequelize/Kkt")
 const News = require("./models/sequelize/News")
 const Info = require("./models/sequelize/Info")
+const PartnerInfo = require("./models/sequelize/PartnerInfo")
 const Instr = require("./models/sequelize/Instr")
 const PartnerSettings = require("./models/sequelize/PartnerSettings")
 const PartnerFee = require("./models/sequelize/PartnerFee")
@@ -128,6 +129,7 @@ class App {
         const KktModel = sequelize.define("kkts", Kkt)
         const NewsModel = sequelize.define("news", News)
         const InfoModel = sequelize.define("information", Info)
+        const PartnerInfoModel = sequelize.define("partner_informations", PartnerInfo)
         const InstrModel = sequelize.define("instructions", Instr)
         const EquipmentModel = sequelize.define("equipments", Equipment)
         const ItemModel = sequelize.define("items", Item)
@@ -319,7 +321,7 @@ class App {
         services.kktService = new KktService({KktModel, redis, MachineModel, SaleModel, LegalInfoModel, ButtonItemModel})
         services.newsService = new NewsService({NewsModel, UserModel, redis})
         services.instrService = new InstrService({InstrModel})
-        services.infoService = new InfoService({InfoModel})
+        services.infoService = new InfoService({InfoModel, PartnerInfoModel})
 
         services.itemMatrixService = new ItemMatrixService({
             ItemMatrixModel,
@@ -415,7 +417,8 @@ class App {
             UserModel,
             PartnerFeeModel,
             BankPaymentsModel,
-            ActsModel
+            ActsModel,
+            redis
         })
         services.reportService = new ReportService({redis, BankPaymentsModel, ActsModel})
         services.controllerService.billingService = services.billingService

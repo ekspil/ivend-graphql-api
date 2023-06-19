@@ -29,12 +29,41 @@ function InfoMutations({infoService}) {
 
         return new InfoDTO(info)
     }
+    const createPartnerInfo = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const info = await infoService.createPartnerInfo(input, user)
+
+        return new InfoDTO(info)
+    }
+
+    const deletePartnerInfo = async (root, args, context) => {
+        const {id} = args
+        const {user} = context
+
+        await infoService.deletePartnerInfo(id, user)
+
+        return true
+    }
+
+    const changePartnerInfo = async (root, args, context) => {
+        const {input} = args
+        const {user} = context
+
+        const info = await infoService.changePartnerInfo(input, user)
+
+        return new InfoDTO(info)
+    }
 
 
     return {
         createInfo,
         changeInfo,
-        deleteInfo
+        deleteInfo,
+        createPartnerInfo,
+        changePartnerInfo,
+        deletePartnerInfo,
     }
 
 }

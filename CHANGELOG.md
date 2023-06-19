@@ -1120,3 +1120,7 @@
 
 * fix all payment page
 
+# 1.6.141 - Hotfix
+
+* add partner information list
+
