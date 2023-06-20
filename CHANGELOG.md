@@ -1124,3 +1124,7 @@
 
 * add partner information list
 
+# 1.6.143 - Hotfix
+
+* extended encashments
+

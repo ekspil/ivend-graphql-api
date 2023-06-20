@@ -799,6 +799,10 @@ const typeDefs = gql`
     type Encashment {
         id: Int!
         sum: Int
+        count: Int
+        countCashless: Int
+        cashless: Int
+        meta: String
         prevEncashment: Encashment
         timestamp: Timestamp!
         createdAt: Timestamp!
@@ -812,6 +816,15 @@ const typeDefs = gql`
     type EncashmentSalesSummaryFast {
         encashmentsAmount: Float!
     }
+    
+    type DataAfterEncashment {
+        cashInMachine: Int!
+        cashCountInMachine: Int
+        cashlessInMachine: Int
+        cashlessCountInMachine: Int
+    }
+    
+    
 
     type Machine {
         id: Int!
@@ -841,7 +854,8 @@ const typeDefs = gql`
         encashments(period: Period): [Encashment!]!
         lastEncashment: Encashment
         kkt: Kkt
-        cashInMachine: Int!
+        dataAfterEncashment: DataAfterEncashment
+
     }
     
     type MachineItemSales {

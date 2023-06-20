@@ -133,7 +133,7 @@ function MachineResolver({machineService, saleService, kktService}) {
         return new SalesSummaryDTO(salesSummary)
     }
 
-    const cashInMachine = async (obj, args, context) => {
+    const dataAfterEncashment = async (obj, args, context) => {
         const {user} = context
 
         const lastEncashment = await machineService.getLastMachineEncashment(obj.id, user)
@@ -142,22 +142,15 @@ function MachineResolver({machineService, saleService, kktService}) {
 
 
 
-        const cash = await saleService.cashInMachine({machineId: obj.id}, user)
+        const cash = await saleService.dataAfterEncashment({machineId: obj.id}, user)
         if(cash){
-            return Number(cash)
+            return cash
         }
 
 
 
         const salesSummary = await saleService.getEncashmentsSummary({machineId: obj.id, period}, user)
-        let encashmentsAmount = 0
-
-        if(salesSummary && salesSummary.encashmentsAmount && salesSummary.encashmentsAmount[0] && salesSummary.encashmentsAmount[0].dataValues && salesSummary.encashmentsAmount[0].dataValues.overallAmount){
-            encashmentsAmount = Number(salesSummary.encashmentsAmount[0].dataValues.overallAmount)
-        }
-
-
-        return encashmentsAmount
+        return salesSummary
     }
 
 
@@ -348,7 +341,7 @@ function MachineResolver({machineService, saleService, kktService}) {
         banknoteCollectorStatus,
         machineItemSales,
         //encashmentsSummariesFast,
-        cashInMachine
+        dataAfterEncashment
     }
 
 }

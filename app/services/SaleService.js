@@ -1254,7 +1254,6 @@ class SaleService {
 
         const {period, machineId} = input
         const where = {}
-        where.type = "CASH"
         where.machine_id = machineId
 
         if (period) {
@@ -1270,20 +1269,29 @@ class SaleService {
             }
         }
 
-        const encashmentsCount = 0
-        const encashmentsAmount = await this.Sale.findAll({
+        const sales = await this.Sale.findAll({
             where,
-            attributes: [
-                [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
-            ],
         })
-        return {
-            encashmentsAmount,
-            encashmentsCount
-        }
+
+        return sales.reduce((acc, item) => {
+            if(item.type === "CASH"){
+                acc.cashCountInMachine++
+                acc.cashInMachine += Number(item.price)
+            }
+            if(item.type === "CASHLESS"){
+                acc.cashlessCountInMachine++
+                acc.cashlessInMachine += Number(item.price)
+            }
+            return acc
+        }, {
+            cashInMachine: 0,
+            cashCountInMachine: 0,
+            cashlessInMachine: 0,
+            cashlessCountInMachine: 0,
+        })
 
     }
-    async cashInMachine(input, user) {
+    async dataAfterEncashment(input, user) {
         if (!user || !user.checkPermission(Permission.GET_SALES_SUMMARY)) {
             throw new NotAuthorized()
         }
@@ -1298,7 +1306,12 @@ class SaleService {
         if(!machineCash){
             return null
         }
-        return machineCash.amount
+        return {
+            cashInMachine: machineCash.amount,
+            cashCountInMachine: machineCash.count,
+            cashlessInMachine: machineCash.cashless,
+            cashlessCountInMachine: machineCash.countCashless
+        }
 
     }
 

@@ -11,6 +11,16 @@ const Temp = {
         type: Sequelize.DataTypes.DECIMAL,
         allowNull: false
     },
+    cashless: {
+        type: Sequelize.DataTypes.DECIMAL,
+    },
+    count: {
+        type: Sequelize.DataTypes.INTEGER,
+    },
+    countCashless: {
+        type: Sequelize.DataTypes.INTEGER,
+        field: "count_cashless"
+    },
     meta: {
         type: Sequelize.DataTypes.STRING
     },
