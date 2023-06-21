@@ -619,7 +619,7 @@ class MachineService {
     }
 
 
-    async createEncashment(machineId, timestamp, user) {
+    async createEncashment(machineId, timestamp, user, meta) {
         if (!user || !user.checkPermission(Permission.CREATE_ENCASHMENT)) {
             throw new NotAuthorized()
         }
@@ -642,7 +642,7 @@ class MachineService {
         const period = {from, to}
 
         const where = {}
-        where.type = "CASH"
+        //where.type = "CASH"
         where.machine_id = machineId
 
         if (period) {
@@ -658,24 +658,41 @@ class MachineService {
             }
         }
 
-        const salesSummary = await this.Sale.findAll({
+        const sales = await this.Sale.findAll({
             where,
             attributes: [
                 [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
             ],
         })
 
+        const salesSummary = sales.reduce((acc, item) => {
+            if(item.type === "CASH"){
+                acc.cashCountInMachine++
+                acc.cashInMachine += Number(item.price)
+            }
+            if(item.type === "CASHLESS"){
+                acc.cashlessCountInMachine++
+                acc.cashlessInMachine += Number(item.price)
+            }
+            return acc
+        }, {
+            cashInMachine: 0,
+            cashCountInMachine: 0,
+            cashlessInMachine: 0,
+            cashlessCountInMachine: 0,
+        })
 
-
-        let encashmentsAmount = 0
-
-        if(salesSummary && salesSummary[0] && salesSummary[0].dataValues && salesSummary[0].dataValues.overallAmount){
-            encashmentsAmount = Number(salesSummary[0].dataValues.overallAmount)
+        encashment.sum = salesSummary.cashInMachine
+        encashment.count = salesSummary.cashCountInMachine
+        encashment.cashless = salesSummary.cashlessInMachine
+        encashment.countCashless = salesSummary.cashlessCountInMachine
+        if(meta){
+            encashment.meta = meta
         }
-        encashment.sum = encashmentsAmount
 
 
-        return await this.Encashment.create(encashment)
+
+        return this.Encashment.create(encashment)
     }
 
 

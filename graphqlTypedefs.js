@@ -1116,6 +1116,7 @@ const typeDefs = gql`
         timestamp: Timestamp!
         controllerUid: String!
         eventType: EventType!
+        meta: String
     }
 
     input RememberInput {

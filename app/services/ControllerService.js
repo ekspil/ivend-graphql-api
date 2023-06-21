@@ -1427,7 +1427,7 @@ class ControllerService {
             throw new NotAuthorized()
         }
 
-        const {controllerUid, timestamp, eventType} = input
+        const {controllerUid, timestamp, eventType, meta} = input
 
         if(eventType !== "ENCASHMENT" && eventType !== "UPDATE" ) {
             throw new Error("Unknown event type")
@@ -1455,10 +1455,10 @@ class ControllerService {
                 throw new MachineNotFound()
             }
 
-            await this.machineService.createEncashment(machine.id, timestamp, controllerUser)
+            await this.machineService.createEncashment(machine.id, timestamp, controllerUser, meta)
             await this.redis.set("machine_encashment_" + machine.id, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
             await this.redis.set("machine_encashment_" + controllerUid + timestamp, `${timestamp}`, "EX", 31 * 24 * 60 * 60)
-            await this.machineService.addLog(machine.id, `Выполнена инкассация`, MachineLogType.ENCASHMENT, controllerUser)
+            await this.machineService.addLog(machine.id, `Выполнена инкассация${meta ? " " + meta : ""}`, MachineLogType.ENCASHMENT, controllerUser)
 
             return controller
         }
