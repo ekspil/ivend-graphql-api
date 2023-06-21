@@ -659,10 +659,7 @@ class MachineService {
         }
 
         const sales = await this.Sale.findAll({
-            where,
-            attributes: [
-                [sequelize.fn("sum", sequelize.col("sales.price")), "overallAmount"]
-            ],
+            where
         })
 
         const salesSummary = sales.reduce((acc, item) => {
