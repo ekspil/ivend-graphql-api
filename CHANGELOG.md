@@ -1132,3 +1132,7 @@
 
 * extended machine encashments
 
+# 1.6.147 - Hotfix
+
+* hotfixex
+

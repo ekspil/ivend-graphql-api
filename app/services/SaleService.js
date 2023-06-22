@@ -1166,6 +1166,7 @@ class SaleService {
         const {sequelize} = this.Sale
         const {Op} = sequelize
         const where = {}
+
         if (period) {
             const {from, to} = period
 
@@ -1179,9 +1180,21 @@ class SaleService {
             }
         }
 
-        const machineWhere = {
-            user_id: user.id
+        let machineWhere = {}
+        if(machineGroupId){
+            machineWhere = {
+                [Op.or]:
+                    [
+                        {machine_group_id: machineGroupId},
+                        {machineGroup2Id: machineGroupId},
+                        {machineGroup3Id: machineGroupId}
+                    ]
+            }
         }
+
+
+        machineWhere.user_id = user.id
+
 
         if(search){
             machineWhere.name = {
@@ -1191,9 +1204,6 @@ class SaleService {
         let machines = await this.Machine.findAll({
             where: machineWhere
         })
-        if(machineGroupId){
-            machines = machines.filter(mach => mach.machine_group_id == machineGroupId)
-        }
 
         where.machine_id = {
             [Op.in]: machines.map(machine => machine.id)
