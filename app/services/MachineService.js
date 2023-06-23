@@ -50,7 +50,7 @@ class MachineService {
         this.getCoinCollectorStatus = this.getCoinCollectorStatus.bind(this)
         this.restoreEncashments = this.restoreEncashments.bind(this)
 
-        this.restoreEncashments()
+        //this.restoreEncashments()
     }
 
     async createMachine(input, user) {
