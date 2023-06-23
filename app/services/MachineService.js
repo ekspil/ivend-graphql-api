@@ -623,9 +623,7 @@ class MachineService {
 
 
     async restoreEncashments(){
-        const user = {
-            checkPermission: ()=> true
-        }
+
         const whereGen = {
             sum: 0,
             count: 0,
@@ -640,7 +638,11 @@ class MachineService {
         
         for (let encashment of encashments){
 
-            const prevEncashment = await this.getLastMachineEncashment(encashment.machine_id, user)
+            const prevEncashment = await this.Encashment.findOne({
+                where: {
+                    id: encashment.prevEncashmentId
+                }
+            })
             const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
             const to = new Date(encashment.timestamp)
 
