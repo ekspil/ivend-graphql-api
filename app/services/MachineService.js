@@ -653,7 +653,7 @@ class MachineService {
                 const {from, to} = period
 
                 if (from > to) {
-                    throw new InvalidPeriod()
+                    continue
                 }
 
                 where.createdAt = {
