@@ -48,6 +48,9 @@ class MachineService {
         this.getLastMachineEncashment = this.getLastMachineEncashment.bind(this)
         this.getBanknoteCollectorStatus = this.getBanknoteCollectorStatus.bind(this)
         this.getCoinCollectorStatus = this.getCoinCollectorStatus.bind(this)
+        this.restoreEncashments = this.restoreEncashments.bind(this)
+
+        this.restoreEncashments()
     }
 
     async createMachine(input, user) {
@@ -618,6 +621,80 @@ class MachineService {
         return await this.MachineLog.create(machineLog, {transaction})
     }
 
+
+    async restoreEncashments(){
+        const user = {
+            checkPermission: ()=> true
+        }
+        const whereGen = {
+            sum: 0,
+            count: 0,
+            cashless: 0,
+            countCashless: 0,
+        }
+        const encashments = await this.Encashment.findAll(
+            {where: whereGen}
+        )
+        const {sequelize} = this.Encashment
+        const {Op} = sequelize
+        
+        for (let encashment of encashments){
+
+            const prevEncashment = await this.getLastMachineEncashment(encashment.machine_id, user)
+            const from = prevEncashment ? new Date(prevEncashment.timestamp) : new Date(0)
+            const to = new Date(encashment.timestamp)
+
+            const period = {from, to}
+
+            const where = {}
+            where.machine_id = encashment.machine_id
+
+            if (period) {
+                const {from, to} = period
+
+                if (from > to) {
+                    throw new InvalidPeriod()
+                }
+
+                where.createdAt = {
+                    [Op.lt]: to,
+                    [Op.gt]: from
+                }
+            }
+
+            const sales = await this.Sale.findAll({
+                where
+            })
+
+            const salesSummary = sales.reduce((acc, item) => {
+                if(item.type === "CASH"){
+                    acc.cashCountInMachine++
+                    acc.cashInMachine += Number(item.price)
+                }
+                if(item.type === "CASHLESS"){
+                    acc.cashlessCountInMachine++
+                    acc.cashlessInMachine += Number(item.price)
+                }
+                return acc
+            }, {
+                cashInMachine: 0,
+                cashCountInMachine: 0,
+                cashlessInMachine: 0,
+                cashlessCountInMachine: 0,
+            })
+
+            encashment.sum = salesSummary.cashInMachine
+            encashment.count = salesSummary.cashCountInMachine
+            encashment.cashless = salesSummary.cashlessInMachine
+            encashment.countCashless = salesSummary.cashlessCountInMachine
+
+
+
+            await encashment.save()
+
+        }
+        
+    }
 
     async createEncashment(machineId, timestamp, user, meta) {
         if (!user || !user.checkPermission(Permission.CREATE_ENCASHMENT)) {
