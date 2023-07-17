@@ -268,7 +268,13 @@ class UserService {
         user.email = email
         user.role = role
 
-        user.partnerId = partnerId
+        if(!partnerId || Number(partnerId) === 0 ){
+            user.partnerId = null
+        }
+        else {
+            user.partnerId = partnerId
+        }
+
         user.managerId = managerId
 
         if(password){
