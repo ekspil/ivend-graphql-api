@@ -324,6 +324,7 @@ const typeDefs = gql`
         vendors: [User!]!
         countryCode: String
         newInfoId: Int
+        idCode: String
     }
     
     type PartnerStatisticInfo {
@@ -627,6 +628,7 @@ const typeDefs = gql`
         telegramChat: String
     }
     input NotificationSettingTelegramChat {
+        hash: String
         telegram: String
         telegramChat: String
     }

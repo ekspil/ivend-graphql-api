@@ -1140,3 +1140,7 @@
 
 * hotfix
 
+# 1.6.153 - Hotfix
+
+* telegram fix
+

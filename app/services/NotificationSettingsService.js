@@ -99,10 +99,25 @@ class NotificationSettingsService {
             throw new NotAuthorized()
         }
 
-        const {telegram, telegramChat} = input
+        const {telegram, telegramChat, hash} = input
 
-        const where = {
-            telegram
+        const where = {}
+
+        if(telegram){
+            where.telegram = telegram
+        }
+
+        if(hash){
+            try{
+                const text = Buffer.from(hash, "base64").toString("ascii")
+                const id_text = text.slice(1)
+                const id = Number(id_text)
+                if(!id) return false
+                where.user_id = id
+            }
+            catch(e){
+                return false
+            }
         }
         const data = {
             telegramChat

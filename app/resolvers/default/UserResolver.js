@@ -59,6 +59,13 @@ function UserResolver({controllerService, notificationSettingsService, itemServi
         return kkts.map(kkt => (new KktDTO(kkt)))
     }
 
+    const idCode = async (obj, args, context) => {
+        const {user} = context
+
+        const hash = Buffer.from(String(user.phone.slice(-1)) + String(user.id)).toString("base64")
+        return hash
+    }
+
     const monthPay = async (obj, args, context) => {
         const {user} = context
         const {id} = obj
@@ -156,7 +163,8 @@ function UserResolver({controllerService, notificationSettingsService, itemServi
         partnerFee,
         vendors,
         partnerInfo,
-        newInfoId
+        newInfoId,
+        idCode
     }
 
 }
